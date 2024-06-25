@@ -1,0 +1,22 @@
+{
+  "appName": "Pratham Admin",
+  "languages": [
+    {
+      "label": "English",
+      "code": "en"
+    },
+
+    {
+      "label": "हिंदी",
+      "code": "hi"
+    },
+    {
+      "label": "मराठी",
+      "code": "mr"
+    },
+    {
+      "label": "ଓଡ଼ିଆ",
+      "code": "or"
+    }
+  ]
+}
