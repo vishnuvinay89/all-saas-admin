@@ -1,0 +1,12 @@
+{
+  "LOGIN_PAGE": {
+    "USERNAME": "Username",
+    "PASSWORD": "Password",
+    "LOGIN": "Login",
+    "USERNAME_PLACEHOLDER": "Enter username",
+    "PASSWORD_PLACEHOLDER": "Enter password",
+    "USERNAME_PASSWORD_NOT_CORRECT": "The username or password you entered is incorrect",
+    "FORGOT_PASSWORD": "Forgot Password?",
+    "REMEMBER_ME": "Remember Me"
+  }
+}

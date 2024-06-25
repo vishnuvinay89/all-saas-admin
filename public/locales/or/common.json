@@ -1,0 +1,12 @@
+{
+  "LOGIN_PAGE": {
+    "USERNAME": "ଉପଯୋଗକର୍ତା ନାମ",
+    "PASSWORD": "ପାସୱାର୍ଡ",
+    "LOGIN": "ପ୍ରବେଶ",
+    "USERNAME_PLACEHOLDER": "ଉପଯୋଗକର୍ତା ନାମ ଏଣ୍ଟର କର",
+    "PASSWORD_PLACEHOLDER": "ପାସୱାର୍ଡ ଏଣ୍ଟର କର",
+    "USERNAME_PASSWORD_NOT_CORRECT": "ଆପଣଙ୍କ ବ୍ୟବହାରକୃତ ନାମ କିମ୍ବା ପାସ୍‌ୱାର୍ଡ ଭୁଲ ଅଛି",
+    "FORGOT_PASSWORD": "ପାସ୍‌ୱାର୍ଡ ଭୁଲିଛନ୍ତି?",
+    "REMEMBER_ME": "ମୋତେ ମନ ରଖ"
+  }
+}

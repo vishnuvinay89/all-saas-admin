@@ -1,0 +1,13 @@
+{
+ 
+  "LOGIN_PAGE": {
+    "USERNAME": "उपयोगकर्ता नाम",
+    "PASSWORD": "पासवर्ड",
+    "LOGIN": "लॉग इन करें",
+    "USERNAME_PLACEHOLDER": "उपयोगकर्ता नाम दर्ज करें",
+    "PASSWORD_PLACEHOLDER": "पासवर्ड दर्ज करें",
+    "USERNAME_PASSWORD_NOT_CORRECT": "आपका यूजरनेम या पासवर्ड गलत है",
+    "FORGOT_PASSWORD": "पासवर्ड भूल गए?",
+    "REMEMBER_ME": "मुझे याद रखें"
+  }
+}
