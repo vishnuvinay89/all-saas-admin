@@ -1,4 +1,8 @@
 {
+  "COMMON": {
+    "LANGUAGE": "ଭାଷା",
+    "LOADING": "ଲୋଡ୍ ହେଉଛି (Loading)"
+  },
   "LOGIN_PAGE": {
     "USERNAME": "ଉପଯୋଗକର୍ତା ନାମ",
     "PASSWORD": "ପାସୱାର୍ଡ",

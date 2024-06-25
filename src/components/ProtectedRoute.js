@@ -1,8 +1,11 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'next-i18next';
 
 const ProtectedRoute = ({ children }) => {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const { user, loading } = useAuth(); 
 
@@ -13,7 +16,7 @@ const ProtectedRoute = ({ children }) => {
   }, [user, loading, router]);
 
   if (loading || !user) {
-    return <p>Loading...</p>; 
+    return <p>{t('COMMON.LOADING')}</p>; 
   }
 
   return children;

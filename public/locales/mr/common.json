@@ -1,5 +1,8 @@
 {
- 
+  "COMMON": {
+    "LANGUAGE": "भाषा",
+    "LOADING": "लोड होत आहे"
+  },
   "LOGIN_PAGE": {
     "USERNAME": "वापरकर्तानाव",
     "PASSWORD": "पासवर्ड",

@@ -1,4 +1,8 @@
 {
+  "COMMON": {
+    "LANGUAGE": "Language",
+    "LOADING": "Loading"
+  },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
     "PASSWORD": "Password",
