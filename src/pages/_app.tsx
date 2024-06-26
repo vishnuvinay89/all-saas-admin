@@ -4,6 +4,8 @@ import { appWithTranslation } from "next-i18next";
 import { initGA } from "../utils/googleAnalytics";
 import { useEffect } from "react";
 import { AuthProvider } from '../context/AuthContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import {
   Experimental_CssVarsProvider as CssVarsProvider,
@@ -23,6 +25,11 @@ function App({ Component, pageProps }: AppProps) {
     <AuthProvider>
     <CssVarsProvider theme={customTheme}>
       <Component {...pageProps} />;
+      <ToastContainer
+            position="bottom-left"
+            autoClose={3000}
+            stacked={false}
+          />
     </CssVarsProvider>
     </AuthProvider>
 
