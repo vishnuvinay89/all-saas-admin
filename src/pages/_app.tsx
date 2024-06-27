@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { AuthProvider } from '../context/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import {telemetryFactory} from '../utils/telemetry'
 import {
   Experimental_CssVarsProvider as CssVarsProvider,
   useColorScheme,
@@ -15,6 +15,9 @@ import {
 import customTheme from "../styles/customTheme";
 
 function App({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    telemetryFactory.init();
+  }, []);
   useEffect(() => {
     if (!window.GA_INITIALIZED) {
       initGA(`G-6NVMB20J4Z`);
