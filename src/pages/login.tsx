@@ -23,7 +23,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
-//import { telemetryFactory } from '@/utils/telemetry';
+import { telemetryFactory } from '@/utils/telemetry';
 import { logEvent } from "@/utils/googleAnalytics";
 import { showToastMessage } from "@/components/Toastify";
 import Link from "@mui/material/Link";
@@ -137,7 +137,7 @@ const LoginPage = () => {
             uid: localStorage.getItem("userId") || "Anonymous",
           },
         };
-        //  telemetryFactory.interact(telemetryInteract);
+          telemetryFactory.interact(telemetryInteract);
           router.push('/dashboard');
       } catch (error: any) {
         setLoading(false);

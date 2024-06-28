@@ -13,7 +13,7 @@ export const login = async ({
   username,
   password,
 }: LoginParams): Promise<any> => {
-  const apiUrl: string = `https://qa.prathamteacherapp.tekdinext.com/user/v1/auth/login`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`;
 
   try {
     const response = await post(apiUrl, { username, password });
@@ -27,7 +27,7 @@ export const login = async ({
 export const refresh = async ({
   refresh_token,
 }: RefreshParams): Promise<any> => {
-  const apiUrl: string = `https://qa.prathamteacherapp.tekdinext.com/user/v1/auth/refresh`;
+  const apiUrl: string =  `${process.env.NEXT_PUBLIC_BASE_URL}/auth/refresh`;
   try {
     const response = await post(apiUrl, { refresh_token });
     return response?.data;
@@ -38,7 +38,7 @@ export const refresh = async ({
 };
 
 export const logout = async (refreshToken: string): Promise<any> => {
-  const apiUrl: string = `https://qa.prathamteacherapp.tekdinext.com/user/v1/auth/logout`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/logout`;
   try {
     const response = await post(apiUrl, { refresh_token: refreshToken });
     return response;
