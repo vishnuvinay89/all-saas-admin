@@ -1,5 +1,5 @@
 import { generateUUID, getDeviceId } from './Helper';
-const hostURL = "https://qa.prathamteacherapp.tekdinext.com";
+const hostURL = process.env.NEXT_PUBLIC_TELEMETRY_URL;
 console.log(hostURL)
 let CsTelemetryModule;
 let EkTelemetry;
