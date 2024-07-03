@@ -12,5 +12,13 @@
     "USERNAME_PASSWORD_NOT_CORRECT": "The username or password you entered is incorrect",
     "FORGOT_PASSWORD": "Forgot Password?",
     "REMEMBER_ME": "Remember Me"
+  },
+  "DASHBOARD":
+  {
+    "HI":"hi",
+    "DASHBOARD":"Dashboard",
+    "MANAGE_USER":"Manage Users",
+    "COURSE_PLANNER":"Course Planner",
+    "COHORTS":"Cohorts"
   }
 }
