@@ -10,14 +10,12 @@ import React, { useEffect, useRef, useState } from "react";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import ReactGA from "react-ga4";
-
 import Checkbox from "@mui/material/Checkbox";
 import Image from "next/image";
 import Loader from "../components/Loader";
 import MenuItem from "@mui/material/MenuItem";
 import appLogo from "../../public/images/appLogo.png";
 import config from "../../config.json";
-//import { getUserId } from '../services/ProfileService';
 import { login } from "../services/LoginService";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
@@ -115,12 +113,6 @@ const LoginPage = () => {
             rememberMe
               ? localStorage.setItem("refreshToken", refreshToken)
               : localStorage.removeItem("refreshToken");
-
-            // const userResponse = await getUserId();
-            // localStorage.setItem('userId', userResponse?.userId);
-            // localStorage.setItem('state', userResponse?.state);
-            // localStorage.setItem('district', userResponse?.district);
-            // localStorage.setItem('role', userResponse?.tenantData[0]?.roleName)
           }
         }
         setLoading(false);
@@ -137,8 +129,8 @@ const LoginPage = () => {
             uid: localStorage.getItem("userId") || "Anonymous",
           },
         };
-          telemetryFactory.interact(telemetryInteract);
-          router.push('/dashboard');
+        telemetryFactory.interact(telemetryInteract);
+        router.push('/dashboard');
       } catch (error: any) {
         setLoading(false);
         if (error.response && error.response.status === 404) {
@@ -366,7 +358,6 @@ const LoginPage = () => {
               alignContent={"center"}
               textAlign={"center"}
               marginTop={"2rem"}
-              // marginBottom={'2rem'}
               width={"100%"}
             >
               <Button
@@ -375,7 +366,6 @@ const LoginPage = () => {
                 fullWidth={true}
                 disabled={isButtonDisabled}
                 ref={loginButtonRef}
-                // sx={{ marginBottom: '2rem' }}
               >
                 {t("LOGIN_PAGE.LOGIN")}
               </Button>
@@ -390,6 +380,7 @@ const LoginPage = () => {
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
+      noLayout: true,
       ...(await serverSideTranslations(locale, ["common"])),
     },
   };
