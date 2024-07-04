@@ -13,11 +13,11 @@ const Menuitems = [
     subOptions: [
       {
         title: "SIDEBAR.TEAM_LEADERS",
-        href: "/team-leaders",
+        href: "/teamLeader",
       },
       {
         title: "SIDEBAR.FACILITATORS",
-        href: "/Faciliator",
+        href: "/faciliator",
       },
       {
         title: "SIDEBAR.LEARNERS",
@@ -33,11 +33,11 @@ const Menuitems = [
     subOptions: [
       {
         title: "SIDEBAR.CREATE_PLAN",
-        href: "/create",
+        href: "/createPlan",
       },
       {
         title: "SIDEBAR.VIEW_PLANS",
-        href: "/view-plans",
+        href: "/viewPlans",
       },
     ],
   },

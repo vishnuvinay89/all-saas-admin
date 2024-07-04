@@ -7,10 +7,10 @@ import {
   FormControl,
   useMediaQuery,
 } from "@mui/material";
-
+import { List, ListItem, ListItemText, ListItemAvatar, Avatar } from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import SearchIcon from "@mui/icons-material/Search";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
 import SearchBar from "@/components/layouts/header/SearchBar";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -25,7 +25,36 @@ interface Facilitator {
 const AllStates = ["maharashtra", "Gujarat"];
 const AllDistrict = ["Kolhapur", "Pune"];
 const AllBlocks = ["Kothrud", "Warje"];
-
+const users = [
+  {
+    name: 'Aditi Patel',
+    location: 'Bhiwapur, Jabarbodi, Bhiwapur, Jabarbodi'
+  },
+  {
+    name: 'Amit Gupta',
+    location: 'Bhiwapur, Jabarbodi, Bhiwapur, Jabarbodi'
+  },
+  {
+    name: 'Anand Joshi',
+    location: 'Bhiwapur, Jabarbodi, Bhiwapur, Jabarbodi'
+  },
+  {
+    name: 'Anil Mehta',
+    location: 'Bhiwapur, Jabarbodi, Bhiwapur, Jabarbodi'
+  },
+  {
+    name: 'Ananya Shergil',
+    location: 'Bhiwapur, Jabarbodi, Bhiwapur, Jabarbodi'
+  },
+  {
+    name: 'Arjun Rao',
+    location: 'Bhiwapur, Jabarbodi, Bhiwapur, Jabarbodi'
+  },
+  {
+    name: 'Asiya Jain',
+    location: 'Bhiwapur, Jabarbodi, Bhiwapur, Jabarbodi'
+  }
+];
 const Facilitators: React.FC = () => {
   const [selectedState, setSelectedState] = useState("All states");
   const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
@@ -151,7 +180,35 @@ const Facilitators: React.FC = () => {
       >
         <Typography>{t("COMMON.ADD_NEW")}</Typography>
         <AddIcon />
+      
       </Box>
+      <List sx={{  bgcolor: 'background.paper' }}>
+      {users.map((user) => (
+        <ListItem key={user.name}>
+          <ListItemAvatar>
+            <Avatar alt={user.name} src={`https://ui-avatars.com/api/?name=${user.name}`} />
+          </ListItemAvatar>
+          <ListItemText
+            primary={
+              <Typography variant="subtitle1">
+                {user.name}
+              </Typography>
+            }
+            secondary={
+              <Typography variant="body2" color="text.secondary">
+                {user.location}
+              </Typography>
+            }
+          />
+          {/* <Box sx={{ ml: 'auto' }}>
+            <Typography variant="body2" color="text.secondary">
+              ...
+            </Typography>
+          </Box> */}
+          <MoreVertIcon/>
+        </ListItem>
+      ))}
+    </List>
     </Box>
   );
 };
