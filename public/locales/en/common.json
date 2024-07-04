@@ -1,7 +1,8 @@
 {
   "COMMON": {
     "LANGUAGE": "Language",
-    "LOADING": "Loading"
+    "LOADING": "Loading",
+    "ADD_NEW":"Add New"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -13,12 +14,31 @@
     "FORGOT_PASSWORD": "Forgot Password?",
     "REMEMBER_ME": "Remember Me"
   },
-  "DASHBOARD":
+  "SIDEBAR":
   {
     "HI":"hi",
     "DASHBOARD":"Dashboard",
-    "MANAGE_USER":"Manage Users",
+    "MANAGE_USERS":"Manage Users",
     "COURSE_PLANNER":"Course Planner",
-    "COHORTS":"Cohorts"
+    "COHORTS":"Cohorts",
+   "FACILITATORS": "Facilitators",
+   "LEARNERS":"Learners",
+   "TEAM_LEADERS":"Team Leaders",
+   "CREATE_PLAN":"Create Plan",
+  "VIEW_PLANS":"View Plans"
+  
+  },
+  "FACILITATORS":
+  {
+    "ALL_STATES":"All States",
+  "ALL_DISTRICTS":"All Districts",
+  "ALL_BLOCKS":"All Blocks",
+  "SEARCHBAR_PLACEHOLDER":"Search Facilitators.."
+  },
+  "NAVBAR":
+  {
+     "SEARCHBAR_PLACEHOLDER":"Search course, topic, student, pdf etc.."
+     
   }
+ 
 }

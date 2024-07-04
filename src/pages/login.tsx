@@ -57,7 +57,6 @@ const LoginPage = () => {
       setLang(lang);
       const token = localStorage.getItem("token");
       if (token) {
-        console.log("hey")
         router.push('/dashboard');
       }
     }

@@ -49,7 +49,7 @@ const ProfileDD = () => {
           <Box
             sx={{
               display: {
-                xs: "none",
+               // xs: "none",
                 sm: "flex",
               },
               alignItems: "center",

@@ -13,7 +13,7 @@ import Sidebar from "./sidebar/Sidebar";
 import Footer from "./footer/Footer";
 import * as theme from '../theme/theme';
 import Dashboard from "@/pages/dashboard";
-import profile from "@/pages/profile";
+import Facilitators from "@/pages/Faciliator";
 const MainWrapper = styled("div")(() => ({
   display: "flex",
   minHeight: "100vh",
@@ -38,7 +38,7 @@ type RouteKey = '/' | '/manage-users' | '/course-planner' | '/cohorts';
 
 const componentMapping: Record<RouteKey, React.ComponentType> = {
   "/": Dashboard,
-  "/manage-users": profile,
+  "/manage-users": Facilitators,
   "/course-planner": Dashboard,
   "/cohorts": Dashboard,
 };
