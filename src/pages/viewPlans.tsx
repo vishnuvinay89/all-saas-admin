@@ -1,19 +1,17 @@
-// pages/dashboard.js
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import ProtectedRoute from '../components/ProtectedRoute';
+import ProtectedRoute from "../components/ProtectedRoute";
 
-const Dashboard = () => {
+const ViewPlans = () => {
   const { t } = useTranslation();
-   return (
+  return (
     <ProtectedRoute>
-      <h1>{t("SIDEBAR.DASHBOARD")}</h1>
-      <p>Welcome to your dashboard</p>
+      <h1>{t("SIDEBAR.VIEW_PLANS")}</h1>
     </ProtectedRoute>
   );
 };
 
-export default Dashboard;
+export default ViewPlans;
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
