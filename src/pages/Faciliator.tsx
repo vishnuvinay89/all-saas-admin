@@ -12,7 +12,8 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import SearchIcon from "@mui/icons-material/Search";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
-import SearchBar from "@/components/layouts/header/SearchDD";
+import SearchBar from "@/components/layouts/header/SearchBar";
+
 import { useTranslation } from "next-i18next";
 
 interface Facilitator {
