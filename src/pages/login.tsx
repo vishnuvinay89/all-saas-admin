@@ -192,7 +192,7 @@ const LoginPage = () => {
   };
 
   return (
-    <Box sx={{ height: "100vh", overflowY: "auto", background: "white" }}>
+    <Box sx={{ height: "100vh",  background: "white" }}>
       <form onSubmit={handleFormSubmit}>
         <Box
           display="flex"

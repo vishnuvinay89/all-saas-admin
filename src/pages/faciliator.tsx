@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   MenuItem,
   Typography,
@@ -10,56 +10,30 @@ import {
 import { List, ListItem, ListItemText, ListItemAvatar, Avatar } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import SearchBar from "@/components/layouts/header/SearchBar";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
+import { userList } from "../services/userList";
 import { useTranslation } from "next-i18next";
 
-interface Facilitator {
-  name: string;
-  location: string;
-}
+type UserDetails = {
+  userId: any
+  username: any
+  name: any
+  role: any
+  mobile: any
+};
 
 const AllStates = ["maharashtra", "Gujarat"];
 const AllDistrict = ["Kolhapur", "Pune"];
 const AllBlocks = ["Kothrud", "Warje"];
-const users = [
-  {
-    name: 'Aditi Patel',
-    location: 'Bhiwapur, Jabarbodi, Bhiwapur, Jabarbodi'
-  },
-  {
-    name: 'Amit Gupta',
-    location: 'Bhiwapur, Jabarbodi, Bhiwapur, Jabarbodi'
-  },
-  {
-    name: 'Anand Joshi',
-    location: 'Bhiwapur, Jabarbodi, Bhiwapur, Jabarbodi'
-  },
-  {
-    name: 'Anil Mehta',
-    location: 'Bhiwapur, Jabarbodi, Bhiwapur, Jabarbodi'
-  },
-  {
-    name: 'Ananya Shergil',
-    location: 'Bhiwapur, Jabarbodi, Bhiwapur, Jabarbodi'
-  },
-  {
-    name: 'Arjun Rao',
-    location: 'Bhiwapur, Jabarbodi, Bhiwapur, Jabarbodi'
-  },
-  {
-    name: 'Asiya Jain',
-    location: 'Bhiwapur, Jabarbodi, Bhiwapur, Jabarbodi'
-  }
-];
+
 const Facilitators: React.FC = () => {
   const [selectedState, setSelectedState] = useState("All states");
   const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
   const [selectedBlock, setSelectedBlock] = useState("All Blocks");
   const { t } = useTranslation();
+  const [data, setData] = useState<UserDetails[]>([]);
 
   const isMobile = useMediaQuery("(max-width:600px)");
 
@@ -74,6 +48,23 @@ const Facilitators: React.FC = () => {
   const handleBlockChange = (event: SelectChangeEvent) => {
     setSelectedBlock(event.target.value as string);
   };
+console.log(data[0])
+  useEffect(() => {
+    const fetchUserList = async () => {
+      try {
+        const limit = 0;
+        const page = 0;
+        const sort = ["createdAt", "asc"];
+        const filters = { role: "Teacher" };
+        const resp = await userList({ limit, page, filters, sort });
+        const result=resp?.getUserDetails;
+        setData(result[0]);
+      } catch (error) {
+        console.error('Error fetching user list:', error);
+      }
+    };
+    fetchUserList();
+  }, []);
 
   return (
     <Box
@@ -104,7 +95,7 @@ const Facilitators: React.FC = () => {
             }}
           >
             <MenuItem value="All states">
-            {t("FACILITATORS.ALL_STATES")}
+              {t("FACILITATORS.ALL_STATES")}
             </MenuItem>
             {AllStates.map((state, index) => (
               <MenuItem value={state} key={index}>
@@ -127,7 +118,7 @@ const Facilitators: React.FC = () => {
             }}
           >
             <MenuItem value="All Districts">
-            {t("FACILITATORS.ALL_DISTRICTS")}
+              {t("FACILITATORS.ALL_DISTRICTS")}
             </MenuItem>
             {AllDistrict.map((state, index) => (
               <MenuItem value={state} key={index}>
@@ -159,16 +150,12 @@ const Facilitators: React.FC = () => {
         </FormControl>
       </Box>
       <Typography>
-      {t("SIDEBAR.FACILITATORS")}
-
+        {t("SIDEBAR.FACILITATORS")}
       </Typography>
-      <SearchBar placeholder={ t("NAVBAR.SEARCHBAR_PLACEHOLDER")} backgroundColor="#EEEEEE" />
-
+      <SearchBar placeholder={t("NAVBAR.SEARCHBAR_PLACEHOLDER")} backgroundColor="#EEEEEE" />
       <Box
         sx={{
           display: "flex",
-          // flexDirection: isMobile ? "column" : "row",
-          // gap:"px",
           justifyContent: "center",
           height: "40px",
           padding: "0px 16px",
@@ -180,38 +167,34 @@ const Facilitators: React.FC = () => {
       >
         <Typography>{t("COMMON.ADD_NEW")}</Typography>
         <AddIcon />
-      
       </Box>
-      <List sx={{  bgcolor: 'background.paper' }}>
-      {users.map((user) => (
-        <ListItem key={user.name}>
-          <ListItemAvatar>
-            <Avatar alt={user.name} src={`https://ui-avatars.com/api/?name=${user.name}`} />
-          </ListItemAvatar>
-          <ListItemText
-            primary={
-              <Typography variant="subtitle1">
-                {user.name}
-              </Typography>
-            }
-            secondary={
-              <Typography variant="body2" color="text.secondary">
-                {user.location}
-              </Typography>
-            }
-          />
-          {/* <Box sx={{ ml: 'auto' }}>
-            <Typography variant="body2" color="text.secondary">
-              ...
-            </Typography>
-          </Box> */}
-          <MoreVertIcon/>
-        </ListItem>
-      ))}
-    </List>
+      <List sx={{ bgcolor: 'background.paper' }}>
+        {data.map((user, index,) => (
+          <ListItem key={index}>
+            <ListItemAvatar>
+              {/* You can uncomment and use Avatar if needed */}
+              <Avatar alt={user.name} src={`https://ui-avatars.com/api/?name=${user.name}`} />
+            </ListItemAvatar>
+            <ListItemText
+              primary={
+                <Typography variant="subtitle1">
+                  {user.name}
+                </Typography>
+              }
+              secondary={
+                <Typography variant="body2" color="text.secondary">
+                  {/* {user.role} */}
+                </Typography>
+              }
+            />
+            <MoreVertIcon />
+          </ListItem>
+        ))}
+      </List>
     </Box>
   );
 };
+
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
@@ -219,4 +202,5 @@ export async function getStaticProps({ locale }: any) {
     },
   };
 }
+
 export default Facilitators;
