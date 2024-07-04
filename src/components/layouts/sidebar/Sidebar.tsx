@@ -73,8 +73,7 @@ const Sidebar = ({ isMobileSidebarOpen, onSidebarClose, isSidebarOpen, onMenuIte
                     //   color: `${location === item.href ? "white" : ""} `,
                     // }}
                     icon={item.icon}
-                    width="20"
-                    height="20"
+                    size="20"
                   />
                 </ListItemIcon>
                 <ListItemText>

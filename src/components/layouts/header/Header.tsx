@@ -28,7 +28,7 @@ const Header = ({ sx, customClass, toggleMobileSidebar, position }:any) => {
             },
           }}
         >
-          <FeatherIcon icon="menu" width="20" height="20" />
+          <FeatherIcon icon="menu" size="20" />
         </IconButton>
         {/* ------------------------------------------- */}
         {/* Search Dropdown */}

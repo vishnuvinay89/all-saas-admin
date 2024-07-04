@@ -90,7 +90,7 @@ const components: Components<Omit<Theme, 'components'>> = {
     },
   },
 
-  MuiGridItem: {
+  MuiGrid: { //grid item
     styleOverrides: {
       root: {
         paddingTop: "30px",

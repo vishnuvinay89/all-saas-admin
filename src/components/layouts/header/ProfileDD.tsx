@@ -72,7 +72,7 @@ const ProfileDD = () => {
             >
               User
             </Typography>
-            <FeatherIcon icon="chevron-down" width="20" height="20" />
+            <FeatherIcon icon="chevron-down" size="20"  />
           </Box>
         </Box>
       </Button>
