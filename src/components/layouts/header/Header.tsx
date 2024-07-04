@@ -4,10 +4,12 @@ import { AppBar, Box, IconButton, Toolbar } from "@mui/material";
 import PropTypes from "prop-types";
 // Dropdown Component
 import SearchDD from "./SearchDD";
-// import ProfileDD from "./ProfileDD";
+import { useTranslation } from "next-i18next";
 import ProfileDD from "./ProfileDD";
 
 const Header = ({ sx, customClass, toggleMobileSidebar, position }:any) => {
+  const { t } = useTranslation();
+
   return (
     <AppBar sx={sx} position={position} elevation={0} className={customClass}>
       <Toolbar>
@@ -28,7 +30,7 @@ const Header = ({ sx, customClass, toggleMobileSidebar, position }:any) => {
         {/* ------------------------------------------- */}
         {/* Search Dropdown */}
         {/* ------------------------------------------- */}
-        <SearchDD />
+        <SearchDD placeholder={ t("NAVBAR.SEARCHBAR_PLACEHOLDER")} backgroundColor="#F4F4F4"/>
         {/* ------------ End Menu icon ------------- */}
 
         <Box flexGrow={1} />
