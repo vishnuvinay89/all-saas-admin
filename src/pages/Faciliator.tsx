@@ -13,6 +13,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
 import SearchBar from "@/components/layouts/header/SearchBar";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useTranslation } from "next-i18next";
 
@@ -154,5 +155,11 @@ const Facilitators: React.FC = () => {
     </Box>
   );
 };
-
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
 export default Facilitators;
