@@ -1,5 +1,4 @@
 
-import { useTranslation } from "next-i18next";
 
 const Menuitems = [
   {
@@ -10,19 +9,19 @@ const Menuitems = [
   {
     title: "SIDEBAR.MANAGE_USERS",
     icon: "user",
-    href: "/manage-users",
+    href: "/",
     subOptions: [
       {
         title: "SIDEBAR.TEAM_LEADERS",
-        href: "/manage-users",
+        href: "/team-leaders",
       },
       {
         title: "SIDEBAR.FACILITATORS",
-        href: "/manage-users",
+        href: "/Faciliator",
       },
       {
         title: "SIDEBAR.LEARNERS",
-        href: "/manage-users",
+        href: "/learners",
       },
       
     ],
@@ -34,16 +33,16 @@ const Menuitems = [
     subOptions: [
       {
         title: "SIDEBAR.CREATE_PLAN",
-        href: "/course-planner",
+        href: "/create",
       },
       {
         title: "SIDEBAR.VIEW_PLANS",
-        href: "/manage-users",
+        href: "/view-plans",
       },
     ],
   },
   {
-    title: "Cohorts",
+    title: "SIDEBAR.COHORTS",
     icon: "users",
     href: "/cohorts",
   },

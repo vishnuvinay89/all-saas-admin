@@ -4,6 +4,8 @@ import Image from "next/image";
 // import userimg from "../../../assets/images/users/user2.jpg";
 import sidebarBuynowsvg from "../../../../public/images/users/user2.jpg";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Logout from "@/pages/logout";
+import { useRouter } from "next/router";
 
 import {
   Box,
@@ -19,6 +21,7 @@ import {
 import { AnyARecord } from "dns";
 const ProfileDD = () => {
   const [anchorEl4, setAnchorEl4] = React.useState(null);
+  const router = useRouter();
 
   const handleClick4 = (event: any) => {
     setAnchorEl4(event.currentTarget);
@@ -26,6 +29,11 @@ const ProfileDD = () => {
 
   const handleClose4 = () => {
     setAnchorEl4(null);
+
+  };
+  const handleLogout = () => {
+    router.push('/logout');
+
   };
   return (
     <>
@@ -112,7 +120,7 @@ const ProfileDD = () => {
           <Divider />
           <Box p={2}>
             <Link>
-              <Button fullWidth variant="contained" color="primary">
+              <Button fullWidth variant="contained" color="primary" onClick={handleLogout}>
                 Logout
               </Button>
             </Link>
