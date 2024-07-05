@@ -5,9 +5,12 @@ import ProtectedRoute from "../components/ProtectedRoute";
 const ViewPlans = () => {
   const { t } = useTranslation();
   return (
-    <ProtectedRoute>
+    // <ProtectedRoute>
+      <>
       <h1>{t("SIDEBAR.VIEW_PLANS")}</h1>
-    </ProtectedRoute>
+      </>
+     
+    // </ProtectedRoute>
   );
 };
 

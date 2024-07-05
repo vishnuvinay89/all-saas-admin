@@ -5,9 +5,11 @@ import ProtectedRoute from "../components/ProtectedRoute";
 const Cohorts = () => {
   const { t } = useTranslation();
   return (
-    <ProtectedRoute>
+    // <ProtectedRoute>
+      <>
       <h1>{t("SIDEBAR.COHORTS")}</h1>
-    </ProtectedRoute>
+</>
+    // </ProtectedRoute>
   );
 };
 
