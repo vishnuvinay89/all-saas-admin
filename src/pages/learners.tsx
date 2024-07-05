@@ -5,9 +5,11 @@ import ProtectedRoute from "../components/ProtectedRoute";
 const Learners = () => {
   const { t } = useTranslation();
   return (
-    <ProtectedRoute>
-      <h1>{t("SIDEBAR.LEARNERS")}</h1>
-    </ProtectedRoute>
+    // <ProtectedRoute>
+    <>
+          <h1>{t("SIDEBAR.LEARNERS")}</h1>
+</>
+    // </ProtectedRoute>
   );
 };
 
