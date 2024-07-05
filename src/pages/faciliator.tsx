@@ -163,6 +163,7 @@ console.log(data[0])
           width: "100px",
           borderRadius: "20px",
           border: "1px solid var(--M3-ref-neutral-neutral10, #1E1B16)",
+          marginTop:isMobile? "10px" : null
         }}
       >
         <Typography>{t("COMMON.ADD_NEW")}</Typography>
