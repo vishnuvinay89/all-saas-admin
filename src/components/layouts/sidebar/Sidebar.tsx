@@ -199,6 +199,7 @@ import {
   ListItemIcon,
   ListItemText,
   Collapse,
+  makeStyles,
 } from "@mui/material";
 import FeatherIcon from "feather-icons-react";
 import LogoIcon from "../logo/LogoIcon";
@@ -206,17 +207,9 @@ import Menuitems from "./MenuItems";
 import Buynow from "./Buynow";
 import { useRouter } from "next/router";
 import theme from "@/components/theme/theme";
-import { makeStyles } from "@material-ui/core/styles";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 
-const useStyles = makeStyles({
-  link: {
-    textDecoration: "none",
-    color: "inherit",
-    cursor: "pointer",
-  },
-});
 
 const Sidebar = ({
   isMobileSidebarOpen,
@@ -225,7 +218,6 @@ const Sidebar = ({
 }: any) => {
   const [open2, setOpen2] = React.useState<{ [key: number]: boolean }>({});
 
-  const classes = useStyles();
   const { t } = useTranslation();
 
   const lgUp = useMediaQuery((theme: any) => theme.breakpoints.up("lg"));
@@ -287,7 +279,7 @@ const Sidebar = ({
                   <List component="div" disablePadding>
                     {item.subOptions.map((subItem) => (
                       <NextLink href={subItem.href} legacyBehavior key={subItem.title}>
-                        <a className={classes.link}>
+                        <a className={'sidebar-link'}>
                           <ListItem
                             button
                            // onClick={onSidebarClose}
