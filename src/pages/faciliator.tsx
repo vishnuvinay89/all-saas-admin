@@ -27,11 +27,15 @@ type UserDetails = {
 const AllStates = ["maharashtra", "Gujarat"];
 const AllDistrict = ["Kolhapur", "Pune"];
 const AllBlocks = ["Kothrud", "Warje"];
+const Sort = ["Names", "A-Z" , "Z-A" ,"Centers"];
+
 
 const Facilitators: React.FC = () => {
   const [selectedState, setSelectedState] = useState("All states");
   const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
   const [selectedBlock, setSelectedBlock] = useState("All Blocks");
+  const [selectedSort, setSelectedSort] = useState("Sort");
+
   const { t } = useTranslation();
   const [data, setData] = useState<UserDetails[]>([]);
 
@@ -47,6 +51,9 @@ const Facilitators: React.FC = () => {
 
   const handleBlockChange = (event: SelectChangeEvent) => {
     setSelectedBlock(event.target.value as string);
+  };
+  const handleSortChange = (event: SelectChangeEvent) => {
+    setSelectedSort(event.target.value as string);
   };
 console.log(data[0])
   useEffect(() => {
@@ -152,7 +159,40 @@ console.log(data[0])
       <Typography>
         {t("SIDEBAR.FACILITATORS")}
       </Typography>
-      <SearchBar placeholder={t("NAVBAR.SEARCHBAR_PLACEHOLDER")} backgroundColor="#EEEEEE" />
+      <Box
+       sx={{
+        display: "flex",
+        flexDirection: "row",
+        gap: isMobile ? "0.1px" : "16px",
+      }}
+      >
+        <Box>
+        <SearchBar width="100%" placeholder={t("NAVBAR.SEARCHBAR_PLACEHOLDER")} backgroundColor="#EEEEEE" />
+
+        </Box>
+      <FormControl sx={{ m: "1rem 1 1rem" }}>
+          <Select
+            value={selectedSort}
+            onChange={handleSortChange}
+            displayEmpty
+            style={{
+              borderRadius: "0.5rem",
+              width: "117px",
+              height: "32px",
+              marginBottom: "0rem",
+              fontSize: "14px",
+            }}
+          >
+            <MenuItem value="Sort">Sort</MenuItem>
+            {Sort.map((state, index) => (
+              <MenuItem value={state} key={index}>
+                {state}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
+     
       <Box
         sx={{
           display: "flex",

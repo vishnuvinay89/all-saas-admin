@@ -16,11 +16,11 @@ const Home: React.FC = () => {
     if (typeof window !== 'undefined' && window.localStorage) {
       const token = localStorage.getItem('token');
       setLoading(false);
-      // if (token) {
-      //   push('/dashboard');
-      // } else {
-        push('/login', undefined, { locale: 'en' });
-     // }
+      if (token) {
+        push('/dashboard');
+      } else {
+       push('/login', undefined, { locale: 'en' });
+     }
     }
   }, []);
 

@@ -5,17 +5,24 @@ import { useTranslation } from 'next-i18next';
 
 const ProtectedRoute = ({ children }) => {
   const { t } = useTranslation();
-
+let user;
   const router = useRouter();
-  const { user, loading } = useAuth(); 
-
+  const {  loading } = useAuth();
+ 
+  console.log(user, loading)
   useEffect(() => {
+    let user;
+    if (typeof window !== "undefined" && window.localStorage) {
+      user= localStorage.getItem('token');
+    }
+    
+
     if (!loading && !user) {
       router.push('/login');
     }
-  }, [user, loading, router]);
+  }, [ loading, router]);
 
-  if (loading || !user) {
+  if (loading) {
     return <p>{t('COMMON.LOADING')}</p>; 
   }
 

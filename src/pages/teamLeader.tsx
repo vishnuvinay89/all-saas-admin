@@ -5,12 +5,12 @@ import ProtectedRoute from '../components/ProtectedRoute';
 const TeamLeader = () => {
     const { t } = useTranslation();
   return (
-    // <ProtectedRoute>
+    <ProtectedRoute>
       <>
       <h1> {t("SIDEBAR.TEAM_LEADERS")}</h1>
       </>
       
-    // </ProtectedRoute>
+    </ProtectedRoute>
   );
 };
 
