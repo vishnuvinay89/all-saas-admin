@@ -6,13 +6,13 @@ import ProtectedRoute from '../components/ProtectedRoute';
 const Dashboard = () => {
   const { t } = useTranslation();
    return (
-    // <ProtectedRoute>
+    <ProtectedRoute>
     <>
      <h1>{t("SIDEBAR.DASHBOARD")}</h1>
       <p>Welcome to your dashboard</p>
     </>
      
-    // </ProtectedRoute>
+    </ProtectedRoute>
   );
 };
 

@@ -6,11 +6,11 @@ const CreatePlan = () => {
   const { t } = useTranslation();
 
   return (
-    // <ProtectedRoute>
+    <ProtectedRoute>
       <>
       <h1>{t("SIDEBAR.CREATE_PLAN")}</h1>
 </>
-    // </ProtectedRoute>
+    </ProtectedRoute>
   );
 };
 
