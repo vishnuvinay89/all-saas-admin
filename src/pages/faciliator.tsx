@@ -5,9 +5,12 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { userList } from "../services/userList";
 import { useState, useEffect } from "react";
 import UserComponent from "@/components/UserComponent";
-import { SelectChangeEvent } from "@mui/material/Select";
 import { useTranslation } from "next-i18next";
 
+import Pagination from "@mui/material/Pagination";
+
+import { SelectChangeEvent } from "@mui/material/Select";
+import PageSizeSelector from "@/components/PageSelector";
 type UserDetails = {
   userId: any;
   username: any;
@@ -43,17 +46,55 @@ const columns = [
     title: "Actions",
     dataType: DataType.String,
   },
-
 ];
-const Faciliator: React.FC = () => {
+const Faciliators: React.FC = () => {
   const [selectedState, setSelectedState] = useState("All states");
   const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
   const [selectedBlock, setSelectedBlock] = useState("All Blocks");
   const [selectedSort, setSelectedSort] = useState("Sort");
+  const [pageOffset, setPageOffset] = useState(0);
+  const [pageLimit, setPageLimit] = useState(10);
+
   const [data, setData] = useState<UserDetails[]>([]);
   const { t } = useTranslation();
+  const [pageSize, setPageSize] = React.useState<string | number>("");
+  const [open, setOpen] = React.useState(false);
 
-  
+  const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
+    setPageSize(event.target.value);
+    setPageLimit(Number(event.target.value));
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const PagesSelector = () => (
+    <>
+      <Pagination
+        color="primary"
+        count={100}
+        page={pageOffset + 1}
+        onChange={handlePaginationChange}
+      />
+    </>
+  );
+  const handlePaginationChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPageOffset(value - 1);
+  };
+
+  const PageSizeSelectorFunction = ({}) => (
+    <>
+      <PageSizeSelector handleChange={handleChange} pageSize={pageSize} />
+    </>
+  );
+
   const handleStateChange = (event: SelectChangeEvent) => {
     setSelectedState(event.target.value as string);
   };
@@ -65,17 +106,38 @@ const Faciliator: React.FC = () => {
   const handleBlockChange = (event: SelectChangeEvent) => {
     setSelectedBlock(event.target.value as string);
   };
-  const handleSortChange = (event: SelectChangeEvent) => {
+  const handleSortChange = async (event: SelectChangeEvent) => {
+    //console.log(event.target.value)
+    try {
+      const limit = pageLimit;
+      const offset = pageOffset;
+      let sort;
+      if (event.target.value === "Z-A") {
+        sort = ["name", "desc"];
+      } else if (event.target.value === "A-Z") {
+        sort = ["name", "asc"];
+      } else {
+        sort = ["createdAt", "asc"];
+      }
+      const filters = { role: "Teacher" };
+      const resp = await userList({ limit, filters, sort, offset });
+      const result = resp?.getUserDetails;
+
+      setData(result[0]);
+    } catch (error) {
+      console.error("Error fetching user list:", error);
+    }
     setSelectedSort(event.target.value as string);
   };
   useEffect(() => {
     const fetchUserList = async () => {
       try {
-        const limit = 0;
-        const page = 0;
-        const sort = ["createdAt", "asc"];
+        const limit = pageLimit;
+        // const page = 0;
+        const offset = pageOffset;
+        // const sort = ["createdAt", "asc"];
         const filters = { role: "Teacher" };
-        const resp = await userList({ limit, page, filters, sort });
+        const resp = await userList({ limit, filters, offset });
         const result = resp?.getUserDetails;
 
         setData(result[0]);
@@ -84,7 +146,7 @@ const Faciliator: React.FC = () => {
       }
     };
     fetchUserList();
-  }, []);
+  }, [pageOffset, pageLimit]);
 
   const userProps = {
     userType: t("SIDEBAR.FACILITATORS"),
@@ -101,7 +163,14 @@ const Faciliator: React.FC = () => {
   return (
     <UserComponent {...userProps}>
       <div>
-        <KaTableComponent columns={columns} data={data} />
+        <KaTableComponent
+          columns={columns}
+          data={data}
+          limit={pageLimit}
+          offset={pageOffset}
+          PagesSelector={PagesSelector}
+          PageSizeSelector={PageSizeSelectorFunction}
+        />
       </div>
     </UserComponent>
   );
@@ -115,4 +184,4 @@ export async function getStaticProps({ locale }: any) {
   };
 }
 
-export default Faciliator;
+export default Faciliators;

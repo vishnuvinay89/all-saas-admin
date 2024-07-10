@@ -13,16 +13,24 @@ import SearchBar from "@/components/layouts/header/SearchBar";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 
-
-
 const AllStates = ["maharashtra", "Gujarat"];
 const AllDistrict = ["Kolhapur", "Pune"];
 const AllBlocks = ["Kothrud", "Warje"];
-const Sort = ["Names", "A-Z" , "Z-A" ,"Centers"];
+const Sort = ["A-Z", "Z-A"];
 
-
-const UserComponent = ({ children ,userType ,searchPlaceHolder, selectedState, selectedDistrict ,selectedBlock, selectedSort ,  handleStateChange, handleDistrictChange, handleBlockChange, handleSortChange}: any) => {
-   
+const UserComponent = ({
+  children,
+  userType,
+  searchPlaceHolder,
+  selectedState,
+  selectedDistrict,
+  selectedBlock,
+  selectedSort,
+  handleStateChange,
+  handleDistrictChange,
+  handleBlockChange,
+  handleSortChange,
+}: any) => {
   const { t } = useTranslation();
 
   const isMobile = useMediaQuery("(max-width:600px)");
@@ -35,117 +43,118 @@ const UserComponent = ({ children ,userType ,searchPlaceHolder, selectedState, s
       }}
     >
       <Box
-      sx={{
-        display: "flex",
-        flexDirection: isMobile ? "column" : "row",
-        width: isMobile ? "90%" : "100%", 
-        backgroundColor: "#EEEEEE",
-        p: isMobile ? "0.5rem" : "1rem", 
-      }}
-    >
-      <Box
         sx={{
           display: "flex",
           flexDirection: isMobile ? "column" : "row",
-          gap: isMobile ? "0.5rem" : "2rem", 
-          width: "100%",
+          width: isMobile ? "90%" : "100%",
+          backgroundColor: "#EEEEEE",
+          p: isMobile ? "0.5rem" : "1rem",
         }}
       >
-        <FormControl
+        <Box
           sx={{
-            width: isMobile ? "100%" : "auto", 
-            mb: isMobile ? "0.5rem" : "0", 
+            display: "flex",
+            flexDirection: isMobile ? "column" : "row",
+            gap: isMobile ? "0.5rem" : "2rem",
+            width: "100%",
           }}
         >
-          <Select
-            value={selectedState}
-            onChange={handleStateChange}
-            displayEmpty
+          <FormControl
             sx={{
-              borderRadius: "0.5rem",
-              width: "117px",
-              height: "32px",
-              fontSize: "14px",
+              width: isMobile ? "100%" : "auto",
+              mb: isMobile ? "0.5rem" : "0",
             }}
           >
-            <MenuItem value="All states">
-              {t("FACILITATORS.ALL_STATES")}
-            </MenuItem>
-            {AllStates.map((state, index) => (
-              <MenuItem value={state} key={index}>
-                {state}
+            <Select
+              value={selectedState}
+              onChange={handleStateChange}
+              displayEmpty
+              sx={{
+                borderRadius: "0.5rem",
+                width: "117px",
+                height: "32px",
+                fontSize: "14px",
+              }}
+            >
+              <MenuItem value="All states">
+                {t("FACILITATORS.ALL_STATES")}
               </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl
-          sx={{
-            width: isMobile ? "100%" : "auto",
-            mb: isMobile ? "0.5rem" : "0", 
-          }}
-        >
-          <Select
-            value={selectedDistrict}
-            onChange={handleDistrictChange}
-            displayEmpty
+              {AllStates.map((state, index) => (
+                <MenuItem value={state} key={index}>
+                  {state}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl
             sx={{
-              borderRadius: "0.5rem",
-              width: "117px",
-              height: "32px",
-              fontSize: "14px",
+              width: isMobile ? "100%" : "auto",
+              mb: isMobile ? "0.5rem" : "0",
             }}
           >
-            <MenuItem value="All Districts">
-              {t("FACILITATORS.ALL_DISTRICTS")}
-            </MenuItem>
-            {AllDistrict.map((district, index) => (
-              <MenuItem value={district} key={index}>
-                {district}
+            <Select
+              value={selectedDistrict}
+              onChange={handleDistrictChange}
+              displayEmpty
+              sx={{
+                borderRadius: "0.5rem",
+                width: "117px",
+                height: "32px",
+                fontSize: "14px",
+              }}
+            >
+              <MenuItem value="All Districts">
+                {t("FACILITATORS.ALL_DISTRICTS")}
               </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl
-          sx={{
-            width: isMobile ? "100%" : "auto", 
-          }}
-        >
-          <Select
-            value={selectedBlock}
-            onChange={handleBlockChange}
-            displayEmpty
+              {AllDistrict.map((district, index) => (
+                <MenuItem value={district} key={index}>
+                  {district}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl
             sx={{
-              borderRadius: "0.5rem",
-              width: "117px",
-              height: "32px",
-              fontSize: "14px",
+              width: isMobile ? "100%" : "auto",
             }}
           >
-            <MenuItem value="All Blocks">All Blocks</MenuItem>
-            {AllBlocks.map((block, index) => (
-              <MenuItem value={block} key={index}>
-                {block}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+            <Select
+              value={selectedBlock}
+              onChange={handleBlockChange}
+              displayEmpty
+              sx={{
+                borderRadius: "0.5rem",
+                width: "117px",
+                height: "32px",
+                fontSize: "14px",
+              }}
+            >
+              <MenuItem value="All Blocks">All Blocks</MenuItem>
+              {AllBlocks.map((block, index) => (
+                <MenuItem value={block} key={index}>
+                  {block}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
       </Box>
-    </Box>
-      <Typography>
-         {userType}
-      </Typography>
+      <Typography>{userType}</Typography>
       <Box
-       sx={{
-        display: "flex",
-        flexDirection: "row",
-        gap:  "35%",
-      }}
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          gap: "35%",
+        }}
       >
         <Box>
-        <SearchBar className="searchBox" placeholder={searchPlaceHolder} backgroundColor="#EEEEEE" />
-
+          <SearchBar
+            className="searchBox"
+            placeholder={searchPlaceHolder}
+            backgroundColor="#EEEEEE"
+          />
         </Box>
-      <FormControl>
+        <FormControl>
           <Select
             value={selectedSort}
             onChange={handleSortChange}
@@ -167,7 +176,7 @@ const UserComponent = ({ children ,userType ,searchPlaceHolder, selectedState, s
           </Select>
         </FormControl>
       </Box>
-     
+
       <Box
         sx={{
           display: "flex",
@@ -178,7 +187,7 @@ const UserComponent = ({ children ,userType ,searchPlaceHolder, selectedState, s
           width: "100px",
           borderRadius: "20px",
           border: "1px solid var(--M3-ref-neutral-neutral10, #1E1B16)",
-          marginTop:isMobile? "10px" : null
+          marginTop: isMobile ? "10px" : null,
         }}
       >
         <Typography>{t("COMMON.ADD_NEW")}</Typography>
@@ -188,7 +197,5 @@ const UserComponent = ({ children ,userType ,searchPlaceHolder, selectedState, s
     </Box>
   );
 };
-
-
 
 export default UserComponent;
