@@ -42,7 +42,7 @@ export default function SearchBar({backgroundColor,placeholder}: any ) {
       transition: theme.transitions.create('width'),
       width: '100%',
       [theme.breakpoints.up('md')]: {
-        width: '100ch',
+         width: '50ch',
       },
     },
   }));
