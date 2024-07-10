@@ -1,5 +1,12 @@
 # Shiksha: Admin-application
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tekdi_shiksha-admin&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=tekdi_shiksha-admin)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=tekdi_shiksha-admin&metric=bugs)](https://sonarcloud.io/summary/new_code?id=tekdi_shiksha-admin)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=tekdi_shiksha-admin&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=tekdi_shiksha-admin)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=tekdi_shiksha-admin&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=tekdi_shiksha-admin)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=tekdi_shiksha-admin&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=tekdi_shiksha-admin)
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=tekdi_shiksha-admin)
+
 ## What is Shiksha?
 
 Shiksha is a next-generation scalable open-source learning solution for teachers.
