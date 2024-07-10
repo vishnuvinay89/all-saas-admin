@@ -2,7 +2,7 @@
   "COMMON": {
     "LANGUAGE": "Language",
     "LOADING": "Loading",
-    "ADD_NEW":"Add New"
+    "ADD_NEW": "Add New"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -14,31 +14,33 @@
     "FORGOT_PASSWORD": "Forgot Password?",
     "REMEMBER_ME": "Remember Me"
   },
-  "SIDEBAR":
-  {
-    "HI":"hi",
-    "DASHBOARD":"Dashboard",
-    "MANAGE_USERS":"Manage Users",
-    "COURSE_PLANNER":"Course Planner",
-    "COHORTS":"Cohorts",
-   "FACILITATORS": "Facilitators",
-   "LEARNERS":"Learners",
-   "TEAM_LEADERS":"Team Leaders",
-   "CREATE_PLAN":"Create Plan",
-  "VIEW_PLANS":"View Plans"
-  
+  "SIDEBAR": {
+    "HI": "hi",
+    "DASHBOARD": "Dashboard",
+    "MANAGE_USERS": "Manage Users",
+    "COURSE_PLANNER": "Course Planner",
+    "COHORTS": "Cohorts",
+    "FACILITATORS": "Facilitators",
+    "LEARNERS": "Learners",
+    "TEAM_LEADERS": "Team Leaders",
+    "CREATE_PLAN": "Create Plan",
+    "VIEW_PLANS": "View Plans"
   },
-  "FACILITATORS":
-  {
-    "ALL_STATES":"All States",
-  "ALL_DISTRICTS":"All Districts",
-  "ALL_BLOCKS":"All Blocks",
-  "SEARCHBAR_PLACEHOLDER":"Search Facilitators.."
+  "FACILITATORS": {
+    "ALL_STATES": "All States",
+    "ALL_DISTRICTS": "All Districts",
+    "ALL_BLOCKS": "All Blocks",
+    "SEARCHBAR_PLACEHOLDER": "Search Facilitators.."
   },
-  "NAVBAR":
-  {
-     "SEARCHBAR_PLACEHOLDER":"Search course, topic, student, pdf etc.."
-     
+  "NAVBAR": {
+    "SEARCHBAR_PLACEHOLDER": "Search course, topic, student, pdf etc.."
+  },
+  "LEARNERS": {
+    
+    "SEARCHBAR_PLACEHOLDER": "Search Learners.."
+  },
+  "TEAM_LEADERS": {
+    
+    "SEARCHBAR_PLACEHOLDER": "Search Team leaders.."
   }
- 
 }
