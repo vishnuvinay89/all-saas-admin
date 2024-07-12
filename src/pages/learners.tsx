@@ -1,16 +1,15 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { userList } from "../services/userList";
-import { useState, useEffect } from "react";
+import { userList} from "../services/userList";
+import {  getCohortList } from "../services/getCohortList";
 import UserComponent from "@/components/UserComponent";
 import { useTranslation } from "next-i18next";
-
 import Pagination from "@mui/material/Pagination";
-
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
+
 type UserDetails = {
   userId: any;
   username: any;
@@ -19,13 +18,18 @@ type UserDetails = {
   mobile: any;
   centers?: any;
   Programs?: any;
+  actions?: any;
 };
+
+interface Cohort {
+  cohortId: string;
+  name: string;
+  parentId: string | null;
+  type: string;
+  customField: any[];
+}
+
 const columns = [
-  // {
-  //   key: "userId",
-  //   title: "ID",
-  //   dataType: DataType.String,
-  // },
   {
     key: "name",
     title: "Name",
@@ -47,6 +51,7 @@ const columns = [
     dataType: DataType.String,
   },
 ];
+
 const Learners: React.FC = () => {
   const [selectedState, setSelectedState] = useState("All states");
   const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
@@ -54,45 +59,33 @@ const Learners: React.FC = () => {
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
-
   const [data, setData] = useState<UserDetails[]>([]);
+  const [cohortsFetched, setCohortsFetched] = useState(false);
   const { t } = useTranslation();
-  const [pageSize, setPageSize] = React.useState<string | number>("");
-  const [open, setOpen] = React.useState(false);
+  const [pageSize, setPageSize] = useState<string | number>("");
+  const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
+  const [pageCount, setPageCount] = useState(1);
 
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
     setPageSize(event.target.value);
     setPageLimit(Number(event.target.value));
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const PagesSelector = () => (
-    <>
-      <Pagination
-        color="primary"
-        count={100}
-        page={pageOffset + 1}
-        onChange={handlePaginationChange}
-      />
-    </>
-  );
-  const handlePaginationChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
+  const handlePaginationChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPageOffset(value - 1);
   };
 
-  const PageSizeSelectorFunction = ({}) => (
-    <>
-      <PageSizeSelector handleChange={handleChange} pageSize={pageSize} />
-    </>
+  const PagesSelector = () => (
+    <Pagination
+      color="primary"
+      count={pageCount}
+      page={pageOffset + 1}
+      onChange={handlePaginationChange}
+    />
+  );
+
+  const PageSizeSelectorFunction = () => (
+    <PageSizeSelector handleChange={handleChange} pageSize={pageSize} />
   );
 
   const handleStateChange = (event: SelectChangeEvent) => {
@@ -106,47 +99,59 @@ const Learners: React.FC = () => {
   const handleBlockChange = (event: SelectChangeEvent) => {
     setSelectedBlock(event.target.value as string);
   };
-  const handleSortChange = async (event: SelectChangeEvent) => {
-    //console.log(event.target.value)
-    try {
-      const limit = pageLimit;
-      const offset = pageOffset;
-      let sort;
-      if (event.target.value === "Z-A") {
-        sort = ["name", "desc"];
-      } else if (event.target.value === "A-Z") {
-        sort = ["name", "asc"];
-      } else {
-        sort = ["createdAt", "asc"];
-      }
-      const filters = { role: "Student" };
-      const resp = await userList({ limit, filters, sort, offset });
-      const result = resp?.getUserDetails;
 
-      setData(result[0]);
-    } catch (error) {
-      console.error("Error fetching user list:", error);
+  const handleSortChange = async (event: SelectChangeEvent) => {
+    if (event.target.value === "Z-A") {
+      setSortBy(["name", "desc"]);
+    } else if (event.target.value === "A-Z") {
+      setSortBy(["name", "asc"]);
+    } else {
+      setSortBy(["createdAt", "asc"]);
     }
     setSelectedSort(event.target.value as string);
   };
+
   useEffect(() => {
     const fetchUserList = async () => {
       try {
         const limit = pageLimit;
-        // const page = 0;
-        const offset = pageOffset;
-        // const sort = ["createdAt", "asc"];
+        const offset = pageOffset * limit;
         const filters = { role: "Student" };
-        const resp = await userList({ limit, filters, offset });
+        const sort = sortBy;
+        const resp = await userList({ limit, filters, sort, offset });
         const result = resp?.getUserDetails;
-
-        setData(result[0]);
+        setPageCount(Math.ceil(resp?.totalCount / pageLimit));
+        setData(result);
+        setCohortsFetched(false);
       } catch (error) {
         console.error("Error fetching user list:", error);
       }
     };
     fetchUserList();
-  }, [pageOffset, pageLimit]);
+  }, [pageOffset, pageLimit, sortBy]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (data.length === 0 || cohortsFetched) return;
+      const newData = await Promise.all(
+        data.map(async (user) => {
+          const response = await getCohortList(user.userId);
+          const cohortNames = response?.result?.cohortData?.map((cohort: Cohort) => cohort.name);
+
+          return {
+            ...user,
+            centers: cohortNames,
+           
+          };
+        })
+      );
+
+      setData(newData);
+      setCohortsFetched(true);
+    };
+
+    fetchData();
+  }, [data, cohortsFetched]);
 
   const userProps = {
     userType: t("SIDEBAR.LEARNERS"),
@@ -160,6 +165,7 @@ const Learners: React.FC = () => {
     handleBlockChange: handleBlockChange,
     handleSortChange: handleSortChange,
   };
+
   return (
     <UserComponent {...userProps}>
       <div>
