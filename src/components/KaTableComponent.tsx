@@ -7,14 +7,17 @@ import { Paper } from "@mui/material";
 import "ka-table/style.css";
 import { IPagingProps } from "ka-table/props";
 import { updatePageIndex, updatePageSize } from "ka-table/actionCreators";
+import ActionCell from "./ActionCell";
 
 interface KaTableComponentProps {
   columns: ITableProps["columns"];
-  data: ITableProps["data"];
+  data?: ITableProps["data"];
   offset?: any;
   limit?: any;
   PagesSelector?: any;
-  PageSizeSelector?:any
+  PageSizeSelector?: any;
+  onEdit: (rowData: any) => void;
+  onDelete: (rowData: any) => void;
 }
 
 const KaTableComponent: React.FC<KaTableComponentProps> = ({
@@ -23,7 +26,9 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   offset,
   limit,
   PagesSelector,
-  PageSizeSelector
+  PageSizeSelector,
+  onEdit,
+  onDelete,
 }) => {
   const tableProps: ITableProps = {
     columns,
@@ -31,16 +36,15 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
     rowKeyField: "id",
     sortingMode: SortingMode.Single,
   };
-
   return (
     <Paper>
       <Table
         {...tableProps}
         paging={{
-          enabled: true,
+          enabled: (data?.length ?? 0) >= 5 ? true : false,
           pageIndex: 0,
           pageSize: limit,
-          pageSizes: [5, 10,15],
+          pageSizes: [5, 10, 15],
           position: PagingPosition.Bottom,
         }}
         childComponents={{
@@ -49,6 +53,20 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
           },
           pagingPages: {
             content: (props) => <PagesSelector {...props} />,
+          },
+          cell: {
+            content: (props) => {
+              if (props.column.key === "actions") {
+                return (
+                  <ActionCell
+                    rowData={props.rowData}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                  />
+                );
+              }
+              return null;
+            },
           },
         }}
       />

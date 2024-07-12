@@ -1,10 +1,8 @@
-
-
 const Menuitems = [
   {
     title: "SIDEBAR.DASHBOARD",
     icon: "home",
-    href: "/",
+    href: "/dashboard",
   },
   {
     title: "SIDEBAR.MANAGE_USERS",
@@ -23,7 +21,6 @@ const Menuitems = [
         title: "SIDEBAR.LEARNERS",
         href: "/learners",
       },
-      
     ],
   },
   {

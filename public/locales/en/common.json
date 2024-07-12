@@ -36,11 +36,10 @@
     "SEARCHBAR_PLACEHOLDER": "Search course, topic, student, pdf etc.."
   },
   "LEARNERS": {
-    
     "SEARCHBAR_PLACEHOLDER": "Search Learners.."
   },
+  "COHORTS": { "SEARCHBAR_PLACEHOLDER": "Search Cohorts.." },
   "TEAM_LEADERS": {
-    
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders.."
   }
 }
