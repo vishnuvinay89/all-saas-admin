@@ -9,8 +9,6 @@ import { useTranslation } from "next-i18next";
 import Pagination from "@mui/material/Pagination";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
-import IconButton from '@mui/material/IconButton';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 type UserDetails = {
   userId: any;
@@ -50,7 +48,7 @@ const columns = [
   {
     key: "actions",
     title: "Actions",
-    dataType: DataType.Object,
+    dataType: DataType.String,
   },
 ];
 
@@ -143,11 +141,7 @@ const Learners: React.FC = () => {
           return {
             ...user,
             centers: cohortNames,
-            actions: (
-              <IconButton>
-                <MoreVertIcon />
-              </IconButton>
-            ),
+           
           };
         })
       );
