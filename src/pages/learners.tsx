@@ -2,14 +2,15 @@ import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { userList, getCohortList } from "../services/userList";
+import { userList} from "../services/userList";
+import {  getCohortList } from "../services/getCohortList";
 import UserComponent from "@/components/UserComponent";
 import { useTranslation } from "next-i18next";
-
 import Pagination from "@mui/material/Pagination";
-
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
+import IconButton from '@mui/material/IconButton';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 type UserDetails = {
   userId: any;
@@ -19,6 +20,7 @@ type UserDetails = {
   mobile: any;
   centers?: any;
   Programs?: any;
+  actions?: any;
 };
 
 interface Cohort {
@@ -30,11 +32,6 @@ interface Cohort {
 }
 
 const columns = [
-  // {
-  //   key: "userId",
-  //   title: "ID",
-  //   dataType: DataType.String,
-  // },
   {
     key: "name",
     title: "Name",
@@ -53,7 +50,7 @@ const columns = [
   {
     key: "actions",
     title: "Actions",
-    dataType: DataType.String,
+    dataType: DataType.Object,
   },
 ];
 
@@ -67,7 +64,7 @@ const Learners: React.FC = () => {
   const [data, setData] = useState<UserDetails[]>([]);
   const [cohortsFetched, setCohortsFetched] = useState(false);
   const { t } = useTranslation();
-  const [pageSize, setPageSize] = React.useState<string | number>("");
+  const [pageSize, setPageSize] = useState<string | number>("");
   const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
   const [pageCount, setPageCount] = useState(1);
 
@@ -76,7 +73,6 @@ const Learners: React.FC = () => {
     setPageLimit(Number(event.target.value));
   };
 
-  
   const handlePaginationChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPageOffset(value - 1);
   };
@@ -107,31 +103,26 @@ const Learners: React.FC = () => {
   };
 
   const handleSortChange = async (event: SelectChangeEvent) => {
-    //console.log(event.target.value)
-    
-     // let sort;
-      if (event.target.value === "Z-A") {
-         setSortBy(["name", "desc"]);
-      } else if (event.target.value === "A-Z") {
-        setSortBy(["name", "asc"]);
-      } else {
-        setSortBy(["createdAt", "asc"]);
-      }
-      
+    if (event.target.value === "Z-A") {
+      setSortBy(["name", "desc"]);
+    } else if (event.target.value === "A-Z") {
+      setSortBy(["name", "asc"]);
+    } else {
+      setSortBy(["createdAt", "asc"]);
+    }
     setSelectedSort(event.target.value as string);
   };
+
   useEffect(() => {
     const fetchUserList = async () => {
       try {
         const limit = pageLimit;
-        const offset = pageOffset*limit;
+        const offset = pageOffset * limit;
         const filters = { role: "Student" };
-        const sort=sortBy
+        const sort = sortBy;
         const resp = await userList({ limit, filters, sort, offset });
         const result = resp?.getUserDetails;
-       // console.log(resp?.totalCount)
-        setPageCount(Math.ceil(resp?.totalCount/pageLimit));
-
+        setPageCount(Math.ceil(resp?.totalCount / pageLimit));
         setData(result);
         setCohortsFetched(false);
       } catch (error) {
@@ -144,15 +135,22 @@ const Learners: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (data.length === 0 || cohortsFetched) return;
-      const newData = await Promise.all(data.map(async (user) => {
-        const response = await getCohortList(user.userId);
-        const cohortNames = response?.result?.cohortData?.map((cohort: Cohort) => cohort.name);
+      const newData = await Promise.all(
+        data.map(async (user) => {
+          const response = await getCohortList(user.userId);
+          const cohortNames = response?.result?.cohortData?.map((cohort: Cohort) => cohort.name);
 
-        return {
-          ...user,
-          centers: cohortNames,
-        };
-      }));
+          return {
+            ...user,
+            centers: cohortNames,
+            actions: (
+              <IconButton>
+                <MoreVertIcon />
+              </IconButton>
+            ),
+          };
+        })
+      );
 
       setData(newData);
       setCohortsFetched(true);

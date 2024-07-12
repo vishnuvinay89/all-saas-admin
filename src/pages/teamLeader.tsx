@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { userList, getCohortList } from "../services/userList";
+import { userList } from "../services/userList";
+import {  getCohortList } from "../services/getCohortList";
+
 import UserComponent from "@/components/UserComponent";
 import { useTranslation } from "next-i18next";
 
