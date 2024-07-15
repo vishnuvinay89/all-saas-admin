@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
 import {
   MenuItem,
   Typography,
@@ -10,9 +9,8 @@ import {
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import AddIcon from "@mui/icons-material/Add";
 import SearchBar from "@/components/layouts/header/SearchBar";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-
+import MultipleSelectCheckmarks from "./FlowControl";
 const AllStates = ["maharashtra", "Gujarat"];
 const AllDistrict = ["Kolhapur", "Pune"];
 const AllBlocks = ["Kothrud", "Warje"];
@@ -32,8 +30,19 @@ const UserComponent = ({
   handleSortChange,
 }: any) => {
   const { t } = useTranslation();
-
   const isMobile = useMediaQuery("(max-width:600px)");
+
+  const handleStateChangeWrapper = (selected: string[]) => {
+    handleStateChange(selected);
+    handleDistrictChange([]);
+    handleBlockChange([]);
+  };
+
+  const handleDistrictChangeWrapper = (selected: string[]) => {
+    handleDistrictChange(selected);
+    handleBlockChange([]);
+  };
+
   return (
     <Box
       sx={{
@@ -46,7 +55,7 @@ const UserComponent = ({
         sx={{
           display: "flex",
           flexDirection: isMobile ? "column" : "row",
-          width: isMobile ? "90%" : "100%",
+          width: "100%",
           backgroundColor: "#EEEEEE",
           p: isMobile ? "0.5rem" : "1rem",
         }}
@@ -59,84 +68,26 @@ const UserComponent = ({
             width: "100%",
           }}
         >
-          <FormControl
-            sx={{
-              width: isMobile ? "100%" : "auto",
-              mb: isMobile ? "0.5rem" : "0",
-            }}
-          >
-            <Select
-              value={selectedState}
-              onChange={handleStateChange}
-              displayEmpty
-              sx={{
-                borderRadius: "0.5rem",
-                width: "117px",
-                height: "32px",
-                fontSize: "14px",
-              }}
-            >
-              <MenuItem value="All states">
-                {t("FACILITATORS.ALL_STATES")}
-              </MenuItem>
-              {AllStates.map((state, index) => (
-                <MenuItem value={state} key={index}>
-                  {state}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl
-            sx={{
-              width: isMobile ? "100%" : "auto",
-              mb: isMobile ? "0.5rem" : "0",
-            }}
-          >
-            <Select
-              value={selectedDistrict}
-              onChange={handleDistrictChange}
-              displayEmpty
-              sx={{
-                borderRadius: "0.5rem",
-                width: "117px",
-                height: "32px",
-                fontSize: "14px",
-              }}
-            >
-              <MenuItem value="All Districts">
-                {t("FACILITATORS.ALL_DISTRICTS")}
-              </MenuItem>
-              {AllDistrict.map((district, index) => (
-                <MenuItem value={district} key={index}>
-                  {district}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl
-            sx={{
-              width: isMobile ? "100%" : "auto",
-            }}
-          >
-            <Select
-              value={selectedBlock}
-              onChange={handleBlockChange}
-              displayEmpty
-              sx={{
-                borderRadius: "0.5rem",
-                width: "117px",
-                height: "32px",
-                fontSize: "14px",
-              }}
-            >
-              <MenuItem value="All Blocks">All Blocks</MenuItem>
-              {AllBlocks.map((block, index) => (
-                <MenuItem value={block} key={index}>
-                  {block}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <MultipleSelectCheckmarks
+            names={AllStates}
+            tagName={t("FACILITATORS.ALL_STATES")}
+            selectedCategories={selectedState}
+            onCategoryChange={handleStateChangeWrapper}
+          />
+          <MultipleSelectCheckmarks
+            names={AllDistrict}
+            tagName={t("FACILITATORS.ALL_DISTRICTS")}
+            selectedCategories={selectedDistrict}
+            onCategoryChange={handleDistrictChangeWrapper}
+            disabled={selectedState.length === 0}
+          />
+          <MultipleSelectCheckmarks
+            names={AllBlocks}
+            tagName={t("FACILITATORS.ALL_BLOCKS")}
+            selectedCategories={selectedBlock}
+            onCategoryChange={handleBlockChange}
+            disabled={selectedDistrict.length === 0}
+          />
         </Box>
       </Box>
       <Typography>{userType}</Typography>
