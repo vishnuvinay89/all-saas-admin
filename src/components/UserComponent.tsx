@@ -1,4 +1,6 @@
+
 import * as React from "react";
+import { useState, useEffect } from "react";
 import {
   MenuItem,
   Typography,
@@ -9,6 +11,7 @@ import {
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import AddIcon from "@mui/icons-material/Add";
 import SearchBar from "@/components/layouts/header/SearchBar";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import MultipleSelectCheckmarks from "./FormControl";
 const AllStates = ["maharashtra", "Gujarat"];
@@ -28,11 +31,12 @@ const UserComponent = ({
   handleDistrictChange,
   handleBlockChange,
   handleSortChange,
+  showStateDropdown = true,
 }: any) => {
   const { t } = useTranslation();
-  const isMobile = useMediaQuery("(max-width:600px)");
 
-  const handleStateChangeWrapper = (selected: string[]) => {
+  const isMobile = useMediaQuery("(max-width:600px)");
+    const handleStateChangeWrapper = (selected: string[]) => {
     handleStateChange(selected);
     handleDistrictChange([]);
     handleBlockChange([]);
@@ -42,7 +46,6 @@ const UserComponent = ({
     handleDistrictChange(selected);
     handleBlockChange([]);
   };
-
   return (
     <Box
       sx={{
@@ -51,24 +54,25 @@ const UserComponent = ({
         gap: isMobile ? "0.1px" : "16px",
       }}
     >
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: isMobile ? "column" : "row",
-          width: "100%",
-          backgroundColor: "#EEEEEE",
-          p: isMobile ? "0.5rem" : "1rem",
-        }}
-      >
+      {showStateDropdown && (
         <Box
           sx={{
             display: "flex",
             flexDirection: isMobile ? "column" : "row",
-            gap: isMobile ? "0.5rem" : "2rem",
-            width: "100%",
+            width: isMobile ? "90%" : "100%",
+            backgroundColor: "#EEEEEE",
+            p: isMobile ? "0.5rem" : "1rem",
           }}
         >
-          <MultipleSelectCheckmarks
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: isMobile ? "column" : "row",
+              gap: isMobile ? "0.5rem" : "2rem",
+              width: "100%",
+            }}
+          >
+              <MultipleSelectCheckmarks
             names={AllStates}
             tagName={t("FACILITATORS.ALL_STATES")}
             selectedCategories={selectedState}
@@ -88,8 +92,9 @@ const UserComponent = ({
             onCategoryChange={handleBlockChange}
             disabled={selectedDistrict.length === 0}
           />
+          </Box>
         </Box>
-      </Box>
+      )}
       <Typography>{userType}</Typography>
       <Box
         sx={{
@@ -127,7 +132,6 @@ const UserComponent = ({
           </Select>
         </FormControl>
       </Box>
-
       <Box
         sx={{
           display: "flex",

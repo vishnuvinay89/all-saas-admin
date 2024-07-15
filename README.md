@@ -1,40 +1,71 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Shiksha: Admin-application
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tekdi_shiksha-admin&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=tekdi_shiksha-admin)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=tekdi_shiksha-admin&metric=bugs)](https://sonarcloud.io/summary/new_code?id=tekdi_shiksha-admin)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=tekdi_shiksha-admin&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=tekdi_shiksha-admin)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=tekdi_shiksha-admin&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=tekdi_shiksha-admin)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=tekdi_shiksha-admin&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=tekdi_shiksha-admin)
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=tekdi_shiksha-admin)
+
+## What is Shiksha?
+
+Shiksha is a next-generation scalable open-source learning solution for teachers.
 
 ## Getting Started
 
-First, run the development server:
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Prerequisites
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+  <table>
+  <tr>
+    <td colspan="2"><b>System Requirements</b></td>
+  </tr>
+  <tr>
+    <td><b>Operating System</b></td>
+    <td>Windows 7 and above/4.2 Mac OS X 10.0 and above/Linux</td>
+  </tr>
+  <tr>
+    <td><b>RAM</b></td>
+    <td>> >= 8 Gb</td>
+  </tr>
+  <tr>
+    <td><b>CPU</b></td>
+    <td>2 cores, > 2 GHz</td>
+  </tr>
+</table>
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+| Software dependencies                                                                             |                                                          |
+| :------------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
+| **[Node](https://nodejs.org/en/download/)**                                                       | > 18.19.0 (or Install the latest release of LTS version) |
+| **[npm](https://nodejs.org/en/learn/getting-started/an-introduction-to-the-npm-package-manager)** | 10.2.3                                                   |
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+### Project Setup
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+1. Clone project
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+   ```console
+   git clone git@github.com:tekdi/shiksha-admin.git
+   ```
 
-## Learn More
+2. Install required dependencies
+   ```console
+   npm install
+   ```
+3. Configuring the Environment
+   Refer the sample environment file: [https://github.com/tekdi/shiksha-admin/blob/main/.env](https://github.com/tekdi/shiksha-admin/blob/main/.env)
 
-To learn more about Next.js, take a look at the following resources:
+### Running Application
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Run the application in development mode
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+   ```console
+   npm run dev
+   ```
 
-## Deploy on Vercel
+   Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+2. To build the application use
+   ```console
+   npm run build
+   ```

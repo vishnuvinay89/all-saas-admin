@@ -12,5 +12,16 @@
     "USERNAME_PASSWORD_NOT_CORRECT": "आपका यूजरनेम या पासवर्ड गलत है",
     "FORGOT_PASSWORD": "पासवर्ड भूल गए?",
     "REMEMBER_ME": "मुझे याद रखें"
+  },
+  "MASTER": {
+    "STATE": "राज्य",
+    "SORT": "क्रमबद्ध करें",
+    "DISTRICT_NAMES": "जिला नाम",
+    "ACTIONS": "क्रियाएँ",
+    "DISTRICTS": "जिले",
+    "SEARCHBAR_PLACEHOLDER_STATE": "राज्यों को खोजें",
+    "SEARCHBAR_PLACEHOLDER_DISTRICT": "जिलों को खोजें",
+    "SEARCHBAR_PLACEHOLDER_BLOCK": "ब्लॉकों को खोजें",
+    "BLOCKS": "ब्लॉक"
   }
 }
