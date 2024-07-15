@@ -31,14 +31,12 @@ type StateDetails = {
 
 const Block: React.FC = () => {
   const { t } = useTranslation();
-  const [selectedState, setSelectedState] = useState(
-    StateData[0]?.state || "All states"
-  );
+  const [selectedState, setSelectedState] = useState(StateData[0]?.state || "");
   const [selectedDistrict, setSelectedDistrict] = useState(
-    StateData[0]?.districts[0] || "All Districts"
+    StateData[0]?.districts[0] || t("MASTER.ALL_DISTRICTS")
   );
   const [selectedBlock, setSelectedBlock] = useState(
-    StateData[0]?.blocks[0] || "All Blocks"
+    StateData[0]?.blocks[0] || t("MASTER.ALL_BLOCKS")
   );
   const [selectedSort, setSelectedSort] = useState(t("MASTER.SORT"));
   const [pageOffset, setPageOffset] = useState(0);
@@ -91,7 +89,7 @@ const Block: React.FC = () => {
   const handleDistrictChange = (event: SelectChangeEvent) => {
     const selectedDistrict = event.target.value as string;
     setSelectedDistrict(selectedDistrict);
-    setSelectedBlock("All Blocks");
+    setSelectedBlock(t("MASTER.ALL_BLOCKS"));
     fetchDataForDistrict(selectedDistrict);
   };
 
@@ -169,7 +167,7 @@ const Block: React.FC = () => {
         <KaTableComponent
           columns={columns}
           data={
-            selectedDistrict !== "All Districts"
+            selectedDistrict !== t("MASTER.ALL_DISTRICTS")
               ? stateData
                   .find((state) => state.state === selectedState)
                   ?.blocks.map((block) => ({

@@ -23,6 +23,8 @@
     "SEARCHBAR_PLACEHOLDER_DISTRICT": "ଜିଲ୍ଲା ଖୋଜନ୍ତୁ",
     "SEARCHBAR_PLACEHOLDER_BLOCK": "ବ୍ଲକ୍ ଖୋଜନ୍ତୁ",
     "BLOCKS": "ବ୍ଲକ୍",
-    "BLOCK_NAMES": "ବ୍ଲକ୍ ନାମ"
+    "BLOCK_NAMES": "ବ୍ଲକ୍ ନାମ",
+    "ALL_DISTRICTS": "ସମସ୍ତ ଜିଲ୍ଲା",
+    "ALL_BLOCKS": "ସମସ୍ତ ବ୍ଲକ୍‌"
   }
 }

@@ -30,13 +30,11 @@ type StateDetails = {
 
 const District: React.FC = () => {
   const { t } = useTranslation();
-  const [selectedState, setSelectedState] = useState(
-    StateData[0]?.state || "All states"
-  );
+  const [selectedState, setSelectedState] = useState(StateData[0]?.state || "");
   const [selectedDistrict, setSelectedDistrict] = useState(
-    StateData[0]?.districts[0] || "All Districts"
+    StateData[0]?.districts[0] || "-"
   );
-  const [selectedBlock, setSelectedBlock] = useState("All Blocks");
+  const [selectedBlock, setSelectedBlock] = useState("");
   const [selectedSort, setSelectedSort] = useState(t("MASTER.SORT"));
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
@@ -81,7 +79,7 @@ const District: React.FC = () => {
       setSelectedDistrict(state.districts[0]);
       fetchDataForDistrict(state.districts[0]);
     } else {
-      setSelectedDistrict("All Districts");
+      setSelectedDistrict("-");
     }
   };
 

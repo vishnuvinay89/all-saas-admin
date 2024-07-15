@@ -23,6 +23,8 @@
     "SEARCHBAR_PLACEHOLDER_DISTRICT": "जिलों को खोजें",
     "SEARCHBAR_PLACEHOLDER_BLOCK": "ब्लॉकों को खोजें",
     "BLOCKS": "ब्लॉक",
-    "BLOCK_NAMES": "ब्लॉक के नाम"
+    "BLOCK_NAMES": "ब्लॉक के नाम",
+    "ALL_DISTRICTS": "सभी जिले",
+    "ALL_BLOCKS": "सभी ब्लॉक"
   }
 }
