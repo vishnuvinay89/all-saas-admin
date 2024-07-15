@@ -7,13 +7,13 @@ import {
   Radio,
   TextField,
   Typography,
-} from '@mui/material';
-import React, { useState } from 'react';
-import { useTheme } from '@mui/material/styles';
-import { useTranslation } from 'next-i18next';
-import CloseIcon from '@mui/icons-material/Close';
-import { showToastMessage } from './Toastify';
-
+} from "@mui/material";
+import React, { useState } from "react";
+import { useTheme } from "@mui/material/styles";
+import { useTranslation } from "next-i18next";
+import CloseIcon from "@mui/icons-material/Close";
+import { showToastMessage } from "./Toastify";
+import CustomModal from "./CustomModal";
 interface DeleteUserModalProps {
   open: boolean;
   onClose: () => void;
@@ -21,32 +21,24 @@ interface DeleteUserModalProps {
   setSelectedValue: (value: string) => void;
   otherReason: string;
   setOtherReason: (value: string) => void;
-  handleDeleteAction: any
+  handleDeleteAction: any;
 }
 
-const DeleteUserModal: React.FC<DeleteUserModalProps> = ({ open, onClose, selectedValue, setSelectedValue,otherReason, setOtherReason, handleDeleteAction }) => {
+const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
+  open,
+  onClose,
+  selectedValue,
+  setSelectedValue,
+  otherReason,
+  setOtherReason,
+  handleDeleteAction,
+}) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '65%',
-    boxShadow: 24,
-    bgcolor: '#fff',
-    borderRadius: '16px',
-    '@media (min-width: 600px)': {
-      width: '450px',
-    },
-  };
-
-  // const [otherReason, setOtherReason] = useState('');
-
   const reasons = [
-    { value: 'Incorrect Data Entry', label:  t('COMMON.INCORRECT_DATA_ENTRY')},
-    { value: 'Duplicated User', label: t('COMMON.DUPLICATED_USER') },
-    { value: 'Other', label:t('COMMON.OTHER') },
+    { value: "Incorrect Data Entry", label: t("COMMON.INCORRECT_DATA_ENTRY") },
+    { value: "Duplicated User", label: t("COMMON.DUPLICATED_USER") },
+    { value: "Other", label: t("COMMON.OTHER") },
   ];
 
   const handleRadioChange = (value: string) => {
@@ -54,77 +46,37 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({ open, onClose, select
     setSelectedValue(value);
   };
 
-  // const handleDeleteAction = () => {
-  //   onClose();
-  //   showToastMessage(t('COMMON.USER_DELETED_PERMANENTLY'), 'success');
-  //   setOtherReason('');
-  //   setSelectedValue('');
-  // };
-
+  
   const handleOtherReasonChange = (event: any) => {
     setOtherReason(event.target.value);
   };
 
   return (
-    <Modal
-      open={open}
-      aria-labelledby="child-modal-title"
-      aria-describedby="child-modal-description"
-    >
-      <Box sx={{ ...style }}>
-        <Box
-          display={'flex'}
-          justifyContent={'space-between'}
-          sx={{ padding: '18px 16px' }}
-        >
-          <Box marginBottom={'0px'}>
-            <Typography
-              variant="h2"
-              sx={{
-                color: theme.palette.warning['A200'],
-                fontSize: '14px',
-              }}
-              component="h2"
-            >
-              {t('COMMON.DELETE_USER')}
-            </Typography>
-          </Box>
-          <CloseIcon
-            sx={{
-              cursor: 'pointer',
-              color: theme.palette.warning['A200'],
-            }}
-            onClick={onClose}
-          />
-        </Box>
-        <Divider />
-        {/* {isButtonAbsent ? ( */}
-        <Box sx={{ padding: '18px 16px', width: '100%' }}>
-          <Typography
-            variant="h2"
-            sx={{
-              color: theme.palette.warning['400'],
-              fontSize: '14px',
-            }}
-            component="h2"
-          >
-            {t('COMMON.REASON_FOR_DELETION')}
-          </Typography>
-        </Box>
+    <>
+      <CustomModal
+        open={open}
+        handleClose={onClose}
+        title= {t('COMMON.DELETE_USER')}
+        subtitle=    {t('COMMON.REASON_FOR_DELETION')}
+        primaryBtnText= {t('COMMON.DELETE_USER_WITH_REASON')}
+       // secondaryBtnText="Cancel"
+        primaryBtnClick={handleDeleteAction}
+        // secondaryBtnClick={handleSecondaryClick}
+      >
         <>
-          <Box padding={'0 1rem'}>
+          <Box padding={"0 1rem"}>
             {reasons.map((option) => (
               <>
                 <Box
-                  display={'flex'}
-                  justifyContent={'space-between'}
-                  alignItems={'center'}
+                  display={"flex"}
+                  justifyContent={"space-between"}
+                  alignItems={"center"}
                 >
                   <Typography
                     variant="h2"
                     sx={{
-                      color: theme.palette.warning['A200'],
-                      fontSize: '14px',
+                      color: theme.palette.warning["A200"],
+                      fontSize: "14px",
                     }}
                     component="h2"
                   >
@@ -132,7 +84,7 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({ open, onClose, select
                   </Typography>
 
                   <Radio
-                    sx={{ pb: '20px' }}
+                    sx={{ pb: "20px" }}
                     onChange={() => handleRadioChange(option.value)}
                     value={option.value}
                     checked={selectedValue === option.value}
@@ -141,7 +93,7 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({ open, onClose, select
                 <Divider />
               </>
             ))}
-            {selectedValue === 'Other' && (
+             {selectedValue === 'Other' && (
               <FormControl sx={{ mt: 2, width: '100%' }}>
                 <TextField
                   id="otherReason"
@@ -155,24 +107,12 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({ open, onClose, select
                 />
               </FormControl>
             )}
-          </Box>
-          <Box mt={1.5}>
-            <Divider />
-          </Box>
-          <Box p={'18px'}>
-            <Button
-              className="w-100"
-              sx={{ boxShadow: 'none' }}
-              variant="contained"
-              onClick={() => handleDeleteAction()}
-              disabled={selectedValue === ''}
-            >
-              {t('COMMON.DELETE_USER_WITH_REASON')}
-            </Button>
+
+
           </Box>
         </>
-      </Box>
-    </Modal>
+      </CustomModal>
+    </>
   );
 };
 
