@@ -36,11 +36,20 @@
     "SEARCHBAR_PLACEHOLDER": "Search course, topic, student, pdf etc.."
   },
   "LEARNERS": {
-    
     "SEARCHBAR_PLACEHOLDER": "Search Learners.."
   },
   "TEAM_LEADERS": {
-    
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders.."
+  },
+  "MASTER": {
+    "STATE": "State",
+    "SORT": "Sort",
+    "DISTRICT_NAMES": "District Names",
+    "ACTIONS": "Actions",
+    "DISTRICTS": "Districts",
+    "SEARCHBAR_PLACEHOLDER_STATE": "Search States",
+    "SEARCHBAR_PLACEHOLDER_DISTRICT": "Search Districts",
+    "SEARCHBAR_PLACEHOLDER_BLOCK": "Search Blocks",
+    "BLOCKS": "Blocks"
   }
 }
