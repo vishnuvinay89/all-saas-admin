@@ -152,5 +152,4 @@ const UserComponent = ({
     </Box>
   );
 };
-
 export default UserComponent;
