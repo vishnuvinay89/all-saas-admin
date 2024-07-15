@@ -22,6 +22,7 @@
     "SEARCHBAR_PLACEHOLDER_STATE": "राज्य शोधा",
     "SEARCHBAR_PLACEHOLDER_DISTRICT": "जिल्हे शोधा",
     "SEARCHBAR_PLACEHOLDER_BLOCK": "ब्लॉक शोधा",
-    "BLOCKS": "ब्लॉक"
+    "BLOCKS": "ब्लॉक",
+    "BLOCK_NAMES": "ब्लॉकचे नावे"
   }
 }

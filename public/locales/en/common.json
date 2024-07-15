@@ -45,6 +45,7 @@
     "STATE": "State",
     "SORT": "Sort",
     "DISTRICT_NAMES": "District Names",
+    "BLOCK_NAMES": "Block Names",
     "ACTIONS": "Actions",
     "DISTRICTS": "Districts",
     "SEARCHBAR_PLACEHOLDER_STATE": "Search States",

@@ -30,15 +30,15 @@ type StateDetails = {
 };
 
 const Block: React.FC = () => {
+  const { t } = useTranslation();
   const [selectedState, setSelectedState] = useState("All states");
   const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
   const [selectedBlock, setSelectedBlock] = useState("All Blocks");
-  const [selectedSort, setSelectedSort] = useState("Sort");
+  const [selectedSort, setSelectedSort] = useState(t("MASTER.SORT"));
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
   const [stateData, setStateData] = useState<StateDetails[]>(StateData);
   const [data, setData] = useState<UserDetails[]>([]);
-  const { t } = useTranslation();
   const [pageSize, setPageSize] = useState<string | number>("");
 
   const columns = [
