@@ -5,6 +5,7 @@ export interface userListParam {
   //  page: number;
     filters: {
       role: string;
+      status?:string
     };
     sort?: object;
     offset:number
@@ -23,7 +24,7 @@ export interface userListParam {
       const response = await post(apiUrl, { limit, filters, sort , offset});
       return response?.data?.result;
     } catch (error) {
-      console.error('error in getting cohort list', error);
+      console.error('error in getting user list', error);
       throw error;
     }
   };

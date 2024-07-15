@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { userList} from "../services/userList";
-import {  getCohortList } from "../services/getCohortList";
+import { userList} from "../services/UserList";
+import {  getCohortList } from "../services/GetCohortList";
 import UserComponent from "@/components/UserComponent";
 import { useTranslation } from "next-i18next";
 import Pagination from "@mui/material/Pagination";
@@ -53,9 +53,9 @@ const columns = [
 ];
 
 const Learners: React.FC = () => {
-  const [selectedState, setSelectedState] = useState("All states");
-  const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
-  const [selectedBlock, setSelectedBlock] = useState("All Blocks");
+  const [selectedState, setSelectedState] = React.useState<string[]>([]);
+  const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
+   const [selectedBlock, setSelectedBlock] = React.useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
@@ -88,16 +88,17 @@ const Learners: React.FC = () => {
     <PageSizeSelector handleChange={handleChange} pageSize={pageSize} />
   );
 
-  const handleStateChange = (event: SelectChangeEvent) => {
-    setSelectedState(event.target.value as string);
+  const handleStateChange = (selected: string[]) => {
+    setSelectedState(selected);
+    console.log('Selected categories:', selected);
   };
-
-  const handleDistrictChange = (event: SelectChangeEvent) => {
-    setSelectedDistrict(event.target.value as string);
+  const handleDistrictChange = (selected: string[]) => {
+    setSelectedDistrict(selected);
+    console.log('Selected categories:', selected);
   };
-
-  const handleBlockChange = (event: SelectChangeEvent) => {
-    setSelectedBlock(event.target.value as string);
+  const handleBlockChange = (selected: string[]) => {
+    setSelectedBlock(selected);
+    console.log('Selected categories:', selected);
   };
 
   const handleSortChange = async (event: SelectChangeEvent) => {
