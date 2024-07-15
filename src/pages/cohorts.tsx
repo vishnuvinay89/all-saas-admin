@@ -114,13 +114,18 @@ const Cohorts: React.FC = () => {
       const limit = pageLimit;
       const offset = pageOffset;
       let sort;
-      if (event.target.value === "Z-A") {
-        sort = ["name", "desc"];
-      } else if (event.target.value === "A-Z") {
-        sort = ["name", "asc"];
-      } else {
-        sort = ["createdAt", "asc"];
+      switch (event.target.value) {
+        case "Z-A":
+          sort = ["name", "desc"];
+          break;
+        case "A-Z":
+          sort = ["name", "asc"];
+          break;
+        default:
+          sort = ["createdAt", "asc"];
+          break;
       }
+      
       const userId = localStorage.getItem(Storage.USERID) || "";
       const filters = { role: Role.TEACHER };
       const resp = await getCohortList(userId);
