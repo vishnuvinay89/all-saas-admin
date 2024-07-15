@@ -1,5 +1,3 @@
-
-
 const Menuitems = [
   {
     title: "SIDEBAR.DASHBOARD",
@@ -23,7 +21,6 @@ const Menuitems = [
         title: "SIDEBAR.LEARNERS",
         href: "/learners",
       },
-      
     ],
   },
   {
@@ -45,6 +42,26 @@ const Menuitems = [
     title: "SIDEBAR.COHORTS",
     icon: "users",
     href: "/cohorts",
+  },
+
+  {
+    title: "Master ",
+    icon: "user",
+    href: "/",
+    subOptions: [
+      {
+        title: "State",
+        href: "/state",
+      },
+      {
+        title: "District",
+        href: "/district",
+      },
+      {
+        title: "Block",
+        href: "/block",
+      },
+    ],
   },
 ];
 

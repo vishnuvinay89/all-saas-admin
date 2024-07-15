@@ -12,5 +12,16 @@
     "USERNAME_PASSWORD_NOT_CORRECT": "ଆପଣଙ୍କ ବ୍ୟବହାରକୃତ ନାମ କିମ୍ବା ପାସ୍‌ୱାର୍ଡ ଭୁଲ ଅଛି",
     "FORGOT_PASSWORD": "ପାସ୍‌ୱାର୍ଡ ଭୁଲିଛନ୍ତି?",
     "REMEMBER_ME": "ମୋତେ ମନ ରଖ"
+  },
+  "MASTER": {
+    "STATE": "ରାଜ୍ୟ",
+    "SORT": "ଛାଟାନ୍ତୁ",
+    "DISTRICT_NAMES": "ଜିଲ୍ଲା ନାମ",
+    "ACTIONS": "କାର୍ଯ୍ୟ",
+    "DISTRICTS": "ଜିଲ୍ଲା",
+    "SEARCHBAR_PLACEHOLDER_STATE": "ରାଜ୍ୟ ଖୋଜନ୍ତୁ",
+    "SEARCHBAR_PLACEHOLDER_DISTRICT": "ଜିଲ୍ଲା ଖୋଜନ୍ତୁ",
+    "SEARCHBAR_PLACEHOLDER_BLOCK": "ବ୍ଲକ୍ ଖୋଜନ୍ତୁ",
+    "BLOCKS": "ବ୍ଲକ୍"
   }
 }

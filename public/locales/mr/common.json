@@ -12,6 +12,16 @@
     "USERNAME_PASSWORD_NOT_CORRECT": "आपलं वापरकर्तानाव किंवा संकेतशब्द चुकीचं आहे",
     "FORGOT_PASSWORD": "पासवर्ड विसरलात?",
     "REMEMBER_ME": "मला लक्षात ठेवा"
+  },
+  "MASTER": {
+    "STATE": "राज्य",
+    "SORT": "क्रमवारी लावा",
+    "DISTRICT_NAMES": "जिल्ह्यांची नावे",
+    "ACTIONS": "कृती",
+    "DISTRICTS": "जिल्हे",
+    "SEARCHBAR_PLACEHOLDER_STATE": "राज्य शोधा",
+    "SEARCHBAR_PLACEHOLDER_DISTRICT": "जिल्हे शोधा",
+    "SEARCHBAR_PLACEHOLDER_BLOCK": "ब्लॉक शोधा",
+    "BLOCKS": "ब्लॉक"
   }
- 
 }
