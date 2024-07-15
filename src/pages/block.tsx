@@ -3,7 +3,7 @@ import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import UserComponent from "@/components/UserComponent";
-import StateData from "./dummyAPI/stateData"; 
+import StateData from "./dummyAPI/stateData";
 import Pagination from "@mui/material/Pagination";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
@@ -31,9 +31,15 @@ type StateDetails = {
 
 const Block: React.FC = () => {
   const { t } = useTranslation();
-  const [selectedState, setSelectedState] = useState("All states");
-  const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
-  const [selectedBlock, setSelectedBlock] = useState("All Blocks");
+  const [selectedState, setSelectedState] = useState(
+    StateData[0]?.state || "All states"
+  );
+  const [selectedDistrict, setSelectedDistrict] = useState(
+    StateData[0]?.districts[0] || "All Districts"
+  );
+  const [selectedBlock, setSelectedBlock] = useState(
+    StateData[0]?.blocks[0] || "All Blocks"
+  );
   const [selectedSort, setSelectedSort] = useState(t("MASTER.SORT"));
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
@@ -85,7 +91,7 @@ const Block: React.FC = () => {
   const handleDistrictChange = (event: SelectChangeEvent) => {
     const selectedDistrict = event.target.value as string;
     setSelectedDistrict(selectedDistrict);
-    setSelectedBlock("All Blocks"); 
+    setSelectedBlock("All Blocks");
     fetchDataForDistrict(selectedDistrict);
   };
 
