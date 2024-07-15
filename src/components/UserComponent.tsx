@@ -10,7 +10,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import AddIcon from "@mui/icons-material/Add";
 import SearchBar from "@/components/layouts/header/SearchBar";
 import { useTranslation } from "next-i18next";
-import MultipleSelectCheckmarks from "./FlowControl";
+import MultipleSelectCheckmarks from "./FormControl";
 const AllStates = ["maharashtra", "Gujarat"];
 const AllDistrict = ["Kolhapur", "Pune"];
 const AllBlocks = ["Kothrud", "Warje"];
