@@ -12,6 +12,9 @@
     "USERNAME_PASSWORD_NOT_CORRECT": "आपलं वापरकर्तानाव किंवा संकेतशब्द चुकीचं आहे",
     "FORGOT_PASSWORD": "पासवर्ड विसरलात?",
     "REMEMBER_ME": "मला लक्षात ठेवा"
+  },
+  "ACTIONBUTONS": {
+    "EDIT": "संपादित करा",
+    "DELETE": "हटवा"
   }
- 
 }

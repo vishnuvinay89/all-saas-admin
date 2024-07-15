@@ -18,6 +18,12 @@ interface KaTableComponentProps {
   PageSizeSelector?: any;
   onEdit: (rowData: any) => void;
   onDelete: (rowData: any) => void;
+  extraActions: {
+    name: string;
+    onClick: (rowData: any) => void;
+  }[];
+  showEdit?: boolean;
+  showDelete?: boolean;
 }
 
 const KaTableComponent: React.FC<KaTableComponentProps> = ({
@@ -29,6 +35,9 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   PageSizeSelector,
   onEdit,
   onDelete,
+  extraActions,
+  showEdit,
+  showDelete,
 }) => {
   const tableProps: ITableProps = {
     columns,
@@ -36,12 +45,13 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
     rowKeyField: "id",
     sortingMode: SortingMode.Single,
   };
+
   return (
     <Paper>
       <Table
         {...tableProps}
         paging={{
-          enabled: (data?.length ?? 0) >= 5 ? true : false,
+          enabled: (data?.length ?? 0) >= 5 ? true : false, // to do dynamic limit for enable  pagination and page sizes by data
           pageIndex: 0,
           pageSize: limit,
           pageSizes: [5, 10, 15],
@@ -62,6 +72,9 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                     rowData={props.rowData}
                     onEdit={onEdit}
                     onDelete={onDelete}
+                    extraActions={extraActions}
+                    showEdit={showEdit}
+                    showDelete={showDelete}
                   />
                 );
               }

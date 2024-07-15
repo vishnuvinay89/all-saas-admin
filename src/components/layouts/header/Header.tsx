@@ -6,10 +6,10 @@ import PropTypes from "prop-types";
 import SearchBar from "./SearchBar";
 
 import { useTranslation } from "next-i18next";
-import ProfileDD from "./ProfileDD";
-import { createTheme } from '@mui/material/styles';
+import { createTheme } from "@mui/material/styles";
+import Profile from "./Profile";
 
-const Header = ({ sx, customClass, toggleMobileSidebar, position }:any) => {
+const Header = ({ sx, customClass, toggleMobileSidebar, position }: any) => {
   const { t } = useTranslation();
   const theme = createTheme();
 
@@ -33,12 +33,15 @@ const Header = ({ sx, customClass, toggleMobileSidebar, position }:any) => {
         {/* ------------------------------------------- */}
         {/* Search Dropdown */}
         {/* ------------------------------------------- */}
-        <SearchBar placeholder={ t("NAVBAR.SEARCHBAR_PLACEHOLDER")} backgroundColor={theme.palette.background.default}/>
+        <SearchBar
+          placeholder={t("NAVBAR.SEARCHBAR_PLACEHOLDER")}
+          backgroundColor={theme.palette.background.default}
+        />
         {/* ------------ End Menu icon ------------- */}
 
         <Box flexGrow={1} />
 
-        <ProfileDD />
+        <Profile />
         {/* ------------------------------------------- */}
         {/* Profile Dropdown */}
         {/* ------------------------------------------- */}

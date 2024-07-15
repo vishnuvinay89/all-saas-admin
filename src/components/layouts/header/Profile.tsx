@@ -19,7 +19,7 @@ import {
   Divider,
 } from "@mui/material";
 import { AnyARecord } from "dns";
-const ProfileDD = () => {
+const Profile = () => {
   const [anchorEl4, setAnchorEl4] = React.useState(null);
   const [userName, setUserName] = React.useState<string | null>("");
   const router = useRouter();
@@ -83,7 +83,7 @@ const ProfileDD = () => {
                 ml: 1,
               }}
             >
-              {userName ? userName : "User"}
+              {userName ? userName : ""}
             </Typography>
             <FeatherIcon icon="chevron-down" size="20" />
           </Box>
@@ -141,4 +141,4 @@ const ProfileDD = () => {
   );
 };
 
-export default ProfileDD;
+export default Profile;

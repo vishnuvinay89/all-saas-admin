@@ -4,6 +4,10 @@
     "LOADING": "Loading",
     "ADD_NEW": "Add New"
   },
+  "ACTIONBUTONS": {
+    "EDIT": "Edit",
+    "DELETE": "Delete"
+  },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
     "PASSWORD": "Password",

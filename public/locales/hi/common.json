@@ -12,5 +12,9 @@
     "USERNAME_PASSWORD_NOT_CORRECT": "आपका यूजरनेम या पासवर्ड गलत है",
     "FORGOT_PASSWORD": "पासवर्ड भूल गए?",
     "REMEMBER_ME": "मुझे याद रखें"
+  },
+  "ACTIONBUTONS": {
+    "EDIT": "संपादित करें",
+    "DELETE": "हटाएं"
   }
 }

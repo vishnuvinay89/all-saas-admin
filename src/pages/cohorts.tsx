@@ -12,6 +12,7 @@ import Pagination from "@mui/material/Pagination";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { getCohortList } from "@/services/cohortService";
+import { Role, Storage } from "@/utils/app.constant";
 type UserDetails = {
   userId: any;
   username: any;
@@ -120,8 +121,8 @@ const Cohorts: React.FC = () => {
       } else {
         sort = ["createdAt", "asc"];
       }
-      const userId = localStorage.getItem("userId") || "";
-      const filters = { role: "Teacher" };
+      const userId = localStorage.getItem(Storage.USERID) || "";
+      const filters = { role: Role.TEACHER };
       const resp = await getCohortList(userId);
       const result = resp?.cohortData;
 
@@ -138,8 +139,8 @@ const Cohorts: React.FC = () => {
         // const page = 0;
         const offset = pageOffset;
         // const sort = ["createdAt", "asc"];
-        const filters = { role: "Teacher" };
-        const userId = localStorage.getItem("userId") || "";
+        const filters = { role: Role.TEACHER };
+        const userId = localStorage.getItem(Storage.USERID) || "";
 
         const resp = await getCohortList(userId);
         const result = resp?.cohortData;
@@ -163,6 +164,20 @@ const Cohorts: React.FC = () => {
     // Handle delete action here
   };
 
+  const handleSend = (rowData: any) => {
+    console.log("Send action clicked", rowData);
+  };
+
+  const handleStar = (rowData: any) => {
+    console.log("Star action clicked", rowData);
+  };
+
+  // add  extra buttons
+  const extraActions: any = [
+    // { name: "Send", onClick: handleSend },
+    // { name: "STAR", onClick: handleStar },
+  ];
+
   const userProps = {
     userType: t("SIDEBAR.COHORTS"),
     searchPlaceHolder: t("COHORTS.SEARCHBAR_PLACEHOLDER"),
@@ -175,6 +190,7 @@ const Cohorts: React.FC = () => {
     handleBlockChange: handleBlockChange,
     handleSortChange: handleSortChange,
   };
+
   return (
     <UserComponent {...userProps}>
       <div>
@@ -187,6 +203,9 @@ const Cohorts: React.FC = () => {
           PageSizeSelector={PageSizeSelectorFunction}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          extraActions={extraActions}
+          showEdit={true}
+          showDelete={true}
         />
       </div>
     </UserComponent>

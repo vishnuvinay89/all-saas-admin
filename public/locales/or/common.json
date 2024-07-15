@@ -12,5 +12,9 @@
     "USERNAME_PASSWORD_NOT_CORRECT": "ଆପଣଙ୍କ ବ୍ୟବହାରକୃତ ନାମ କିମ୍ବା ପାସ୍‌ୱାର୍ଡ ଭୁଲ ଅଛି",
     "FORGOT_PASSWORD": "ପାସ୍‌ୱାର୍ଡ ଭୁଲିଛନ୍ତି?",
     "REMEMBER_ME": "ମୋତେ ମନ ରଖ"
+  },
+  "ACTIONBUTONS": {
+    "EDIT": "ସଂପାଦନା",
+    "DELETE": "ବିଲୋପ"
   }
 }

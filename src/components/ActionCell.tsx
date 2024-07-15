@@ -5,18 +5,29 @@ import { Box, Divider, IconButton, Menu, MenuItem } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-
+import { useTranslation } from "next-i18next";
 interface ActionCellProps {
   rowData: any;
   onEdit: (rowData: any) => void;
   onDelete: (rowData: any) => void;
+  extraActions: {
+    name: string;
+    onClick: (rowData: any) => void;
+  }[];
+  showEdit?: boolean;
+  showDelete?: boolean;
 }
 
 const ActionCell: React.FC<ActionCellProps> = ({
   rowData,
   onEdit,
   onDelete,
+  extraActions,
+  showEdit = true,
+  showDelete = true,
 }) => {
+  const { t } = useTranslation();
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -43,13 +54,39 @@ const ActionCell: React.FC<ActionCellProps> = ({
         <MoreVertIcon fontSize="small" />
       </IconButton>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-        <MenuItem sx={{ fontSize: "small" }} onClick={handleEdit}>
-          Edit
-        </MenuItem>
-        <Divider />
-        <MenuItem sx={{ fontSize: "small" }} onClick={handleDelete}>
-          Delete
-        </MenuItem>
+        {showEdit && (
+          <>
+            {" "}
+            <Divider />
+            <MenuItem sx={{ fontSize: "small" }} onClick={handleEdit}>
+              {t("ACTIONBUTONS.EDIT")}
+            </MenuItem>
+          </>
+        )}
+        {showDelete && (
+          <>
+            <Divider />
+            <MenuItem sx={{ fontSize: "small" }} onClick={handleDelete}>
+              {t("ACTIONBUTONS.DELETE")}
+            </MenuItem>
+          </>
+        )}
+
+        {extraActions?.map((action, index) => (
+          <>
+            <Divider />
+            <MenuItem
+              key={index}
+              sx={{ fontSize: "small" }}
+              onClick={() => {
+                action.onClick(rowData);
+                handleClose();
+              }}
+            >
+              {t(action.name)}
+            </MenuItem>
+          </>
+        ))}
       </Menu>
     </Box>
   );
