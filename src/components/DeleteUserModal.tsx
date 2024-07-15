@@ -22,6 +22,8 @@ interface DeleteUserModalProps {
   otherReason: string;
   setOtherReason: (value: string) => void;
   handleDeleteAction: any;
+  confirmButtonDisable:boolean;
+  setConfirmButtonDisable:any
 }
 
 const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
@@ -32,6 +34,8 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
   otherReason,
   setOtherReason,
   handleDeleteAction,
+  confirmButtonDisable= true,
+  setConfirmButtonDisable
 }) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
@@ -44,6 +48,7 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
   const handleRadioChange = (value: string) => {
     console.log(value);
     setSelectedValue(value);
+    setConfirmButtonDisable(false);
   };
 
   
@@ -61,6 +66,7 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
         primaryBtnText= {t('COMMON.DELETE_USER_WITH_REASON')}
        // secondaryBtnText="Cancel"
         primaryBtnClick={handleDeleteAction}
+        primaryBtnDisabled={confirmButtonDisable}
         // secondaryBtnClick={handleSecondaryClick}
       >
         <>

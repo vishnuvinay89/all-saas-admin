@@ -22,7 +22,8 @@ interface CustomModalProps {
   secondaryBtnClick?: () => void;
   showClose?: boolean;
   backdropClose?: boolean;
-  children: React.ReactNode;
+  primaryBtnDisabled?: boolean;
+   children: React.ReactNode;
 }
 
 const CustomModal: React.FC<CustomModalProps> = ({
@@ -36,7 +37,8 @@ const CustomModal: React.FC<CustomModalProps> = ({
   secondaryBtnClick,
   showClose = true,
   backdropClose = true,
-  children,
+  primaryBtnDisabled = true,
+   children,
 }) => {
   const isSmallScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
@@ -85,7 +87,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
         <Divider sx={{ my: 2 }} />
         <Box id="modal-description">{children}</Box>
         <Box mt={2} display="flex" justifyContent="center" gap={2}>
-          <Button onClick={primaryBtnClick} variant="contained">
+          <Button onClick={primaryBtnClick} variant="contained"  disabled={primaryBtnDisabled}>
             {primaryBtnText}
           </Button>
           {secondaryBtnText && (
