@@ -76,7 +76,6 @@ const Block: React.FC = () => {
     const state = stateData.find((state) => state.state === selectedState);
     if (state) {
       setSelectedDistrict(state.districts[0]);
-      // Assuming you want to load data for the first district initially
       fetchDataForDistrict(state.districts[0]);
     } else {
       setSelectedDistrict("All Districts");
@@ -86,8 +85,7 @@ const Block: React.FC = () => {
   const handleDistrictChange = (event: SelectChangeEvent) => {
     const selectedDistrict = event.target.value as string;
     setSelectedDistrict(selectedDistrict);
-    setSelectedBlock("All Blocks"); // Reset selected block
-    // Fetch data based on selected district
+    setSelectedBlock("All Blocks"); 
     fetchDataForDistrict(selectedDistrict);
   };
 
