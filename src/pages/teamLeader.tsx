@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { userList } from "../services/userList";
-import {  getCohortList } from "../services/getCohortList";
+import { userList } from "../services/UserList";
+import {  getCohortList } from "../services/GetCohortList";
 
 import UserComponent from "@/components/UserComponent";
 import { useTranslation } from "next-i18next";
@@ -60,9 +60,9 @@ const columns = [
 ];
 
 const TeamLeader: React.FC = () => {
-  const [selectedState, setSelectedState] = useState("All states");
-  const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
-  const [selectedBlock, setSelectedBlock] = useState("All Blocks");
+  const [selectedState, setSelectedState] = React.useState<string[]>([]);
+ const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
+  const [selectedBlock, setSelectedBlock] = React.useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
@@ -96,16 +96,17 @@ const TeamLeader: React.FC = () => {
     <PageSizeSelector handleChange={handleChange} pageSize={pageSize} />
   );
 
-  const handleStateChange = (event: SelectChangeEvent) => {
-    setSelectedState(event.target.value as string);
+  const handleStateChange = (selected: string[]) => {
+    setSelectedState(selected);
+    console.log('Selected categories:', selected);
   };
-
-  const handleDistrictChange = (event: SelectChangeEvent) => {
-    setSelectedDistrict(event.target.value as string);
+  const handleDistrictChange = (selected: string[]) => {
+    setSelectedDistrict(selected);
+    console.log('Selected categories:', selected);
   };
-
-  const handleBlockChange = (event: SelectChangeEvent) => {
-    setSelectedBlock(event.target.value as string);
+  const handleBlockChange = (selected: string[]) => {
+    setSelectedBlock(selected);
+    console.log('Selected categories:', selected);
   };
 
   const handleSortChange = async (event: SelectChangeEvent) => {
@@ -127,12 +128,19 @@ const TeamLeader: React.FC = () => {
       try {
         const limit = pageLimit;
         const offset = pageOffset*limit;
-        const filters = { role: "Team Leader" };
+        const filters = { role: "Team Leader" , status:"active"};
         const sort=sortBy
         const resp = await userList({ limit, filters, sort, offset });
         const result = resp?.getUserDetails;
+        if(resp?.totalCount<=5)
+        {
+          setPageCount(1);
+        }
+        else{
+          setPageCount(Math.ceil(resp?.totalCount/pageLimit));
+
+        }
        // console.log(resp?.totalCount)
-        setPageCount(Math.ceil(resp?.totalCount/pageLimit));
 
         setData(result);
         setCohortsFetched(false);

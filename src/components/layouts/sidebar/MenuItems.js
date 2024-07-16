@@ -43,6 +43,26 @@ const Menuitems = [
     icon: "users",
     href: "/cohorts",
   },
+
+  {
+    title: "Master ",
+    icon: "user",
+    href: "/",
+    subOptions: [
+      {
+        title: "State",
+        href: "/state",
+      },
+      {
+        title: "District",
+        href: "/district",
+      },
+      {
+        title: "Block",
+        href: "/block",
+      },
+    ],
+  },
 ];
 
 export default Menuitems;

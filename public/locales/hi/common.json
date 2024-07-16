@@ -16,5 +16,16 @@
   "ACTIONBUTONS": {
     "EDIT": "संपादित करें",
     "DELETE": "हटाएं"
+  },
+  "MASTER": {
+    "STATE": "राज्य",
+    "SORT": "क्रमबद्ध करें",
+    "DISTRICT_NAMES": "जिला नाम",
+    "ACTIONS": "क्रियाएँ",
+    "DISTRICTS": "जिले",
+    "SEARCHBAR_PLACEHOLDER_STATE": "राज्यों को खोजें",
+    "SEARCHBAR_PLACEHOLDER_DISTRICT": "जिलों को खोजें",
+    "SEARCHBAR_PLACEHOLDER_BLOCK": "ब्लॉकों को खोजें",
+    "BLOCKS": "ब्लॉक"
   }
 }

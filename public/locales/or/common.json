@@ -15,6 +15,16 @@
   },
   "ACTIONBUTONS": {
     "EDIT": "ସଂପାଦନା",
-    "DELETE": "ବିଲୋପ"
+    "DELETE": "ବିଲୋପ"},
+  "MASTER": {
+    "STATE": "ରାଜ୍ୟ",
+    "SORT": "ଛାଟାନ୍ତୁ",
+    "DISTRICT_NAMES": "ଜିଲ୍ଲା ନାମ",
+    "ACTIONS": "କାର୍ଯ୍ୟ",
+    "DISTRICTS": "ଜିଲ୍ଲା",
+    "SEARCHBAR_PLACEHOLDER_STATE": "ରାଜ୍ୟ ଖୋଜନ୍ତୁ",
+    "SEARCHBAR_PLACEHOLDER_DISTRICT": "ଜିଲ୍ଲା ଖୋଜନ୍ତୁ",
+    "SEARCHBAR_PLACEHOLDER_BLOCK": "ବ୍ଲକ୍ ଖୋଜନ୍ତୁ",
+    "BLOCKS": "ବ୍ଲକ୍"
   }
 }
