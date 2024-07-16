@@ -2,7 +2,6 @@ import React from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { userList } from "../services/userList";
 import { useState, useEffect } from "react";
 import UserComponent from "@/components/UserComponent";
 import { useTranslation } from "next-i18next";
@@ -52,9 +51,9 @@ const columns = [
   },
 ];
 const Cohorts: React.FC = () => {
-  const [selectedState, setSelectedState] = useState("All states");
-  const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
-  const [selectedBlock, setSelectedBlock] = useState("All Blocks");
+  const [selectedState, setSelectedState] = React.useState<string[]>([]);
+  const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
+  const [selectedBlock, setSelectedBlock] = React.useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
@@ -99,16 +98,17 @@ const Cohorts: React.FC = () => {
     </>
   );
 
-  const handleStateChange = (event: SelectChangeEvent) => {
-    setSelectedState(event.target.value as string);
+  const handleStateChange = (selected: string[]) => {
+    setSelectedState(selected);
+    console.log("Selected categories:", selected);
   };
-
-  const handleDistrictChange = (event: SelectChangeEvent) => {
-    setSelectedDistrict(event.target.value as string);
+  const handleDistrictChange = (selected: string[]) => {
+    setSelectedDistrict(selected);
+    console.log("Selected categories:", selected);
   };
-
-  const handleBlockChange = (event: SelectChangeEvent) => {
-    setSelectedBlock(event.target.value as string);
+  const handleBlockChange = (selected: string[]) => {
+    setSelectedBlock(selected);
+    console.log("Selected categories:", selected);
   };
   const handleSortChange = async (event: SelectChangeEvent) => {
     //console.log(event.target.value)
