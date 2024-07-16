@@ -2,14 +2,17 @@ import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { userList} from "../services/UserList";
+import { userList } from "../services/UserList";
 import {  getCohortList } from "../services/GetCohortList";
 import UserComponent from "@/components/UserComponent";
 import { useTranslation } from "next-i18next";
+import { deleteUser  } from "../services/DeleteUser";
 import Pagination from "@mui/material/Pagination";
+import DeleteUserModal from "@/components/DeleteUserModal";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
-
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 type UserDetails = {
   userId: any;
   username: any;
@@ -18,7 +21,6 @@ type UserDetails = {
   mobile: any;
   centers?: any;
   Programs?: any;
-  actions?: any;
 };
 
 interface Cohort {
@@ -30,6 +32,11 @@ interface Cohort {
 }
 
 const columns = [
+  // {
+  //   key: "userId",
+  //   title: "ID",
+  //   dataType: DataType.String,
+  // },
   {
     key: "name",
     title: "Name",
@@ -54,23 +61,31 @@ const columns = [
 
 const Learners: React.FC = () => {
   const [selectedState, setSelectedState] = React.useState<string[]>([]);
-  const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
-   const [selectedBlock, setSelectedBlock] = React.useState<string[]>([]);
+ const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
+  const [selectedBlock, setSelectedBlock] = React.useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
+  const [pageSizeArray, setPageSizeArray] =  React.useState< number[]>([]);
   const [data, setData] = useState<UserDetails[]>([]);
   const [cohortsFetched, setCohortsFetched] = useState(false);
   const { t } = useTranslation();
-  const [pageSize, setPageSize] = useState<string | number>("");
+  const [pageSize, setPageSize] = React.useState<string | number>("");
   const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
   const [pageCount, setPageCount] = useState(1);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState('');
+  const [selectedReason, setSelectedReason] = useState('');
+   const [otherReason, setOtherReason] = useState('');
+   const [confirmButtonDisable, setConfirmButtonDisable] = useState(true);
+
 
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
     setPageSize(event.target.value);
     setPageLimit(Number(event.target.value));
   };
 
+  
   const handlePaginationChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPageOffset(value - 1);
   };
@@ -85,9 +100,8 @@ const Learners: React.FC = () => {
   );
 
   const PageSizeSelectorFunction = () => (
-    <PageSizeSelector handleChange={handleChange} pageSize={pageSize} />
+    <PageSizeSelector handleChange={handleChange} pageSize={pageSize} options={pageSizeArray}/>
   );
-
   const handleStateChange = (selected: string[]) => {
     setSelectedState(selected);
     console.log('Selected categories:', selected);
@@ -100,28 +114,58 @@ const Learners: React.FC = () => {
     setSelectedBlock(selected);
     console.log('Selected categories:', selected);
   };
-
   const handleSortChange = async (event: SelectChangeEvent) => {
-    if (event.target.value === "Z-A") {
-      setSortBy(["name", "desc"]);
-    } else if (event.target.value === "A-Z") {
-      setSortBy(["name", "asc"]);
-    } else {
-      setSortBy(["createdAt", "asc"]);
-    }
+    
+     // let sort;
+      if (event.target.value === "Z-A") {
+         setSortBy(["name", "desc"]);
+      } else if (event.target.value === "A-Z") {
+        setSortBy(["name", "asc"]);
+      } else {
+        setSortBy(["createdAt", "asc"]);
+      }
+      
     setSelectedSort(event.target.value as string);
   };
+  const handleEdit = (rowData: any) => {
+    console.log("Edit row:", rowData);
+    // Handle edit action here
+  };
 
+  const handleDelete = (rowData: any) => {
+    setIsDeleteModalOpen(true);
+    setSelectedUserId(rowData.userId);
+    //const userData="";
+
+    console.log("Delete row:", rowData.userId);
+    
+
+  };
   useEffect(() => {
     const fetchUserList = async () => {
       try {
         const limit = pageLimit;
-        const offset = pageOffset * limit;
-        const filters = { role: "Student" };
-        const sort = sortBy;
+        const offset = pageOffset*limit;
+        const filters = { role: "Student" , status:"active"};
+        const sort=sortBy
         const resp = await userList({ limit, filters, sort, offset });
         const result = resp?.getUserDetails;
-        setPageCount(Math.ceil(resp?.totalCount / pageLimit));
+       // console.log(resp?.totalCount)
+       if(resp?.totalCount>=15)
+       {
+            setPageSizeArray([5,10,15]);
+       }
+       else if(resp?.totalCount>=10)
+       {
+        setPageSizeArray([5,10]);
+       }
+       else if(resp?.totalCount>=5 || resp?.totalCount<5)
+       {
+        setPageSizeArray([5]);
+       }
+
+        setPageCount(Math.ceil(resp?.totalCount/pageLimit));
+
         setData(result);
         setCohortsFetched(false);
       } catch (error) {
@@ -134,18 +178,15 @@ const Learners: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (data.length === 0 || cohortsFetched) return;
-      const newData = await Promise.all(
-        data.map(async (user) => {
-          const response = await getCohortList(user.userId);
-          const cohortNames = response?.result?.cohortData?.map((cohort: Cohort) => cohort.name);
+      const newData = await Promise.all(data.map(async (user) => {
+        const response = await getCohortList(user.userId);
+        const cohortNames = response?.result?.cohortData?.map((cohort: Cohort) => cohort.name);
 
-          return {
-            ...user,
-            centers: cohortNames,
-           
-          };
-        })
-      );
+        return {
+          ...user,
+          centers: cohortNames,
+        };
+      }));
 
       setData(newData);
       setCohortsFetched(true);
@@ -153,10 +194,39 @@ const Learners: React.FC = () => {
 
     fetchData();
   }, [data, cohortsFetched]);
+  const handleCloseDeleteModal = () => {
+    setSelectedReason('')
+    setOtherReason('')
+    setIsDeleteModalOpen(false);
+  };
+  const handleDeleteUser = async (category: string) => {
+    try {
+      console.log(selectedUserId);
+      const userId = selectedUserId;
+      const userData = {
+        userData: [
+          {
+            reason: selectedReason,
+            status: "archived",
+          },
+        ],
+      };
+      const response = await deleteUser(userId, userData);
+      handleCloseDeleteModal();
+    } catch (error) {
+      console.log("error while deleting entry", error);
+    }
+  };
+  
+  const extraActions: any = [
+    { name: "Edit", onClick: handleEdit, icon: EditIcon },
+    { name: "Delete", onClick: handleDelete, icon: DeleteIcon },
+  ];
+
 
   const userProps = {
     userType: t("SIDEBAR.LEARNERS"),
-    searchPlaceHolder: t("LEARNERS.SEARCHBAR_PLACEHOLDER"),
+   searchPlaceHolder: t("LEARNERS.SEARCHBAR_PLACEHOLDER"),
     selectedState: selectedState,
     selectedDistrict: selectedDistrict,
     selectedBlock: selectedBlock,
@@ -177,8 +247,24 @@ const Learners: React.FC = () => {
           offset={pageOffset}
           PagesSelector={PagesSelector}
           PageSizeSelector={PageSizeSelectorFunction}
+          pageSizes={pageSizeArray}
+          extraActions={extraActions}
+          showIcons={true}
         />
       </div>
+      <DeleteUserModal
+      open={isDeleteModalOpen}
+       onClose={handleCloseDeleteModal}
+       selectedValue={selectedReason}
+       setSelectedValue={setSelectedReason}
+       handleDeleteAction={handleDeleteUser}
+       otherReason={otherReason}
+      setOtherReason={setOtherReason}
+      confirmButtonDisable={confirmButtonDisable}
+      setConfirmButtonDisable={setConfirmButtonDisable}
+      />
+
+
     </UserComponent>
   );
 };

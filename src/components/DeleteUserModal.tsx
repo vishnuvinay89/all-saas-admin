@@ -42,7 +42,7 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
   const reasons = [
     { value: "Incorrect Data Entry", label: t("COMMON.INCORRECT_DATA_ENTRY") },
     { value: "Duplicated User", label: t("COMMON.DUPLICATED_USER") },
-    { value: "Other", label: t("COMMON.OTHER") },
+   
   ];
 
   const handleRadioChange = (value: string) => {
@@ -99,21 +99,7 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
                 <Divider />
               </>
             ))}
-             {selectedValue === 'Other' && (
-              <FormControl sx={{ mt: 2, width: '100%' }}>
-                <TextField
-                  id="otherReason"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  label={t('COMMON.OTHER_REASON')}
-                  placeholder={t('COMMON.OTHER_REASON_PLACEHOLDER')}
-                  value={otherReason}
-                  onChange={(e) => handleOtherReasonChange(e)}
-                />
-              </FormControl>
-            )}
-
+            
 
           </Box>
         </>

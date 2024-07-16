@@ -65,13 +65,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
           borderRadius: 2,
         }}
       >
-        <Box display="flex" justifyContent="flex-end">
-          {showClose && (
-            <IconButton onClick={handleClose} sx={{ ml: "auto" }}>
-              <CloseIcon />
-            </IconButton>
-          )}
-        </Box>
+        
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Box>
             <Typography id="modal-title" variant="h1">
@@ -83,11 +77,18 @@ const CustomModal: React.FC<CustomModalProps> = ({
               </Typography>
             )}
           </Box>
+          <Box display="flex" justifyContent="flex-end">
+          {showClose && (
+            <IconButton onClick={handleClose} sx={{ ml: "auto" }}>
+              <CloseIcon />
+            </IconButton>
+          )}
+        </Box>
         </Box>
         <Divider sx={{ my: 2 }} />
         <Box id="modal-description">{children}</Box>
         <Box mt={2} display="flex" justifyContent="center" gap={2}>
-          <Button onClick={primaryBtnClick} variant="contained"  disabled={primaryBtnDisabled}>
+          <Button  fullWidth onClick={primaryBtnClick} variant="contained"  disabled={primaryBtnDisabled}>
             {primaryBtnText}
           </Button>
           {secondaryBtnText && (
