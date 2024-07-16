@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import FeatherIcon from "feather-icons-react";
 import Image from "next/image";
 // import userimg from "../../../assets/images/users/user2.jpg";
 import sidebarBuynowsvg from "../../../../public/images/users/user2.jpg";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Logout from "@/pages/logout";
 import { useRouter } from "next/router";
 
@@ -19,8 +19,10 @@ import {
   Divider,
 } from "@mui/material";
 import { AnyARecord } from "dns";
-const ProfileDD = () => {
+import { Storage } from "@/utils/app.constant";
+const Profile = () => {
   const [anchorEl4, setAnchorEl4] = React.useState(null);
+  const [userName, setUserName] = React.useState<string | null>("");
   const router = useRouter();
 
   const handleClick4 = (event: any) => {
@@ -29,12 +31,22 @@ const ProfileDD = () => {
 
   const handleClose4 = () => {
     setAnchorEl4(null);
-
   };
   const handleLogout = () => {
-    router.push('/logout');
-
+    router.push("/logout");
   };
+
+  const getUserName = () => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const name = localStorage.getItem(Storage.NAME);
+      setUserName(name);
+    }
+  };
+
+  useEffect(() => {
+    getUserName();
+  }, []);
+
   return (
     <>
       <Button
@@ -44,8 +56,7 @@ const ProfileDD = () => {
         aria-haspopup="true"
         onClick={handleClick4}
       >
-        <Box display="flex" alignItems="center"             color="white"
->
+        <Box display="flex" alignItems="center" color="white">
           {/* <Image
             src={AccountCircleIcon}
             alt={"userimg"}
@@ -53,22 +64,17 @@ const ProfileDD = () => {
             height="30"
             className="roundedCircle"
           /> */}
-          <AccountCircleIcon/>
+          <AccountCircleIcon />
           <Box
             sx={{
               display: {
-               // xs: "none",
+                // xs: "none",
                 sm: "flex",
               },
               alignItems: "center",
             }}
-
           >
-            <Typography
-              variant="h5"
-              fontWeight="400"
-              sx={{ ml: 1 }}
-            >
+            <Typography variant="h5" fontWeight="400" sx={{ ml: 1 }}>
               Hi,
             </Typography>
             <Typography
@@ -78,9 +84,9 @@ const ProfileDD = () => {
                 ml: 1,
               }}
             >
-              User
+              {userName ? userName : ""}
             </Typography>
-            <FeatherIcon icon="chevron-down" size="20"  />
+            <FeatherIcon icon="chevron-down" size="20" />
           </Box>
         </Box>
       </Button>
@@ -120,7 +126,12 @@ const ProfileDD = () => {
           <Divider />
           <Box p={2}>
             <Link>
-              <Button fullWidth variant="contained" color="primary" onClick={handleLogout}>
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                onClick={handleLogout}
+              >
                 Logout
               </Button>
             </Link>
@@ -131,4 +142,4 @@ const ProfileDD = () => {
   );
 };
 
-export default ProfileDD;
+export default Profile;

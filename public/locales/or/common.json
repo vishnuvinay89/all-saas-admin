@@ -13,6 +13,9 @@
     "FORGOT_PASSWORD": "ପାସ୍‌ୱାର୍ଡ ଭୁଲିଛନ୍ତି?",
     "REMEMBER_ME": "ମୋତେ ମନ ରଖ"
   },
+  "ACTIONBUTONS": {
+    "EDIT": "ସଂପାଦନା",
+    "DELETE": "ବିଲୋପ"},
   "MASTER": {
     "STATE": "ରାଜ୍ୟ",
     "SORT": "ଛାଟାନ୍ତୁ",

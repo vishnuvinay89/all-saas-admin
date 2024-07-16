@@ -4,6 +4,10 @@
     "LOADING": "Loading",
     "ADD_NEW": "Add New"
   },
+  "ACTIONBUTONS": {
+    "EDIT": "Edit",
+    "DELETE": "Delete"
+  },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
     "PASSWORD": "Password",
@@ -38,6 +42,7 @@
   "LEARNERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Learners.."
   },
+  "COHORTS": { "SEARCHBAR_PLACEHOLDER": "Search Cohorts.." },
   "TEAM_LEADERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders.."
   },
