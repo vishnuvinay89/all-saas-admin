@@ -1,22 +1,25 @@
-
 import * as React from "react";
-import { useState, useEffect } from "react";
-import {
-  MenuItem,
-  Typography,
-  Box,
-  FormControl,
-  useMediaQuery,
-} from "@mui/material";
+import { useState } from "react";
+import { MenuItem, Typography, Box, FormControl, useMediaQuery } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import AddIcon from "@mui/icons-material/Add";
 import SearchBar from "@/components/layouts/header/SearchBar";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import MultipleSelectCheckmarks from "./FormControl";
-const AllStates = ["maharashtra", "Gujarat"];
-const AllDistrict = ["Kolhapur", "Pune"];
-const AllBlocks = ["Kothrud", "Warje"];
+const AllStates = [
+  { name: "Maharashtra", code: "mh" },
+  { name: "Gujarat", code: "gj" }
+];
+const AllDistrict = [
+  { name: "Mumbai", code: "MUM" },
+  { name: "Pune", code: "PN" }
+];
+const AllBlocks = [
+  { name: "Baner", code: "BA" },
+  { name: "Hinjewadi", code: "HJ" }
+];
+
+//const AllBlocks = ["Kothrud", "Warje"];
 const Sort = ["A-Z", "Z-A"];
 
 const UserComponent = ({
@@ -36,16 +39,31 @@ const UserComponent = ({
   const { t } = useTranslation();
 
   const isMobile = useMediaQuery("(max-width:600px)");
-    const handleStateChangeWrapper = (selected: string[]) => {
-    handleStateChange(selected);
-    handleDistrictChange([]);
-    handleBlockChange([]);
+
+  const handleStateChangeWrapper = (selectedNames: string[], selectedCodes: string[]) => {
+    console.log(selectedNames)
+    if(selectedNames[0]==="")
+    {
+      console.log(true)
+      handleDistrictChange([], []);
+      handleBlockChange([], [])
+    }
+    handleStateChange(selectedNames, selectedCodes);
+  
   };
 
-  const handleDistrictChangeWrapper = (selected: string[]) => {
-    handleDistrictChange(selected);
-    handleBlockChange([]);
+  const handleDistrictChangeWrapper = (selected: string[], selectedCodes: string[]) => {
+    if(selected[0]==="")
+    {
+      console.log(true)
+      handleBlockChange([], [])
+    }
+    handleDistrictChange(selected, selectedCodes);
   };
+  const handleBlockChangeWrapper = (selected: string[], selectedCodes: string[]) => {
+    handleBlockChange(selected, selectedCodes);
+  };
+
   return (
     <Box
       sx={{
@@ -55,43 +73,31 @@ const UserComponent = ({
       }}
     >
       {showStateDropdown && (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: isMobile ? "column" : "row",
-            width: isMobile ? "90%" : "100%",
-            backgroundColor: "#EEEEEE",
-            p: isMobile ? "0.5rem" : "1rem",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: isMobile ? "column" : "row",
-              gap: isMobile ? "0.5rem" : "2rem",
-              width: "100%",
-            }}
-          >
-              <MultipleSelectCheckmarks
-            names={AllStates}
-            tagName={t("FACILITATORS.ALL_STATES")}
-            selectedCategories={selectedState}
-            onCategoryChange={handleStateChangeWrapper}
-          />
-          <MultipleSelectCheckmarks
-            names={AllDistrict}
-            tagName={t("FACILITATORS.ALL_DISTRICTS")}
-            selectedCategories={selectedDistrict}
-            onCategoryChange={handleDistrictChangeWrapper}
-            disabled={selectedState.length === 0}
-          />
-          <MultipleSelectCheckmarks
-            names={AllBlocks}
-            tagName={t("FACILITATORS.ALL_BLOCKS")}
-            selectedCategories={selectedBlock}
-            onCategoryChange={handleBlockChange}
-            disabled={selectedDistrict.length === 0}
-          />
+        <Box sx={{ display: "flex", flexDirection: isMobile ? "column" : "row", width: isMobile ? "90%" : "100%", backgroundColor: "#EEEEEE", p: isMobile ? "0.5rem" : "1rem" }}>
+          <Box sx={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? "0.5rem" : "2rem", width: "100%" }}>
+            <MultipleSelectCheckmarks
+              names={AllStates.map(state => state.name)}
+              codes={AllStates.map(state => state.code)}
+              tagName={t("FACILITATORS.ALL_STATES")}
+              selectedCategories={selectedState}
+              onCategoryChange={handleStateChangeWrapper}
+            />
+            <MultipleSelectCheckmarks
+              names={AllDistrict.map(districts => districts.name)}
+              codes={AllDistrict.map(districts => districts.code)} // Assuming codes for districts are the same as names
+              tagName={t("FACILITATORS.ALL_DISTRICTS")}
+              selectedCategories={selectedDistrict}
+              onCategoryChange={handleDistrictChangeWrapper}
+              disabled={selectedState.length === 0 ||selectedState[0]=== ""}
+            />
+            <MultipleSelectCheckmarks
+             names={AllBlocks.map(blocks => blocks.name)}
+             codes={AllBlocks.map(blocks => blocks.code)}// Assuming codes for blocks are the same as names
+              tagName={t("FACILITATORS.ALL_BLOCKS")}
+              selectedCategories={selectedBlock}
+              onCategoryChange={handleBlockChange}
+              disabled={selectedDistrict.length === 0|| selectedDistrict[0]=== ""}
+            />
           </Box>
         </Box>
       )}
@@ -152,4 +158,5 @@ const UserComponent = ({
     </Box>
   );
 };
+
 export default UserComponent;
