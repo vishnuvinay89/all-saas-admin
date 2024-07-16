@@ -16,14 +16,14 @@ interface KaTableComponentProps {
   limit?: any;
   PagesSelector?: any;
   PageSizeSelector?: any;
-  onEdit: (rowData: any) => void;
-  onDelete: (rowData: any) => void;
+
   extraActions: {
     name: string;
     onClick: (rowData: any) => void;
+    icon: React.ElementType;
   }[];
-  showEdit?: boolean;
-  showDelete?: boolean;
+
+  showIcons?: boolean;
 }
 
 const KaTableComponent: React.FC<KaTableComponentProps> = ({
@@ -33,11 +33,10 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   limit,
   PagesSelector,
   PageSizeSelector,
-  onEdit,
-  onDelete,
+
   extraActions,
-  showEdit,
-  showDelete,
+
+  showIcons,
 }) => {
   const tableProps: ITableProps = {
     columns,
@@ -70,11 +69,14 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                 return (
                   <ActionCell
                     rowData={props.rowData}
-                    onEdit={onEdit}
-                    onDelete={onDelete}
                     extraActions={extraActions}
-                    showEdit={showEdit}
-                    showDelete={showDelete}
+                    showIcons={showIcons}
+                    onEdit={function (rowData: any): void {
+                      throw new Error("Function not implemented.");
+                    }}
+                    onDelete={function (rowData: any): void {
+                      throw new Error("Function not implemented.");
+                    }}
                   />
                 );
               }

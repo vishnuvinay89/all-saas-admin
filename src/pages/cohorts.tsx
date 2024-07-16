@@ -13,6 +13,8 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { getCohortList } from "@/services/cohortService";
 import { Role, Storage } from "@/utils/app.constant";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 type UserDetails = {
   userId: any;
   username: any;
@@ -125,7 +127,7 @@ const Cohorts: React.FC = () => {
           sort = ["createdAt", "asc"];
           break;
       }
-      
+
       const userId = localStorage.getItem(Storage.USERID) || "";
       const filters = { role: Role.TEACHER };
       const resp = await getCohortList(userId);
@@ -169,18 +171,10 @@ const Cohorts: React.FC = () => {
     // Handle delete action here
   };
 
-  const handleSend = (rowData: any) => {
-    console.log("Send action clicked", rowData);
-  };
-
-  const handleStar = (rowData: any) => {
-    console.log("Star action clicked", rowData);
-  };
-
   // add  extra buttons
   const extraActions: any = [
-    // { name: "Send", onClick: handleSend },
-    // { name: "STAR", onClick: handleStar },
+    { name: "Edit", onClick: handleEdit, icon: EditIcon },
+    { name: "Delete", onClick: handleDelete, icon: DeleteIcon },
   ];
 
   const userProps = {
@@ -206,11 +200,8 @@ const Cohorts: React.FC = () => {
           offset={pageOffset}
           PagesSelector={PagesSelector}
           PageSizeSelector={PageSizeSelectorFunction}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
           extraActions={extraActions}
-          showEdit={true}
-          showDelete={true}
+          showIcons={true}
         />
       </div>
     </UserComponent>

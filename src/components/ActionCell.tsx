@@ -1,7 +1,15 @@
 // components/ActionCell.tsx
 
 import React from "react";
-import { Box, Divider, IconButton, Menu, MenuItem } from "@mui/material";
+import {
+  Box,
+  Divider,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -13,18 +21,16 @@ interface ActionCellProps {
   extraActions: {
     name: string;
     onClick: (rowData: any) => void;
+    icon: React.ElementType;
   }[];
-  showEdit?: boolean;
-  showDelete?: boolean;
+
+  showIcons?: boolean;
 }
 
 const ActionCell: React.FC<ActionCellProps> = ({
   rowData,
-  onEdit,
-  onDelete,
   extraActions,
-  showEdit = true,
-  showDelete = true,
+  showIcons = true,
 }) => {
   const { t } = useTranslation();
 
@@ -38,52 +44,30 @@ const ActionCell: React.FC<ActionCellProps> = ({
     setAnchorEl(null);
   };
 
-  const handleEdit = () => {
-    onEdit(rowData);
-    handleClose();
-  };
-
-  const handleDelete = () => {
-    onDelete(rowData);
-    handleClose();
-  };
-
   return (
     <Box>
       <IconButton size="small" onClick={handleClick}>
         <MoreVertIcon fontSize="small" />
       </IconButton>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-        {showEdit && (
-          <>
-            {" "}
-            <Divider />
-            <MenuItem sx={{ fontSize: "small" }} onClick={handleEdit}>
-              {t("ACTIONBUTONS.EDIT")}
-            </MenuItem>
-          </>
-        )}
-        {showDelete && (
-          <>
-            <Divider />
-            <MenuItem sx={{ fontSize: "small" }} onClick={handleDelete}>
-              {t("ACTIONBUTONS.DELETE")}
-            </MenuItem>
-          </>
-        )}
-
         {extraActions?.map((action, index) => (
           <>
             <Divider />
             <MenuItem
-              key={index}
               sx={{ fontSize: "small" }}
               onClick={() => {
                 action.onClick(rowData);
                 handleClose();
               }}
             >
-              {t(action.name)}
+              {showIcons ? (
+                <ListItemIcon>
+                  <action.icon fontSize="small" />
+                </ListItemIcon>
+              ) : (
+                ""
+              )}
+              <ListItemText primary={t(action.name)} />
             </MenuItem>
           </>
         ))}

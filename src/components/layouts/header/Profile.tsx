@@ -19,6 +19,7 @@ import {
   Divider,
 } from "@mui/material";
 import { AnyARecord } from "dns";
+import { Storage } from "@/utils/app.constant";
 const Profile = () => {
   const [anchorEl4, setAnchorEl4] = React.useState(null);
   const [userName, setUserName] = React.useState<string | null>("");
@@ -37,7 +38,7 @@ const Profile = () => {
 
   const getUserName = () => {
     if (typeof window !== "undefined" && window.localStorage) {
-      const name = localStorage.getItem("name");
+      const name = localStorage.getItem(Storage.NAME);
       setUserName(name);
     }
   };
