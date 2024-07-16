@@ -3,7 +3,7 @@ import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import UserComponent from "@/components/UserComponent";
-import StateData from "./dummyAPI/stateData"; 
+import StateData from "./dummyAPI/stateData";
 import Pagination from "@mui/material/Pagination";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
@@ -30,15 +30,19 @@ type StateDetails = {
 };
 
 const Block: React.FC = () => {
-  const [selectedState, setSelectedState] = useState("All states");
-  const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
-  const [selectedBlock, setSelectedBlock] = useState("All Blocks");
-  const [selectedSort, setSelectedSort] = useState("Sort");
+  const { t } = useTranslation();
+  const [selectedState, setSelectedState] = useState(StateData[0]?.state || "");
+  const [selectedDistrict, setSelectedDistrict] = useState(
+    StateData[0]?.districts[0] || t("MASTER.ALL_DISTRICTS")
+  );
+  const [selectedBlock, setSelectedBlock] = useState(
+    StateData[0]?.blocks[0] || t("MASTER.ALL_BLOCKS")
+  );
+  const [selectedSort, setSelectedSort] = useState(t("MASTER.SORT"));
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
   const [stateData, setStateData] = useState<StateDetails[]>(StateData);
   const [data, setData] = useState<UserDetails[]>([]);
-  const { t } = useTranslation();
   const [pageSize, setPageSize] = useState<string | number>("");
 
   const columns = [
@@ -85,7 +89,7 @@ const Block: React.FC = () => {
   const handleDistrictChange = (event: SelectChangeEvent) => {
     const selectedDistrict = event.target.value as string;
     setSelectedDistrict(selectedDistrict);
-    setSelectedBlock("All Blocks"); 
+    setSelectedBlock(t("MASTER.ALL_BLOCKS"));
     fetchDataForDistrict(selectedDistrict);
   };
 
@@ -163,7 +167,7 @@ const Block: React.FC = () => {
         <KaTableComponent
           columns={columns}
           data={
-            selectedDistrict !== "All Districts"
+            selectedDistrict !== t("MASTER.ALL_DISTRICTS")
               ? stateData
                   .find((state) => state.state === selectedState)
                   ?.blocks.map((block) => ({

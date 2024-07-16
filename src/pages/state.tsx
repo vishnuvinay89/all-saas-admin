@@ -25,7 +25,7 @@ type BlockDetails = {
 
 const State: React.FC = () => {
   const { t } = useTranslation();
-  const [selectedState, setSelectedState] = useState("All states");
+  const [selectedState, setSelectedState] = useState("");
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
   const [stateData, setStateData] = useState<StateDetails[]>(StateData);
