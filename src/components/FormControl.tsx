@@ -1,4 +1,3 @@
-// components/MultipleSelectCheckmarks.tsx
 import * as React from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
@@ -21,19 +20,21 @@ const MenuProps = {
 
 interface MultipleSelectCheckmarksProps {
   names: string[];
+  codes: string[];
   tagName: string;
   selectedCategories: string[];
-  onCategoryChange: (selected: string[]) => void;
+  onCategoryChange: (selectedNames: string[], selectedCodes: string[]) => void;
   disabled?: boolean;
 }
 
-const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({ names, tagName, selectedCategories, onCategoryChange , disabled = false}) => {
+const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({ names, codes, tagName, selectedCategories, onCategoryChange, disabled = false }) => {
   const handleChange = (event: SelectChangeEvent<typeof selectedCategories>) => {
     const {
       target: { value },
     } = event;
-    const selected = typeof value === 'string' ? value.split(',') : value;
-    onCategoryChange(selected);
+    const selectedNames = typeof value === 'string' ? value.split(',') : value;
+    const selectedCodes = selectedNames.map(name => codes[names.indexOf(name)]);
+    onCategoryChange(selectedNames, selectedCodes);
   };
 
   return (
