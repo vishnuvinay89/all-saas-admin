@@ -16,12 +16,12 @@ import Loader from "../components/Loader";
 import MenuItem from "@mui/material/MenuItem";
 import appLogo from "../../public/images/appLogo.png";
 import config from "../../config.json";
-import { login } from "../services/LoginService";
+import { getUserId, login } from "../services/LoginService";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
-import { telemetryFactory } from '@/utils/telemetry';
+import { telemetryFactory } from "@/utils/telemetry";
 import { logEvent } from "@/utils/googleAnalytics";
 import { showToastMessage } from "@/components/Toastify";
 import Link from "@mui/material/Link";
@@ -57,7 +57,7 @@ const LoginPage = () => {
       setLang(lang);
       const token = localStorage.getItem("token");
       if (token) {
-        router.push('/dashboard');
+        router.push("/dashboard");
       }
     }
   }, []);
@@ -85,7 +85,7 @@ const LoginPage = () => {
   };
 
   const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>,
+    event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
   };
@@ -112,6 +112,12 @@ const LoginPage = () => {
             rememberMe
               ? localStorage.setItem("refreshToken", refreshToken)
               : localStorage.removeItem("refreshToken");
+
+            const userResponse = await getUserId();
+            localStorage.setItem("userId", userResponse?.userId);
+            localStorage.setItem("name", userResponse?.name);
+            const tenentId = userResponse?.tenantData?.[0]?.tenantId;
+            localStorage.setItem("tenentId", tenentId);
           }
         }
         setLoading(false);
@@ -129,19 +135,19 @@ const LoginPage = () => {
           },
         };
         telemetryFactory.interact(telemetryInteract);
-        router.push('/dashboard');
+        router.push("/dashboard");
       } catch (error: any) {
         setLoading(false);
         if (error.response && error.response.status === 404) {
           showToastMessage(
             t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT"),
-            "error",
+            "error"
           );
         } else {
           console.error("Error:", error);
           showToastMessage(
             t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT"),
-            "error",
+            "error"
           );
         }
       }
@@ -192,7 +198,7 @@ const LoginPage = () => {
   };
 
   return (
-    <Box sx={{ height: "100vh",  background: "white" }}>
+    <Box sx={{ height: "100vh", background: "white" }}>
       <form onSubmit={handleFormSubmit}>
         <Box
           display="flex"

@@ -1,4 +1,4 @@
-import { post } from "./RestClient";
+import { get, post } from "./RestClient";
 
 interface LoginParams {
   username: string;
@@ -27,7 +27,7 @@ export const login = async ({
 export const refresh = async ({
   refresh_token,
 }: RefreshParams): Promise<any> => {
-  const apiUrl: string =  `${process.env.NEXT_PUBLIC_BASE_URL}/auth/refresh`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/refresh`;
   try {
     const response = await post(apiUrl, { refresh_token });
     return response?.data;
@@ -44,6 +44,17 @@ export const logout = async (refreshToken: string): Promise<any> => {
     return response;
   } catch (error) {
     console.error("error in logout", error);
+    throw error;
+  }
+};
+
+export const getUserId = async (): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/auth`;
+  try {
+    const response = await get(apiUrl);
+    return response?.data?.result;
+  } catch (error) {
+    console.error("error in fetching user details", error);
     throw error;
   }
 };

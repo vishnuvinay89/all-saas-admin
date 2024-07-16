@@ -13,6 +13,10 @@
     "FORGOT_PASSWORD": "पासवर्ड विसरलात?",
     "REMEMBER_ME": "मला लक्षात ठेवा"
   },
+  "ACTIONBUTONS": {
+    "EDIT": "संपादित करा",
+    "DELETE": "हटवा"
+  },
   "MASTER": {
     "STATE": "राज्य",
     "SORT": "क्रमवारी लावा",
