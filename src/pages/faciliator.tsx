@@ -2,16 +2,16 @@ import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { userList} from "../services/userList";
-import {  getCohortList } from "../services/getCohortList";
+import { userList } from "../services/UserList";
+import {  getCohortList } from "../services/GetCohortList";
 import UserComponent from "@/components/UserComponent";
 import { useTranslation } from "next-i18next";
-
+import { deleteUser  } from "../services/DeleteUser";
 import Pagination from "@mui/material/Pagination";
-
+import DeleteUserModal from "@/components/DeleteUserModal";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
-
+import CustomModal from "@/components/CustomModal";
 type UserDetails = {
   userId: any;
   username: any;
@@ -59,9 +59,9 @@ const columns = [
 ];
 
 const Facilitators: React.FC = () => {
-  const [selectedState, setSelectedState] = useState("All states");
-  const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
-  const [selectedBlock, setSelectedBlock] = useState("All Blocks");
+  const [selectedState, setSelectedState] = React.useState<string[]>([]);
+ const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
+  const [selectedBlock, setSelectedBlock] = React.useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
@@ -71,6 +71,12 @@ const Facilitators: React.FC = () => {
   const [pageSize, setPageSize] = React.useState<string | number>("");
   const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
   const [pageCount, setPageCount] = useState(1);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState('');
+  const [selectedReason, setSelectedReason] = useState('');
+   const [otherReason, setOtherReason] = useState('');
+   const [confirmButtonDisable, setConfirmButtonDisable] = useState(true);
+
 
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
     setPageSize(event.target.value);
@@ -94,21 +100,19 @@ const Facilitators: React.FC = () => {
   const PageSizeSelectorFunction = () => (
     <PageSizeSelector handleChange={handleChange} pageSize={pageSize} />
   );
-
-  const handleStateChange = (event: SelectChangeEvent) => {
-    setSelectedState(event.target.value as string);
+  const handleStateChange = (selected: string[]) => {
+    setSelectedState(selected);
+    console.log('Selected categories:', selected);
   };
-
-  const handleDistrictChange = (event: SelectChangeEvent) => {
-    setSelectedDistrict(event.target.value as string);
+  const handleDistrictChange = (selected: string[]) => {
+    setSelectedDistrict(selected);
+    console.log('Selected categories:', selected);
   };
-
-  const handleBlockChange = (event: SelectChangeEvent) => {
-    setSelectedBlock(event.target.value as string);
+  const handleBlockChange = (selected: string[]) => {
+    setSelectedBlock(selected);
+    console.log('Selected categories:', selected);
   };
-
   const handleSortChange = async (event: SelectChangeEvent) => {
-    //console.log(event.target.value)
     
      // let sort;
       if (event.target.value === "Z-A") {
@@ -121,12 +125,26 @@ const Facilitators: React.FC = () => {
       
     setSelectedSort(event.target.value as string);
   };
+  const handleEdit = (rowData: any) => {
+    console.log("Edit row:", rowData);
+    // Handle edit action here
+  };
+
+  const handleDelete = async(rowData: any) => {
+    setIsDeleteModalOpen(true);
+    setSelectedUserId(rowData.userId);
+    //const userData="";
+
+    console.log("Delete row:", rowData.userId);
+    
+
+  };
   useEffect(() => {
     const fetchUserList = async () => {
       try {
         const limit = pageLimit;
         const offset = pageOffset*limit;
-        const filters = { role: "Teacher" };
+        const filters = { role: "Teacher" , status:"active"};
         const sort=sortBy
         const resp = await userList({ limit, filters, sort, offset });
         const result = resp?.getUserDetails;
@@ -161,6 +179,34 @@ const Facilitators: React.FC = () => {
 
     fetchData();
   }, [data, cohortsFetched]);
+  const handleCloseDeleteModal = () => {
+    setSelectedReason('')
+    setOtherReason('')
+    setIsDeleteModalOpen(false);
+  };
+  const handleDeleteUser = async (category: string) => {
+    try {
+      console.log(selectedUserId);
+      const userId = selectedUserId;
+      const userData = {
+        userData: [
+          {
+            reason: selectedReason,
+            status: "archived",
+          },
+        ],
+      };
+      const response = await deleteUser(userId, userData);
+      handleCloseDeleteModal();
+    } catch (error) {
+      console.log("error while deleting entry", error);
+    }
+  };
+  
+  const extraActions: any = [
+    // { name: "Send", onClick: handleSend },
+    // { name: "STAR", onClick: handleStar },
+  ];
 
   const userProps = {
     userType: t("SIDEBAR.FACILITATORS"),
@@ -185,8 +231,26 @@ const Facilitators: React.FC = () => {
           offset={pageOffset}
           PagesSelector={PagesSelector}
           PageSizeSelector={PageSizeSelectorFunction}
+        //   onEdit={handleEdit}
+        //   onDelete={handleDelete}
+        // extraActions={extraActions}
+         // showEdit={true}
+         // showDelete={true}
         />
       </div>
+      <DeleteUserModal
+      open={isDeleteModalOpen}
+       onClose={handleCloseDeleteModal}
+       selectedValue={selectedReason}
+       setSelectedValue={setSelectedReason}
+       handleDeleteAction={handleDeleteUser}
+       otherReason={otherReason}
+      setOtherReason={setOtherReason}
+      confirmButtonDisable={confirmButtonDisable}
+      setConfirmButtonDisable={setConfirmButtonDisable}
+      />
+
+
     </UserComponent>
   );
 };
