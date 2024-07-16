@@ -3,16 +3,16 @@
     "LANGUAGE": "Language",
     "LOADING": "Loading",
     "ADD_NEW": "Add New",
-    "PAGE_SIZE":"Page Size",
+    "PAGE_SIZE": "Page Size",
     "DELETE_USER": "Delete User Permanently",
     "DELETE_USER_WITH_REASON": "Delete User",
     "USER_DELETED_PERMANENTLY": "User Successfully Deleted!",
     "OTHER_REASON": "Other Reason",
     "OTHER_REASON_PLACEHOLDER": "Enter Other Reason",
     "REASON_FOR_DELETION": "Reason for Deletion",
-    "INCORRECT_DATA_ENTRY":"Incorrect Data Entry",
-    "DUPLICATED_USER":"Duplicate User",
-    "OTHER":"Other"
+    "INCORRECT_DATA_ENTRY": "Incorrect Data Entry",
+    "DUPLICATED_USER": "Duplicate User",
+    "OTHER": "Other"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -53,8 +53,10 @@
   },
   "MASTER": {
     "STATE": "State",
+    "STATE_NAMES": "State Names",
     "SORT": "Sort",
     "DISTRICT_NAMES": "District Names",
+    "BLOCK_NAMES": "Block Names",
     "ACTIONS": "Actions",
     "DISTRICTS": "Districts",
     "SEARCHBAR_PLACEHOLDER_STATE": "Search States",
