@@ -124,10 +124,11 @@ const Facilitators: React.FC = () => {
   );
   const handleStateChange = async (selected: string[], code: string[]) => {
     setSelectedState(selected);
-    if (code.length === 0) {
+  
+    if (selected[0] === "") {
       setFilters({ role: "Teacher", status: "active" });
     } else {
-      const stateCodes = code?.join(",");
+     const stateCodes = code?.join(",");
       setSelectedStateCode(stateCodes);
       setFilters({ role: "Teacher", status: "active", state: stateCodes });
     }
@@ -137,7 +138,7 @@ const Facilitators: React.FC = () => {
   const handleDistrictChange = (selected: string[], code: string[]) => {
     setSelectedDistrict(selected);
 
-    if (selected.length === 0) {
+    if (selected[0] === "") {
       setFilters({
         role: "Teacher",
         status: "active",
@@ -157,7 +158,7 @@ const Facilitators: React.FC = () => {
   };
   const handleBlockChange = (selected: string[], code: string[]) => {
     setSelectedBlock(selected);
-    if (selected.length === 0) {
+    if (selected[0] === "") {
       setFilters({
         role: "Teacher",
         status: "active",

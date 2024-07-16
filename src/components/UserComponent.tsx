@@ -41,11 +41,23 @@ const UserComponent = ({
   const isMobile = useMediaQuery("(max-width:600px)");
 
   const handleStateChangeWrapper = (selectedNames: string[], selectedCodes: string[]) => {
+    console.log(selectedNames)
+    if(selectedNames[0]==="")
+    {
+      console.log(true)
+      handleDistrictChange([], []);
+      handleBlockChange([], [])
+    }
     handleStateChange(selectedNames, selectedCodes);
   
   };
 
   const handleDistrictChangeWrapper = (selected: string[], selectedCodes: string[]) => {
+    if(selected[0]==="")
+    {
+      console.log(true)
+      handleBlockChange([], [])
+    }
     handleDistrictChange(selected, selectedCodes);
   };
   const handleBlockChangeWrapper = (selected: string[], selectedCodes: string[]) => {
@@ -76,7 +88,7 @@ const UserComponent = ({
               tagName={t("FACILITATORS.ALL_DISTRICTS")}
               selectedCategories={selectedDistrict}
               onCategoryChange={handleDistrictChangeWrapper}
-              disabled={selectedState.length === 0}
+              disabled={selectedState.length === 0 ||selectedState[0]=== ""}
             />
             <MultipleSelectCheckmarks
              names={AllBlocks.map(blocks => blocks.name)}
@@ -84,7 +96,7 @@ const UserComponent = ({
               tagName={t("FACILITATORS.ALL_BLOCKS")}
               selectedCategories={selectedBlock}
               onCategoryChange={handleBlockChange}
-              disabled={selectedDistrict.length === 0}
+              disabled={selectedDistrict.length === 0|| selectedDistrict[0]=== ""}
             />
           </Box>
         </Box>

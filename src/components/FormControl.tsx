@@ -44,16 +44,19 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({ nam
         <Select
           labelId="multiple-checkbox-label"
           id="multiple-checkbox"
-          multiple
+          
           value={selectedCategories}
           onChange={handleChange}
           input={<OutlinedInput label={tagName} />}
           renderValue={(selected) => selected.join(', ')}
           MenuProps={MenuProps}
         >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
           {names.map((name) => (
             <MenuItem key={name} value={name}>
-              <Checkbox checked={selectedCategories.indexOf(name) > -1} />
+              {/* <Checkbox checked={selectedCategories.indexOf(name) > -1} /> */}
               <ListItemText primary={name} />
             </MenuItem>
           ))}
