@@ -2,11 +2,17 @@
   "COMMON": {
     "LANGUAGE": "Language",
     "LOADING": "Loading",
-    "ADD_NEW": "Add New"
-  },
-  "ACTIONBUTONS": {
-    "EDIT": "Edit",
-    "DELETE": "Delete"
+    "ADD_NEW": "Add New",
+    "PAGE_SIZE":"Page Size",
+    "DELETE_USER": "Delete User Permanently",
+    "DELETE_USER_WITH_REASON": "Delete User",
+    "USER_DELETED_PERMANENTLY": "User Successfully Deleted!",
+    "OTHER_REASON": "Other Reason",
+    "OTHER_REASON_PLACEHOLDER": "Enter Other Reason",
+    "REASON_FOR_DELETION": "Reason for Deletion",
+    "INCORRECT_DATA_ENTRY":"Incorrect Data Entry",
+    "DUPLICATED_USER":"Duplicate User",
+    "OTHER":"Other"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -42,7 +48,6 @@
   "LEARNERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Learners.."
   },
-  "COHORTS": { "SEARCHBAR_PLACEHOLDER": "Search Cohorts.." },
   "TEAM_LEADERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders.."
   },
@@ -50,14 +55,11 @@
     "STATE": "State",
     "SORT": "Sort",
     "DISTRICT_NAMES": "District Names",
-    "BLOCK_NAMES": "Block Names",
     "ACTIONS": "Actions",
     "DISTRICTS": "Districts",
     "SEARCHBAR_PLACEHOLDER_STATE": "Search States",
     "SEARCHBAR_PLACEHOLDER_DISTRICT": "Search Districts",
     "SEARCHBAR_PLACEHOLDER_BLOCK": "Search Blocks",
-    "BLOCKS": "Blocks",
-    "ALL_DISTRICTS": "All Districts",
-    "ALL_BLOCKS": "All Blocks"
+    "BLOCKS": "Blocks"
   }
 }

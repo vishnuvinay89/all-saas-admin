@@ -16,6 +16,8 @@ interface KaTableComponentProps {
   limit?: any;
   PagesSelector?: any;
   PageSizeSelector?: any;
+  pageSizes?:any
+
 
   extraActions: {
     name: string;
@@ -37,6 +39,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   extraActions,
 
   showIcons,
+  pageSizes
 }) => {
   const tableProps: ITableProps = {
     columns,
@@ -53,7 +56,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
           enabled: (data?.length ?? 0) >= 5 ? true : false, // to do dynamic limit for enable  pagination and page sizes by data
           pageIndex: 0,
           pageSize: limit,
-          pageSizes: [5, 10, 15],
+          pageSizes: pageSizes,
           position: PagingPosition.Bottom,
         }}
         childComponents={{
