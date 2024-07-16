@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { logout } from '../services/LoginService';
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 function Logout() {
   const router = useRouter();
@@ -23,5 +24,15 @@ function Logout() {
 
   return "";
 }
+
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
+
 
 export default Logout;

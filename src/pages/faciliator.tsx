@@ -12,6 +12,8 @@ import DeleteUserModal from "@/components/DeleteUserModal";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import CustomModal from "@/components/CustomModal";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 type UserDetails = {
   userId: any;
   username: any;
@@ -65,6 +67,7 @@ const Facilitators: React.FC = () => {
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
+  const [pageSizeArray, setPageSizeArray] =  React.useState< number[]>([]);
   const [data, setData] = useState<UserDetails[]>([]);
   const [cohortsFetched, setCohortsFetched] = useState(false);
   const { t } = useTranslation();
@@ -98,7 +101,7 @@ const Facilitators: React.FC = () => {
   );
 
   const PageSizeSelectorFunction = () => (
-    <PageSizeSelector handleChange={handleChange} pageSize={pageSize} />
+    <PageSizeSelector handleChange={handleChange} pageSize={pageSize} options={pageSizeArray}/>
   );
   const handleStateChange = (selected: string[]) => {
     setSelectedState(selected);
@@ -130,7 +133,7 @@ const Facilitators: React.FC = () => {
     // Handle edit action here
   };
 
-  const handleDelete = async(rowData: any) => {
+  const handleDelete = (rowData: any) => {
     setIsDeleteModalOpen(true);
     setSelectedUserId(rowData.userId);
     //const userData="";
@@ -149,6 +152,19 @@ const Facilitators: React.FC = () => {
         const resp = await userList({ limit, filters, sort, offset });
         const result = resp?.getUserDetails;
        // console.log(resp?.totalCount)
+       if(resp?.totalCount>=15)
+       {
+            setPageSizeArray([5,10,15]);
+       }
+       else if(resp?.totalCount>=10)
+       {
+        setPageSizeArray([5,10]);
+       }
+       else if(resp?.totalCount>=5 || resp?.totalCount<5)
+       {
+        setPageSizeArray([5]);
+       }
+
         setPageCount(Math.ceil(resp?.totalCount/pageLimit));
 
         setData(result);
@@ -204,9 +220,10 @@ const Facilitators: React.FC = () => {
   };
   
   const extraActions: any = [
-    // { name: "Send", onClick: handleSend },
-    // { name: "STAR", onClick: handleStar },
+    { name: "Edit", onClick: handleEdit, icon: EditIcon },
+    { name: "Delete", onClick: handleDelete, icon: DeleteIcon },
   ];
+
 
   const userProps = {
     userType: t("SIDEBAR.FACILITATORS"),
@@ -231,11 +248,9 @@ const Facilitators: React.FC = () => {
           offset={pageOffset}
           PagesSelector={PagesSelector}
           PageSizeSelector={PageSizeSelectorFunction}
-        //   onEdit={handleEdit}
-        //   onDelete={handleDelete}
-        // extraActions={extraActions}
-         // showEdit={true}
-         // showDelete={true}
+          pageSizes={pageSizeArray}
+          extraActions={extraActions}
+          showIcons={true}
         />
       </div>
       <DeleteUserModal
