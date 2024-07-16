@@ -132,7 +132,7 @@ const State: React.FC = () => {
             options={pageSizeArray}
           />
         )}
-        extraActions={[]} // Pass an empty array or the appropriate actions
+        extraActions={[]} 
       />
     </UserComponent>
   );
