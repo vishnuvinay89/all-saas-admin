@@ -3,7 +3,7 @@ import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import UserComponent from "@/components/UserComponent";
-import StateData from "./dummyAPI/stateData";
+import StateData from "../data/stateData";
 import Pagination from "@mui/material/Pagination";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
@@ -53,7 +53,7 @@ const State: React.FC = () => {
       setSortBy(["state", "asc"]);
     }
 
-    setSelectedSort(event.target.value as string);
+    setSelectedSort(event.target.value );
   };
 
   useEffect(() => {

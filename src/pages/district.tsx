@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import UserComponent from "@/components/UserComponent";
-import StateData from "./dummyAPI/stateData";
+import StateData from "../data/stateData";
 import Pagination from "@mui/material/Pagination";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
@@ -73,7 +73,7 @@ const District: React.FC = () => {
   );
 
   const handleStateChange = (event: SelectChangeEvent) => {
-    const selectedState = event.target.value as string;
+    const selectedState = event.target.value;
     setSelectedState(selectedState);
     const state = stateData.find((state) => state.state === selectedState);
     if (state) {
@@ -85,17 +85,17 @@ const District: React.FC = () => {
   };
 
   const handleDistrictChange = (event: SelectChangeEvent) => {
-    const selectedDistrict = event.target.value as string;
+    const selectedDistrict = event.target.value;
     setSelectedDistrict(selectedDistrict);
     fetchDataForDistrict(selectedDistrict);
   };
 
   const handleBlockChange = (event: SelectChangeEvent) => {
-    setSelectedBlock(event.target.value as string);
+    setSelectedBlock(event.target.value);
   };
 
   const handleSortChange = (event: SelectChangeEvent) => {
-    const sortValue = event.target.value as string;
+    const sortValue = event.target.value;
     setSelectedSort(sortValue);
     if (sortValue === "Z-A") {
       setSortDirection("desc");
@@ -124,11 +124,12 @@ const District: React.FC = () => {
     showStateDropdown: false,
   };
 
-  const sortedDistricts = stateData
-    .find((state) => state.state === selectedState)
-    ?.districts.sort((a, b) =>
-      sortDirection === "asc" ? a.localeCompare(b) : b.localeCompare(a)
-    ) || [];
+  const sortedDistricts =
+    stateData
+      .find((state) => state.state === selectedState)
+      ?.districts.sort((a, b) =>
+        sortDirection === "asc" ? a.localeCompare(b) : b.localeCompare(a)
+      ) || [];
 
   return (
     <React.Fragment>

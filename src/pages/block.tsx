@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import UserComponent from "@/components/UserComponent";
-import StateData from "./dummyAPI/stateData";
+import StateData from "../data/stateData";
 import Pagination from "@mui/material/Pagination";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
@@ -72,7 +72,7 @@ const Block: React.FC = () => {
   );
 
   const handleStateChange = (event: SelectChangeEvent) => {
-    const selectedState = event.target.value as string;
+    const selectedState = event.target.value;
     setSelectedState(selectedState);
     const state = stateData.find((state) => state.state === selectedState);
     if (state) {
@@ -84,13 +84,13 @@ const Block: React.FC = () => {
   };
 
   const handleDistrictChange = (event: SelectChangeEvent) => {
-    const selectedDistrict = event.target.value as string;
+    const selectedDistrict = event.target.value;
     setSelectedDistrict(selectedDistrict);
     fetchDataForDistrict(selectedDistrict);
   };
 
   const handleSortChange = async (event: SelectChangeEvent) => {
-    setSelectedSort(event.target.value as string);
+    setSelectedSort(event.target.value);
   };
 
   const fetchDataForDistrict = (district: string) => {
