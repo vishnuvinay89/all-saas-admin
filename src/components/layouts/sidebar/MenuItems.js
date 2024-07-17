@@ -46,7 +46,7 @@ const Menuitems = [
 
   {
     title: "Master ",
-    icon: "user",
+    icon: "database",
     href: "/",
     subOptions: [
       {
