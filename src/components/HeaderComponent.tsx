@@ -1,25 +1,52 @@
 import * as React from "react";
-import { useState } from "react";
-import { MenuItem, Typography, Box, FormControl, useMediaQuery, Grid, Button } from "@mui/material";
+import { useState, useEffect } from "react";
+import {
+  MenuItem,
+  Typography,
+  Box,
+  FormControl,
+  useMediaQuery,
+  Grid,
+  Button,
+} from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import AddIcon from "@mui/icons-material/Add";
 import SearchBar from "@/components/layouts/header/SearchBar";
 import { useTranslation } from "next-i18next";
 import MultipleSelectCheckmarks from "./FormControl";
 import { useTheme } from "@mui/material/styles";
+import {
+  getBlockList,
+  getStateList,
+  getDistrictList,
+} from "../services/MasterDataService";
 
 const AllStates = [
   { name: "Maharashtra", code: "mh" },
   { name: "Gujarat", code: "gj" },
 ];
 const AllDistrict = [
-  { name: "Mumbai", code: "MUM" },
-  { name: "Pune", code: "PN" },
+  { name: "Mu", code: "MUM" },
+  { name: "Pu", code: "PN" },
 ];
 const AllBlocks = [
   { name: "Baner", code: "BA" },
   { name: "Hinjewadi", code: "HJ" },
 ];
+interface State {
+  value: string;
+  label: string;
+}
+
+interface District {
+  value: string;
+  label: string;
+}
+
+interface Block {
+  value: string;
+  label: string;
+}
 const Sort = ["A-Z", "Z-A"];
 
 const HeaderComponent = ({
@@ -40,18 +67,37 @@ const HeaderComponent = ({
   const theme = useTheme<any>();
   const isMobile = useMediaQuery("(max-width:600px)");
   const isMediumScreen = useMediaQuery("(max-width:986px)");
-
-  const handleStateChangeWrapper = (selectedNames: string[], selectedCodes: string[]) => {
+  const [allStates, setAllStates] = useState<State[]>([]);
+  const [allDistricts, setAllDistricts] = useState<District[]>([]);
+  const [allBlocks, setAllBlocks] = useState<Block[]>([]);
+  const handleStateChangeWrapper = async (
+    selectedNames: string[],
+    selectedCodes: string[]
+  ) => {
     if (selectedNames[0] === "") {
       handleDistrictChange([], []);
       handleBlockChange([], []);
     }
+    try {
+      const response = await getDistrictList(selectedCodes);
+      const result=response?.result
+      setAllDistricts(result);
+    } catch (error) {
+      console.log(error);
+    }
     handleStateChange(selectedNames, selectedCodes);
   };
 
-  const handleDistrictChangeWrapper = (selected: string[], selectedCodes: string[]) => {
+  const handleDistrictChangeWrapper = async(selected: string[], selectedCodes: string[]) => {
     if (selected[0] === "") {
       handleBlockChange([], []);
+    }
+    try {
+      const response = await getBlockList(selectedCodes);
+      const result=response?.result
+      setAllBlocks(result);
+    } catch (error) {
+      console.log(error);
     }
     handleDistrictChange(selected, selectedCodes);
   };
@@ -59,6 +105,20 @@ const HeaderComponent = ({
   const handleBlockChangeWrapper = (selected: string[], selectedCodes: string[]) => {
     handleBlockChange(selected, selectedCodes);
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getStateList();
+        const result = response?.result;
+        setAllStates(result);
+        console.log(typeof allStates);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <Box
@@ -85,8 +145,8 @@ const HeaderComponent = ({
           <Grid container spacing={isMobile ? 1 : 2}>
             <Grid item xs={12} sm={isMediumScreen ? 12 : 4}>
               <MultipleSelectCheckmarks
-                names={AllStates.map((state) => state.name)}
-                codes={AllStates.map((state) => state.code)}
+                names={allStates.map((state) => state.label)}
+                codes={allStates.map((state) => state.value)}
                 tagName={t("FACILITATORS.ALL_STATES")}
                 selectedCategories={selectedState}
                 onCategoryChange={handleStateChangeWrapper}
@@ -94,8 +154,8 @@ const HeaderComponent = ({
             </Grid>
             <Grid item xs={12} sm={isMediumScreen ? 12 : 4}>
               <MultipleSelectCheckmarks
-                names={AllDistrict.map((districts) => districts.name)}
-                codes={AllDistrict.map((districts) => districts.code)}
+                names={allDistricts.map((districts) => districts.label)}
+                codes={allDistricts.map((districts) => districts.value)}
                 tagName={t("FACILITATORS.ALL_DISTRICTS")}
                 selectedCategories={selectedDistrict}
                 onCategoryChange={handleDistrictChangeWrapper}
@@ -104,8 +164,8 @@ const HeaderComponent = ({
             </Grid>
             <Grid item xs={12} sm={isMediumScreen ? 12 : 4}>
               <MultipleSelectCheckmarks
-                names={AllBlocks.map((blocks) => blocks.name)}
-                codes={AllBlocks.map((blocks) => blocks.code)}
+                names={allBlocks.map((blocks) => blocks.label)}
+                codes={allBlocks.map((blocks) => blocks.value)}
                 tagName={t("FACILITATORS.ALL_BLOCKS")}
                 selectedCategories={selectedBlock}
                 onCategoryChange={handleBlockChangeWrapper}
