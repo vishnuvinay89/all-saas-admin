@@ -5,7 +5,10 @@ export interface userListParam {
   //  page: number;
     filters: {
       role: string;
-      status?:string
+      status?:string;
+      state?:string;
+      district?:string;
+      block?:string;
     };
     sort?: object;
     offset:number
