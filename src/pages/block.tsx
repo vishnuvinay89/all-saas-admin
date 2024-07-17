@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import UserComponent from "@/components/UserComponent";
-import StateData from "./dummyAPI/stateData";
+import StateData from "../data/stateData";
 import Pagination from "@mui/material/Pagination";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
@@ -35,13 +35,10 @@ const Block: React.FC = () => {
   const [selectedDistrict, setSelectedDistrict] = useState(
     StateData[0]?.districts[0] || t("MASTER.ALL_DISTRICTS")
   );
-  const [selectedBlock, setSelectedBlock] = useState(
-    StateData[0]?.blocks[0] || t("MASTER.ALL_BLOCKS")
-  );
   const [selectedSort, setSelectedSort] = useState(t("MASTER.SORT"));
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
-  const [stateData, setStateData] = useState<StateDetails[]>(StateData);
+  const [stateData, setStateData] = useState(StateData);
   const [data, setData] = useState<UserDetails[]>([]);
   const [pageSize, setPageSize] = useState<string | number>("");
 
@@ -75,30 +72,25 @@ const Block: React.FC = () => {
   );
 
   const handleStateChange = (event: SelectChangeEvent) => {
-    const selectedState = event.target.value as string;
+    const selectedState = event.target.value;
     setSelectedState(selectedState);
     const state = stateData.find((state) => state.state === selectedState);
     if (state) {
       setSelectedDistrict(state.districts[0]);
       fetchDataForDistrict(state.districts[0]);
     } else {
-      setSelectedDistrict("All Districts");
+      setSelectedDistrict(t("MASTER.ALL_DISTRICTS"));
     }
   };
 
   const handleDistrictChange = (event: SelectChangeEvent) => {
-    const selectedDistrict = event.target.value as string;
+    const selectedDistrict = event.target.value;
     setSelectedDistrict(selectedDistrict);
-    setSelectedBlock(t("MASTER.ALL_BLOCKS"));
     fetchDataForDistrict(selectedDistrict);
   };
 
-  const handleBlockChange = (event: SelectChangeEvent) => {
-    setSelectedBlock(event.target.value as string);
-  };
-
   const handleSortChange = async (event: SelectChangeEvent) => {
-    setSelectedSort(event.target.value as string);
+    setSelectedSort(event.target.value);
   };
 
   const fetchDataForDistrict = (district: string) => {
@@ -115,8 +107,6 @@ const Block: React.FC = () => {
     states: stateData.map((state) => state.state),
     districts:
       stateData.find((state) => state.state === selectedState)?.districts || [],
-    blocks:
-      stateData.find((state) => state.state === selectedState)?.blocks || [],
     selectedState: selectedState,
     selectedDistrict: selectedDistrict,
     showStateDropdown: false,
@@ -166,16 +156,7 @@ const Block: React.FC = () => {
 
         <KaTableComponent
           columns={columns}
-          data={
-            selectedDistrict !== t("MASTER.ALL_DISTRICTS")
-              ? stateData
-                  .find((state) => state.state === selectedState)
-                  ?.blocks.map((block) => ({
-                    blocks: block,
-                    actions: "Action buttons",
-                  })) || []
-              : []
-          }
+          data={data}
           limit={pageLimit}
           offset={pageOffset * pageLimit}
           PagesSelector={() => (
@@ -187,6 +168,7 @@ const Block: React.FC = () => {
             />
           )}
           PageSizeSelector={PageSizeSelectorFunction}
+          extraActions={[]}
         />
       </UserComponent>
     </React.Fragment>
