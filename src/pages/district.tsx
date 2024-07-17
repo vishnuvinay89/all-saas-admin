@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -98,7 +98,8 @@ const District: React.FC = () => {
   };
 
   const fetchDataForDistrict = (district: string) => {
-    const newData: UserDetails[] = [];
+    // Simulate fetching data based on selected district
+    const newData: UserDetails[] = []; // Replace with actual data fetching logic
     setData(newData);
   };
 
@@ -158,6 +159,7 @@ const District: React.FC = () => {
             />
           )}
           PageSizeSelector={PageSizeSelectorFunction}
+          extraActions={[]}
         />
       </UserComponent>
     </React.Fragment>
