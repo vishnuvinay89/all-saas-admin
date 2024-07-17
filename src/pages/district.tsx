@@ -35,12 +35,13 @@ const District: React.FC = () => {
     StateData[0]?.districts[0] || "-"
   );
   const [selectedBlock, setSelectedBlock] = useState("");
-  const [selectedSort, setSelectedSort] = useState(t("MASTER.SORT"));
+  const [selectedSort, setSelectedSort] = useState("Sort");
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
   const [stateData, setStateData] = useState<StateDetails[]>(StateData);
   const [data, setData] = useState<UserDetails[]>([]);
   const [pageSize, setPageSize] = useState<string | number>("");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   const columns = [
     {
@@ -93,13 +94,18 @@ const District: React.FC = () => {
     setSelectedBlock(event.target.value as string);
   };
 
-  const handleSortChange = async (event: SelectChangeEvent) => {
-    setSelectedSort(event.target.value as string);
+  const handleSortChange = (event: SelectChangeEvent) => {
+    const sortValue = event.target.value as string;
+    setSelectedSort(sortValue);
+    if (sortValue === "Z-A") {
+      setSortDirection("desc");
+    } else {
+      setSortDirection("asc");
+    }
   };
 
   const fetchDataForDistrict = (district: string) => {
-    // Simulate fetching data based on selected district
-    const newData: UserDetails[] = []; // Replace with actual data fetching logic
+    const newData: UserDetails[] = [];
     setData(newData);
   };
 
@@ -109,6 +115,7 @@ const District: React.FC = () => {
     selectedSort: selectedSort,
     handleStateChange: handleStateChange,
     handleDistrictChange: handleDistrictChange,
+    handleSortChange: handleSortChange,
     states: stateData.map((state) => state.state),
     districts:
       stateData.find((state) => state.state === selectedState)?.districts || [],
@@ -116,6 +123,12 @@ const District: React.FC = () => {
     selectedDistrict: selectedDistrict,
     showStateDropdown: false,
   };
+
+  const sortedDistricts = stateData
+    .find((state) => state.state === selectedState)
+    ?.districts.sort((a, b) =>
+      sortDirection === "asc" ? a.localeCompare(b) : b.localeCompare(a)
+    ) || [];
 
   return (
     <React.Fragment>
@@ -140,14 +153,10 @@ const District: React.FC = () => {
         </Box>
         <KaTableComponent
           columns={columns}
-          data={stateData
-            .filter((state) => state.state === selectedState)
-            .flatMap((state) =>
-              state.districts.map((district) => ({
-                district: district,
-                actions: "Action buttons",
-              }))
-            )}
+          data={sortedDistricts.map((district) => ({
+            district: district,
+            actions: "Action buttons",
+          }))}
           limit={pageLimit}
           offset={pageOffset * pageLimit}
           PagesSelector={() => (

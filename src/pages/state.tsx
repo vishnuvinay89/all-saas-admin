@@ -9,28 +9,13 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
 
-type StateDetails = {
-  state: string;
-  districts: DistrictDetails[];
-};
-
-type DistrictDetails = {
-  district: string;
-  blocks: BlockDetails[];
-};
-
-type BlockDetails = {
-  block: string;
-};
-
-
 const State: React.FC = () => {
   const { t } = useTranslation();
   const [selectedState, setSelectedState] = useState<string[]>([]);
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([]);
-  const [stateData, setStateData] = useState<StateDetails[]>([]);
+  const [stateData, setStateData] = useState(StateData);
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [pageSize, setPageSize] = useState<string | number>("");
   const [sortBy, setSortBy] = useState<["state", "asc" | "desc"]>([
@@ -39,7 +24,6 @@ const State: React.FC = () => {
   ]);
   const [pageCount, setPageCount] = useState(1);
 
-
   const columns = [
     {
       key: "state",
@@ -47,7 +31,6 @@ const State: React.FC = () => {
       dataType: DataType.String,
     },
   ];
-  
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     setPageSize(event.target.value);
@@ -90,7 +73,7 @@ const State: React.FC = () => {
       const paginatedData = sortedData.slice(offset, offset + limit);
 
       setPageCount(Math.ceil(StateData.length / pageLimit));
-      setStateData(paginatedData as StateDetails[]);
+      setStateData(paginatedData);
       setPageSizeArray([5, 10, 15]);
     };
 
@@ -132,7 +115,7 @@ const State: React.FC = () => {
             options={pageSizeArray}
           />
         )}
-        extraActions={[]} 
+        extraActions={[]}
       />
     </UserComponent>
   );

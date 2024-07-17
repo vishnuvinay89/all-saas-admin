@@ -1,8 +1,11 @@
-const StateData = [
+type StateDetails = {
+  state: string;
+  districts: string[];
+};
+const StateData: StateDetails[] = [
   {
     state: "Andaman and Nicobar Islands",
     districts: ["Nicobar", "North and Middle Andaman", "South Andaman"],
-    blocks: [],
   },
   {
     state: "Andhra Pradesh",
@@ -20,14 +23,6 @@ const StateData = [
       "Vizianagaram",
       "West Godavari",
       "YSR Kadapa",
-    ],
-    blocks: [
-      "Anantapur Urban",
-      "Anantapur Rural",
-      "Bathalapalli",
-      "Bommanahal",
-      "Brahmasamudram",
-      // Add more blocks as needed
     ],
   },
   {
@@ -55,7 +50,6 @@ const StateData = [
       "Tirap",
       "Longding",
     ],
-    blocks: [],
   },
   {
     state: "Assam",
@@ -94,7 +88,6 @@ const StateData = [
       "Udalguri",
       "West Karbi Anglong",
     ],
-    blocks: [],
   },
   {
     state: "Bihar",
@@ -138,12 +131,10 @@ const StateData = [
       "Vaishali",
       "West Champaran",
     ],
-    blocks: [],
   },
   {
     state: "Chandigarh",
     districts: ["Chandigarh"],
-    blocks: [],
   },
   {
     state: "Chhattisgarh",
@@ -176,12 +167,10 @@ const StateData = [
       "Surajpur",
       "Surguja",
     ],
-    blocks: [],
   },
   {
     state: "Dadra and Nagar Haveli and Daman and Diu",
     districts: ["Dadra and Nagar Haveli", "Daman", "Diu"],
-    blocks: [],
   },
   {
     state: "Delhi",
@@ -198,12 +187,10 @@ const StateData = [
       "South West Delhi",
       "West Delhi",
     ],
-    blocks: [],
   },
   {
     state: "Goa",
     districts: ["North Goa", "South Goa"],
-    blocks: [],
   },
   {
     state: "Gujarat",
@@ -242,7 +229,6 @@ const StateData = [
       "Vadodara",
       "Valsad",
     ],
-    blocks: [],
   },
   {
     state: "Haryana",
@@ -270,7 +256,6 @@ const StateData = [
       "Sonipat",
       "Yamunanagar",
     ],
-    blocks: [],
   },
   {
     state: "Himachal Pradesh",
@@ -288,7 +273,6 @@ const StateData = [
       "Solan",
       "Una",
     ],
-    blocks: [],
   },
   {
     state: "Jammu and Kashmir",
@@ -314,7 +298,6 @@ const StateData = [
       "Srinagar",
       "Udhampur",
     ],
-    blocks: [],
   },
   {
     state: "Jharkhand",
@@ -344,7 +327,6 @@ const StateData = [
       "Simdega",
       "West Singhbhum",
     ],
-    blocks: [],
   },
   {
     state: "Karnataka",
@@ -380,7 +362,6 @@ const StateData = [
       "Vijayapura (Bijapur)",
       "Yadgir",
     ],
-    blocks: [],
   },
   {
     state: "Kerala",
@@ -400,17 +381,14 @@ const StateData = [
       "Thrissur",
       "Wayanad",
     ],
-    blocks: [],
   },
   {
     state: "Ladakh",
     districts: ["Kargil", "Leh"],
-    blocks: [],
   },
   {
     state: "Lakshadweep",
     districts: ["Lakshadweep"],
-    blocks: [],
   },
   {
     state: "Madhya Pradesh",
@@ -467,7 +445,6 @@ const StateData = [
       "Umaria",
       "Vidisha",
     ],
-    blocks: [],
   },
   {
     state: "Maharashtra",
@@ -509,24 +486,6 @@ const StateData = [
       "Washim",
       "Yavatmal",
     ],
-    blocks: [
-      [
-        "Akola",
-        "Jamkhed",
-        "Karjat",
-        "Kopargaon",
-        "Nagar",
-        "Nevasa",
-        "Parner",
-        "Pathardi",
-        "Rahta",
-        "Rahuri",
-        "Sangamner",
-        "Shevgaon",
-        "Shrigonda",
-        "Shrirampur",
-      ],
-    ],
   },
   {
     state: "Manipur",
@@ -548,7 +507,6 @@ const StateData = [
       "Thoubal",
       "Ukhrul",
     ],
-    blocks: [],
   },
   {
     state: "Meghalaya",
@@ -565,7 +523,6 @@ const StateData = [
       "West Jaintia Hills",
       "West Khasi Hills",
     ],
-    blocks: [],
   },
   {
     state: "Mizoram",
@@ -582,7 +539,6 @@ const StateData = [
       "Saitual",
       "Serchhip",
     ],
-    blocks: [],
   },
   {
     state: "Nagaland",
@@ -599,7 +555,6 @@ const StateData = [
       "Wokha",
       "Zunheboto",
     ],
-    blocks: [],
   },
   {
     state: "Odisha",
@@ -635,12 +590,10 @@ const StateData = [
       "Subarnapur (Sonepur)",
       "Sundargarh",
     ],
-    blocks: [],
   },
   {
     state: "Puducherry",
     districts: ["Karaikal", "Mahe", "Puducherry", "Yanam"],
-    blocks: [],
   },
   {
     state: "Punjab",
@@ -668,7 +621,6 @@ const StateData = [
       "Sri Muktsar Sahib",
       "Tarn Taran",
     ],
-    blocks: [],
   },
   {
     state: "Rajasthan",
@@ -707,12 +659,10 @@ const StateData = [
       "Tonk",
       "Udaipur",
     ],
-    blocks: [],
   },
   {
     state: "Sikkim",
     districts: ["East Sikkim", "North Sikkim", "South Sikkim", "West Sikkim"],
-    blocks: [],
   },
   {
     state: "Tamil Nadu",
@@ -756,7 +706,6 @@ const StateData = [
       "Viluppuram",
       "Virudhunagar",
     ],
-    blocks: [],
   },
   {
     state: "Telangana",
@@ -794,7 +743,6 @@ const StateData = [
       "Warangal Urban",
       "Yadadri Bhuvanagiri",
     ],
-    blocks: [],
   },
   {
     state: "Tripura",
@@ -808,7 +756,6 @@ const StateData = [
       "Unakoti",
       "West Tripura",
     ],
-    blocks: [],
   },
   {
     state: "Uttar Pradesh",
@@ -889,7 +836,6 @@ const StateData = [
       "Unnao",
       "Varanasi",
     ],
-    blocks: [],
   },
   {
     state: "Uttarakhand",
@@ -908,7 +854,6 @@ const StateData = [
       "Udham Singh Nagar",
       "Uttarkashi",
     ],
-    blocks: [],
   },
   {
     state: "West Bengal",
@@ -937,7 +882,6 @@ const StateData = [
       "South 24 Parganas",
       "Uttar Dinajpur (North Dinajpur)",
     ],
-    blocks: [], 
   },
 ];
 
