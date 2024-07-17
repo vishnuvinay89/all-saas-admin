@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import UserComponent from "@/components/UserComponent";
+import HeaderComponent from "@/components/HeaderComponent";
 import StateData from "../data/stateData";
 import Pagination from "@mui/material/Pagination";
 import { SelectChangeEvent } from "@mui/material/Select";
@@ -92,7 +92,7 @@ const State: React.FC = () => {
   };
 
   return (
-    <UserComponent {...userProps}>
+    <HeaderComponent {...userProps}>
       <KaTableComponent
         columns={columns}
         data={stateData.map((stateDetail) => ({
@@ -117,7 +117,7 @@ const State: React.FC = () => {
         )}
         extraActions={[]}
       />
-    </UserComponent>
+    </HeaderComponent>
   );
 };
 

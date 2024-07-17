@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import UserComponent from "@/components/UserComponent";
+import HeaderComponent from "@/components/HeaderComponent";
 import StateData from "../data/stateData";
 import Pagination from "@mui/material/Pagination";
 import Box from "@mui/material/Box";
@@ -114,7 +114,7 @@ const Block: React.FC = () => {
 
   return (
     <React.Fragment>
-      <UserComponent {...userProps}>
+      <HeaderComponent {...userProps}>
         <Box sx={{ minWidth: 240, display: "flex", gap: 5 }}>
           <Box sx={{ minWidth: 240 }}>
             <FormControl sx={{ minWidth: 240 }}>
@@ -170,7 +170,7 @@ const Block: React.FC = () => {
           PageSizeSelector={PageSizeSelectorFunction}
           extraActions={[]}
         />
-      </UserComponent>
+      </HeaderComponent>
     </React.Fragment>
   );
 };
