@@ -3,40 +3,43 @@ import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import HeaderComponent from "@/components/HeaderComponent";
-import StateData from "../data/stateData";
 import Pagination from "@mui/material/Pagination";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
+import { getStateList } from "@/services/MasterDataService";
+
+type StateDetail = {
+  label: string;
+};
 
 const State: React.FC = () => {
   const { t } = useTranslation();
-  const [selectedState, setSelectedState] = useState<string[]>([]);
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([]);
-  const [stateData, setStateData] = useState(StateData);
+  const [stateData, setStateData] = useState<StateDetail[]>([]);
   const [selectedSort, setSelectedSort] = useState("Sort");
-  const [pageSize, setPageSize] = useState<string | number>("");
-  const [sortBy, setSortBy] = useState<["state", "asc" | "desc"]>([
-    "state",
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [sortBy, setSortBy] = useState<["label", "asc" | "desc"]>([
+    "label",
     "asc",
   ]);
   const [pageCount, setPageCount] = useState(1);
 
   const columns = [
     {
-      key: "state",
+      key: "label",
       title: t("MASTER.STATE_NAMES"),
       dataType: DataType.String,
     },
   ];
 
-  const handleChange = (event: SelectChangeEvent<string>) => {
-    setPageSize(event.target.value);
-    setPageLimit(Number(event.target.value));
+  const handleChange = (event: SelectChangeEvent<number>) => {
+    const value = Number(event.target.value);
+    setPageSize(value);
+    setPageLimit(value);
   };
-
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
     value: number
@@ -45,36 +48,37 @@ const State: React.FC = () => {
   };
 
   const handleSortChange = (event: SelectChangeEvent<string>) => {
-    if (event.target.value === "Z-A") {
-      setSortBy(["state", "desc"]);
-    } else if (event.target.value === "A-Z") {
-      setSortBy(["state", "asc"]);
+    const selectedValue = event.target.value;
+    setSelectedSort(selectedValue);
+    if (selectedValue === "Z-A") {
+      setSortBy(["label", "desc"]);
+    } else if (selectedValue === "A-Z") {
+      setSortBy(["label", "asc"]);
     } else {
-      setSortBy(["state", "asc"]);
+      setSortBy(["label", "asc"]);
     }
-
-    setSelectedSort(event.target.value );
   };
 
   useEffect(() => {
-    const fetchStateData = () => {
-      const limit = pageLimit;
-      const offset = pageOffset * limit;
+    const fetchStateData = async () => {
+      try {
+        const data = await getStateList();
+        const sortedData = [...data.result].sort((a, b) => {
+          const [field, order] = sortBy;
+          return order === "asc"
+            ? a[field].localeCompare(b[field])
+            : b[field].localeCompare(a[field]);
+        });
 
-      const sortedData = [...StateData].sort((a, b) => {
-        const [field, order] = sortBy;
-        if (order === "asc") {
-          return (a as any)[field].localeCompare((b as any)[field]);
-        } else {
-          return (b as any)[field].localeCompare((a as any)[field]);
-        }
-      });
+        const offset = pageOffset * pageLimit;
+        const paginatedData = sortedData.slice(offset, offset + pageLimit);
 
-      const paginatedData = sortedData.slice(offset, offset + limit);
-
-      setPageCount(Math.ceil(StateData.length / pageLimit));
-      setStateData(paginatedData);
-      setPageSizeArray([5, 10, 15]);
+        setPageCount(Math.ceil(data.result.length / pageLimit));
+        setStateData(paginatedData);
+        setPageSizeArray([5, 10, 15]);
+      } catch (error) {
+        console.error("Error fetching state data", error);
+      }
     };
 
     fetchStateData();
@@ -83,11 +87,10 @@ const State: React.FC = () => {
   const userProps = {
     userType: t("MASTER.STATE"),
     searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_STATE"),
-    selectedState: selectedState,
     selectedSort: selectedSort,
     handleStateChange: handleChange,
     handleSortChange: handleSortChange,
-    states: stateData.map((stateDetail) => stateDetail.state),
+    states: stateData.map((stateDetail) => stateDetail.label),
     showStateDropdown: false,
   };
 
@@ -96,7 +99,7 @@ const State: React.FC = () => {
       <KaTableComponent
         columns={columns}
         data={stateData.map((stateDetail) => ({
-          state: stateDetail.state,
+          label: stateDetail.label,
         }))}
         limit={pageLimit}
         offset={pageOffset}
@@ -121,7 +124,7 @@ const State: React.FC = () => {
   );
 };
 
-export async function getStaticProps({ locale }: any) {
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
