@@ -14,6 +14,8 @@ import PageSizeSelector from "@/components/PageSelector";
 import CustomModal from "@/components/CustomModal";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { showToastMessage } from "@/components/Toastify";
+
 type UserDetails = {
   userId: any;
   username: any;
@@ -22,6 +24,10 @@ type UserDetails = {
   mobile: any;
   centers?: any;
   Programs?: any;
+  age?:any;
+  state?:any;
+  district?:any;
+  blocks?:any
 };
 type FilterDetails = {
   role: any;
@@ -69,6 +75,26 @@ const columns = [
     title: "Actions",
     dataType: DataType.String,
   },
+  {
+    key: "state",
+    title: "state",
+    dataType: DataType.String,
+  },
+  {
+    key: "district",
+    title: "district",
+    dataType: DataType.String,
+  },
+  {
+    key: "age",
+    title: "age",
+    dataType: DataType.String,
+  },
+  {
+    key: "blocks",
+    title: "blocks",
+    dataType: DataType.String,
+  },
 ];
 
 const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholder}) => {
@@ -93,6 +119,8 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [confirmButtonDisable, setConfirmButtonDisable] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState("All");
+
   const [filters, setFilters] = useState<FilterDetails>({
     role: role,
     status: "active",
@@ -134,6 +162,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
     setSelectedState(selected);
   
     if (selected[0] === "") {
+      console.log("hii")
       setFilters({ role: role, status: "active" });
     } else {
      const stateCodes = code?.join(",");
@@ -143,7 +172,13 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
 
     console.log("Selected categories:", typeof code[0]);
   };
+  const handleFilterChange = async (event: SelectChangeEvent) => {
+    console.log(event.target.value as string);
+    setSelectedFilter(event.target.value as string);
+  };
+
   const handleDistrictChange = (selected: string[], code: string[]) => {
+    console.log("district")
     setSelectedBlock([]);
    setSelectedDistrict(selected);
 
@@ -215,11 +250,16 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
   useEffect(() => {
     const fetchUserList = async () => {
       try {
+        const fields=[ "age",
+        "districts",
+        "states",
+        "blocks"];
         const limit = pageLimit;
         const offset = pageOffset * limit;
         // const filters = { role: role , status:"active"};
         const sort = sortBy;
-        const resp = await userList({ limit, filters, sort, offset });
+        console.log("filters", filters)
+        const resp = await userList({ limit, filters, sort, offset , fields});
         const result = resp?.getUserDetails;
         // console.log(resp?.totalCount)
         if (resp?.totalCount >= 15) {
@@ -231,12 +271,35 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
         }
 
         setPageCount(Math.ceil(resp?.totalCount / pageLimit));
+         console.log(result)
+        const finalResult= result.map((user: any) => {
+          const ageField = user.customFields.find((field: any) => field.name === "age");
+          const blockField = user.customFields.find((field: any) => field.name === "blocks");
+          const districtField = user.customFields.find((field: any) => field.name === "districts");
+          const stateField = user.customFields.find((field: any) => field.name === "states");
 
-        setData(result);
+
+          return {
+            userId: user.userId,
+            username: user.username,
+            name: user.name,
+            role: user.role,
+            mobile: user.mobile,
+            age: ageField ? ageField.value : null,
+            district: districtField ? districtField.value : null,
+            state: stateField ? stateField.value : null,
+            blocks: blockField ? blockField.value : null,
+            // centers: null,
+            // Programs: null,
+          };
+        });
+        setData(finalResult);
         setCohortsFetched(false);
       } catch (error: any) {
         if (error?.response && error?.response.status === 404) {
           setData([]);
+          showToastMessage("No data found", "info");
+
         }
 
         console.log(error);
@@ -247,6 +310,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
 
   useEffect(() => {
     const fetchData = async () => {
+      
       if (data.length === 0 || cohortsFetched) return;
       const newData = await Promise.all(
         data.map(async (user) => {
@@ -308,6 +372,8 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
     handleDistrictChange: handleDistrictChange,
     handleBlockChange: handleBlockChange,
     handleSortChange: handleSortChange,
+    selectedFilter: selectedFilter,
+    handleFilterChange: handleFilterChange
   };
 
   return (
@@ -325,6 +391,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
           showIcons={true}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          
         />
       <DeleteUserModal
         open={isDeleteModalOpen}

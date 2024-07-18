@@ -38,14 +38,6 @@ const ActionIcon: React.FC<ActionCellProps> = ({
     >
        <Box
         onClick={() => {
-          onDelete(rowData);
-        }}
-        style={{ cursor: "pointer" }}
-      >
-        <DeleteIcon style={{ color: "rgba(0, 0, 0, 0.5)" }} />
-      </Box>
-      <Box
-        onClick={() => {
           onEdit(rowData);
         }}
         style={{
@@ -56,6 +48,15 @@ const ActionIcon: React.FC<ActionCellProps> = ({
       >
         <EditIcon style={{ color: "rgba(0, 0, 0, 0.5)" }} />
       </Box>
+       <Box
+        onClick={() => {
+          onDelete(rowData);
+        }}
+        style={{ cursor: "pointer" }}
+      >
+        <DeleteIcon style={{ color: "rgba(0, 0, 0, 0.5)" }} />
+      </Box>
+     
      
     </Box>
   );

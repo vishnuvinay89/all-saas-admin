@@ -43,6 +43,7 @@ const Block: React.FC = () => {
   const [blockData, setBlockData] = useState<BlockDetail[]>([]);
   const [pageSize, setPageSize] = useState<string | number>("");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [selectedFilter, setSelectedFilter] = useState("All");
 
   const columns = [
     {
@@ -124,7 +125,10 @@ const Block: React.FC = () => {
     });
     setBlockData(sortedBlocks);
   };
-
+  const handleFilterChange = async (event: SelectChangeEvent) => {
+    console.log(event.target.value as string);
+    setSelectedFilter(event.target.value as string);
+  };
   useEffect(() => {
     const fetchStateData = async () => {
       try {
@@ -163,6 +167,9 @@ const Block: React.FC = () => {
     selectedState: selectedState,
     selectedDistrict: selectedDistrict,
     showStateDropdown: false,
+    selectedFilter: selectedFilter,
+    handleFilterChange: handleFilterChange
+
   };
 
   return (
