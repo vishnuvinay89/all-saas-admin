@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import UserComponent from "@/components/UserComponent";
-import StateData from "./dummyAPI/stateData";
+import HeaderComponent from "@/components/HeaderComponent";
+import StateData from "../data/stateData";
 import Pagination from "@mui/material/Pagination";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
@@ -35,12 +35,13 @@ const District: React.FC = () => {
     StateData[0]?.districts[0] || "-"
   );
   const [selectedBlock, setSelectedBlock] = useState("");
-  const [selectedSort, setSelectedSort] = useState(t("MASTER.SORT"));
+  const [selectedSort, setSelectedSort] = useState("Sort");
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
   const [stateData, setStateData] = useState<StateDetails[]>(StateData);
   const [data, setData] = useState<UserDetails[]>([]);
   const [pageSize, setPageSize] = useState<string | number>("");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   const columns = [
     {
@@ -72,7 +73,7 @@ const District: React.FC = () => {
   );
 
   const handleStateChange = (event: SelectChangeEvent) => {
-    const selectedState = event.target.value as string;
+    const selectedState = event.target.value;
     setSelectedState(selectedState);
     const state = stateData.find((state) => state.state === selectedState);
     if (state) {
@@ -84,17 +85,23 @@ const District: React.FC = () => {
   };
 
   const handleDistrictChange = (event: SelectChangeEvent) => {
-    const selectedDistrict = event.target.value as string;
+    const selectedDistrict = event.target.value;
     setSelectedDistrict(selectedDistrict);
     fetchDataForDistrict(selectedDistrict);
   };
 
   const handleBlockChange = (event: SelectChangeEvent) => {
-    setSelectedBlock(event.target.value as string);
+    setSelectedBlock(event.target.value);
   };
 
-  const handleSortChange = async (event: SelectChangeEvent) => {
-    setSelectedSort(event.target.value as string);
+  const handleSortChange = (event: SelectChangeEvent) => {
+    const sortValue = event.target.value;
+    setSelectedSort(sortValue);
+    if (sortValue === "Z-A") {
+      setSortDirection("desc");
+    } else {
+      setSortDirection("asc");
+    }
   };
 
   const fetchDataForDistrict = (district: string) => {
@@ -108,6 +115,7 @@ const District: React.FC = () => {
     selectedSort: selectedSort,
     handleStateChange: handleStateChange,
     handleDistrictChange: handleDistrictChange,
+    handleSortChange: handleSortChange,
     states: stateData.map((state) => state.state),
     districts:
       stateData.find((state) => state.state === selectedState)?.districts || [],
@@ -116,9 +124,16 @@ const District: React.FC = () => {
     showStateDropdown: false,
   };
 
+  const sortedDistricts =
+    stateData
+      .find((state) => state.state === selectedState)
+      ?.districts.sort((a, b) =>
+        sortDirection === "asc" ? a.localeCompare(b) : b.localeCompare(a)
+      ) || [];
+
   return (
     <React.Fragment>
-      <UserComponent {...userProps}>
+      <HeaderComponent {...userProps}>
         <Box sx={{ minWidth: 240 }}>
           <FormControl sx={{ minWidth: 240 }}>
             <InputLabel id="demo-simple-select-label">States</InputLabel>
@@ -139,14 +154,10 @@ const District: React.FC = () => {
         </Box>
         <KaTableComponent
           columns={columns}
-          data={stateData
-            .filter((state) => state.state === selectedState)
-            .flatMap((state) =>
-              state.districts.map((district) => ({
-                district: district,
-                actions: "Action buttons",
-              }))
-            )}
+          data={sortedDistricts.map((district) => ({
+            district: district,
+            actions: "Action buttons",
+          }))}
           limit={pageLimit}
           offset={pageOffset * pageLimit}
           PagesSelector={() => (
@@ -158,8 +169,9 @@ const District: React.FC = () => {
             />
           )}
           PageSizeSelector={PageSizeSelectorFunction}
+          extraActions={[]}
         />
-      </UserComponent>
+      </HeaderComponent>
     </React.Fragment>
   );
 };

@@ -12,10 +12,11 @@
     "REASON_FOR_DELETION": "Reason for Deletion",
     "INCORRECT_DATA_ENTRY": "Incorrect Data Entry",
     "DUPLICATED_USER": "Duplicate User",
-    "OTHER": "Other",
     "NO_GO_BACK": "No, go back",
     "YES": "Yes",
-    "SURE_REASSIGN_CENTER": "Are you sure you want to re-assign Center to this user?"
+    "SURE_REASSIGN_CENTER": "Are you sure you want to re-assign Center to this user?",
+     "OTHER":"Other",
+    "SORT":"Sort"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -59,8 +60,10 @@
   },
   "MASTER": {
     "STATE": "State",
+    "STATE_NAMES": "State Names",
     "SORT": "Sort",
     "DISTRICT_NAMES": "District Names",
+    "BLOCK_NAMES": "Block Names",
     "ACTIONS": "Actions",
     "DISTRICTS": "Districts",
     "SEARCHBAR_PLACEHOLDER_STATE": "Search States",

@@ -3,7 +3,7 @@ import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState, useEffect } from "react";
-import UserComponent from "@/components/UserComponent";
+import HeaderComponent from "@/components/HeaderComponent";
 import { useTranslation } from "next-i18next";
 
 import Pagination from "@mui/material/Pagination";
@@ -150,7 +150,7 @@ const Cohorts: React.FC = () => {
           break;
       }
 
-      const userId = localStorage.getItem(Storage.USERID) || "";
+      const userId = localStorage.getItem(Storage.USER_ID) || "";
       const filters = { role: Role.TEACHER };
       const resp = await getCohortList(userId);
       const result = resp?.cohortData;
@@ -169,7 +169,7 @@ const Cohorts: React.FC = () => {
         const offset = pageOffset;
         // const sort = ["createdAt", "asc"];
         const filters = { role: Role.TEACHER };
-        const userId = localStorage.getItem(Storage.USERID) || "";
+        const userId = localStorage.getItem(Storage.USER_ID) || "";
 
         const resp = await getCohortList(userId);
         const result = resp;
@@ -230,7 +230,7 @@ const Cohorts: React.FC = () => {
         handleCloseModal={handleCloseModal}
         modalOpen={confirmationModalOpen}
       />
-      <UserComponent {...userProps}>
+      <HeaderComponent {...userProps}>
         <div>
           <KaTableComponent
             columns={columns}
@@ -243,7 +243,7 @@ const Cohorts: React.FC = () => {
             showIcons={true}
           />
         </div>
-      </UserComponent>
+      </HeaderComponent>
     </>
   );
 };
