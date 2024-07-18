@@ -127,6 +127,10 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
     />
   );
   const handleStateChange = async (selected: string[], code: string[]) => {
+    setSelectedDistrict([]);
+    setSelectedBlock([]);
+
+
     setSelectedState(selected);
   
     if (selected[0] === "") {
@@ -140,7 +144,8 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
     console.log("Selected categories:", typeof code[0]);
   };
   const handleDistrictChange = (selected: string[], code: string[]) => {
-    setSelectedDistrict(selected);
+    setSelectedBlock([]);
+   setSelectedDistrict(selected);
 
     if (selected[0] === "") {
       setFilters({
