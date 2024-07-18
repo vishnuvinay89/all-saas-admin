@@ -23,7 +23,7 @@ const Menuitems = [
       },
     ],
   },
-  
+
   {
     title: "SIDEBAR.COHORTS",
     icon: "users",

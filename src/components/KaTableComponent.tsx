@@ -55,7 +55,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
       <Table
         {...tableProps}
         paging={{
-          enabled: (data?.length ?? 0) >= 5 ? true : false, // to do dynamic limit for enable  pagination and page sizes by data
+          enabled:  true, // to do dynamic limit for enable  pagination and page sizes by data
           pageIndex: 0,
           pageSize: limit,
           pageSizes: pageSizes,

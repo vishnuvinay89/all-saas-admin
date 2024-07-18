@@ -1,7 +1,12 @@
 {
   "COMMON": {
     "LANGUAGE": "भाषा",
-    "LOADING": "लोड होत आहे"
+    "LOADING": "लोड होत आहे",
+    "OTHER": "इतर",
+    "SORT": "क्रमवारी लावा",
+    "EDIT_COHORT_NAME": "समूह संपादित करा",
+    "NAME": "नाव",
+    "UPDATE_COHORT": "कोहॉर्ट अपडेट करा"
   },
   "LOGIN_PAGE": {
     "USERNAME": "वापरकर्तानाव",
@@ -11,7 +16,12 @@
     "PASSWORD_PLACEHOLDER": "पासवर्ड टाका",
     "USERNAME_PASSWORD_NOT_CORRECT": "आपलं वापरकर्तानाव किंवा संकेतशब्द चुकीचं आहे",
     "FORGOT_PASSWORD": "पासवर्ड विसरलात?",
-    "REMEMBER_ME": "मला लक्षात ठेवा"
+    "REMEMBER_ME": "मला लक्षात ठेवा",
+    "NO_GO_BACK": "नाही, परत जा",
+    "YES": "होय"
+  },
+  "COHORTS": {
+    "SEARCHBAR_PLACEHOLDER": "कोहॉर्ट्स शोधा.."
   },
   "ACTIONBUTONS": {
     "EDIT": "संपादित करा",
@@ -30,5 +40,26 @@
     "BLOCK_NAMES": "ब्लॉकचे नावे",
     "ALL_DISTRICTS": "सर्व जिल्हे",
     "ALL_BLOCKS": "सर्व ब्लॉक"
+  },
+  "CENTERS": {
+    "CENTERS": "केंद्रे",
+    "REGULAR_CENTERS": "नियमित केंद्रे",
+    "REMOTE_CENTERS": "दूरस्थ केंद्रे",
+    "REMOTE_CENTER": "दूरस्थ केंद्र",
+    "REGULAR": "नियमित",
+    "REMOTE": "दूरस्थ",
+    "SEARCH_BLOCKS": "ब्लॉक शोधा",
+    "BLOCK_REQUEST": "आपण या वापरकर्त्यास ब्लॉक पुन्हा नियुक्त करण्यासाठी राज्य टीम लीडरला विनंती पाठवत आहात",
+    "NEW_CENTER": "नवीन केंद्र",
+    "CENTER_TYPE": "केंद्र प्रकार",
+    "UNIT_NAME": "युनिटचे नाव",
+    "NOTE": "टीप: हे केंद्राचे नाव असेल",
+    "CENTER_CREATED": "केंद्र यशस्वीरित्या तयार झाले!",
+    "RENAME_CENTER": "केंद्राचे नाव बदला",
+    "REQUEST_TO_DELETE": "हटविण्याची विनंती",
+    "RENAME": "नाव बदला",
+    "CENTER_RENAMED": "केंद्राचे नाव यशस्वीरित्या बदलले!",
+    "SEND_REQUEST": "विनंती पाठवा",
+    "REQUEST_TO_DELETE_HAS_BEEN_SENT": "हटविण्याची विनंती पाठविण्यात आली आहे"
   }
 }
