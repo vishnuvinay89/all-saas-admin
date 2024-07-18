@@ -8,16 +8,15 @@ const customTheme = extendTheme({
           main: "#FDBE16",
           light: "#FFDEA1",
           contrastText: " #EBE1D4",
-          "100":"#000000"
-          
+          "100": "#000000",
         },
         secondary: {
           main: "#0D599E",
           light: "#E7F3F8",
           contrastText: " #cdc5bd",
-          "100":"#F7F7F7",
-          "200":"#FFFFFF",
-          "300":"#EEEEEE"
+          "100": "#F7F7F7",
+          "200": "#FFFFFF",
+          "300": "#EEEEEE",
         },
         success: {
           main: "#1A8825",
@@ -179,7 +178,7 @@ const customTheme = extendTheme({
     },
   },
   typography: {
-    fontFamily: "inherit",
+    fontFamily: "Poppins, Arial, sans-serif", 
     h1: {
       fontSize: "22px",
       fontWeight: 400,
