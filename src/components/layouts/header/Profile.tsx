@@ -82,7 +82,11 @@ const Profile = () => {
               fontWeight="700"
               sx={{
                 ml: 1,
-              }}
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+               // whiteSpace: 'nowrap',
+                // maxWidth: '200px',  
+                          }}
             >
               {userName ? userName : ""}
             </Typography>

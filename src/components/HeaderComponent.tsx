@@ -156,7 +156,7 @@ const HeaderComponent = ({
           <Grid container spacing={isMobile ? 1 : 2}>
             <Grid item xs={12} sm={isMediumScreen ? 12 : 4}>
               <MultipleSelectCheckmarks
-                names={allStates.map((state) => state.label)}
+                names={allStates.map((state) => state.label?.toLowerCase().charAt(0).toUpperCase() + state.label?.toLowerCase().slice(1))}
                 codes={allStates.map((state) => state.value)}
                 tagName={t("FACILITATORS.ALL_STATES")}
                 selectedCategories={selectedState}
