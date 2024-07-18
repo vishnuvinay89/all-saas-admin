@@ -15,8 +15,11 @@
     "NO_GO_BACK": "No, go back",
     "YES": "Yes",
     "SURE_REASSIGN_CENTER": "Are you sure you want to re-assign Center to this user?",
-     "OTHER":"Other",
-    "SORT":"Sort"
+    "OTHER": "Other",
+    "SORT": "Sort",
+    "EDIT_COHORT_NAME": "Edit Cohort",
+    "NAME": "Name",
+    "UPDATE_COHORT": "Update Cohort"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",

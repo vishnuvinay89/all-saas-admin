@@ -1,7 +1,11 @@
 {
   "COMMON": {
     "LANGUAGE": "ଭାଷା",
-    "LOADING": "ଲୋଡ୍ ହେଉଛି (Loading)"
+    "LOADING": "ଲୋଡ୍ ହେଉଛି (Loading)",
+    "UPDATE_COHORT": "କୋହୋର୍ଟ୍ ଅଦ୍ୟତନ କରନ୍ତୁ",
+    "SORT": "ସର୍ଟ",
+    "OTHER": "ଅନ୍ୟ",
+    "NAME": "ନାମ"
   },
   "LOGIN_PAGE": {
     "USERNAME": "ଉପଯୋଗକର୍ତା ନାମ",

@@ -8,6 +8,7 @@ import {
   useMediaQuery,
   Grid,
   Button,
+  InputLabel,
 } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import AddIcon from "@mui/icons-material/Add";
@@ -20,6 +21,7 @@ import {
   getStateList,
   getDistrictList,
 } from "../services/MasterDataService";
+import { Archive } from "@mui/icons-material";
 
 const AllStates = [
   { name: "Maharashtra", code: "mh" },
@@ -48,6 +50,7 @@ interface Block {
   label: string;
 }
 const Sort = ["A-Z", "Z-A"];
+const Filter = ["Active", "Archived"];
 
 const HeaderComponent = ({
   children,
@@ -57,10 +60,12 @@ const HeaderComponent = ({
   selectedDistrict,
   selectedBlock,
   selectedSort,
+  selectedFilter,
   handleStateChange,
   handleDistrictChange,
   handleBlockChange,
   handleSortChange,
+  handleFilterChange,
   showStateDropdown = true,
 }: any) => {
   const { t } = useTranslation();
@@ -80,7 +85,7 @@ const HeaderComponent = ({
     }
     try {
       const response = await getDistrictList(selectedCodes);
-      const result=response?.result
+      const result = response?.result;
       setAllDistricts(result);
     } catch (error) {
       console.log(error);
@@ -88,13 +93,16 @@ const HeaderComponent = ({
     handleStateChange(selectedNames, selectedCodes);
   };
 
-  const handleDistrictChangeWrapper = async(selected: string[], selectedCodes: string[]) => {
+  const handleDistrictChangeWrapper = async (
+    selected: string[],
+    selectedCodes: string[]
+  ) => {
     if (selected[0] === "") {
       handleBlockChange([], []);
     }
     try {
       const response = await getBlockList(selectedCodes);
-      const result=response?.result
+      const result = response?.result;
       setAllBlocks(result);
     } catch (error) {
       console.log(error);
@@ -102,7 +110,10 @@ const HeaderComponent = ({
     handleDistrictChange(selected, selectedCodes);
   };
 
-  const handleBlockChangeWrapper = (selected: string[], selectedCodes: string[]) => {
+  const handleBlockChangeWrapper = (
+    selected: string[],
+    selectedCodes: string[]
+  ) => {
     handleBlockChange(selected, selectedCodes);
   };
   useEffect(() => {
@@ -169,7 +180,9 @@ const HeaderComponent = ({
                 tagName={t("FACILITATORS.ALL_BLOCKS")}
                 selectedCategories={selectedBlock}
                 onCategoryChange={handleBlockChangeWrapper}
-                disabled={selectedDistrict.length === 0 || selectedDistrict[0] === ""}
+                disabled={
+                  selectedDistrict.length === 0 || selectedDistrict[0] === ""
+                }
               />
             </Grid>
           </Grid>
@@ -182,7 +195,7 @@ const HeaderComponent = ({
         sx={{
           display: "flex",
           flexDirection: isMobile || isMediumScreen ? "column" : "row",
-          gap: isMobile || isMediumScreen ? "8px" : "35%",
+          gap: isMobile || isMediumScreen ? "8px" : "5%",
         }}
       >
         <Box sx={{ flex: 1 }}>
@@ -193,25 +206,48 @@ const HeaderComponent = ({
             fullWidth
           />
         </Box>
-        <FormControl sx={{ minWidth: "120px" }}>
-          <Select
-            value={selectedSort}
-            onChange={handleSortChange}
-            displayEmpty
-            style={{
-              borderRadius: "8px",
-              height: "40px",
-              fontSize: "14px",
-            }}
-          >
-            <MenuItem value="Sort">{t("COMMON.SORT")}</MenuItem>
-            {Sort.map((state, index) => (
-              <MenuItem value={state} key={index}>
-                {state}
+        <Box display={"flex"} gap={1}>
+          <FormControl sx={{ minWidth: "120px" }}>
+            <Select
+              value={selectedFilter}
+              onChange={handleFilterChange}
+              displayEmpty
+              style={{
+                borderRadius: "8px",
+                height: "40px",
+                fontSize: "14px",
+              }}
+            >
+              <MenuItem value="All">
+                <em>All</em>
               </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+              {Filter?.map((filter, index) => (
+                <MenuItem value={filter} key={index}>
+                  {filter}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl sx={{ minWidth: "120px" }}>
+            <Select
+              value={selectedSort}
+              onChange={handleSortChange}
+              displayEmpty
+              style={{
+                borderRadius: "8px",
+                height: "40px",
+                fontSize: "14px",
+              }}
+            >
+              <MenuItem value="Sort">{t("COMMON.SORT")}</MenuItem>
+              {Sort.map((state, index) => (
+                <MenuItem value={state} key={index}>
+                  {state}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
       </Box>
       <Box
         sx={{
@@ -227,12 +263,12 @@ const HeaderComponent = ({
         }}
       >
         <Button
-      //  variant="contained"
+          //  variant="contained"
           startIcon={<AddIcon />}
           sx={{
             textTransform: "none",
             fontSize: "14px",
-            color: theme.palette.primary["100"]
+            color: theme.palette.primary["100"],
           }}
         >
           {t("COMMON.ADD_NEW")}

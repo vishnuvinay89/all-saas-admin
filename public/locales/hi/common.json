@@ -13,7 +13,13 @@
     "FORGOT_PASSWORD": "पासवर्ड भूल गए?",
     "REMEMBER_ME": "मुझे याद रखें",
     "NO_GO_BACK": "नहीं, वापस जाओ",
-    "YES": "हाँ"
+    "YES": "हाँ",
+    "OTHER": "अन्य",
+    "SORT": "क्रमबद्ध करें",
+    "EDIT_COHORT_NAME": "समूह संपादित करें",
+    "UPDATE_COHORT": "अद्यतन समूह"
+    
+   
   },
   "COHORTS": {
     "SEARCHBAR_PLACEHOLDER": "कोहॉर्ट्स खोजें.."

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FormEvent } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -15,6 +15,8 @@ import { Role, Storage } from "@/utils/app.constant";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationModal from "@/components/ConfirmationModal";
+import CustomModal from "@/components/CustomModal";
+import { Box, TextField } from "@mui/material";
 type UserDetails = {
   userId: any;
   username: any;
@@ -58,6 +60,7 @@ const Cohorts: React.FC = () => {
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
+  const [selectedFilter, setSelectedFilter] = useState("All");
 
   const [data, setData] = useState<UserDetails[]>([]);
   const { t } = useTranslation();
@@ -67,7 +70,10 @@ const Cohorts: React.FC = () => {
     React.useState<boolean>(false);
 
   const [selectedCohortId, setSelectedCohortId] = React.useState<string>("");
-
+  const [editModelOpen, setIsEditModalOpen] = React.useState<boolean>(false);
+  const [confirmButtonDisable, setConfirmButtonDisable] =
+    React.useState<boolean>(false);
+  const [inputName, setInputName] = React.useState<string>("");
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
     setPageSize(event.target.value);
     setPageLimit(Number(event.target.value));
@@ -123,7 +129,6 @@ const Cohorts: React.FC = () => {
   const handleActionForDelete = async () => {
     if (selectedCohortId) {
       let cohortDetails = {
-        name: "New Cohort",
         status: "active",
       };
       const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
@@ -161,6 +166,12 @@ const Cohorts: React.FC = () => {
     }
     setSelectedSort(event.target.value as string);
   };
+
+  const handleFilterChange = async (event: SelectChangeEvent) => {
+    console.log(event.target.value as string);
+    setSelectedFilter(event.target.value as string);
+  };
+
   useEffect(() => {
     const fetchUserList = async () => {
       try {
@@ -186,6 +197,12 @@ const Cohorts: React.FC = () => {
   const handleEdit = (rowData: any) => {
     console.log("Edit row:", rowData);
     // Handle edit action here
+    setIsEditModalOpen(true);
+    if (rowData) {
+      const cohortId = rowData?.cohortId;
+      setSelectedCohortId(cohortId);
+    }
+    setConfirmButtonDisable(false);
   };
 
   const handleDelete = (rowData: any) => {
@@ -212,14 +229,60 @@ const Cohorts: React.FC = () => {
     selectedDistrict: selectedDistrict,
     selectedBlock: selectedBlock,
     selectedSort: selectedSort,
+    selectedFilter: selectedFilter,
     handleStateChange: handleStateChange,
     handleDistrictChange: handleDistrictChange,
     handleBlockChange: handleBlockChange,
     handleSortChange: handleSortChange,
+    handleFilterChange: handleFilterChange,
+  };
+
+  const onCloseEditMOdel = () => {
+    setIsEditModalOpen(false);
+  };
+
+  const handleInputName = (event: FormEvent<HTMLFormElement>) => {
+    const updatedName = event.target.value;
+    setInputName(updatedName);
+  };
+
+  const handleUpdateAction = async () => {
+    setConfirmButtonDisable(true);
+
+    if (selectedCohortId) {
+      let cohortDetails = {
+        name: inputName,
+      };
+      const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
+      console.log("resp:", resp);
+    } else {
+      console.log("No cohort Id Selected");
+    }
+    onCloseEditMOdel();
   };
 
   return (
     <>
+      <CustomModal
+        open={editModelOpen}
+        handleClose={onCloseEditMOdel}
+        title={t("COMMON.EDIT_COHORT_NAME")}
+        // subtitle={t("COMMON.NAME")}
+        primaryBtnText={t("COMMON.UPDATE_COHORT")}
+        secondaryBtnText="Cancel"
+        primaryBtnClick={handleUpdateAction}
+        primaryBtnDisabled={confirmButtonDisable}
+        secondaryBtnClick={onCloseEditMOdel}
+      >
+        <Box>
+          <TextField
+            id="standard-basic"
+            label="Cohort Name"
+            variant="standard"
+            onChange={handleInputName}
+          />
+        </Box>
+      </CustomModal>
       <ConfirmationModal
         message={t("CENTERS.REQUEST_TO_DELETE_HAS_BEEN_SENT")}
         handleAction={handleActionForDelete}
