@@ -10,10 +10,11 @@ import Pagination from "@mui/material/Pagination";
 
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
-import { getCohortList } from "@/services/cohortService";
+import { getCohortList, updateCohortUpdate } from "@/services/cohortService";
 import { Role, Storage } from "@/utils/app.constant";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ConfirmationModal from "@/components/ConfirmationModal";
 type UserDetails = {
   userId: any;
   username: any;
@@ -30,7 +31,7 @@ const columns = [
   //   dataType: DataType.String,
   // },
   {
-    key: "name",
+    key: "cohortName",
     title: "Name",
     dataType: DataType.String,
   },
@@ -62,6 +63,10 @@ const Cohorts: React.FC = () => {
   const { t } = useTranslation();
   const [pageSize, setPageSize] = React.useState<string | number>("");
   const [open, setOpen] = React.useState(false);
+  const [confirmationModalOpen, setConfirmationModalOpen] =
+    React.useState<boolean>(false);
+
+  const [selectedCohortId, setSelectedCohortId] = React.useState<string>("");
 
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
     setPageSize(event.target.value);
@@ -110,6 +115,23 @@ const Cohorts: React.FC = () => {
     setSelectedBlock(selected);
     console.log("Selected categories:", selected);
   };
+
+  const handleCloseModal = () => {
+    setConfirmationModalOpen(false);
+  };
+
+  const handleActionForDelete = async () => {
+    if (selectedCohortId) {
+      let cohortDetails = {
+        name: "New Cohort",
+        status: "active",
+      };
+      const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
+      console.log("resp:", resp);
+    } else {
+    }
+  };
+
   const handleSortChange = async (event: SelectChangeEvent) => {
     //console.log(event.target.value)
     try {
@@ -150,7 +172,7 @@ const Cohorts: React.FC = () => {
         const userId = localStorage.getItem(Storage.USERID) || "";
 
         const resp = await getCohortList(userId);
-        const result = resp?.cohortData;
+        const result = resp;
         console.log("result", result);
 
         setData(result);
@@ -167,6 +189,12 @@ const Cohorts: React.FC = () => {
   };
 
   const handleDelete = (rowData: any) => {
+    setConfirmationModalOpen(true);
+    if (rowData) {
+      const cohortId = rowData?.cohortId;
+      setSelectedCohortId(cohortId);
+    }
+    handleActionForDelete();
     console.log("Delete row:", rowData);
     // Handle delete action here
   };
@@ -191,20 +219,32 @@ const Cohorts: React.FC = () => {
   };
 
   return (
-    <UserComponent {...userProps}>
-      <div>
-        <KaTableComponent
-          columns={columns}
-          data={data}
-          limit={pageLimit}
-          offset={pageOffset}
-          PagesSelector={PagesSelector}
-          PageSizeSelector={PageSizeSelectorFunction}
-          extraActions={extraActions}
-          showIcons={true}
-        />
-      </div>
-    </UserComponent>
+    <>
+      <ConfirmationModal
+        message={t("CENTERS.REQUEST_TO_DELETE_HAS_BEEN_SENT")}
+        handleAction={handleActionForDelete}
+        buttonNames={{
+          primary: t("COMMON.YES"),
+          secondary: t("COMMON.NO_GO_BACK"),
+        }}
+        handleCloseModal={handleCloseModal}
+        modalOpen={confirmationModalOpen}
+      />
+      <UserComponent {...userProps}>
+        <div>
+          <KaTableComponent
+            columns={columns}
+            data={data}
+            limit={pageLimit}
+            offset={pageOffset}
+            PagesSelector={PagesSelector}
+            PageSizeSelector={PageSizeSelectorFunction}
+            extraActions={extraActions}
+            showIcons={true}
+          />
+        </div>
+      </UserComponent>
+    </>
   );
 };
 

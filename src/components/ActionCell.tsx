@@ -45,34 +45,44 @@ const ActionCell: React.FC<ActionCellProps> = ({
   };
 
   return (
-    <Box>
-      <IconButton size="small" onClick={handleClick}>
-        <MoreVertIcon fontSize="small" />
-      </IconButton>
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-        {extraActions?.map((action, index) => (
-          <>
-            <Divider />
-            <MenuItem
-              sx={{ fontSize: "small" }}
-              onClick={() => {
-                action.onClick(rowData);
-                handleClose();
-              }}
-            >
-              {showIcons ? (
-                <ListItemIcon>
-                  <action.icon fontSize="small" />
-                </ListItemIcon>
-              ) : (
-                ""
-              )}
-              <ListItemText primary={t(action.name)} />
-            </MenuItem>
-          </>
-        ))}
-      </Menu>
-    </Box>
+    <React.Fragment>
+      {extraActions.length > 0 ? (
+        <Box>
+          <IconButton size="small" onClick={handleClick}>
+            <MoreVertIcon fontSize="small" />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            {extraActions?.map((action, index) => (
+              <>
+                <Divider />
+                <MenuItem
+                  sx={{ fontSize: "small" }}
+                  onClick={() => {
+                    action.onClick(rowData);
+                    handleClose();
+                  }}
+                >
+                  {showIcons ? (
+                    <ListItemIcon>
+                      <action.icon fontSize="small" />
+                    </ListItemIcon>
+                  ) : (
+                    ""
+                  )}
+                  <ListItemText primary={t(action.name)} />
+                </MenuItem>
+              </>
+            ))}
+          </Menu>
+        </Box>
+      ) : (
+        ""
+      )}
+    </React.Fragment>
   );
 };
 

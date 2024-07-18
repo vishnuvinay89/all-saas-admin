@@ -3,16 +3,19 @@
     "LANGUAGE": "Language",
     "LOADING": "Loading",
     "ADD_NEW": "Add New",
-    "PAGE_SIZE":"Page Size",
+    "PAGE_SIZE": "Page Size",
     "DELETE_USER": "Delete User Permanently",
     "DELETE_USER_WITH_REASON": "Delete User",
     "USER_DELETED_PERMANENTLY": "User Successfully Deleted!",
     "OTHER_REASON": "Other Reason",
     "OTHER_REASON_PLACEHOLDER": "Enter Other Reason",
     "REASON_FOR_DELETION": "Reason for Deletion",
-    "INCORRECT_DATA_ENTRY":"Incorrect Data Entry",
-    "DUPLICATED_USER":"Duplicate User",
-    "OTHER":"Other"
+    "INCORRECT_DATA_ENTRY": "Incorrect Data Entry",
+    "DUPLICATED_USER": "Duplicate User",
+    "OTHER": "Other",
+    "NO_GO_BACK": "No, go back",
+    "YES": "Yes",
+    "SURE_REASSIGN_CENTER": "Are you sure you want to re-assign Center to this user?"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -51,6 +54,9 @@
   "TEAM_LEADERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders.."
   },
+  "COHORTS": {
+    "SEARCHBAR_PLACEHOLDER": "Search Cohorts.."
+  },
   "MASTER": {
     "STATE": "State",
     "SORT": "Sort",
@@ -61,5 +67,26 @@
     "SEARCHBAR_PLACEHOLDER_DISTRICT": "Search Districts",
     "SEARCHBAR_PLACEHOLDER_BLOCK": "Search Blocks",
     "BLOCKS": "Blocks"
+  },
+  "CENTERS": {
+    "CENTERS": "Centers",
+    "REGULAR_CENTERS": "Regular Centers",
+    "REMOTE_CENTERS": "Remote Centers",
+    "REMOTE_CENTER": "Remote Center",
+    "REGULAR": "Regular",
+    "REMOTE": "Remote",
+    "SEARCH_BLOCKS": "Search Blocks",
+    "BLOCK_REQUEST": "You are sending a request to the state Team Leader to re-assign the Block to this user",
+    "NEW_CENTER": "New Center",
+    "CENTER_TYPE": "Center Type",
+    "UNIT_NAME": "Unit Name",
+    "NOTE": "Note: This will be the center name",
+    "CENTER_CREATED": "Center Created Successfully!",
+    "RENAME_CENTER": "Rename Center",
+    "REQUEST_TO_DELETE": "Request to Delete",
+    "RENAME": "Rename",
+    "CENTER_RENAMED": "Center Renamed Successfully!",
+    "SEND_REQUEST": "Send Request",
+    "REQUEST_TO_DELETE_HAS_BEEN_SENT": "Request to Delete has been sent"
   }
 }
