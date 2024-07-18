@@ -1,7 +1,11 @@
 {
   "COMMON": {
     "LANGUAGE": "ଭାଷା",
-    "LOADING": "ଲୋଡ୍ ହେଉଛି (Loading)"
+    "LOADING": "ଲୋଡ୍ ହେଉଛି (Loading)",
+    "UPDATE_COHORT": "କୋହୋର୍ଟ୍ ଅଦ୍ୟତନ କରନ୍ତୁ",
+    "SORT": "ସର୍ଟ",
+    "OTHER": "ଅନ୍ୟ",
+    "NAME": "ନାମ"
   },
   "LOGIN_PAGE": {
     "USERNAME": "ଉପଯୋଗକର୍ତା ନାମ",
@@ -11,11 +15,17 @@
     "PASSWORD_PLACEHOLDER": "ପାସୱାର୍ଡ ଏଣ୍ଟର କର",
     "USERNAME_PASSWORD_NOT_CORRECT": "ଆପଣଙ୍କ ବ୍ୟବହାରକୃତ ନାମ କିମ୍ବା ପାସ୍‌ୱାର୍ଡ ଭୁଲ ଅଛି",
     "FORGOT_PASSWORD": "ପାସ୍‌ୱାର୍ଡ ଭୁଲିଛନ୍ତି?",
-    "REMEMBER_ME": "ମୋତେ ମନ ରଖ"
+    "REMEMBER_ME": "ମୋତେ ମନ ରଖ",
+    "NO_GO_BACK": "ନାହିଁ, ପଛକୁ ଯାଆନ୍ତୁ",
+    "YES": "ହଁ"
   },
   "ACTIONBUTONS": {
     "EDIT": "ସଂପାଦନା",
-    "DELETE": "ବିଲୋପ"},
+    "DELETE": "ବିଲୋପ"
+  },
+  "COHORTS": {
+    "SEARCHBAR_PLACEHOLDER": "କୋହର୍ଟସ୍ ସନ୍ଧାନ କରନ୍ତୁ.."
+  },
   "MASTER": {
     "STATE": "ରାଜ୍ୟ",
     "SORT": "ଛାଟାନ୍ତୁ",
@@ -29,5 +39,26 @@
     "BLOCK_NAMES": "ବ୍ଲକ୍ ନାମ",
     "ALL_DISTRICTS": "ସମସ୍ତ ଜିଲ୍ଲା",
     "ALL_BLOCKS": "ସମସ୍ତ ବ୍ଲକ୍‌"
+  },
+  "CENTERS": {
+    "CENTERS": "କେନ୍ଦ୍ରଗୁଡିକ",
+    "REGULAR_CENTERS": "ନିୟମିତ କେନ୍ଦ୍ରଗୁଡିକ",
+    "REMOTE_CENTERS": "ଦୂରସ୍ଥ କେନ୍ଦ୍ରଗୁଡିକ",
+    "REMOTE_CENTER": "ଦୂରସ୍ଥ କେନ୍ଦ୍ର",
+    "REGULAR": "ନିୟମିତ",
+    "REMOTE": "ଦୂରସ୍ଥ",
+    "SEARCH_BLOCKS": "ବ୍ଲକଗୁଡ଼ିକୁ ଖୋଜନ୍ତୁ",
+    "BLOCK_REQUEST": "ଆପଣ ଏହି ବ୍ୟବହାରକାରୀଙ୍କୁ ବ୍ଲକ ପୁନଃ ନିଯୁକ୍ତ କରିବା ପାଇଁ ରାଜ୍ୟ ଟିମ୍ ଲିଡରକୁ ଅନୁରୋଧ ପଠାଉଛନ୍ତି",
+    "NEW_CENTER": "ନୂତନ କେନ୍ଦ୍ର",
+    "CENTER_TYPE": "କେନ୍ଦ୍ର ପ୍ରକାର",
+    "UNIT_NAME": "ଅଂଶର ନାମ",
+    "NOTE": "ଟିପ୍ପଣୀ: ଏହା ହେବ କେନ୍ଦ୍ରର ନାମ",
+    "CENTER_CREATED": "କେନ୍ଦ୍ର ସଫଳତାପୂର୍ଣ୍ଣ ଭାବରେ ସୃଷ୍ଟି ହେଲା!",
+    "RENAME_CENTER": "କେନ୍ଦ୍ରର ନାମ ପରିବର୍ତ୍ତନ କରନ୍ତୁ",
+    "REQUEST_TO_DELETE": "ମିଟାଇବାକୁ ଅନୁରୋଧ",
+    "RENAME": "ନାମ ପରିବର୍ତ୍ତନ କରନ୍ତୁ",
+    "CENTER_RENAMED": "କେନ୍ଦ୍ରର ନାମ ସଫଳତାପୂର୍ଣ୍ଣ ଭାବରେ ପରିବର୍ତ୍ତିତ ହେଲା!",
+    "SEND_REQUEST": "ଅନୁରୋଧ ପଠାଅନ୍ତୁ",
+    "REQUEST_TO_DELETE_HAS_BEEN_SENT": "ମିଟାଇବା ପାଇଁ ଅନୁରୋଧ ପଠାଯାଇଛି"
   }
 }

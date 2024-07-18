@@ -23,7 +23,7 @@ interface CustomModalProps {
   showClose?: boolean;
   backdropClose?: boolean;
   primaryBtnDisabled?: boolean;
-   children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 const CustomModal: React.FC<CustomModalProps> = ({
@@ -38,7 +38,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
   showClose = true,
   backdropClose = true,
   primaryBtnDisabled = true,
-   children,
+  children,
 }) => {
   const isSmallScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
@@ -57,15 +57,14 @@ const CustomModal: React.FC<CustomModalProps> = ({
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: isSmallScreen ? '90%' : 400,
-          maxWidth: '90%',
+          width: isSmallScreen ? "90%" : 400,
+          maxWidth: "90%",
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 2,
           borderRadius: 2,
         }}
       >
-        
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Box>
             <Typography id="modal-title" variant="h1">
@@ -78,17 +77,22 @@ const CustomModal: React.FC<CustomModalProps> = ({
             )}
           </Box>
           <Box display="flex" justifyContent="flex-end">
-          {showClose && (
-            <IconButton onClick={handleClose} sx={{ ml: "auto" }}>
-              <CloseIcon />
-            </IconButton>
-          )}
-        </Box>
+            {showClose && (
+              <IconButton onClick={handleClose} sx={{ ml: "auto" }}>
+                <CloseIcon />
+              </IconButton>
+            )}
+          </Box>
         </Box>
         <Divider sx={{ my: 2 }} />
         <Box id="modal-description">{children}</Box>
         <Box mt={2} display="flex" justifyContent="center" gap={2}>
-          <Button  fullWidth onClick={primaryBtnClick} variant="contained"  disabled={primaryBtnDisabled}>
+          <Button
+            fullWidth
+            onClick={primaryBtnClick}
+            variant="contained"
+            disabled={primaryBtnDisabled}
+          >
             {primaryBtnText}
           </Button>
           {secondaryBtnText && (

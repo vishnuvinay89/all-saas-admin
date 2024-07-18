@@ -11,7 +11,18 @@
     "PASSWORD_PLACEHOLDER": "पासवर्ड दर्ज करें",
     "USERNAME_PASSWORD_NOT_CORRECT": "आपका यूजरनेम या पासवर्ड गलत है",
     "FORGOT_PASSWORD": "पासवर्ड भूल गए?",
-    "REMEMBER_ME": "मुझे याद रखें"
+    "REMEMBER_ME": "मुझे याद रखें",
+    "NO_GO_BACK": "नहीं, वापस जाओ",
+    "YES": "हाँ",
+    "OTHER": "अन्य",
+    "SORT": "क्रमबद्ध करें",
+    "EDIT_COHORT_NAME": "समूह संपादित करें",
+    "UPDATE_COHORT": "अद्यतन समूह"
+    
+   
+  },
+  "COHORTS": {
+    "SEARCHBAR_PLACEHOLDER": "कोहॉर्ट्स खोजें.."
   },
   "ACTIONBUTONS": {
     "EDIT": "संपादित करें",
@@ -30,5 +41,26 @@
     "BLOCK_NAMES": "ब्लॉक के नाम",
     "ALL_DISTRICTS": "सभी जिले",
     "ALL_BLOCKS": "सभी ब्लॉक"
+  },
+  "CENTERS": {
+    "CENTERS": "केंद्र",
+    "REGULAR_CENTERS": "नियमित केंद्र",
+    "REMOTE_CENTERS": "दूरस्थ केंद्र",
+    "REMOTE_CENTER": "दूरस्थ केंद्र",
+    "REGULAR": "नियमित",
+    "REMOTE": "दूरस्थ",
+    "SEARCH_BLOCKS": "ब्लॉक खोजें",
+    "BLOCK_REQUEST": "आप इस उपयोगकर्ता को ब्लॉक पुनः असाइन करने के लिए राज्य टीम लीडर को अनुरोध भेज रहे हैं",
+    "NEW_CENTER": "नया केंद्र",
+    "CENTER_TYPE": "केंद्र प्रकार",
+    "UNIT_NAME": "इकाई का नाम",
+    "NOTE": "नोट: यह केंद्र का नाम होगा",
+    "CENTER_CREATED": "केंद्र सफलतापूर्वक बनाया गया!",
+    "RENAME_CENTER": "केंद्र का नाम बदलें",
+    "REQUEST_TO_DELETE": "हटाने का अनुरोध",
+    "RENAME": "नाम बदलें",
+    "CENTER_RENAMED": "केंद्र का नाम सफलतापूर्वक बदला गया!",
+    "SEND_REQUEST": "अनुरोध भेजें",
+    "REQUEST_TO_DELETE_HAS_BEEN_SENT": "हटाने का अनुरोध भेजा गया है"
   }
 }
