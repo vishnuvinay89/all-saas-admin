@@ -92,7 +92,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
   const [selectedUserId, setSelectedUserId] = useState("");
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
-  const [confirmButtonDisable, setConfirmButtonDisable] = useState(true);
+  const [confirmButtonDisable, setConfirmButtonDisable] = useState(false);
   const [filters, setFilters] = useState<FilterDetails>({
     role: role,
     status: "active",
@@ -205,6 +205,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
   };
 
   const handleDelete = (rowData: any) => {
+
     setIsDeleteModalOpen(true);
     setSelectedUserId(rowData.userId);
     //const userData="";
@@ -322,6 +323,8 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
           pageSizes={pageSizeArray}
           extraActions={extraActions}
           showIcons={true}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       <DeleteUserModal
         open={isDeleteModalOpen}

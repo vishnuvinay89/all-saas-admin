@@ -5,7 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Checkbox from '@mui/material/Checkbox';
+import { useTranslation } from "next-i18next";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -28,6 +28,7 @@ interface MultipleSelectCheckmarksProps {
 }
 
 const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({ names, codes, tagName, selectedCategories, onCategoryChange, disabled = false }) => {
+  const { t } = useTranslation();
   const handleChange = (event: SelectChangeEvent<typeof selectedCategories>) => {
     const {
       target: { value },
@@ -39,7 +40,7 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({ nam
 
   return (
     <div>
-      <FormControl sx={{ m: 1, width: 300 }} disabled={disabled}>
+      <FormControl sx={{ m: 1, width: 200 }} disabled={disabled}>
         <InputLabel id="multiple-checkbox-label">{tagName}</InputLabel>
         <Select
           labelId="multiple-checkbox-label"
@@ -52,7 +53,7 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({ nam
           MenuProps={MenuProps}
         >
           <MenuItem value="">
-            <em>None</em>
+            <em> {t("COMMON.ALL")}</em>
           </MenuItem>
           {names.map((name) => (
             <MenuItem key={name} value={name}>

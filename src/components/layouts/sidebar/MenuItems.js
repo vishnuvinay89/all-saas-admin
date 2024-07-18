@@ -23,21 +23,7 @@ const Menuitems = [
       },
     ],
   },
-  {
-    title: "SIDEBAR.COURSE_PLANNER",
-    icon: "calendar",
-    href: "/course-planner",
-    subOptions: [
-      {
-        title: "SIDEBAR.CREATE_PLAN",
-        href: "/createPlan",
-      },
-      {
-        title: "SIDEBAR.VIEW_PLANS",
-        href: "/viewPlans",
-      },
-    ],
-  },
+  
   {
     title: "SIDEBAR.COHORTS",
     icon: "users",
@@ -60,6 +46,21 @@ const Menuitems = [
       {
         title: "Block",
         href: "/block",
+      },
+    ],
+  },
+  {
+    title: "SIDEBAR.COURSE_PLANNER",
+    icon: "calendar",
+    href: "/course-planner",
+    subOptions: [
+      {
+        title: "SIDEBAR.CREATE_PLAN",
+        href: "/createPlan",
+      },
+      {
+        title: "SIDEBAR.VIEW_PLANS",
+        href: "/viewPlans",
       },
     ],
   },

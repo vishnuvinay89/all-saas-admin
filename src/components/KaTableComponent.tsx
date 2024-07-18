@@ -8,7 +8,7 @@ import "ka-table/style.css";
 import { IPagingProps } from "ka-table/props";
 import { updatePageIndex, updatePageSize } from "ka-table/actionCreators";
 import ActionCell from "./ActionCell";
-
+import ActionIcon from "./ActionIcon";
 interface KaTableComponentProps {
   columns: ITableProps["columns"];
   data?: ITableProps["data"];
@@ -17,7 +17,8 @@ interface KaTableComponentProps {
   PagesSelector?: any;
   PageSizeSelector?: any;
   pageSizes?:any
-
+  onDelete?:any
+  onEdit?:any
 
   extraActions: {
     name: string;
@@ -37,7 +38,8 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   PageSizeSelector,
 
   extraActions,
-
+  onEdit,
+   onDelete,
   showIcons,
   pageSizes
 }) => {
@@ -70,7 +72,8 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
             content: (props) => {
               if (props.column.key === "actions") {
                 return (
-                  <ActionCell
+                  <>
+                  {/* <ActionCell
                     rowData={props.rowData}
                     extraActions={extraActions}
                     showIcons={showIcons}
@@ -80,7 +83,14 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                     onDelete={function (rowData: any): void {
                       throw new Error("Function not implemented.");
                     }}
+                  /> */}
+                  <ActionIcon
+                  rowData={props.rowData}
+                   onEdit={onEdit}
+                   onDelete={onDelete}
                   />
+                  </>
+                  
                 );
               }
               return null;

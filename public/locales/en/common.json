@@ -13,7 +13,8 @@
     "INCORRECT_DATA_ENTRY": "Incorrect Data Entry",
     "DUPLICATED_USER": "Duplicate User",
      "OTHER":"Other",
-    "SORT":"Sort"
+    "SORT":"Sort",
+    "ALL":"All"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
