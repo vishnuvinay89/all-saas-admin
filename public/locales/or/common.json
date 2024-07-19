@@ -5,7 +5,9 @@
     "UPDATE_COHORT": "କୋହୋର୍ଟ୍ ଅଦ୍ୟତନ କରନ୍ତୁ",
     "SORT": "ସର୍ଟ",
     "OTHER": "ଅନ୍ୟ",
-    "NAME": "ନାମ"
+    "NAME": "ନାମ",
+    "EDIT": "ସଂପାଦନା",
+    "DELETE": "ବିଲୋପ"
   },
   "LOGIN_PAGE": {
     "USERNAME": "ଉପଯୋଗକର୍ତା ନାମ",
