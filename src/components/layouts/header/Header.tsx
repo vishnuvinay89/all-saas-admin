@@ -33,10 +33,10 @@ const Header = ({ sx, customClass, toggleMobileSidebar, position }: any) => {
         {/* ------------------------------------------- */}
         {/* Search Dropdown */}
         {/* ------------------------------------------- */}
-        <SearchBar
+        {/* <SearchBar
           placeholder={t("NAVBAR.SEARCHBAR_PLACEHOLDER")}
           backgroundColor={theme.palette.background.default}
-        />
+        /> */}
         {/* ------------ End Menu icon ------------- */}
 
         <Box flexGrow={1} />
