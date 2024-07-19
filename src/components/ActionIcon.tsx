@@ -61,7 +61,7 @@ const ActionIcon: React.FC<ActionCellProps> = ({
             cursor: "pointer",
           }}
         >
-          <DeleteIcon sx={{ color: "rgba(0, 0, 0, 0.5)" }} />
+<DeleteIcon sx={{ color: "rgb(244, 67, 54)" }} />
           <Typography variant="body2">Delete</Typography>
         </Box>
       </Tooltip>
