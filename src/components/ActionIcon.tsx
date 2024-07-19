@@ -9,6 +9,7 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  Tooltip,
 } from "@mui/material";
 // import EditIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 // import DeleteIcon from '@mui/icons-material/DeleteOutlined';
@@ -28,6 +29,7 @@ const ActionIcon: React.FC<ActionCellProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const { t } = useTranslation();
   return (
     <Box
       sx={{
@@ -36,7 +38,7 @@ const ActionIcon: React.FC<ActionCellProps> = ({
         gap: "20px",
       }}
     >
-       <Box
+      <Box
         onClick={() => {
           onEdit(rowData);
         }}
@@ -46,18 +48,20 @@ const ActionIcon: React.FC<ActionCellProps> = ({
           pointerEvents: "auto", // Enable pointer events to allow click
         }}
       >
-        <EditIcon style={{ color: "rgba(0, 0, 0, 0.5)" }} />
+        <Tooltip title={t("COMMON.EDIT")}>
+          <EditIcon style={{ color: "rgba(0, 0, 0, 0.5)" }} />
+        </Tooltip>
       </Box>
-       <Box
+      <Box
         onClick={() => {
           onDelete(rowData);
         }}
         style={{ cursor: "pointer" }}
       >
-        <DeleteIcon style={{ color: "rgba(0, 0, 0, 0.5)" }} />
+        <Tooltip title={t("COMMON.DELETE")}>
+          <DeleteIcon style={{ color: "rgba(0, 0, 0, 0.5)" }} />
+        </Tooltip>
       </Box>
-     
-     
     </Box>
   );
 };

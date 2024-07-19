@@ -10,7 +10,8 @@ import {
   ListItemIcon,
   ListItemText,
   Collapse,
-  Typography
+  Typography,
+  Tooltip,
 } from "@mui/material";
 import FeatherIcon from "feather-icons-react";
 import LogoIcon from "../logo/LogoIcon";
@@ -42,65 +43,73 @@ const Sidebar = ({
       <LogoIcon />
       <Box mt={2}>
         <List>
-          {Menuitems.map((item, index) => (
+          {Menuitems?.map((item, index) => (
             <List component="li" disablePadding key={item.title}>
-              <ListItem
-                button
-                onClick={() => {
-                  if (item.subOptions) {
-                    handleClick(index);
-                  } else {
-                    router.push(item.href);
-                    onSidebarClose();
-                  }
-                }}
-                selected={location === item.href}
-                sx={{
-                  mb: 1,
-                  ...(location === item.href && {
-                    color: "white",
-                    backgroundColor: (theme) =>
-                      `${theme.palette.primary.main}!important`,
-                  }),
-                }}
-              >
-                <ListItemIcon>
-                  <FeatherIcon icon={item.icon} />
-                </ListItemIcon>
-                <ListItemText>
-                  <Typography variant="h2" sx={{ fontWeight: 'bold' }}>
-                    {t(item.title)}
-                  </Typography>
-                </ListItemText>
-                {item.subOptions ? (
-                  open === index ? <ExpandLess /> : <ExpandMore />
-                ) : null}
-              </ListItem>
+              <Tooltip placement="right-start" title={t(item.title)}>
+                <ListItem
+                  button
+                  onClick={() => {
+                    if (item.subOptions) {
+                      handleClick(index);
+                    } else {
+                      router.push(item.href);
+                      onSidebarClose();
+                    }
+                  }}
+                  selected={location === item.href}
+                  sx={{
+                    mb: 1,
+                    ...(location === item.href && {
+                      color: "white",
+                      backgroundColor: (theme) =>
+                        `${theme.palette.primary.main}!important`,
+                    }),
+                  }}
+                >
+                  <ListItemIcon>
+                    <FeatherIcon icon={item.icon} />
+                  </ListItemIcon>
+                  <ListItemText>
+                    <Typography variant="h2" sx={{ fontWeight: "bold" }}>
+                      {t(item.title)}
+                    </Typography>
+                  </ListItemText>
+                  {item.subOptions ? (
+                    open === index ? (
+                      <ExpandLess />
+                    ) : (
+                      <ExpandMore />
+                    )
+                  ) : null}
+                </ListItem>
+              </Tooltip>
 
               {item.subOptions && (
                 <Collapse in={open === index} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
                     {item.subOptions.map((subItem) => (
-                      <ListItem
-                        button
-                        key={subItem.title}
-                        onClick={() => {
-                          router.push(subItem.href);
-                          onSidebarClose();
-                        }}
-                        selected={location === subItem.href}
-                        sx={{
-                          pl: 8,
-                          mb: 1,
-                          ...(location === subItem.href && {
-                            color: "white",
-                            backgroundColor: (theme) =>
-                              `${theme.palette.primary.main}!important`,
-                          }),
-                        }}
-                      >
-                        <ListItemText>{t(subItem.title)}</ListItemText>
-                      </ListItem>
+                      <Tooltip title={t(subItem.title)} placement="right-start">
+                        <ListItem
+                          button
+                          key={subItem.title}
+                          onClick={() => {
+                            router.push(subItem.href);
+                            onSidebarClose();
+                          }}
+                          selected={location === subItem.href}
+                          sx={{
+                            pl: 8,
+                            mb: 1,
+                            ...(location === subItem.href && {
+                              color: "white",
+                              backgroundColor: (theme) =>
+                                `${theme.palette.primary.main}!important`,
+                            }),
+                          }}
+                        >
+                          <ListItemText>{t(subItem.title)}</ListItemText>
+                        </ListItem>
+                      </Tooltip>
                     ))}
                   </List>
                 </Collapse>
