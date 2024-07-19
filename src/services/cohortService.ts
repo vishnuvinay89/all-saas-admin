@@ -21,8 +21,8 @@ export const getCohortList = async (
 export const updateCohortUpdate = async (
   userId: string,
   cohortDetails: {
-    name: string;
-    status: string;
+    name?: string;
+    status?: string;
   }
 ): Promise<any> => {
   const { name, status } = cohortDetails;
