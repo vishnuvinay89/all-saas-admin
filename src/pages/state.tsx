@@ -133,9 +133,6 @@ const State: React.FC = () => {
               stateDetail.label?.toLocaleLowerCase().charAt(0).toUpperCase() +
               stateDetail.label?.toLocaleLowerCase().slice(1),
           }))}
-          // state.label?.toLowerCase().charAt(0).toUpperCase() +
-          // state.label?.toLowerCase().slice(1)
-
           limit={pageLimit}
           offset={pageOffset}
           PagesSelector={() => (
