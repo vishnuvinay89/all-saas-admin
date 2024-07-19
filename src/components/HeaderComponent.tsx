@@ -158,7 +158,7 @@ const HeaderComponent = ({
           }}
         >
           <Grid container spacing={isMobile ? 1 : 2}>
-            <Grid item xs={12} sm={isMediumScreen ? 12 : 4}>
+            <Grid item xs={12} sm={isMediumScreen ? 12 :2}>
               <MultipleSelectCheckmarks
                 names={allStates.map(
                   (state) =>
@@ -171,7 +171,7 @@ const HeaderComponent = ({
                 onCategoryChange={handleStateChangeWrapper}
               />
             </Grid>
-            <Grid item xs={12} sm={isMediumScreen ? 12 : 4}>
+            <Grid item xs={12} sm={isMediumScreen ? 12 : 2}>
               <MultipleSelectCheckmarks
                 names={allDistricts.map((districts) => districts.label)}
                 codes={allDistricts.map((districts) => districts.value)}
@@ -181,7 +181,7 @@ const HeaderComponent = ({
                 disabled={selectedState.length === 0 || selectedState[0] === ""}
               />
             </Grid>
-            <Grid item xs={12} sm={isMediumScreen ? 12 : 4}>
+            <Grid item xs={12} sm={isMediumScreen ? 12 : 2}>
               <MultipleSelectCheckmarks
                 names={allBlocks.map((blocks) => blocks.label)}
                 codes={allBlocks.map((blocks) => blocks.value)}
@@ -196,7 +196,7 @@ const HeaderComponent = ({
           </Grid>
         </Box>
       )}
-      <Typography variant="h2" sx={{ mt: isMobile ? "12px" : "20px" }}>
+      <Typography variant="h1" sx={{ mt: isMobile ? "12px" : "20px" }}>
         {userType}
       </Typography>
       <Box
@@ -210,7 +210,7 @@ const HeaderComponent = ({
           <SearchBar
             className="searchBox"
             placeholder={searchPlaceHolder}
-            backgroundColor={theme.palette.secondary["300"]}
+            backgroundColor={"white"}
             fullWidth
           />
         </Box>

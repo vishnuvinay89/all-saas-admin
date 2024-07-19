@@ -86,6 +86,7 @@ const Cohorts: React.FC = () => {
   const handleOpen = () => {
     setOpen(true);
   };
+  
   const PagesSelector = () => (
     <>
       <Pagination
@@ -305,6 +306,8 @@ const Cohorts: React.FC = () => {
             PageSizeSelector={PageSizeSelectorFunction}
             extraActions={extraActions}
             showIcons={true}
+            onEdit={handleEdit}
+          onDelete={handleDelete}
           />
         </div>
       </HeaderComponent>
