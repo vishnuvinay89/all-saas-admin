@@ -179,7 +179,11 @@ const District: React.FC = () => {
             >
               {stateData.map((stateDetail) => (
                 <MenuItem key={stateDetail.value} value={stateDetail.value}>
-                  {stateDetail.label}
+                  {stateDetail.label
+                    ?.toLocaleLowerCase()
+                    .charAt(0)
+                    .toUpperCase() +
+                    stateDetail.label?.toLocaleLowerCase().slice(1)}
                 </MenuItem>
               ))}
             </Select>

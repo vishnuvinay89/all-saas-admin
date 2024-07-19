@@ -23,7 +23,7 @@ const staticDistrictData = [
   { value: "D2", label: "Mumbai" },
 ];
 
-const staticBlockData = [{ label: "Hinjewadi" }, { label: "Kothrud" }];
+const staticBlockData = [{ label: "Hinjewadi" }, { label: "Baner" }];
 
 const Block: React.FC = () => {
   const { t } = useTranslation();
@@ -154,7 +154,11 @@ const Block: React.FC = () => {
               >
                 {stateData.map((stateDetail) => (
                   <MenuItem key={stateDetail.value} value={stateDetail.value}>
-                    {stateDetail.label}
+                    {stateDetail.label
+                      ?.toLocaleLowerCase()
+                      .charAt(0)
+                      .toUpperCase() +
+                      stateDetail.label?.toLocaleLowerCase().slice(1)}
                   </MenuItem>
                 ))}
               </Select>
