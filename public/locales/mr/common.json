@@ -6,7 +6,9 @@
     "SORT": "क्रमवारी लावा",
     "EDIT_COHORT_NAME": "समूह संपादित करा",
     "NAME": "नाव",
-    "UPDATE_COHORT": "कोहॉर्ट अपडेट करा"
+    "UPDATE_COHORT": "कोहॉर्ट अपडेट करा",
+    "EDIT": "संपादित करा",
+    "DELETE": "हटवा"
   },
   "LOGIN_PAGE": {
     "USERNAME": "वापरकर्तानाव",

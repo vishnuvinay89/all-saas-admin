@@ -1,7 +1,12 @@
 // components/ActionCell.tsx
 
 import React from "react";
-import { Box, Typography } from "@mui/material";
+
+// import EditIcon from '@mui/icons-material/ModeEditOutlineOutlined';
+// import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { useTranslation } from "next-i18next";
+import { Box, Typography, Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -16,6 +21,7 @@ const ActionIcon: React.FC<ActionCellProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const { t } = useTranslation();
   return (
     <Box
       sx={{
@@ -59,6 +65,40 @@ const ActionIcon: React.FC<ActionCellProps> = ({
           Delete
         </Typography>
       </Box>
+      <Tooltip title={t("COMMON.EDIT")}>
+        <Box
+          onClick={() => {
+            onEdit(rowData);
+          }}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            cursor: "pointer",
+            opacity: 0.5, // Reduced opacity to make it appear disabled
+            pointerEvents: "auto", // Enable pointer events to allow click
+          }}
+        >
+          <EditIcon sx={{ color: "rgba(0, 0, 0, 0.5)" }} />
+          <Typography variant="body2">Edit</Typography>
+        </Box>
+      </Tooltip>
+      <Tooltip title={t("COMMON.DELETE")}>
+        <Box
+          onClick={() => {
+            onDelete(rowData);
+          }}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            cursor: "pointer",
+          }}
+        >
+          <DeleteIcon sx={{ color: "rgba(0, 0, 0, 0.5)" }} />
+          <Typography variant="body2">Delete</Typography>
+        </Box>
+      </Tooltip>
     </Box>
   );
 };

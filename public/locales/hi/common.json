@@ -1,7 +1,9 @@
 {
   "COMMON": {
     "LANGUAGE": "भाषा",
-    "LOADING": "लोडिंग"
+    "LOADING": "लोडिंग",
+    "EDIT": "संपादित करें",
+    "DELETE": "हटाएं"
   },
   "LOGIN_PAGE": {
     "USERNAME": "उपयोगकर्ता नाम",
@@ -18,8 +20,6 @@
     "SORT": "क्रमबद्ध करें",
     "EDIT_COHORT_NAME": "समूह संपादित करें",
     "UPDATE_COHORT": "अद्यतन समूह"
-    
-   
   },
   "COHORTS": {
     "SEARCHBAR_PLACEHOLDER": "कोहॉर्ट्स खोजें.."

@@ -21,7 +21,9 @@
     "SORT": "Sort",
     "EDIT_COHORT_NAME": "Edit Cohort",
     "NAME": "Name",
-    "UPDATE_COHORT": "Update Cohort"
+    "UPDATE_COHORT": "Update Cohort",
+    "EDIT": "Edit",
+    "DELETE": "Delete"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
