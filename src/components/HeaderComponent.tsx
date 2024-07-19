@@ -210,7 +210,7 @@ const HeaderComponent = ({
           <SearchBar
             className="searchBox"
             placeholder={searchPlaceHolder}
-            backgroundColor={theme.palette.secondary["300"]}
+            backgroundColor="white"
             fullWidth
           />
         </Box>
