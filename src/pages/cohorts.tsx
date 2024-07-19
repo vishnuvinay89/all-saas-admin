@@ -1,4 +1,4 @@
-import React, { FormEvent } from "react";
+import React, { ChangeEvent, FormEvent } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -172,25 +172,25 @@ const Cohorts: React.FC = () => {
     setSelectedFilter(event.target.value as string);
   };
 
+  const fetchUserList = async () => {
+    try {
+      const limit = pageLimit;
+      // const page = 0;
+      const offset = pageOffset;
+      // const sort = ["createdAt", "asc"];
+      const filters = { role: Role.TEACHER };
+      const userId = localStorage.getItem(Storage.USER_ID) || "";
+
+      const resp = await getCohortList(userId);
+      const result = resp;
+      console.log("result", result);
+
+      setData(result);
+    } catch (error) {
+      console.error("Error fetching user list:", error);
+    }
+  };
   useEffect(() => {
-    const fetchUserList = async () => {
-      try {
-        const limit = pageLimit;
-        // const page = 0;
-        const offset = pageOffset;
-        // const sort = ["createdAt", "asc"];
-        const filters = { role: Role.TEACHER };
-        const userId = localStorage.getItem(Storage.USER_ID) || "";
-
-        const resp = await getCohortList(userId);
-        const result = resp;
-        console.log("result", result);
-
-        setData(result);
-      } catch (error) {
-        console.error("Error fetching user list:", error);
-      }
-    };
     fetchUserList();
   }, [pageOffset, pageLimit]);
 
@@ -241,7 +241,7 @@ const Cohorts: React.FC = () => {
     setIsEditModalOpen(false);
   };
 
-  const handleInputName = (event: FormEvent<HTMLFormElement>) => {
+  const handleInputName = (event: ChangeEvent<HTMLInputElement>) => {
     const updatedName = event.target.value;
     setInputName(updatedName);
   };
@@ -259,6 +259,7 @@ const Cohorts: React.FC = () => {
       console.log("No cohort Id Selected");
     }
     onCloseEditMOdel();
+    fetchUserList();
   };
 
   return (

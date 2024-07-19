@@ -28,6 +28,9 @@ const Profile = () => {
   };
 
   const handleLogout = () => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      localStorage.removeItem("token");
+    }
     router.push("/logout");
   };
 

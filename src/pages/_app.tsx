@@ -1,19 +1,5 @@
 // import "@/styles/globals.css";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { appWithTranslation } from "next-i18next";
@@ -24,11 +10,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { telemetryFactory } from "../utils/telemetry";
 import FullLayout from "@/components/layouts/FullLayout";
-import {
-  Experimental_CssVarsProvider as CssVarsProvider,
-} from "@mui/material/styles";
+import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material/styles";
 import customTheme from "../styles/customTheme";
-
+import "./../styles/style.css";
 function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     telemetryFactory.init();

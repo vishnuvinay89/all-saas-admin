@@ -9,6 +9,7 @@ import { IPagingProps } from "ka-table/props";
 import { updatePageIndex, updatePageSize } from "ka-table/actionCreators";
 import ActionCell from "./ActionCell";
 import ActionIcon from "./ActionIcon";
+
 interface KaTableComponentProps {
   columns: ITableProps["columns"];
   data?: ITableProps["data"];
@@ -16,9 +17,9 @@ interface KaTableComponentProps {
   limit?: any;
   PagesSelector?: any;
   PageSizeSelector?: any;
-  pageSizes?:any
-  onDelete?:any
-  onEdit?:any
+  pageSizes?: any;
+  onDelete?: any;
+  onEdit?: any;
 
   extraActions: {
     name: string;
@@ -39,9 +40,9 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
 
   extraActions,
   onEdit,
-   onDelete,
+  onDelete,
   showIcons,
-  pageSizes
+  pageSizes,
 }) => {
   const tableProps: ITableProps = {
     columns,
@@ -52,28 +53,29 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
 
   return (
     <Paper>
-      <Table
-        {...tableProps}
-        paging={{
-          enabled:  true, // to do dynamic limit for enable  pagination and page sizes by data
-          pageIndex: 0,
-          pageSize: limit,
-          pageSizes: pageSizes,
-          position: PagingPosition.Bottom,
-        }}
-        childComponents={{
-          pagingSizes: {
-            content: (props) => <PageSizeSelector {...props} />,
-          },
-          pagingPages: {
-            content: (props) => <PagesSelector {...props} />,
-          },
-          cell: {
-            content: (props) => {
-              if (props.column.key === "actions") {
-                return (
-                  <>
-                  {/* <ActionCell
+      <div className="ka-table-wrapper">
+        <Table
+          {...tableProps}
+          paging={{
+            enabled: true, // to do dynamic limit for enable  pagination and page sizes by data
+            pageIndex: 0,
+            pageSize: limit,
+            pageSizes: pageSizes,
+            position: PagingPosition.Bottom,
+          }}
+          childComponents={{
+            pagingSizes: {
+              content: (props) => <PageSizeSelector {...props} />,
+            },
+            pagingPages: {
+              content: (props) => <PagesSelector {...props} />,
+            },
+            cell: {
+              content: (props) => {
+                if (props.column.key === "actions") {
+                  return (
+                    <>
+                      {/* <ActionCell
                     rowData={props.rowData}
                     extraActions={extraActions}
                     showIcons={showIcons}
@@ -84,20 +86,20 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                       throw new Error("Function not implemented.");
                     }}
                   /> */}
-                  <ActionIcon
-                  rowData={props.rowData}
-                   onEdit={onEdit}
-                   onDelete={onDelete}
-                  />
-                  </>
-                  
-                );
-              }
-              return null;
+                      <ActionIcon
+                        rowData={props.rowData}
+                        onEdit={onEdit}
+                        onDelete={onDelete}
+                      />
+                    </>
+                  );
+                }
+                return null;
+              },
             },
-          },
-        }}
-      />
+          }}
+        />
+      </div>
     </Paper>
   );
 };
