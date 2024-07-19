@@ -1,20 +1,12 @@
 // components/ActionCell.tsx
 
 import React from "react";
-import {
-  Box,
-  Divider,
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Tooltip,
-} from "@mui/material";
+
 // import EditIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 // import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useTranslation } from "next-i18next";
+import { Box, Typography, Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -36,32 +28,43 @@ const ActionIcon: React.FC<ActionCellProps> = ({
         display: "flex",
         flexDirection: "row",
         gap: "20px",
+        alignItems: "center",
       }}
     >
-      <Box
-        onClick={() => {
-          onEdit(rowData);
-        }}
-        style={{
-          cursor: "pointer",
-          opacity: 0.5, // Reduced opacity to make it appear disabled
-          pointerEvents: "auto", // Enable pointer events to allow click
-        }}
-      >
-        <Tooltip title={t("COMMON.EDIT")}>
-          <EditIcon style={{ color: "rgba(0, 0, 0, 0.5)" }} />
-        </Tooltip>
-      </Box>
-      <Box
-        onClick={() => {
-          onDelete(rowData);
-        }}
-        style={{ cursor: "pointer" }}
-      >
-        <Tooltip title={t("COMMON.DELETE")}>
-          <DeleteIcon style={{ color: "rgba(0, 0, 0, 0.5)" }} />
-        </Tooltip>
-      </Box>
+      <Tooltip title={t("COMMON.EDIT")}>
+        <Box
+          onClick={() => {
+            onEdit(rowData);
+          }}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            cursor: "pointer",
+            opacity: 0.5, // Reduced opacity to make it appear disabled
+            pointerEvents: "auto", // Enable pointer events to allow click
+          }}
+        >
+          <EditIcon sx={{ color: "rgba(0, 0, 0, 0.5)" }} />
+          <Typography variant="body2">Edit</Typography>
+        </Box>
+      </Tooltip>
+      <Tooltip title={t("COMMON.DELETE")}>
+        <Box
+          onClick={() => {
+            onDelete(rowData);
+          }}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            cursor: "pointer",
+          }}
+        >
+          <DeleteIcon sx={{ color: "rgba(0, 0, 0, 0.5)" }} />
+          <Typography variant="body2">Delete</Typography>
+        </Box>
+      </Tooltip>
     </Box>
   );
 };

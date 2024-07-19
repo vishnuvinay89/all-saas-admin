@@ -21,6 +21,7 @@ import { useRouter } from "next/router";
 import theme from "@/components/theme/theme";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
+import { useTheme } from "@mui/material/styles";
 
 const Sidebar = ({
   isMobileSidebarOpen,
@@ -37,10 +38,22 @@ const Sidebar = ({
   const handleClick = (index: number) => {
     setOpen((prevOpen) => (prevOpen === index ? null : index));
   };
+  const theme = useTheme<any>();
 
   const SidebarContent = (
-    <Box p={2} height="100%">
+    <Box
+      p={2}
+      height="100%"
+      bgcolor="#F8EFDA
+"
+      sx={{
+        // width: '100%',
+        // height: '100vh',
+        background: "linear-gradient(to bottom, white, #F8EFDA)",
+      }}
+    >
       <LogoIcon />
+
       <Box mt={2}>
         <List>
           {Menuitems?.map((item, index) => (
@@ -60,7 +73,7 @@ const Sidebar = ({
                   sx={{
                     mb: 1,
                     ...(location === item.href && {
-                      color: "white",
+                      color: "black",
                       backgroundColor: (theme) =>
                         `${theme.palette.primary.main}!important`,
                     }),
@@ -101,7 +114,7 @@ const Sidebar = ({
                             pl: 8,
                             mb: 1,
                             ...(location === subItem.href && {
-                              color: "white",
+                              color: "black",
                               backgroundColor: (theme) =>
                                 `${theme.palette.primary.main}!important`,
                             }),

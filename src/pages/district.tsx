@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -32,22 +32,26 @@ const District: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [stateData, setStateData] = useState<StateDetail[]>([]);
   const [districtData, setDistrictData] = useState<DistrictDetail[]>([]);
+  const [sortedDistricts, setSortedDistricts] = useState<DistrictDetail[]>([]);
   const [pageCount, setPageCount] = useState<number>(1);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [selectedFilter, setSelectedFilter] = useState("All");
 
-  const columns = [
-    {
-      key: "label",
-      title: t("MASTER.DISTRICT_NAMES"),
-      dataType: DataType.String,
-    },
-    {
-      key: "actions",
-      title: t("MASTER.ACTIONS"),
-      dataType: DataType.String,
-    },
-  ];
+  const columns = useMemo(
+    () => [
+      {
+        key: "label",
+        title: t("MASTER.DISTRICT_NAMES"),
+        dataType: DataType.String,
+      },
+      {
+        key: "actions",
+        title: t("MASTER.ACTIONS"),
+        dataType: DataType.String,
+      },
+    ],
+    [t]
+  );
 
   const handleChange = (event: SelectChangeEvent<number>) => {
     setPageSize(Number(event.target.value));
@@ -61,58 +65,64 @@ const District: React.FC = () => {
     setPageOffset(value - 1);
   };
 
-  const PageSizeSelectorFunction = () => (
-    <PageSizeSelector
-      handleChange={handleChange}
-      pageSize={pageSize}
-      options={pageSize}
-    />
+  const PageSizeSelectorFunction = useCallback(
+    () => (
+      <PageSizeSelector
+        handleChange={handleChange}
+        pageSize={pageSize}
+        options={[5, 10, 15]}
+      />
+    ),
+    [pageSize]
   );
 
-  const handleStateChange = async (event: SelectChangeEvent<string>) => {
-    const selectedState = event.target.value;
-    setSelectedState(selectedState);
-    try {
-      const data = await getDistrictList(selectedState);
-      setDistrictData(data.result);
-      setSelectedDistrict(data.result[0]?.label || "-");
-    } catch (error) {
-      console.error("Error fetching district data", error);
-    }
-  };
+  const handleStateChange = useCallback(
+    async (event: SelectChangeEvent<string>) => {
+      const selectedState = event.target.value;
+      setSelectedState(selectedState);
+      try {
+        const data = await getDistrictList(selectedState);
+        setDistrictData(data.result);
+        setSelectedDistrict(data.result[0]?.label || "-");
+      } catch (error) {
+        console.error("Error fetching district data", error);
+      }
+    },
+    []
+  );
 
-  const handleSortChange = (event: SelectChangeEvent<string>) => {
+  const handleSortChange = useCallback((event: SelectChangeEvent<string>) => {
     const sortValue = event.target.value;
     setSelectedSort(sortValue);
-    if (sortValue === "Z-A") {
-      setSortDirection("desc");
-    } else {
-      setSortDirection("asc");
-    }
-  };
-  const handleEdit = (rowData: any) => {
+    setSortDirection(sortValue === "Z-A" ? "desc" : "asc");
+  }, []);
+
+  const handleEdit = useCallback((rowData: any) => {
     console.log("Edit row:", rowData);
-  };
+  }, []);
 
-  const handleDelete = (rowData: any) => {
-
+  const handleDelete = useCallback((rowData: any) => {
     console.log("Delete row:", rowData);
-  };
-  const handleFilterChange = async (event: SelectChangeEvent) => {
-    console.log(event.target.value as string);
-    setSelectedFilter(event.target.value as string);
-  };
+  }, []);
+
+  const handleFilterChange = useCallback(
+    async (event: SelectChangeEvent<string>) => {
+      console.log(event.target.value);
+      setSelectedFilter(event.target.value);
+    },
+    []
+  );
+
   useEffect(() => {
     const fetchStateData = async () => {
       try {
         const data = await getStateList();
         setStateData(data.result);
-        setSelectedState(data.result[0]?.value || "");
-        if (data.result[0]?.value) {
-          const districtData = await getDistrictList(data.result[0].value);
-          setDistrictData(districtData.result);
-          setSelectedDistrict(districtData.result[0]?.label || "-");
-        }
+        const initialSelectedState = data.result[0]?.value || "";
+        setSelectedState(initialSelectedState);
+        const districtData = await getDistrictList(initialSelectedState);
+        setDistrictData(districtData.result);
+        setSelectedDistrict(districtData.result[0]?.label || "-");
       } catch (error) {
         console.error("Error fetching state data", error);
       }
@@ -122,32 +132,36 @@ const District: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const sortedDistricts = [...districtData].sort((a, b) =>
-      sortDirection === "asc"
-        ? a.label.localeCompare(b.label)
-        : b.label.localeCompare(a.label)
-    );
-    const paginatedData = sortedDistricts.slice(
-      pageOffset * pageLimit,
-      (pageOffset + 1) * pageLimit
-    );
-    setDistrictData(paginatedData);
-    setPageCount(Math.ceil(districtData.length / pageLimit));
-  }, [pageOffset, pageLimit, sortDirection, districtData]);
+    const sortAndPaginateData = () => {
+      const sorted = [...districtData].sort((a, b) =>
+        sortDirection === "asc"
+          ? a.label.localeCompare(b.label)
+          : b.label.localeCompare(a.label)
+      );
+      const paginatedData = sorted.slice(
+        pageOffset * pageLimit,
+        (pageOffset + 1) * pageLimit
+      );
+      setSortedDistricts(paginatedData);
+      setPageCount(Math.ceil(districtData.length / pageLimit));
+    };
+
+    sortAndPaginateData();
+  }, [districtData, pageOffset, pageLimit, sortDirection]);
 
   const userProps = {
     userType: t("MASTER.DISTRICTS"),
     searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_DISTRICT"),
-    selectedSort: selectedSort,
-    handleStateChange: handleStateChange,
-    handleSortChange: handleSortChange,
+    selectedSort,
+    handleStateChange,
+    handleSortChange,
     states: stateData.map((state) => state.label),
     districts: districtData.map((district) => district.label),
-    selectedState: selectedState,
-    selectedDistrict: selectedDistrict,
+    selectedState,
+    selectedDistrict,
     showStateDropdown: false,
-    selectedFilter:selectedFilter,
-    handleFilterChange:handleFilterChange
+    selectedFilter,
+    handleFilterChange,
   };
 
   return (
@@ -155,10 +169,10 @@ const District: React.FC = () => {
       <HeaderComponent {...userProps}>
         <Box sx={{ minWidth: 240 }}>
           <FormControl sx={{ minWidth: 240 }}>
-            <InputLabel id="demo-simple-select-label">States</InputLabel>
+            <InputLabel id="state-select-label">States</InputLabel>
             <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
+              labelId="state-select-label"
+              id="state-select"
               value={selectedState}
               label="State"
               onChange={handleStateChange}
@@ -173,7 +187,7 @@ const District: React.FC = () => {
         </Box>
         <KaTableComponent
           columns={columns}
-          data={districtData.map((districtDetail) => ({
+          data={sortedDistricts.map((districtDetail) => ({
             label: districtDetail.label,
             actions: "Action buttons",
           }))}

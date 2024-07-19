@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -11,159 +11,119 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
-import {
-  getStateList,
-  getDistrictList,
-  getBlockList,
-} from "@/services/MasterDataService";
 
-type StateDetail = {
-  value: string;
-  label: string;
-};
+// Static Data
+const staticStateData = [
+  { value: "MH", label: "MAHARASHTRA" },
+  { value: "KA", label: "KARNATAKA" },
+];
 
-type DistrictDetail = {
-  value: string;
-  label: string;
-};
+const staticDistrictData = [
+  { value: "D1", label: "Pune" },
+  { value: "D2", label: "Mumbai" },
+];
 
-type BlockDetail = {
-  label: string;
-};
+const staticBlockData = [{ label: "Hinjewadi" }, { label: "Kothrud" }];
 
 const Block: React.FC = () => {
   const { t } = useTranslation();
-  const [selectedState, setSelectedState] = useState<string>("");
-  const [selectedDistrict, setSelectedDistrict] = useState<string>("");
+  const [selectedState, setSelectedState] = useState<string>("MH");
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("D1");
   const [selectedSort, setSelectedSort] = useState<string>(t("MASTER.SORT"));
   const [pageOffset, setPageOffset] = useState<number>(0);
   const [pageLimit, setPageLimit] = useState<number>(10);
-  const [stateData, setStateData] = useState<StateDetail[]>([]);
-  const [districtData, setDistrictData] = useState<DistrictDetail[]>([]);
-  const [blockData, setBlockData] = useState<BlockDetail[]>([]);
-  const [pageSize, setPageSize] = useState<string | number>("");
+  const [stateData] = useState(staticStateData);
+  const [districtData] = useState(staticDistrictData);
+  const [blockData] = useState(staticBlockData);
+  const [pageSize, setPageSize] = useState<number>(10);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [selectedFilter, setSelectedFilter] = useState("All");
 
-  const columns = [
-    {
-      key: "block",
-      title: t("MASTER.BLOCK_NAMES"),
-      dataType: DataType.String,
-    },
-    {
-      key: "actions",
-      title: t("MASTER.ACTIONS"),
-      dataType: DataType.String,
-    },
-  ];
-
-  const handleChange = (event: SelectChangeEvent<number>) => {
-    setPageSize(event.target.value);
-    setPageLimit(Number(event.target.value));
-  };
-
-  const handlePaginationChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    setPageOffset(value - 1);
-  };
-
-  const PageSizeSelectorFunction = () => (
-    <PageSizeSelector
-      handleChange={handleChange}
-      pageSize={pageSize}
-      options={[5, 10, 15]}
-    />
+  const columns = useMemo(
+    () => [
+      {
+        key: "block",
+        title: t("MASTER.BLOCK_NAMES"),
+        dataType: DataType.String,
+      },
+      {
+        key: "actions",
+        title: t("MASTER.ACTIONS"),
+        dataType: DataType.String,
+      },
+    ],
+    [t]
   );
 
-  const handleStateChange = async (event: SelectChangeEvent<string>) => {
-    const selectedState = event.target.value;
-    setSelectedState(selectedState);
-    try {
-      const data = await getDistrictList(selectedState);
-      setDistrictData(data.result || []);
-      setSelectedDistrict(data.result[0]?.value || "");
-      const blockData = await getBlockList(data.result[0]?.value || "");
-      setBlockData(blockData.result || []);
-    } catch (error) {
-      console.error("Error fetching district data", error);
-    }
-  };
+  const handleChange = useCallback((event: SelectChangeEvent<number>) => {
+    setPageSize(Number(event.target.value));
+    setPageLimit(Number(event.target.value));
+  }, []);
 
-  const handleDistrictChange = async (event: SelectChangeEvent<string>) => {
-    const selectedDistrict = event.target.value;
-    setSelectedDistrict(selectedDistrict);
-    try {
-      const blockData = await getBlockList(selectedDistrict);
-      setBlockData(blockData.result || []);
-    } catch (error) {
-      console.error("Error fetching block data", error);
-    }
-  };
+  const handlePaginationChange = useCallback(
+    (event: React.ChangeEvent<unknown>, value: number) => {
+      setPageOffset(value - 1);
+    },
+    []
+  );
 
-  const handleSortChange = (event: SelectChangeEvent<string>) => {
+  const PageSizeSelectorFunction = useCallback(
+    () => (
+      <PageSizeSelector
+        handleChange={handleChange}
+        pageSize={pageSize}
+        options={[5, 10, 15]}
+      />
+    ),
+    [handleChange, pageSize]
+  );
+
+  const handleStateChange = useCallback((event: SelectChangeEvent<string>) => {
+    setSelectedState(event.target.value);
+  }, []);
+
+  const handleDistrictChange = useCallback(
+    (event: SelectChangeEvent<string>) => {
+      setSelectedDistrict(event.target.value);
+    },
+    []
+  );
+
+  const handleSortChange = useCallback((event: SelectChangeEvent<string>) => {
     const sortValue = event.target.value;
     setSelectedSort(sortValue);
-    if (sortValue === "Z-A") {
-      setSortDirection("desc");
-    } else {
-      setSortDirection("asc");
-    }
-    sortBlocks(sortValue);
-  };
-
-  const sortBlocks = (sortValue: string) => {
-    const sortedBlocks = [...blockData];
-    sortedBlocks.sort((a, b) => {
-      if (sortDirection === "asc") {
-        return a.label.localeCompare(b.label);
-      } else {
-        return b.label.localeCompare(a.label);
-      }
-    });
-    setBlockData(sortedBlocks);
-  };
-  const handleFilterChange = async (event: SelectChangeEvent) => {
-    console.log(event.target.value as string);
-    setSelectedFilter(event.target.value as string);
-  };
-  const handleEdit = (rowData: any) => {
-    console.log("Edit row:", rowData);
-  };
-
-  const handleDelete = (rowData: any) => {
-
-    console.log("Delete row:", rowData);
-  };
-  useEffect(() => {
-    const fetchStateData = async () => {
-      try {
-        const data = await getStateList();
-        setStateData(data.result || []);
-        const initialState = data.result[0]?.value || "";
-        setSelectedState(initialState);
-        const districtData = await getDistrictList(initialState);
-        setDistrictData(districtData.result || []);
-        const initialDistrict = districtData.result[0]?.value || "";
-        setSelectedDistrict(initialDistrict);
-        const blockData = await getBlockList(initialDistrict);
-        setBlockData(blockData.result || []);
-      } catch (error) {
-        console.error("Error fetching initial data", error);
-      }
-    };
-    fetchStateData();
+    setSortDirection(sortValue === "Z-A" ? "desc" : "asc");
   }, []);
+
+  const handleFilterChange = useCallback((event: SelectChangeEvent<string>) => {
+    setSelectedFilter(event.target.value);
+  }, []);
+
+  const handleEdit = useCallback((rowData: any) => {
+    console.log("Edit row:", rowData);
+  }, []);
+
+  const handleDelete = useCallback((rowData: any) => {
+    console.log("Delete row:", rowData);
+  }, []);
+
+  const sortedBlocks = [...blockData].sort((a, b) =>
+    sortDirection === "asc"
+      ? a.label.localeCompare(b.label)
+      : b.label.localeCompare(a.label)
+  );
+  const paginatedData = sortedBlocks.slice(
+    pageOffset * pageLimit,
+    (pageOffset + 1) * pageLimit
+  );
 
   const userProps = {
     userType: t("MASTER.BLOCKS"),
     searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK"),
-    selectedSort: selectedSort,
-    handleStateChange: handleStateChange,
-    handleSortChange: handleSortChange,
-    handleDistrictChange: handleDistrictChange,
+    selectedSort,
+    handleStateChange,
+    handleSortChange,
+    handleDistrictChange,
     states: stateData.map((state) => ({
       value: state.value,
       label: state.label,
@@ -172,12 +132,11 @@ const Block: React.FC = () => {
       value: district.value,
       label: district.label,
     })),
-    selectedState: selectedState,
-    selectedDistrict: selectedDistrict,
+    selectedState,
+    selectedDistrict,
     showStateDropdown: false,
-    selectedFilter: selectedFilter,
-    handleFilterChange: handleFilterChange
-
+    selectedFilter,
+    handleFilterChange,
   };
 
   return (
@@ -225,12 +184,12 @@ const Block: React.FC = () => {
 
         <KaTableComponent
           columns={columns}
-          data={blockData.map((block) => ({
+          data={paginatedData.map((block) => ({
             block: block.label,
             actions: "Action buttons",
           }))}
           limit={pageLimit}
-          offset={pageOffset * pageLimit}
+          offset={pageOffset}
           PagesSelector={() => (
             <Pagination
               color="primary"
@@ -248,7 +207,6 @@ const Block: React.FC = () => {
     </React.Fragment>
   );
 };
-
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
@@ -258,4 +216,3 @@ export async function getStaticProps({ locale }: any) {
 }
 
 export default Block;
-  
