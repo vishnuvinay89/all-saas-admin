@@ -90,6 +90,14 @@ const District: React.FC = () => {
       setSortDirection("asc");
     }
   };
+  const handleEdit = (rowData: any) => {
+    console.log("Edit row:", rowData);
+  };
+
+  const handleDelete = (rowData: any) => {
+
+    console.log("Delete row:", rowData);
+  };
   const handleFilterChange = async (event: SelectChangeEvent) => {
     console.log(event.target.value as string);
     setSelectedFilter(event.target.value as string);
@@ -181,6 +189,8 @@ const District: React.FC = () => {
           )}
           PageSizeSelector={PageSizeSelectorFunction}
           extraActions={[]}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       </HeaderComponent>
     </React.Fragment>

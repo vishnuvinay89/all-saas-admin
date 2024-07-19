@@ -34,6 +34,12 @@ const State: React.FC = () => {
       title: t("MASTER.STATE_NAMES"),
       dataType: DataType.String,
     },
+    {
+      key: "actions",
+      title: t("MASTER.ACTIONS"),
+      dataType: DataType.String,
+    },
+
   ];
 
   const handleChange = (event: SelectChangeEvent<number>) => {
@@ -62,6 +68,16 @@ const State: React.FC = () => {
   const handleFilterChange = async (event: SelectChangeEvent) => {
     console.log(event.target.value as string);
     setSelectedFilter(event.target.value as string);
+  };
+  const handleEdit = (rowData: any) => {
+    console.log("Edit row:", rowData);
+  };
+
+  const handleDelete = (rowData: any) => {
+
+    
+
+    console.log("Delete row:", rowData);
   };
   useEffect(() => {
     const fetchStateData = async () => {
@@ -126,6 +142,8 @@ const State: React.FC = () => {
           />
         )}
         extraActions={[]}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
       />
     </HeaderComponent>
   );

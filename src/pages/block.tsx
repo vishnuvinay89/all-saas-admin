@@ -129,6 +129,14 @@ const Block: React.FC = () => {
     console.log(event.target.value as string);
     setSelectedFilter(event.target.value as string);
   };
+  const handleEdit = (rowData: any) => {
+    console.log("Edit row:", rowData);
+  };
+
+  const handleDelete = (rowData: any) => {
+
+    console.log("Delete row:", rowData);
+  };
   useEffect(() => {
     const fetchStateData = async () => {
       try {
@@ -233,6 +241,8 @@ const Block: React.FC = () => {
           )}
           PageSizeSelector={PageSizeSelectorFunction}
           extraActions={[]}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       </HeaderComponent>
     </React.Fragment>
