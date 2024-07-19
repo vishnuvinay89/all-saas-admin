@@ -129,7 +129,9 @@ const State: React.FC = () => {
         <KaTableComponent
           columns={columns}
           data={stateData.map((stateDetail) => ({
-            label: stateDetail.label,
+            label:
+              stateDetail.label?.toLocaleLowerCase().charAt(0).toUpperCase() +
+              stateDetail.label?.toLocaleLowerCase().slice(1),
           }))}
           limit={pageLimit}
           offset={pageOffset}

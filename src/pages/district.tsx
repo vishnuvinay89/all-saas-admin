@@ -54,8 +54,9 @@ const District: React.FC = () => {
   );
 
   const handleChange = (event: SelectChangeEvent<number>) => {
-    setPageSize(Number(event.target.value));
-    setPageLimit(Number(event.target.value));
+    const value = Number(event.target.value);
+    setPageSize(value);
+    setPageLimit(value);
   };
 
   const handlePaginationChange = (
@@ -82,7 +83,7 @@ const District: React.FC = () => {
       setSelectedState(selectedState);
       try {
         const data = await getDistrictList(selectedState);
-        setDistrictData(data.result);
+        setDistrictData(data.result || []); 
         setSelectedDistrict(data.result[0]?.label || "-");
       } catch (error) {
         console.error("Error fetching district data", error);
@@ -117,11 +118,11 @@ const District: React.FC = () => {
     const fetchStateData = async () => {
       try {
         const data = await getStateList();
-        setStateData(data.result);
+        setStateData(data.result || []); 
         const initialSelectedState = data.result[0]?.value || "";
         setSelectedState(initialSelectedState);
         const districtData = await getDistrictList(initialSelectedState);
-        setDistrictData(districtData.result);
+        setDistrictData(districtData.result || []); 
         setSelectedDistrict(districtData.result[0]?.label || "-");
       } catch (error) {
         console.error("Error fetching state data", error);
@@ -155,8 +156,8 @@ const District: React.FC = () => {
     selectedSort,
     handleStateChange,
     handleSortChange,
-    states: stateData.map((state) => state.label),
-    districts: districtData.map((district) => district.label),
+    states: stateData.map((state) => state.label) || [],
+    districts: districtData.map((district) => district.label) || [],
     selectedState,
     selectedDistrict,
     showStateDropdown: false,
@@ -179,7 +180,11 @@ const District: React.FC = () => {
             >
               {stateData.map((stateDetail) => (
                 <MenuItem key={stateDetail.value} value={stateDetail.value}>
-                  {stateDetail.label}
+                  {stateDetail.label
+                    ?.toLocaleLowerCase()
+                    .charAt(0)
+                    .toUpperCase() +
+                    stateDetail.label?.toLocaleLowerCase().slice(1)}
                 </MenuItem>
               ))}
             </Select>
@@ -188,7 +193,12 @@ const District: React.FC = () => {
         <KaTableComponent
           columns={columns}
           data={sortedDistricts.map((districtDetail) => ({
-            label: districtDetail.label,
+            label:
+              districtDetail.label
+                ?.toLocaleLowerCase()
+                .charAt(0)
+                .toUpperCase() +
+              districtDetail.label?.toLocaleLowerCase().slice(1),
             actions: "Action buttons",
           }))}
           limit={pageLimit}
