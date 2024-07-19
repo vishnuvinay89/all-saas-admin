@@ -136,7 +136,7 @@ const FullLayout = ({ children }: any) => {
       <Header
         sx={{
           paddingLeft: isSidebarOpen && lgUp ? "265px" : "",
-          backgroundColor: "#F8BE27",
+          backgroundColor: "#4d4639"
         }}
         toggleMobileSidebar={() => setMobileSidebarOpen(true)}
       />

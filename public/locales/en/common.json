@@ -12,7 +12,7 @@
     "REASON_FOR_DELETION": "Reason for Deletion",
     "INCORRECT_DATA_ENTRY": "Incorrect Data Entry",
     "DUPLICATED_USER": "Duplicate User",
-    
+    "NO_USER_FOUND": "User not found",
     "ALL":"All",
     "NO_GO_BACK": "No, go back",
     "YES": "Yes",

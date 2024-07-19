@@ -71,28 +71,29 @@ const columns = [
   //   dataType: DataType.String,
   // },
   {
-    key: "actions",
-    title: "Actions",
+    key: "age",
+    title: "Age",
     dataType: DataType.String,
   },
   {
     key: "state",
-    title: "state",
+    title: "State",
     dataType: DataType.String,
   },
   {
     key: "district",
-    title: "district",
+    title: "District",
     dataType: DataType.String,
   },
-  {
-    key: "age",
-    title: "age",
-    dataType: DataType.String,
-  },
+  
   {
     key: "blocks",
-    title: "blocks",
+    title: "Bocks",
+    dataType: DataType.String,
+  },
+  {
+    key: "actions",
+    title: "Actions",
     dataType: DataType.String,
   },
 ];
