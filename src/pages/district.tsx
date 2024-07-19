@@ -192,7 +192,12 @@ const District: React.FC = () => {
         <KaTableComponent
           columns={columns}
           data={sortedDistricts.map((districtDetail) => ({
-            label: districtDetail.label,
+            label:
+              districtDetail.label
+                ?.toLocaleLowerCase()
+                .charAt(0)
+                .toUpperCase() +
+              districtDetail.label?.toLocaleLowerCase().slice(1),
             actions: "Action buttons",
           }))}
           limit={pageLimit}
