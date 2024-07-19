@@ -80,8 +80,12 @@ const HeaderComponent = ({
     selectedCodes: string[]
   ) => {
     if (selectedNames[0] === "") {
-      handleDistrictChange([], []);
-      handleBlockChange([], []);
+      // if(allDistricts.length!==0)
+      // {
+      //   handleDistrictChange([], []);
+      //   handleBlockChange([], []);
+      // }
+    
     }
     try {
       const response = await getDistrictList(selectedCodes);
