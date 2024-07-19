@@ -95,21 +95,6 @@
 
 // export default FullLayout;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import React from "react";
 import {
   experimentalStyled,
@@ -146,12 +131,12 @@ const FullLayout = ({ children }: any) => {
   const [isSidebarOpen, setSidebarOpen] = React.useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = React.useState(false);
   const lgUp = useMediaQuery((theme: any) => theme.breakpoints.up("lg"));
-return (
+  return (
     <MainWrapper>
       <Header
         sx={{
           paddingLeft: isSidebarOpen && lgUp ? "265px" : "",
-          backgroundColor: "black",
+          backgroundColor: "#F8BE27",
         }}
         toggleMobileSidebar={() => setMobileSidebarOpen(true)}
       />
@@ -177,4 +162,3 @@ return (
 };
 
 export default FullLayout;
-

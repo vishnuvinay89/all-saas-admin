@@ -83,10 +83,10 @@ const Block: React.FC = () => {
     setSelectedState(selectedState);
     try {
       const data = await getDistrictList(selectedState);
-      setDistrictData(data.result);
+      setDistrictData(data.result || []);
       setSelectedDistrict(data.result[0]?.value || "");
       const blockData = await getBlockList(data.result[0]?.value || "");
-      setBlockData(blockData.result);
+      setBlockData(blockData.result || []);
     } catch (error) {
       console.error("Error fetching district data", error);
     }
@@ -97,7 +97,7 @@ const Block: React.FC = () => {
     setSelectedDistrict(selectedDistrict);
     try {
       const blockData = await getBlockList(selectedDistrict);
-      setBlockData(blockData.result);
+      setBlockData(blockData.result || []);
     } catch (error) {
       console.error("Error fetching block data", error);
     }
@@ -133,15 +133,15 @@ const Block: React.FC = () => {
     const fetchStateData = async () => {
       try {
         const data = await getStateList();
-        setStateData(data.result);
-        setSelectedState(data.result[0]?.value || "");
-        const districtData = await getDistrictList(data.result[0]?.value || "");
-        setDistrictData(districtData.result);
-        setSelectedDistrict(districtData.result[0]?.value || "");
-        const blockData = await getBlockList(
-          districtData.result[0]?.value || ""
-        );
-        setBlockData(blockData.result);
+        setStateData(data.result || []);
+        const initialState = data.result[0]?.value || "";
+        setSelectedState(initialState);
+        const districtData = await getDistrictList(initialState);
+        setDistrictData(districtData.result || []);
+        const initialDistrict = districtData.result[0]?.value || "";
+        setSelectedDistrict(initialDistrict);
+        const blockData = await getBlockList(initialDistrict);
+        setBlockData(blockData.result || []);
       } catch (error) {
         console.error("Error fetching initial data", error);
       }
@@ -248,3 +248,4 @@ export async function getStaticProps({ locale }: any) {
 }
 
 export default Block;
+  
