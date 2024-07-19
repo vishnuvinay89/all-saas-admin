@@ -34,6 +34,7 @@ const District: React.FC = () => {
   const [districtData, setDistrictData] = useState<DistrictDetail[]>([]);
   const [pageCount, setPageCount] = useState<number>(1);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [selectedFilter, setSelectedFilter] = useState("All");
 
   const columns = [
     {
@@ -89,7 +90,10 @@ const District: React.FC = () => {
       setSortDirection("asc");
     }
   };
-
+  const handleFilterChange = async (event: SelectChangeEvent) => {
+    console.log(event.target.value as string);
+    setSelectedFilter(event.target.value as string);
+  };
   useEffect(() => {
     const fetchStateData = async () => {
       try {
@@ -134,6 +138,8 @@ const District: React.FC = () => {
     selectedState: selectedState,
     selectedDistrict: selectedDistrict,
     showStateDropdown: false,
+    selectedFilter:selectedFilter,
+    handleFilterChange:handleFilterChange
   };
 
   return (

@@ -1,37 +1,32 @@
 import React, { useEffect } from "react";
 import FeatherIcon from "feather-icons-react";
-import Image from "next/image";
-// import userimg from "../../../assets/images/users/user2.jpg";
-import sidebarBuynowsvg from "../../../../public/images/users/user2.jpg";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Logout from "@/pages/logout";
 import { useRouter } from "next/router";
-
 import {
   Box,
   Menu,
   Typography,
-  Link,
   ListItemButton,
   List,
   ListItemText,
   Button,
   Divider,
 } from "@mui/material";
-import { AnyARecord } from "dns";
 import { Storage } from "@/utils/app.constant";
+
 const Profile = () => {
-  const [anchorEl4, setAnchorEl4] = React.useState(null);
+  const [anchorEl4, setAnchorEl4] = React.useState<null | HTMLElement>(null);
   const [userName, setUserName] = React.useState<string | null>("");
   const router = useRouter();
 
-  const handleClick4 = (event: any) => {
+  const handleClick4 = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl4(event.currentTarget);
   };
 
   const handleClose4 = () => {
     setAnchorEl4(null);
   };
+
   const handleLogout = () => {
     if (typeof window !== "undefined" && window.localStorage) {
       localStorage.removeItem("token");
@@ -60,31 +55,26 @@ const Profile = () => {
         onClick={handleClick4}
       >
         <Box display="flex" alignItems="center" color="white">
-          {/* <Image
-            src={AccountCircleIcon}
-            alt={"userimg"}
-            width="30"
-            height="30"
-            className="roundedCircle"
-          /> */}
           <AccountCircleIcon />
           <Box
             sx={{
-              display: {
-                // xs: "none",
-                sm: "flex",
-              },
+              display: "flex",
               alignItems: "center",
+              ml: 1,
             }}
           >
-            <Typography variant="h5" fontWeight="400" sx={{ ml: 1 }}>
+            <Typography variant="body1" fontWeight="400" sx={{ fontSize: "16px" }}>
               Hi,
             </Typography>
             <Typography
-              variant="h5"
+              variant="body1"
               fontWeight="700"
               sx={{
                 ml: 1,
+                maxWidth: "200px",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                fontSize: "16px",
               }}
             >
               {userName ? userName : ""}
@@ -99,8 +89,8 @@ const Profile = () => {
         keepMounted
         open={Boolean(anchorEl4)}
         onClose={handleClose4}
-        sx={{
-          "& .MuiMenu-paper": {
+        PaperProps={{
+          sx: {
             width: "385px",
           },
         }}
@@ -128,16 +118,15 @@ const Profile = () => {
           </Box>
           <Divider />
           <Box p={2}>
-            <Link>
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={handleLogout}
-              >
-                Logout
-              </Button>
-            </Link>
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={handleLogout}
+              sx={{ fontSize: "16px" }}
+            >
+              Logout
+            </Button>
           </Box>
         </Box>
       </Menu>

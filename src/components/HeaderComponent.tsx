@@ -80,8 +80,12 @@ const HeaderComponent = ({
     selectedCodes: string[]
   ) => {
     if (selectedNames[0] === "") {
-      handleDistrictChange([], []);
-      handleBlockChange([], []);
+      // if(allDistricts.length!==0)
+      // {
+      //   handleDistrictChange([], []);
+      //   handleBlockChange([], []);
+      // }
+    
     }
     try {
       const response = await getDistrictList(selectedCodes);
@@ -156,7 +160,11 @@ const HeaderComponent = ({
           <Grid container spacing={isMobile ? 1 : 2}>
             <Grid item xs={12} sm={isMediumScreen ? 12 : 4}>
               <MultipleSelectCheckmarks
-                names={allStates.map((state) => state.label)}
+                names={allStates.map(
+                  (state) =>
+                    state.label?.toLowerCase().charAt(0).toUpperCase() +
+                    state.label?.toLowerCase().slice(1)
+                )}
                 codes={allStates.map((state) => state.value)}
                 tagName={t("FACILITATORS.ALL_STATES")}
                 selectedCategories={selectedState}
@@ -188,7 +196,7 @@ const HeaderComponent = ({
           </Grid>
         </Box>
       )}
-      <Typography variant="h2" sx={{ mt: isMobile ? "8px" : "16px" }}>
+      <Typography variant="h2" sx={{ mt: isMobile ? "12px" : "20px" }}>
         {userType}
       </Typography>
       <Box

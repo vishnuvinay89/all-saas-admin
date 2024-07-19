@@ -10,7 +10,7 @@ import {
   ListItemIcon,
   ListItemText,
   Collapse,
-  makeStyles,
+  Typography
 } from "@mui/material";
 import FeatherIcon from "feather-icons-react";
 import LogoIcon from "../logo/LogoIcon";
@@ -26,21 +26,16 @@ const Sidebar = ({
   onSidebarClose,
   isSidebarOpen,
 }: any) => {
-  const [open2, setOpen2] = React.useState<{ [key: number]: boolean }>({});
+  const [open, setOpen] = useState<number | null>(null);
 
   const { t } = useTranslation();
-
   const lgUp = useMediaQuery((theme: any) => theme.breakpoints.up("lg"));
-
-  const handleClick = (index: any) => {
-    setOpen2((prev) => ({
-      ...prev,
-      [index]: !prev[index],
-    }));
-  };
-
-  let router = useRouter();
+  const router = useRouter();
   const location = router.pathname;
+
+  const handleClick = (index: number) => {
+    setOpen((prevOpen) => (prevOpen === index ? null : index));
+  };
 
   const SidebarContent = (
     <Box p={2} height="100%">
@@ -72,30 +67,30 @@ const Sidebar = ({
                 <ListItemIcon>
                   <FeatherIcon icon={item.icon} />
                 </ListItemIcon>
-
-                <ListItemText>{t(item.title)}</ListItemText>
+                <ListItemText>
+                  <Typography variant="h2" sx={{ fontWeight: 'bold' }}>
+                    {t(item.title)}
+                  </Typography>
+                </ListItemText>
                 {item.subOptions ? (
-                  open2[index] ? (
-                    <ExpandLess />
-                  ) : (
-                    <ExpandMore />
-                  )
+                  open === index ? <ExpandLess /> : <ExpandMore />
                 ) : null}
               </ListItem>
 
               {item.subOptions && (
-                <Collapse in={open2[index]} timeout="auto" unmountOnExit>
+                <Collapse in={open === index} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
                     {item.subOptions.map((subItem) => (
                       <ListItem
                         button
+                        key={subItem.title}
                         onClick={() => {
                           router.push(subItem.href);
                           onSidebarClose();
                         }}
                         selected={location === subItem.href}
                         sx={{
-                          pl: 4,
+                          pl: 8,
                           mb: 1,
                           ...(location === subItem.href && {
                             color: "white",
@@ -106,8 +101,6 @@ const Sidebar = ({
                       >
                         <ListItemText>{t(subItem.title)}</ListItemText>
                       </ListItem>
-                      //   </a>
-                      // </NextLink>
                     ))}
                   </List>
                 </Collapse>

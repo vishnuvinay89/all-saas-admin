@@ -26,6 +26,7 @@ const State: React.FC = () => {
     "asc",
   ]);
   const [pageCount, setPageCount] = useState(1);
+  const [selectedFilter, setSelectedFilter] = useState("All");
 
   const columns = [
     {
@@ -58,7 +59,10 @@ const State: React.FC = () => {
       setSortBy(["label", "asc"]);
     }
   };
-
+  const handleFilterChange = async (event: SelectChangeEvent) => {
+    console.log(event.target.value as string);
+    setSelectedFilter(event.target.value as string);
+  };
   useEffect(() => {
     const fetchStateData = async () => {
       try {
@@ -92,6 +96,9 @@ const State: React.FC = () => {
     handleSortChange: handleSortChange,
     states: stateData.map((stateDetail) => stateDetail.label),
     showStateDropdown: false,
+    selectedFilter:selectedFilter,
+    handleFilterChange: handleFilterChange
+
   };
 
   return (

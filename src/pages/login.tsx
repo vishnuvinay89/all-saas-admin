@@ -5,6 +5,9 @@ import {
   IconButton,
   InputAdornment,
   TextField,
+  Grid,
+  Typography,
+  useMediaQuery, // Import useMediaQuery hook
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
@@ -25,6 +28,7 @@ import { telemetryFactory } from "@/utils/telemetry";
 import { logEvent } from "@/utils/googleAnalytics";
 import { showToastMessage } from "@/components/Toastify";
 import Link from "@mui/material/Link";
+import loginImage from "../../public/6300830.jpg";
 
 const LoginPage = () => {
   const { t } = useTranslation();
@@ -38,23 +42,23 @@ const LoginPage = () => {
   const [lang, setLang] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState(lang);
   const [language, setLanguage] = useState(selectedLanguage);
-  const [scrolling, setScrolling] = useState(false);
 
   const theme = useTheme<any>();
   const router = useRouter();
+  
+  // Use useMediaQuery to detect screen size
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMedium = useMediaQuery(theme.breakpoints.between('sm', 'md'));
 
   const passwordRef = useRef<HTMLInputElement>(null);
   const loginButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
-      if (localStorage.getItem("preferredLanguage")) {
-        var lang = localStorage.getItem("preferredLanguage") || "en";
-      } else {
-        lang = "en";
-      }
-      setLanguage(lang);
-      setLang(lang);
+      const preferredLang = localStorage.getItem("preferredLanguage") || "en";
+      setLanguage(preferredLang);
+      setLang(preferredLang);
+
       const token = localStorage.getItem("token");
       if (token) {
         router.push("/dashboard");
@@ -66,8 +70,7 @@ const LoginPage = () => {
     const { value } = event.target;
     const trimmedValue = value.trim();
     setUsername(trimmedValue);
-    const containsSpace = /\s/.test(trimmedValue);
-    setUsernameError(containsSpace);
+    setUsernameError(/\s/.test(trimmedValue));
   };
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,10 +103,7 @@ const LoginPage = () => {
     if (!usernameError && !passwordError) {
       setLoading(true);
       try {
-        const response = await login({
-          username: username,
-          password: password,
-        });
+        const response = await login({ username, password });
         if (response) {
           if (typeof window !== "undefined" && window.localStorage) {
             const token = response?.result?.access_token;
@@ -116,20 +116,16 @@ const LoginPage = () => {
             const userResponse = await getUserId();
             localStorage.setItem("userId", userResponse?.userId);
             localStorage.setItem("name", userResponse?.name);
-            const tenentId = userResponse?.tenantData?.[0]?.tenantId;
-            localStorage.setItem("tenentId", tenentId);
+            const tenantId = userResponse?.tenantData?.[0]?.tenantId;
+            localStorage.setItem("tenantId", tenantId);
           }
         }
         setLoading(false);
         const telemetryInteract = {
-          context: {
-            env: "sign-in",
-            cdata: [],
-          },
+          context: { env: "sign-in", cdata: [] },
           edata: {
             id: "login-success",
             type: "CLICK",
-            subtype: "",
             pageid: "sign-in",
             uid: localStorage.getItem("userId") || "Anonymous",
           },
@@ -138,18 +134,11 @@ const LoginPage = () => {
         router.push("/dashboard");
       } catch (error: any) {
         setLoading(false);
-        if (error.response && error.response.status === 404) {
-          showToastMessage(
-            t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT"),
-            "error"
-          );
-        } else {
-          console.error("Error:", error);
-          showToastMessage(
-            t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT"),
-            "error"
-          );
-        }
+        const errorMessage =
+          error.response && error.response.status === 404
+            ? t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT")
+            : t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT");
+        showToastMessage(errorMessage, "error");
       }
     }
   };
@@ -161,33 +150,13 @@ const LoginPage = () => {
     const newLocale = event.target.value;
     if (typeof window !== "undefined" && window.localStorage) {
       localStorage.setItem("preferredLanguage", newLocale);
-      setLanguage(event.target.value);
+      setLanguage(newLocale);
       ReactGA.event("select-language-login-page", {
-        selectedLanguage: event.target.value,
+        selectedLanguage: newLocale,
       });
       router.push("/login", undefined, { locale: newLocale });
     }
   };
-
-  useEffect(() => {
-    const handlePasswordFocus = () => {
-      if (loginButtonRef.current) {
-        setTimeout(() => {
-          loginButtonRef.current?.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-        }, 200); // Delay of 200 milliseconds
-      }
-    };
-    const passwordField = passwordRef.current;
-    if (passwordField) {
-      passwordField.addEventListener("focus", handlePasswordFocus);
-      return () => {
-        passwordField.removeEventListener("focus", handlePasswordFocus);
-      };
-    }
-  }, []);
 
   const handleForgotPasswordClick = () => {
     logEvent({
@@ -198,187 +167,167 @@ const LoginPage = () => {
   };
 
   return (
-    <Box sx={{ height: "100vh", background: "white" }}>
-      <form onSubmit={handleFormSubmit}>
+    <Grid container sx={{ }}>
+      {!(isMobile || isMedium) && ( // Render only on desktop view
+        <Grid
+          item
+          xs={12}
+          md={6}
+          sx={{
+            background: `url(${loginImage.src}) no-repeat center center`,
+            backgroundSize: "cover",
+            height: "100vh"
+          }}
+        />
+      )}
+      <Grid
+        item
+        xs={12}
+        md={6}
+        display="flex"
+        alignItems="center"
+        sx={{
+          backgroundColor: "white",
+        }}
+      >
         <Box
-          display="flex"
-          flexDirection="column"
-          bgcolor={theme.palette.warning.A200}
+          sx={{
+            width: "100%",
+            maxWidth: 500,
+            margin: "auto",
+            padding: 4,
+            boxShadow: isMedium||isMobile? null: 3,
+          }}
         >
-          {loading && (
-            <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
-          )}
-          <Box
-            display={"flex"}
-            overflow="auto"
-            alignItems={"center"}
-            justifyContent={"center"}
-            zIndex={99}
-            sx={{ margin: "32px 0 65px" }}
-          >
-            <Image src={appLogo} alt="App Logo" height={100} />{" "}
-          </Box>
-        </Box>
-        <Box
-          flexGrow={1}
-          display={"flex"}
-          bgcolor="white"
-          height="auto"
-          borderRadius={"2rem 2rem 0 0"}
-          zIndex={99}
-          justifyContent={"center"}
-          p={"2rem"}
-          marginTop={"-25px"}
-        >
-          <Box
-            position={"relative"}
-            sx={{
-              "@media (max-width: 700px)": {
-                width: "100%",
-              },
-            }}
-          >
-            <Box mt={"0.5rem"}>
-              <FormControl sx={{ m: "1rem 0 1rem" }}>
-                <Select
-                  className="SelectLanguages"
-                  value={language}
-                  onChange={handleChange}
-                  displayEmpty
-                  style={{
-                    borderRadius: "0.5rem",
-                    color: theme.palette.warning["A200"],
-                    width: "117px",
-                    height: "32px",
-                    marginBottom: "0rem",
-                    fontSize: "14px",
-                  }}
-                >
-                  {config?.languages.map((lang) => (
-                    <MenuItem value={lang.code} key={lang.code}>
-                      {lang.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
+          <form onSubmit={handleFormSubmit}>
             <Box
-              marginY={"1rem"}
-              sx={{
-                width: "668px",
-                "@media (max-width: 700px)": {
-                  width: "100%",
-                },
-              }}
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              bgcolor={theme.palette.warning.A200}
+              p={2}
+              borderRadius={2}
             >
-              <TextField
-                id="username"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                label={t("LOGIN_PAGE.USERNAME")}
-                placeholder={t("LOGIN_PAGE.USERNAME_PLACEHOLDER")}
-                value={username}
-                onChange={handleUsernameChange}
-                error={usernameError}
-                className="userName"
-              />
+              {loading && (
+                <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
+              )}
+              <Image src={appLogo} alt="App Logo" height={100} />
             </Box>
+            <Typography
+              variant="h4"
+              gutterBottom
+              textAlign="center"
+              sx={{ mt: 2 }}
+            >
+              {t("LOGIN_PAGE.LOGIN")}
+            </Typography>
+            <FormControl fullWidth margin="normal">
+              <Select
+                className="SelectLanguages"
+                value={language}
+                onChange={handleChange}
+                displayEmpty
+                sx={{
+                  borderRadius: "0.5rem",
+                  color: theme.palette.warning.A200,
+                  width: "117px",
+                  height: "32px",
+                  marginBottom: "0rem",
+                  fontSize: "14px",
+                }}
+              >
+                {config.languages.map((lang) => (
+                  <MenuItem value={lang.code} key={lang.code}>
+                    {lang.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              fullWidth
+              id="username"
+              InputLabelProps={{ shrink: true }}
+              label={t("LOGIN_PAGE.USERNAME")}
+              placeholder={t("LOGIN_PAGE.USERNAME_PLACEHOLDER")}
+              value={username}
+              onChange={handleUsernameChange}
+              error={usernameError}
+              margin="normal"
+            />
+            <TextField
+              fullWidth
+              type={showPassword ? "text" : "password"}
+              id="password"
+              InputLabelProps={{ shrink: true }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              label={t("LOGIN_PAGE.PASSWORD")}
+              placeholder={t("LOGIN_PAGE.PASSWORD_PLACEHOLDER")}
+              value={password}
+              onChange={handlePasswordChange}
+              error={passwordError}
+              margin="normal"
+              inputRef={passwordRef}
+            />
+          
             <Box
-              sx={{
-                width: "668px",
-                "@media (max-width: 768px)": {
-                  width: "100%",
-                },
-              }}
-              margin={"2rem 0 0"}
+              display="flex"
+              alignItems="center"
+              marginTop="1.2rem"
+              className="remember-me-checkbox"
             >
-              <TextField
-                type={showPassword ? "text" : "password"}
-                id="password"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                onClick={() => setScrolling(!scrolling)}
-                className="password"
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                label={t("LOGIN_PAGE.PASSWORD")}
-                placeholder={t("LOGIN_PAGE.PASSWORD_PLACEHOLDER")}
-                value={password}
-                onChange={handlePasswordChange}
-                error={passwordError}
-                inputRef={passwordRef}
-              />
-            </Box>
-
-            {
-              <Box marginTop={"1rem"} marginLeft={"0.8rem"}>
-                <Link
-                  sx={{ color: theme.palette.secondary.main }}
-                  href="https://qa.prathamteacherapp.tekdinext.com/auth/realms/pratham/login-actions/reset-credentials?client_id=security-admin-console&tab_id=rPJFHSFv50M"
-                  underline="none"
-                  onClick={handleForgotPasswordClick}
-                >
-                  {t("LOGIN_PAGE.FORGOT_PASSWORD")}
-                </Link>
-              </Box>
-            }
-            <Box marginTop={"1.2rem"} className="remember-me-checkbox">
               <Checkbox
                 onChange={(e) => setRememberMe(e.target.checked)}
                 checked={rememberMe}
               />
-              <span
-                style={{
-                  cursor: "pointer",
-                  color: theme.palette.warning["300"],
-                }}
-                className="fw-400"
+              <Typography
+                variant="body2"
                 onClick={() => {
                   setRememberMe(!rememberMe);
                   logEvent({
                     action: "remember-me-button-clicked",
                     category: "Login Page",
-                    label: `Remember Me ${rememberMe ? "Checked" : "Unchecked"}`,
+                    label: `Remember Me ${
+                      rememberMe ? "Checked" : "Unchecked"
+                    }`,
                   });
+                }}
+                sx={{
+                  cursor: "pointer",
+                  marginTop:"15px",
+                  color: theme.palette.warning[300],
                 }}
               >
                 {t("LOGIN_PAGE.REMEMBER_ME")}
-              </span>
+              </Typography>
             </Box>
-            <Box
-              alignContent={"center"}
-              textAlign={"center"}
-              marginTop={"2rem"}
-              width={"100%"}
-            >
+            <Box marginTop="2rem" textAlign="center">
               <Button
                 variant="contained"
                 type="submit"
-                fullWidth={true}
+                fullWidth
                 disabled={isButtonDisabled}
                 ref={loginButtonRef}
               >
                 {t("LOGIN_PAGE.LOGIN")}
               </Button>
             </Box>
-          </Box>
+          </form>
         </Box>
-      </form>
-    </Box>
+      </Grid>
+    </Grid>
   );
 };
 
