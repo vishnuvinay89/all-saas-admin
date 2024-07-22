@@ -437,7 +437,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
 
           return {
             ...user,
-            centers: cohortNames,
+            centers:cohortNames?.join(" , "),
           };
 
         })
