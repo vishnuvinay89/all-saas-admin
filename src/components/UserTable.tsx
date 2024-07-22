@@ -65,13 +65,17 @@ const columns = [
     key: "name",
     title: "Name",
     dataType: DataType.String,
-    sortDirection: SortDirection.Ascend
+    sortDirection: SortDirection.Ascend,
+    width: 160,
+    
   },
   {
     key: "centers",
     title: "Centers",
     dataType: DataType.String,
-    sortDirection: SortDirection.Ascend
+    sortDirection: SortDirection.Ascend,
+    width: 160,
+
   },
   // {
   //   key: "programs",
@@ -82,30 +86,40 @@ const columns = [
     key: "age",
     title: "Age",
     dataType: DataType.String,
+    width: 160,
+
   },
   {
     key: "state",
     title: "State",
     dataType: DataType.String,
-    sortDirection: SortDirection.Ascend
+    sortDirection: SortDirection.Ascend,
+    width: 160,
+
   },
   {
     key: "district",
     title: "District",
     dataType: DataType.String,
-    sortDirection: SortDirection.Ascend
+    sortDirection: SortDirection.Ascend,
+    width: 160,
+
   },
   
   {
     key: "blocks",
     title: "Bocks",
     dataType: DataType.String,
-    sortDirection: SortDirection.Ascend
+    sortDirection: SortDirection.Ascend,
+    width: 160,
+
   },
   {
     key: "actions",
     title: "Actions",
     dataType: DataType.String,
+        width: 160,
+
   },
 ];
 
