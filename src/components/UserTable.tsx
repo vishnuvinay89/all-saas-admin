@@ -20,6 +20,8 @@ import glass from "../../public/images/empty_hourglass.svg";
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Image from 'next/image';
+import { SortDirection  } from 'ka-table/enums';
+
 type UserDetails = {
   userId: any;
   username: any;
@@ -63,11 +65,13 @@ const columns = [
     key: "name",
     title: "Name",
     dataType: DataType.String,
+    sortDirection: SortDirection.Ascend
   },
   {
     key: "centers",
     title: "Centers",
     dataType: DataType.String,
+    sortDirection: SortDirection.Ascend
   },
   // {
   //   key: "programs",
@@ -83,17 +87,20 @@ const columns = [
     key: "state",
     title: "State",
     dataType: DataType.String,
+    sortDirection: SortDirection.Ascend
   },
   {
     key: "district",
     title: "District",
     dataType: DataType.String,
+    sortDirection: SortDirection.Ascend
   },
   
   {
     key: "blocks",
     title: "Bocks",
     dataType: DataType.String,
+    sortDirection: SortDirection.Ascend
   },
   {
     key: "actions",

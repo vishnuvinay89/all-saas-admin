@@ -12,6 +12,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
 import { getDistrictList, getStateList } from "@/services/MasterDataService";
+import { SortDirection  } from 'ka-table/enums';
 
 type StateDetail = {
   value: string;
@@ -43,11 +44,14 @@ const District: React.FC = () => {
         key: "label",
         title: t("MASTER.DISTRICT_NAMES"),
         dataType: DataType.String,
+        sortDirection: SortDirection.Ascend
+
       },
       {
         key: "actions",
         title: t("MASTER.ACTIONS"),
         dataType: DataType.String,
+
       },
     ],
     [t]

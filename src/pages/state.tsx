@@ -8,6 +8,7 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
 import { getStateList } from "@/services/MasterDataService";
+import { SortDirection  } from 'ka-table/enums';
 
 type StateDetail = {
   label: string;
@@ -35,6 +36,8 @@ const State: React.FC = () => {
         key: "label",
         title: t("MASTER.STATE_NAMES"),
         dataType: DataType.String,
+        sortDirection: SortDirection.Ascend
+
       },
       {
         key: "actions",
