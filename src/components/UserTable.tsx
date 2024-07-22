@@ -21,6 +21,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Image from 'next/image';
 import { SortDirection  } from 'ka-table/enums';
+import { Status, SORT} from "@/utils/app.constant";
 
 type UserDetails = {
   userId: any;
@@ -214,14 +215,14 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
       console.log(true)
        setFilters(prevFilters => ({
       ...prevFilters,
-      status: "active"
+      status: Status.ACTIVE
     }));
     }
     else if (event.target.value==="Archived")
     {
       setFilters(prevFilters => ({
         ...prevFilters,
-        status: "archived"
+        status: Status.ARCHIVED
       }));
     }
     else
@@ -240,7 +241,6 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
   };
 
   const handleDistrictChange = (selected: string[], code: string[]) => {
-    console.log("district")
     setSelectedBlock([]);
    setSelectedDistrict(selected);
 
@@ -331,11 +331,11 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
   const handleSortChange = async (event: SelectChangeEvent) => {
     // let sort;
     if (event.target.value === "Z-A") {
-      setSortBy(["name", "desc"]);
+      setSortBy(["name", SORT.DESCENDING]);
     } else if (event.target.value === "A-Z") {
-      setSortBy(["name", "asc"]);
+      setSortBy(["name", SORT.ASCENDING]);
     } else {
-      setSortBy(["createdAt", "asc"]);
+      setSortBy(["createdAt", SORT.ASCENDING]);
     }
 
     setSelectedSort(event.target.value as string);
