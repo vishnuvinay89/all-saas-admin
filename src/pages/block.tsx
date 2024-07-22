@@ -145,7 +145,12 @@ const Block: React.FC = () => {
         <Box sx={{ minWidth: 240, display: "flex", gap: 5 }}>
           <Box sx={{ minWidth: 240 }}>
             <FormControl sx={{ minWidth: 240 }}>
-              <InputLabel id="state-select-label">States</InputLabel>
+              <InputLabel
+                sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
+                id="state-select-label"
+              >
+                States
+              </InputLabel>
               <Select
                 labelId="state-select-label"
                 id="state-select"
@@ -166,7 +171,12 @@ const Block: React.FC = () => {
           </Box>
           <Box sx={{ minWidth: 240 }}>
             <FormControl sx={{ minWidth: 240 }}>
-              <InputLabel id="district-select-label">Districts</InputLabel>
+              <InputLabel
+                sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
+                id="district-select-label"
+              >
+                Districts
+              </InputLabel>
               <Select
                 labelId="district-select-label"
                 id="district-select"
