@@ -15,7 +15,11 @@ import CustomModal from "@/components/CustomModal";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { showToastMessage } from "@/components/Toastify";
-
+import Loader from "../components/Loader";
+import glass from "../../public/images/empty_hourglass.svg";
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Image from 'next/image';
 type UserDetails = {
   userId: any;
   username: any;
@@ -121,6 +125,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
   const [otherReason, setOtherReason] = useState("");
   const [confirmButtonDisable, setConfirmButtonDisable] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const [loading, setLoading] = useState<boolean | undefined>(undefined);
 
   const [filters, setFilters] = useState<FilterDetails>({
     role: role,
@@ -250,6 +255,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
   };
   useEffect(() => {
     const fetchUserList = async () => {
+      setLoading(true);
       try {
         const fields=[ "age",
         "districts",
@@ -295,11 +301,14 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
           };
         });
         setData(finalResult);
+        setLoading(false);
         setCohortsFetched(false);
       } catch (error: any) {
+        setLoading(false);
+
         if (error?.response && error?.response.status === 404) {
           setData([]);
-          showToastMessage("No data found", "info");
+          //showToastMessage("No data found", "info");
 
         }
 
@@ -311,8 +320,12 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
 
   useEffect(() => {
     const fetchData = async () => {
-      
-      if (data.length === 0 || cohortsFetched) return;
+
+      try{
+       
+        if (data.length === 0 || cohortsFetched)
+        {
+          return;  }
       const newData = await Promise.all(
         data.map(async (user) => {
           const response = await getCohortList(user.userId);
@@ -324,11 +337,21 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
             ...user,
             centers: cohortNames,
           };
+
         })
+
       );
 
       setData(newData);
       setCohortsFetched(true);
+
+      }
+      catch(error: any)
+      {
+         console.log(error);
+      }
+      
+      
     };
 
     fetchData();
@@ -379,8 +402,34 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
 
   return (
     <HeaderComponent {...userProps}>
-      
-        <KaTableComponent
+       {loading ? (
+                <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
+              ): (  (data.length!==0 && loading===false  )? (  <KaTableComponent
+                columns={columns}
+                data={data}
+                limit={pageLimit}
+                offset={pageOffset}
+                PagesSelector={PagesSelector}
+                PageSizeSelector={PageSizeSelectorFunction}
+                pageSizes={pageSizeArray}
+                extraActions={extraActions}
+                showIcons={true}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                
+              />) : 
+              ( loading===false &&   data.length===0 && ( 
+                <Box display="flex" >
+              <Image src={glass} alt="" />
+              <Typography
+              marginTop="10px"
+              >
+               {t("COMMON.NO_USER_FOUND")}    
+              </Typography>
+            </Box>)) )}
+
+    
+        {/* <KaTableComponent
           columns={columns}
           data={data}
           limit={pageLimit}
@@ -393,7 +442,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
           onEdit={handleEdit}
           onDelete={handleDelete}
           
-        />
+        /> */}
       <DeleteUserModal
         open={isDeleteModalOpen}
         onClose={handleCloseDeleteModal}
