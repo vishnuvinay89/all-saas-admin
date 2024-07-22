@@ -116,7 +116,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
   const [data, setData] = useState<UserDetails[]>([]);
   const [cohortsFetched, setCohortsFetched] = useState(false);
   const { t } = useTranslation();
-  const [pageSize, setPageSize] = React.useState<string | number>("");
+  const [pageSize, setPageSize] = React.useState<string | number>("10");
   const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
   const [pageCount, setPageCount] = useState(1);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -272,8 +272,10 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
         if (resp?.totalCount >= 15) {
           setPageSizeArray([5, 10, 15]);
         } else if (resp?.totalCount >= 10) {
+          setPageSize(resp?.totalCount);
           setPageSizeArray([5, 10]);
         } else if (resp?.totalCount >= 5 || resp?.totalCount < 5) {
+          setPageSize(resp?.totalCount);
           setPageSizeArray([5]);
         }
 
