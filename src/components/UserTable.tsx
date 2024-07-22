@@ -37,7 +37,7 @@ type UserDetails = {
 };
 type FilterDetails = {
   role: any;
-  status: any;
+  status?: any;
   district?: any;
    state?: any;
    block?: any;
@@ -150,7 +150,6 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
 
   const [filters, setFilters] = useState<FilterDetails>({
     role: role,
-    status: "active",
   });
 
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
@@ -185,16 +184,24 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
     setSelectedDistrict([]);
     setSelectedBlock([]);
 
+    console.log("f", filters.status)
 
     setSelectedState(selected);
   
     if (selected[0] === "") {
-      console.log("hii")
-      setFilters({ role: role, status: "active" });
+      if(filters.status)
+      setFilters({ role: role, status: filters.status });
+    else
+    setFilters({ role: role});
+
     } else {
      const stateCodes = code?.join(",");
       setSelectedStateCode(stateCodes);
-      setFilters({ role: role, status: "active", state: stateCodes });
+      if(filters.status)
+      setFilters({ role: role, status: filters.status, state: stateCodes });
+    else
+    setFilters({ role: role, state: stateCodes });
+
     }
 
     console.log("Selected categories:", typeof code[0]);
@@ -202,6 +209,34 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
   const handleFilterChange = async (event: SelectChangeEvent) => {
     console.log(event.target.value as string);
     setSelectedFilter(event.target.value as string);
+    if(event.target.value ==="Active")
+    {
+      console.log(true)
+       setFilters(prevFilters => ({
+      ...prevFilters,
+      status: "active"
+    }));
+    }
+    else if (event.target.value==="Archived")
+    {
+      setFilters(prevFilters => ({
+        ...prevFilters,
+        status: "archived"
+      }));
+    }
+    else
+    {
+      setFilters(prevFilters => {
+        const { status, ...restFilters } = prevFilters; 
+        return {
+          ...restFilters,
+        };
+      });
+    }
+    console.log(filters);
+    
+
+
   };
 
   const handleDistrictChange = (selected: string[], code: string[]) => {
@@ -210,42 +245,86 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
    setSelectedDistrict(selected);
 
     if (selected[0] === "") {
-      setFilters({
+      if(filters.status)
+      { setFilters({
         role: role,
-        status: "active",
+        status: filters.status,
         state: selectedStateCode,
-      });
+      });}
+      else
+      {
+        setFilters({
+          role: role,
+          state: selectedStateCode,
+        });
+      }
+     
     } else {
       const districts = code?.join(",");
       setSelectedDistrictCode(districts);
-      setFilters({
+      if(filters.status)
+      {  setFilters({
         role: role,
-        status: "active",
+        status: filters.status,
         state: selectedStateCode,
         district: districts,
-      });
+      });}
+      else
+      {
+        setFilters({
+          role: role,
+          state: selectedStateCode,
+          district: districts,
+        });
+      }
+     
     }
     console.log("Selected categories:", selected);
   };
   const handleBlockChange = (selected: string[], code: string[]) => {
     setSelectedBlock(selected);
     if (selected[0] === "") {
-      setFilters({
-        role: role,
-        status: "active",
-        state: selectedStateCode,
-        district:selectedDistrictCode
-      });
+      if(filters.status)
+      {
+        setFilters({
+          role: role,
+          status: filters.status,
+          state: selectedStateCode,
+          district:selectedDistrictCode
+        });
+      }
+      else
+      {
+        setFilters({
+          role: role,
+          state: selectedStateCode,
+          district:selectedDistrictCode
+        });
+      }
+      
     } else {
       const blocks = code?.join(",");
       setSelectedBlockCode(blocks);
-      setFilters({
-        role: role,
-        status: "active",
-        state: selectedStateCode,
-        district: selectedDistrictCode,
-        block:blocks
-      });
+      if(filters.status)
+        {
+
+          setFilters({
+            role: role,
+            status: filters.status,
+            state: selectedStateCode,
+            district: selectedDistrictCode,
+            block:blocks
+          });
+        }
+        else{
+          setFilters({
+            role: role,
+            state: selectedStateCode,
+            district: selectedDistrictCode,
+            block:blocks
+          });
+        }
+     
     }
     console.log("Selected categories:", selected);
   };
