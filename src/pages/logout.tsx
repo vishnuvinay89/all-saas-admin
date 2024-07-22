@@ -1,14 +1,17 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { logout } from '../services/LoginService';
+import { logout } from "../services/LoginService";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Loader from "@/components/Loader";
+import { useTranslation } from "react-i18next";
 
 function Logout() {
   const router = useRouter();
+  const { t } = useTranslation();
   useEffect(() => {
     const userLogout = async () => {
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
+        const refreshToken = localStorage.getItem("refreshToken");
         if (refreshToken) {
           await logout(refreshToken);
         }
@@ -17,14 +20,12 @@ function Logout() {
       }
     };
     userLogout();
-    localStorage.removeItem('token');
-
+    localStorage.removeItem("token");
     router.replace("/login");
   }, []);
 
-  return "";
+  return <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />;
 }
-
 
 export async function getStaticProps({ locale }: any) {
   return {
@@ -33,6 +34,5 @@ export async function getStaticProps({ locale }: any) {
     },
   };
 }
-
 
 export default Logout;

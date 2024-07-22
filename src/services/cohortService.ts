@@ -4,7 +4,7 @@ export const getCohortList = async (
   userId: string,
   filters: { [key: string]: string } = {}
 ): Promise<any> => {
-  let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/mycohorts/${userId}?children=true`;
+  let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/mycohorts/${userId}?children=true&customField`;
   const filterParams = new URLSearchParams(filters).toString();
   if (filterParams) {
     apiUrl += `&${filterParams}`;

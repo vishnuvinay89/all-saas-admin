@@ -74,6 +74,7 @@ const Cohorts: React.FC = () => {
   const [confirmButtonDisable, setConfirmButtonDisable] =
     React.useState<boolean>(false);
   const [inputName, setInputName] = React.useState<string>("");
+  const [cohortName, setCohortName] = React.useState<string>("");
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
     setPageSize(event.target.value);
     setPageLimit(Number(event.target.value));
@@ -86,7 +87,7 @@ const Cohorts: React.FC = () => {
   const handleOpen = () => {
     setOpen(true);
   };
-  
+
   const PagesSelector = () => (
     <>
       <Pagination
@@ -185,8 +186,11 @@ const Cohorts: React.FC = () => {
       const resp = await getCohortList(userId);
       const result = resp;
       console.log("result", result);
-
+      const cohortName = result?.[0]?.cohortName;
       setData(result);
+      setInputName(cohortName);
+      const childData = result?.[0]?.childData;
+      
     } catch (error) {
       console.error("Error fetching user list:", error);
     }
@@ -281,6 +285,7 @@ const Cohorts: React.FC = () => {
             id="standard-basic"
             label="Cohort Name"
             variant="standard"
+            value={inputName}
             onChange={handleInputName}
           />
         </Box>
@@ -307,7 +312,7 @@ const Cohorts: React.FC = () => {
             extraActions={extraActions}
             showIcons={true}
             onEdit={handleEdit}
-          onDelete={handleDelete}
+            onDelete={handleDelete}
           />
         </div>
       </HeaderComponent>
