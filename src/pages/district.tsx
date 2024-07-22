@@ -83,7 +83,7 @@ const District: React.FC = () => {
       setSelectedState(selectedState);
       try {
         const data = await getDistrictList(selectedState);
-        setDistrictData(data.result || []); 
+        setDistrictData(data.result || []);
         setSelectedDistrict(data.result[0]?.label || "-");
       } catch (error) {
         console.error("Error fetching district data", error);
@@ -118,11 +118,11 @@ const District: React.FC = () => {
     const fetchStateData = async () => {
       try {
         const data = await getStateList();
-        setStateData(data.result || []); 
+        setStateData(data.result || []);
         const initialSelectedState = data.result[0]?.value || "";
         setSelectedState(initialSelectedState);
         const districtData = await getDistrictList(initialSelectedState);
-        setDistrictData(districtData.result || []); 
+        setDistrictData(districtData.result || []);
         setSelectedDistrict(districtData.result[0]?.label || "-");
       } catch (error) {
         console.error("Error fetching state data", error);
@@ -168,8 +168,18 @@ const District: React.FC = () => {
   return (
     <React.Fragment>
       <HeaderComponent {...userProps}>
-        <Box sx={{ minWidth: 240 }}>
-          <FormControl sx={{ minWidth: 240 }}>
+        <Box
+          sx={{
+            minWidth: 240,
+            "@media (max-width: 580px)": {
+              marginTop: 3,
+              marginBottom: 3,
+              flexDirection: "column",
+              alignItems: "center",
+            },
+          }}
+        >
+          <FormControl sx={{ minWidth: 340 }}>
             <InputLabel id="state-select-label">States</InputLabel>
             <Select
               labelId="state-select-label"

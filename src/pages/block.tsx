@@ -11,6 +11,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
+import { useMediaQuery } from "@mui/material";
 
 // Static Data
 const staticStateData = [
@@ -38,6 +39,8 @@ const Block: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const isMobile = useMediaQuery("(max-width:600px)");
+  const isMediumScreen = useMediaQuery("(max-width:986px)");
 
   const columns = useMemo(
     () => [
@@ -142,9 +145,20 @@ const Block: React.FC = () => {
   return (
     <React.Fragment>
       <HeaderComponent {...userProps}>
-        <Box sx={{ minWidth: 240, display: "flex", gap: 5 }}>
-          <Box sx={{ minWidth: 240 }}>
-            <FormControl sx={{ minWidth: 240 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 5,
+            "@media (max-width: 580px)": {
+              marginTop: 10,
+              flexDirection: "column",
+              alignItems: "center",
+            },
+          }}
+        >
+          <Box sx={{ width: "100%" }}>
+            <FormControl sx={{ width: "100%" }}>
               <InputLabel
                 sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
                 id="state-select-label"
@@ -169,8 +183,8 @@ const Block: React.FC = () => {
               </Select>
             </FormControl>
           </Box>
-          <Box sx={{ minWidth: 240 }}>
-            <FormControl sx={{ minWidth: 240 }}>
+          <Box sx={{ width: "100%" }}>
+            <FormControl sx={{ width: "100%" }}>
               <InputLabel
                 sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
                 id="district-select-label"
