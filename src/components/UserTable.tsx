@@ -63,6 +63,10 @@ const columns = [
   //   dataType: DataType.String,
   // },
   {
+    key: 'selection-cell',
+    width: 50
+},
+  {
     key: "name",
     title: "Name",
     dataType: DataType.String,
