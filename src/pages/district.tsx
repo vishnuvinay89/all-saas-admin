@@ -171,6 +171,7 @@ const District: React.FC = () => {
         <Box
           sx={{
             minWidth: 240,
+            marginTop: 2,
             "@media (max-width: 580px)": {
               marginTop: 3,
               marginBottom: 3,

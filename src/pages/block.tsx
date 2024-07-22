@@ -150,6 +150,7 @@ const Block: React.FC = () => {
             display: "flex",
             justifyContent: "center",
             gap: 5,
+            marginTop: 2,
             "@media (max-width: 580px)": {
               marginTop: 10,
               flexDirection: "column",
