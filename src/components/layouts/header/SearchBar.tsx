@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Box, InputBase, IconButton, Paper } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import { IconButton, InputBase, Paper } from '@mui/material';
 import { styled } from '@mui/system';
+import React, { useState } from 'react';
 
 interface SearchBarProps {
   onSearch: (keyword: string) => void;
