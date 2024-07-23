@@ -227,20 +227,7 @@ const Cohorts: React.FC = () => {
     { name: "Delete", onClick: handleDelete, icon: DeleteIcon },
   ];
 
-  const userProps = {
-    userType: t("SIDEBAR.COHORTS"),
-    searchPlaceHolder: t("COHORTS.SEARCHBAR_PLACEHOLDER"),
-    selectedState: selectedState,
-    selectedDistrict: selectedDistrict,
-    selectedBlock: selectedBlock,
-    selectedSort: selectedSort,
-    selectedFilter: selectedFilter,
-    handleStateChange: handleStateChange,
-    handleDistrictChange: handleDistrictChange,
-    handleBlockChange: handleBlockChange,
-    handleSortChange: handleSortChange,
-    handleFilterChange: handleFilterChange,
-  };
+ 
 
   const onCloseEditMOdel = () => {
     setIsEditModalOpen(false);
@@ -266,7 +253,24 @@ const Cohorts: React.FC = () => {
     onCloseEditMOdel();
     fetchUserList();
   };
+  const handleSearch = (keyword: string) => {
 
+  };
+  const userProps = {
+    userType: t("SIDEBAR.COHORTS"),
+    searchPlaceHolder: t("COHORTS.SEARCHBAR_PLACEHOLDER"),
+    selectedState: selectedState,
+    selectedDistrict: selectedDistrict,
+    selectedBlock: selectedBlock,
+    selectedSort: selectedSort,
+    selectedFilter: selectedFilter,
+    handleStateChange: handleStateChange,
+    handleDistrictChange: handleDistrictChange,
+    handleBlockChange: handleBlockChange,
+    handleSortChange: handleSortChange,
+    handleFilterChange: handleFilterChange,
+    handleSearch:handleSearch
+  };
   return (
     <>
       <CustomModal
@@ -312,6 +316,7 @@ const Cohorts: React.FC = () => {
             showIcons={true}
             onEdit={handleEdit}
           onDelete={handleDelete}
+          
           />
         </div>
       </HeaderComponent>

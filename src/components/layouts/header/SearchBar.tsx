@@ -1,61 +1,60 @@
-
-import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
-import InputBase from '@mui/material/InputBase';
+import React, { useState } from 'react';
+import { Box, InputBase, IconButton, Paper } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import { styled } from '@mui/system';
 
+interface SearchBarProps {
+  onSearch: (keyword: string) => void;
+  placeholder: string;
+}
 
-export default function SearchBar({backgroundColor,placeholder}: any ) {
-  const Search = styled('div')(({ theme }) => ({
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-   backgroundColor: backgroundColor,
-    '&:hover': {
-    //  backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-     // marginLeft: theme.spacing(3),
-      width: '50%',
-    },
-  }));
-  
-  const SearchIconWrapper = styled('div')(({ theme }) => ({
-    color: 'black',
-      padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  }));
-  
-  const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: 'black',
-    '& .MuiInputBase-input': {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-      transition: theme.transitions.create('width'),
-      width: '100%',
-      [theme.breakpoints.up('md')]: {
-         width: '50ch',
-      },
-    },
-  }));
-  
+const SearchBox = styled(Paper)(({ theme }) => ({
+  padding: '2px 4px',
+  display: 'flex',
+  alignItems: 'center',
+  width: 400,
+  borderRadius: '8px',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  marginLeft: theme.spacing(1),
+  flex: 1,
+}));
+
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder }) => {
+  const [keyword, setKeyword] = useState('');
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value === "") {
+      onSearch("");
+    }
+    setKeyword(event.target.value);
+  };
+
+  const handleSearch = () => {
+    onSearch(keyword);
+  };
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   return (
-    <Search>
-      <SearchIconWrapper>
-        <SearchIcon  />
-      </SearchIconWrapper>
+    <SearchBox>
       <StyledInputBase
         placeholder={placeholder}
+        value={keyword}
+        onChange={handleInputChange}
+        onKeyPress={handleKeyPress}
         inputProps={{ 'aria-label': 'search' }}
       />
-    </Search>
+      <IconButton type="button" onClick={handleSearch}>
+        <SearchIcon />
+      </IconButton>
+    </SearchBox>
   );
-}
+};
+
+export default SearchBar;

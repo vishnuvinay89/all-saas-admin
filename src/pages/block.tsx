@@ -119,6 +119,9 @@ const Block: React.FC = () => {
     pageOffset * pageLimit,
     (pageOffset + 1) * pageLimit
   );
+  const handleSearch = (keyword: string) => {
+
+  };
 
   const userProps = {
     userType: t("MASTER.BLOCKS"),
@@ -140,6 +143,8 @@ const Block: React.FC = () => {
     showStateDropdown: false,
     selectedFilter,
     handleFilterChange,
+  handleSearch:handleSearch
+
   };
 
   return (

@@ -135,6 +135,8 @@ const District: React.FC = () => {
 
     fetchStateData();
   }, []);
+  const handleSearch = (keyword: string) => {
+  };
 
   useEffect(() => {
     const sortAndPaginateData = () => {
@@ -167,6 +169,7 @@ const District: React.FC = () => {
     showStateDropdown: false,
     selectedFilter,
     handleFilterChange,
+    handleSearch
   };
 
   return (

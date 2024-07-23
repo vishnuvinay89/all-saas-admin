@@ -1,27 +1,23 @@
-import React, { useState, useEffect } from "react";
-import KaTableComponent from "../components/KaTableComponent";
-import { DataType } from "ka-table/enums";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { userList } from "../services/UserList";
-import { getCohortList } from "../services/GetCohortList";
-import HeaderComponent from "@/components/HeaderComponent";
-import { useTranslation } from "next-i18next";
-import { deleteUser } from "../services/DeleteUser";
-import Pagination from "@mui/material/Pagination";
 import DeleteUserModal from "@/components/DeleteUserModal";
-import { SelectChangeEvent } from "@mui/material/Select";
+import HeaderComponent from "@/components/HeaderComponent";
 import PageSizeSelector from "@/components/PageSelector";
-import CustomModal from "@/components/CustomModal";
-import EditIcon from "@mui/icons-material/Edit";
+import { SORT, Status } from "@/utils/app.constant";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { showToastMessage } from "@/components/Toastify";
-import Loader from "../components/Loader";
-import glass from "../../public/images/empty_hourglass.svg";
+import EditIcon from "@mui/icons-material/Edit";
 import Box from '@mui/material/Box';
+import Pagination from "@mui/material/Pagination";
+import { SelectChangeEvent } from "@mui/material/Select";
 import Typography from '@mui/material/Typography';
+import { DataType, SortDirection } from "ka-table/enums";
+import { useTranslation } from "next-i18next";
 import Image from 'next/image';
-import { SortDirection  } from 'ka-table/enums';
-import { Status, SORT} from "@/utils/app.constant";
+import React, { useEffect, useState } from "react";
+import glass from "../../public/images/empty_hourglass.svg";
+import KaTableComponent from "../components/KaTableComponent";
+import Loader from "../components/Loader";
+import { deleteUser } from "../services/DeleteUser";
+import { getCohortList } from "../services/GetCohortList";
+import { userList } from "../services/UserList";
 
 type UserDetails = {
   userId: any;
@@ -189,7 +185,6 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
     setSelectedDistrict([]);
     setSelectedBlock([]);
 
-    console.log("f", filters.status)
 
     setSelectedState(selected);
   
@@ -357,6 +352,14 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
 
     console.log("Delete row:", rowData.userId);
   };
+  const handleSearch = (keyword: string) => {
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      name: keyword
+    }));
+
+  };
+
   useEffect(() => {
     const fetchUserList = async () => {
       setLoading(true);
@@ -376,11 +379,12 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
         if (resp?.totalCount >= 15) {
           setPageSizeArray([5, 10, 15]);
         } else if (resp?.totalCount >= 10) {
-          setPageSize(resp?.totalCount);
+         // setPageSize(resp?.totalCount);
           setPageSizeArray([5, 10]);
         } else if (resp?.totalCount >= 5 || resp?.totalCount < 5) {
-          setPageSize(resp?.totalCount);
+         // setPageSize(resp?.totalCount);
           setPageSizeArray([5]);
+          //PageSizeSelectorFunction();
         }
 
         setPageCount(Math.ceil(resp?.totalCount / pageLimit));
@@ -503,7 +507,8 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
     handleBlockChange: handleBlockChange,
     handleSortChange: handleSortChange,
     selectedFilter: selectedFilter,
-    handleFilterChange: handleFilterChange
+    handleFilterChange: handleFilterChange,
+    handleSearch:handleSearch
   };
 
   return (
