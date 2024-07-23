@@ -1,9 +1,9 @@
 // components/KaTableComponent.tsx
 
-import React from "react";
+import React, { useState } from "react";
 import { ITableProps, Table } from "ka-table";
 import { SortingMode, PagingPosition } from "ka-table/enums";
-import { Paper } from "@mui/material";
+import { Paper, Checkbox } from "@mui/material";
 import "ka-table/style.css";
 import { IPagingProps } from "ka-table/props";
 import { updatePageIndex, updatePageSize } from "ka-table/actionCreators";
@@ -20,7 +20,7 @@ interface KaTableComponentProps {
   pageSizes?: any;
   onDelete?: any;
   onEdit?: any;
-
+  onChange?: any;
   extraActions: {
     name: string;
     onClick: (rowData: any) => void;
@@ -44,6 +44,16 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   showIcons,
   pageSizes,
 }) => {
+  const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
+
+  const handleCheckboxChange = (rowId: number) => {
+    setSelectedRowIds((prevSelected) =>
+      prevSelected.includes(rowId)
+        ? prevSelected.filter((id) => id !== rowId)
+        : [...prevSelected, rowId]
+    );
+  };
+
   const tableProps: ITableProps = {
     columns,
     data,
@@ -57,7 +67,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
         <Table
           {...tableProps}
           paging={{
-            enabled: true, // to do dynamic limit for enable  pagination and page sizes by data
+            enabled: true,
             pageIndex: 0,
             pageSize: limit,
             pageSizes: pageSizes,
@@ -74,24 +84,19 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
               content: (props) => {
                 if (props.column.key === "actions") {
                   return (
-                    <>
-                      {/* <ActionCell
-                    rowData={props.rowData}
-                    extraActions={extraActions}
-                    showIcons={showIcons}
-                    onEdit={function (rowData: any): void {
-                      throw new Error("Function not implemented.");
-                    }}
-                    onDelete={function (rowData: any): void {
-                      throw new Error("Function not implemented.");
-                    }}
-                  /> */}
-                      <ActionIcon
-                        rowData={props.rowData}
-                        onEdit={onEdit}
-                        onDelete={onDelete}
-                      />
-                    </>
+                    <ActionIcon
+                      rowData={props.rowData}
+                      onEdit={onEdit}
+                      onDelete={onDelete}
+                    />
+                  );
+                }
+                if (props.column.key === "selection-cell") {
+                  return (
+                    <Checkbox
+                      checked={selectedRowIds.includes(props.rowData.userId)}
+                      onChange={() => handleCheckboxChange(props.rowData.userId)}
+                    />
                   );
                 }
                 return null;

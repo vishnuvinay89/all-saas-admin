@@ -5,6 +5,15 @@ export enum Role {
   ADMIN = "Admin",
 }
 
+export enum Status {
+ ARCHIVED="archived",
+ ACTIVE="active"
+}
+export enum SORT {
+  ASCENDING="asc",
+  DESCENDING="desc"
+ }
+
 export enum Storage {
   NAME = "name",
   USER_ID = "userId",

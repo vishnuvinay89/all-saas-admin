@@ -15,6 +15,13 @@ import CustomModal from "@/components/CustomModal";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { showToastMessage } from "@/components/Toastify";
+import Loader from "../components/Loader";
+import glass from "../../public/images/empty_hourglass.svg";
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Image from 'next/image';
+import { SortDirection  } from 'ka-table/enums';
+import { Status, SORT} from "@/utils/app.constant";
 
 type UserDetails = {
   userId: any;
@@ -31,7 +38,7 @@ type UserDetails = {
 };
 type FilterDetails = {
   role: any;
-  status: any;
+  status?: any;
   district?: any;
    state?: any;
    block?: any;
@@ -56,14 +63,24 @@ const columns = [
   //   dataType: DataType.String,
   // },
   {
+    key: 'selection-cell',
+    width: 50
+},
+  {
     key: "name",
     title: "Name",
     dataType: DataType.String,
+    sortDirection: SortDirection.Ascend,
+    width: 160,
+    
   },
   {
     key: "centers",
     title: "Centers",
     dataType: DataType.String,
+    sortDirection: SortDirection.Ascend,
+    width: 160,
+
   },
   // {
   //   key: "programs",
@@ -74,27 +91,40 @@ const columns = [
     key: "age",
     title: "Age",
     dataType: DataType.String,
+    width: 160,
+
   },
   {
     key: "state",
     title: "State",
     dataType: DataType.String,
+    sortDirection: SortDirection.Ascend,
+    width: 160,
+
   },
   {
     key: "district",
     title: "District",
     dataType: DataType.String,
+    sortDirection: SortDirection.Ascend,
+    width: 160,
+
   },
   
   {
     key: "blocks",
     title: "Bocks",
     dataType: DataType.String,
+    sortDirection: SortDirection.Ascend,
+    width: 160,
+
   },
   {
     key: "actions",
     title: "Actions",
     dataType: DataType.String,
+        width: 160,
+
   },
 ];
 
@@ -112,7 +142,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
   const [data, setData] = useState<UserDetails[]>([]);
   const [cohortsFetched, setCohortsFetched] = useState(false);
   const { t } = useTranslation();
-  const [pageSize, setPageSize] = React.useState<string | number>("");
+  const [pageSize, setPageSize] = React.useState<string | number>("10");
   const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
   const [pageCount, setPageCount] = useState(1);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -121,10 +151,10 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
   const [otherReason, setOtherReason] = useState("");
   const [confirmButtonDisable, setConfirmButtonDisable] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const [loading, setLoading] = useState<boolean | undefined>(undefined);
 
   const [filters, setFilters] = useState<FilterDetails>({
     role: role,
-    status: "active",
   });
 
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
@@ -159,16 +189,24 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
     setSelectedDistrict([]);
     setSelectedBlock([]);
 
+    console.log("f", filters.status)
 
     setSelectedState(selected);
   
     if (selected[0] === "") {
-      console.log("hii")
-      setFilters({ role: role, status: "active" });
+      if(filters.status)
+      setFilters({ role: role, status: filters.status });
+    else
+    setFilters({ role: role});
+
     } else {
      const stateCodes = code?.join(",");
       setSelectedStateCode(stateCodes);
-      setFilters({ role: role, status: "active", state: stateCodes });
+      if(filters.status)
+      setFilters({ role: role, status: filters.status, state: stateCodes });
+    else
+    setFilters({ role: role, state: stateCodes });
+
     }
 
     console.log("Selected categories:", typeof code[0]);
@@ -176,61 +214,132 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
   const handleFilterChange = async (event: SelectChangeEvent) => {
     console.log(event.target.value as string);
     setSelectedFilter(event.target.value as string);
+    if(event.target.value ==="Active")
+    {
+      console.log(true)
+       setFilters(prevFilters => ({
+      ...prevFilters,
+      status: Status.ACTIVE
+    }));
+    }
+    else if (event.target.value==="Archived")
+    {
+      setFilters(prevFilters => ({
+        ...prevFilters,
+        status: Status.ARCHIVED
+      }));
+    }
+    else
+    {
+      setFilters(prevFilters => {
+        const { status, ...restFilters } = prevFilters; 
+        return {
+          ...restFilters,
+        };
+      });
+    }
+    console.log(filters);
+    
+
+
   };
 
   const handleDistrictChange = (selected: string[], code: string[]) => {
-    console.log("district")
     setSelectedBlock([]);
    setSelectedDistrict(selected);
 
     if (selected[0] === "") {
-      setFilters({
+      if(filters.status)
+      { setFilters({
         role: role,
-        status: "active",
+        status: filters.status,
         state: selectedStateCode,
-      });
+      });}
+      else
+      {
+        setFilters({
+          role: role,
+          state: selectedStateCode,
+        });
+      }
+     
     } else {
       const districts = code?.join(",");
       setSelectedDistrictCode(districts);
-      setFilters({
+      if(filters.status)
+      {  setFilters({
         role: role,
-        status: "active",
+        status: filters.status,
         state: selectedStateCode,
         district: districts,
-      });
+      });}
+      else
+      {
+        setFilters({
+          role: role,
+          state: selectedStateCode,
+          district: districts,
+        });
+      }
+     
     }
     console.log("Selected categories:", selected);
   };
   const handleBlockChange = (selected: string[], code: string[]) => {
     setSelectedBlock(selected);
     if (selected[0] === "") {
-      setFilters({
-        role: role,
-        status: "active",
-        state: selectedStateCode,
-        district:selectedDistrictCode
-      });
+      if(filters.status)
+      {
+        setFilters({
+          role: role,
+          status: filters.status,
+          state: selectedStateCode,
+          district:selectedDistrictCode
+        });
+      }
+      else
+      {
+        setFilters({
+          role: role,
+          state: selectedStateCode,
+          district:selectedDistrictCode
+        });
+      }
+      
     } else {
       const blocks = code?.join(",");
       setSelectedBlockCode(blocks);
-      setFilters({
-        role: role,
-        status: "active",
-        state: selectedStateCode,
-        district: selectedDistrictCode,
-        block:blocks
-      });
+      if(filters.status)
+        {
+
+          setFilters({
+            role: role,
+            status: filters.status,
+            state: selectedStateCode,
+            district: selectedDistrictCode,
+            block:blocks
+          });
+        }
+        else{
+          setFilters({
+            role: role,
+            state: selectedStateCode,
+            district: selectedDistrictCode,
+            block:blocks
+          });
+        }
+     
     }
     console.log("Selected categories:", selected);
   };
   const handleSortChange = async (event: SelectChangeEvent) => {
     // let sort;
     if (event.target.value === "Z-A") {
-      setSortBy(["name", "desc"]);
+      setSortBy(["name", SORT.DESCENDING]);
     } else if (event.target.value === "A-Z") {
-      setSortBy(["name", "asc"]);
+      setSortBy(["name", SORT.ASCENDING]);
     } else {
-      setSortBy(["createdAt", "asc"]);
+      setSortBy(["createdAt", SORT.ASCENDING]);
     }
 
     setSelectedSort(event.target.value as string);
@@ -250,6 +359,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
   };
   useEffect(() => {
     const fetchUserList = async () => {
+      setLoading(true);
       try {
         const fields=[ "age",
         "districts",
@@ -266,8 +376,10 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
         if (resp?.totalCount >= 15) {
           setPageSizeArray([5, 10, 15]);
         } else if (resp?.totalCount >= 10) {
+          setPageSize(resp?.totalCount);
           setPageSizeArray([5, 10]);
         } else if (resp?.totalCount >= 5 || resp?.totalCount < 5) {
+          setPageSize(resp?.totalCount);
           setPageSizeArray([5]);
         }
 
@@ -295,11 +407,14 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
           };
         });
         setData(finalResult);
+        setLoading(false);
         setCohortsFetched(false);
       } catch (error: any) {
+        setLoading(false);
+
         if (error?.response && error?.response.status === 404) {
           setData([]);
-          showToastMessage("No data found", "info");
+          //showToastMessage("No data found", "info");
 
         }
 
@@ -311,8 +426,12 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
 
   useEffect(() => {
     const fetchData = async () => {
-      
-      if (data.length === 0 || cohortsFetched) return;
+
+      try{
+       
+        if (data.length === 0 || cohortsFetched)
+        {
+          return;  }
       const newData = await Promise.all(
         data.map(async (user) => {
           const response = await getCohortList(user.userId);
@@ -322,13 +441,23 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
 
           return {
             ...user,
-            centers: cohortNames,
+            centers:cohortNames?.join(" , "),
           };
+
         })
+
       );
 
       setData(newData);
       setCohortsFetched(true);
+
+      }
+      catch(error: any)
+      {
+         console.log(error);
+      }
+      
+      
     };
 
     fetchData();
@@ -379,8 +508,34 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
 
   return (
     <HeaderComponent {...userProps}>
-      
-        <KaTableComponent
+       {loading ? (
+                <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
+              ): (  (data.length!==0 && loading===false  )? (  <KaTableComponent
+                columns={columns}
+                data={data}
+                limit={pageLimit}
+                offset={pageOffset}
+                PagesSelector={PagesSelector}
+                PageSizeSelector={PageSizeSelectorFunction}
+                pageSizes={pageSizeArray}
+                extraActions={extraActions}
+                showIcons={true}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                
+              />) : 
+              ( loading===false &&   data.length===0 && ( 
+                <Box display="flex" >
+              <Image src={glass} alt="" />
+              <Typography
+              marginTop="10px"
+              >
+               {t("COMMON.NO_USER_FOUND")}    
+              </Typography>
+            </Box>)) )}
+
+    
+        {/* <KaTableComponent
           columns={columns}
           data={data}
           limit={pageLimit}
@@ -393,7 +548,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
           onEdit={handleEdit}
           onDelete={handleDelete}
           
-        />
+        /> */}
       <DeleteUserModal
         open={isDeleteModalOpen}
         onClose={handleCloseDeleteModal}
