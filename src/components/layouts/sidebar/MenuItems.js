@@ -7,7 +7,7 @@ const Menuitems = [
   {
     title: "SIDEBAR.MANAGE_USERS",
     icon: "user",
-  //  href: "/",
+    //  href: "/",
     subOptions: [
       {
         title: "SIDEBAR.TEAM_LEADERS",
@@ -33,7 +33,7 @@ const Menuitems = [
   {
     title: "Master ",
     icon: "database",
-   // href: "/",
+    // href: "/",
     subOptions: [
       {
         title: "State",
@@ -55,12 +55,12 @@ const Menuitems = [
     href: "/course-planner",
     subOptions: [
       {
-        title: "SIDEBAR.CREATE_PLAN",
-        href: "/createPlan",
+        title: "SIDEBAR.FOUNDATION_COURSE",
+        href: "/foundationCourse",
       },
       {
-        title: "SIDEBAR.VIEW_PLANS",
-        href: "/viewPlans",
+        title: "SIDEBAR.MAIN_COURSE",
+        href: "/mainCourse",
       },
     ],
   },

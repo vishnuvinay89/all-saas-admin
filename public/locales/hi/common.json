@@ -28,6 +28,10 @@
     "EDIT": "संपादित करें",
     "DELETE": "हटाएं"
   },
+  "SIDEBAR": {
+    "FOUNDATION_COURSE": "आधार पाठ्यक्रम",
+    "MAIN_COURSE": "मुख्य पाठ्यक्रम"
+  },
   "MASTER": {
     "STATE": "राज्य",
     "SORT": "क्रमबद्ध करें",

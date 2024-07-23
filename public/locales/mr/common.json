@@ -29,6 +29,11 @@
     "EDIT": "संपादित करा",
     "DELETE": "हटवा"
   },
+  "SIDEBAR": {
+    "FOUNDATION_COURSE": "मूलभूत अभ्यासक्रम",
+    "MAIN_COURSE": "मुख्य अभ्यासक्रम"
+  },
+
   "MASTER": {
     "STATE": "राज्य",
     "SORT": "क्रमवारी लावा",

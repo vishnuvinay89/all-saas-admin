@@ -28,6 +28,10 @@
   "COHORTS": {
     "SEARCHBAR_PLACEHOLDER": "କୋହର୍ଟସ୍ ସନ୍ଧାନ କରନ୍ତୁ.."
   },
+  "SIDEBAR": {
+    "FOUNDATION_COURSE": "ମୂଳ ପାଠ୍ୟକ୍ରମ",
+    "MAIN_COURSE": "ମୁଖ୍ୟ ପାଠ୍ୟକ୍ରମ"
+  },
   "MASTER": {
     "STATE": "ରାଜ୍ୟ",
     "SORT": "ଛାଟାନ୍ତୁ",

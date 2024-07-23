@@ -13,7 +13,7 @@
     "INCORRECT_DATA_ENTRY": "Incorrect Data Entry",
     "DUPLICATED_USER": "Duplicate User",
     "NO_USER_FOUND": "User not found",
-    "ALL":"All",
+    "ALL": "All",
     "NO_GO_BACK": "No, go back",
     "YES": "Yes",
     "SURE_REASSIGN_CENTER": "Are you sure you want to re-assign Center to this user?",
@@ -45,7 +45,9 @@
     "LEARNERS": "Learners",
     "TEAM_LEADERS": "Team Leaders",
     "CREATE_PLAN": "Create Plan",
-    "VIEW_PLANS": "View Plans"
+    "VIEW_PLANS": "View Plans",
+    "FOUNDATION_COURSE": "Foundation Course",
+    "MAIN_COURSE": "Main Course"
   },
   "FACILITATORS": {
     "ALL_STATES": "All States",

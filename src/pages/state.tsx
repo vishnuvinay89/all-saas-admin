@@ -117,6 +117,8 @@ const State: React.FC = () => {
       handleSortChange: handleSortChange,
       states: stateData.map((stateDetail) => stateDetail.label),
       showStateDropdown: false,
+      showAddNew: true,
+      showSort: true,
       selectedFilter,
       handleFilterChange: handleFilterChange,
 
