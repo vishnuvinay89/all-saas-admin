@@ -79,6 +79,11 @@ const State: React.FC = () => {
     console.log("Delete row:", rowData);
   }, []);
 
+
+  const handleSearch = (keyword: string) => {
+
+  };
+
   useEffect(() => {
     const fetchStateData = async () => {
       try {
@@ -114,6 +119,7 @@ const State: React.FC = () => {
       showStateDropdown: false,
       selectedFilter,
       handleFilterChange: handleFilterChange,
+
     }),
     [
       t,
@@ -122,13 +128,15 @@ const State: React.FC = () => {
       handleSortChange,
       stateData,
       selectedFilter,
-      handleFilterChange,
+      handleFilterChange
+      
+
     ]
   );
 
   return (
     <div>
-      <HeaderComponent {...userProps}>
+      <HeaderComponent {...userProps } handleSearch={handleSearch}>
         <KaTableComponent
           columns={columns}
           data={stateData.map((stateDetail) => ({
