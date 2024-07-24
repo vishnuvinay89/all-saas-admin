@@ -68,6 +68,7 @@ const HeaderComponent = ({
   handleSortChange,
   handleFilterChange,
   showStateDropdown = true,
+  handleSearch
 }: any) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
@@ -76,6 +77,7 @@ const HeaderComponent = ({
   const [allStates, setAllStates] = useState<State[]>([]);
   const [allDistricts, setAllDistricts] = useState<District[]>([]);
   const [allBlocks, setAllBlocks] = useState<Block[]>([]);
+
   const handleStateChangeWrapper = async (
     selectedNames: string[],
     selectedCodes: string[]
@@ -120,6 +122,7 @@ const HeaderComponent = ({
   ) => {
     handleBlockChange(selected, selectedCodes);
   };
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -207,12 +210,11 @@ const HeaderComponent = ({
         }}
       >
         <Box sx={{ flex: 1 }}>
-          <SearchBar
-            className="searchBox"
-            placeholder={searchPlaceHolder}
-            backgroundColor="white"
-            fullWidth
-          />
+        <SearchBar onSearch={handleSearch} 
+          placeholder={searchPlaceHolder}
+
+        />
+
         </Box>
         <Box display={"flex"} gap={1}>
           <Tooltip title="Filter">

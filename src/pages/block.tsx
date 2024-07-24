@@ -11,6 +11,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
+import { useMediaQuery } from "@mui/material";
 
 // Static Data
 const staticStateData = [
@@ -38,6 +39,8 @@ const Block: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const isMobile = useMediaQuery("(max-width:600px)");
+  const isMediumScreen = useMediaQuery("(max-width:986px)");
 
   const columns = useMemo(
     () => [
@@ -116,6 +119,9 @@ const Block: React.FC = () => {
     pageOffset * pageLimit,
     (pageOffset + 1) * pageLimit
   );
+  const handleSearch = (keyword: string) => {
+
+  };
 
   const userProps = {
     userType: t("MASTER.BLOCKS"),
@@ -137,15 +143,34 @@ const Block: React.FC = () => {
     showStateDropdown: false,
     selectedFilter,
     handleFilterChange,
+  handleSearch:handleSearch
+
   };
 
   return (
     <React.Fragment>
       <HeaderComponent {...userProps}>
-        <Box sx={{ minWidth: 240, display: "flex", gap: 5 }}>
-          <Box sx={{ minWidth: 240 }}>
-            <FormControl sx={{ minWidth: 240 }}>
-              <InputLabel id="state-select-label">States</InputLabel>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 5,
+            marginTop: 2,
+            "@media (max-width: 580px)": {
+              marginTop: 10,
+              flexDirection: "column",
+              alignItems: "center",
+            },
+          }}
+        >
+          <Box sx={{ width: "100%" }}>
+            <FormControl sx={{ width: "100%" }}>
+              <InputLabel
+                sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
+                id="state-select-label"
+              >
+                States
+              </InputLabel>
               <Select
                 labelId="state-select-label"
                 id="state-select"
@@ -164,9 +189,14 @@ const Block: React.FC = () => {
               </Select>
             </FormControl>
           </Box>
-          <Box sx={{ minWidth: 240 }}>
-            <FormControl sx={{ minWidth: 240 }}>
-              <InputLabel id="district-select-label">Districts</InputLabel>
+          <Box sx={{ width: "100%" }}>
+            <FormControl sx={{ width: "100%" }}>
+              <InputLabel
+                sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
+                id="district-select-label"
+              >
+                Districts
+              </InputLabel>
               <Select
                 labelId="district-select-label"
                 id="district-select"

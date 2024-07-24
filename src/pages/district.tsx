@@ -12,6 +12,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
 import { getDistrictList, getStateList } from "@/services/MasterDataService";
+import { SortDirection  } from 'ka-table/enums';
 
 type StateDetail = {
   value: string;
@@ -43,11 +44,14 @@ const District: React.FC = () => {
         key: "label",
         title: t("MASTER.DISTRICT_NAMES"),
         dataType: DataType.String,
+        sortDirection: SortDirection.Ascend
+
       },
       {
         key: "actions",
         title: t("MASTER.ACTIONS"),
         dataType: DataType.String,
+
       },
     ],
     [t]
@@ -83,7 +87,7 @@ const District: React.FC = () => {
       setSelectedState(selectedState);
       try {
         const data = await getDistrictList(selectedState);
-        setDistrictData(data.result || []); 
+        setDistrictData(data.result || []);
         setSelectedDistrict(data.result[0]?.label || "-");
       } catch (error) {
         console.error("Error fetching district data", error);
@@ -118,11 +122,11 @@ const District: React.FC = () => {
     const fetchStateData = async () => {
       try {
         const data = await getStateList();
-        setStateData(data.result || []); 
+        setStateData(data.result || []);
         const initialSelectedState = data.result[0]?.value || "";
         setSelectedState(initialSelectedState);
         const districtData = await getDistrictList(initialSelectedState);
-        setDistrictData(districtData.result || []); 
+        setDistrictData(districtData.result || []);
         setSelectedDistrict(districtData.result[0]?.label || "-");
       } catch (error) {
         console.error("Error fetching state data", error);
@@ -131,6 +135,8 @@ const District: React.FC = () => {
 
     fetchStateData();
   }, []);
+  const handleSearch = (keyword: string) => {
+  };
 
   useEffect(() => {
     const sortAndPaginateData = () => {
@@ -163,13 +169,25 @@ const District: React.FC = () => {
     showStateDropdown: false,
     selectedFilter,
     handleFilterChange,
+    handleSearch
   };
 
   return (
     <React.Fragment>
       <HeaderComponent {...userProps}>
-        <Box sx={{ minWidth: 240 }}>
-          <FormControl sx={{ minWidth: 240 }}>
+        <Box
+          sx={{
+            minWidth: 240,
+            marginTop: 2,
+            "@media (max-width: 580px)": {
+              marginTop: 3,
+              marginBottom: 3,
+              flexDirection: "column",
+              alignItems: "center",
+            },
+          }}
+        >
+          <FormControl sx={{ minWidth: 340 }}>
             <InputLabel id="state-select-label">States</InputLabel>
             <Select
               labelId="state-select-label"

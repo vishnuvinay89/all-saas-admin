@@ -1,15 +1,15 @@
 // components/KaTableComponent.tsx
 
-import React from "react";
+import React, { useState } from "react";
 import { ITableProps, Table } from "ka-table";
 import { SortingMode, PagingPosition } from "ka-table/enums";
-import { Paper, Typography } from "@mui/material";
+import { Paper, Checkbox } from "@mui/material";
 import "ka-table/style.css";
 import { IPagingProps } from "ka-table/props";
 import { updatePageIndex, updatePageSize } from "ka-table/actionCreators";
 import ActionCell from "./ActionCell";
 import ActionIcon from "./ActionIcon";
-import { useTranslation } from "next-i18next";
+
 interface KaTableComponentProps {
   columns: ITableProps["columns"];
   data?: ITableProps["data"];
@@ -20,7 +20,7 @@ interface KaTableComponentProps {
   pageSizes?: any;
   onDelete?: any;
   onEdit?: any;
-
+  onChange?: any;
   extraActions: {
     name: string;
     onClick: (rowData: any) => void;
@@ -44,74 +44,68 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   showIcons,
   pageSizes,
 }) => {
+  const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
+
+  const handleCheckboxChange = (rowId: number) => {
+    setSelectedRowIds((prevSelected) =>
+      prevSelected.includes(rowId)
+        ? prevSelected.filter((id) => id !== rowId)
+        : [...prevSelected, rowId]
+    );
+  };
+
   const tableProps: ITableProps = {
     columns,
     data,
     rowKeyField: "id",
     sortingMode: SortingMode.Single,
   };
-  const { t } = useTranslation();
-  // Check if data exists
-  const hasData = data && data.length > 0;
 
   return (
     <Paper>
       <div className="ka-table-wrapper">
-        {hasData ? (
-          <Table
-            {...tableProps}
-            paging={{
-              enabled: true, // to do dynamic limit for enable  pagination and page sizes by data
-              pageIndex: 0,
-              pageSize: limit,
-              pageSizes: pageSizes,
-              position: PagingPosition.Bottom,
-            }}
-            childComponents={{
-              pagingSizes: {
-                content: (props) => <PageSizeSelector {...props} />,
+        <Table
+          {...tableProps}
+          paging={{
+            enabled: true,
+            pageIndex: 0,
+            pageSize: limit,
+            pageSizes: pageSizes,
+            position: PagingPosition.Bottom,
+          }}
+          childComponents={{
+            pagingSizes: {
+              content: (props) => <PageSizeSelector {...props} />,
+            },
+            pagingPages: {
+              content: (props) => <PagesSelector {...props} />,
+            },
+            cell: {
+              content: (props) => {
+                if (props.column.key === "actions") {
+                  return (
+                    <ActionIcon
+                      rowData={props.rowData}
+                      onEdit={onEdit}
+                      onDelete={onDelete}
+                    />
+                  );
+                }
+                if (props.column.key === "selection-cell") {
+                  return (
+                    <Checkbox
+                      checked={selectedRowIds.includes(props.rowData.userId)}
+                      onChange={() =>
+                        handleCheckboxChange(props.rowData.userId)
+                      }
+                    />
+                  );
+                }
+                return null;
               },
-              pagingPages: {
-                content: (props) => <PagesSelector {...props} />,
-              },
-              cell: {
-                content: (props) => {
-                  if (props.column.key === "actions") {
-                    return (
-                      <>
-                        {/* <ActionCell
-                    rowData={props.rowData}
-                    extraActions={extraActions}
-                    showIcons={showIcons}
-                    onEdit={function (rowData: any): void {
-                      throw new Error("Function not implemented.");
-                    }}
-                    onDelete={function (rowData: any): void {
-                      throw new Error("Function not implemented.");
-                    }}
-                  /> */}
-                        <ActionIcon
-                          rowData={props.rowData}
-                          onEdit={onEdit}
-                          onDelete={onDelete}
-                        />
-                      </>
-                    );
-                  }
-                  return null;
-                },
-              },
-            }}
-          />
-        ) : (
-          <Typography
-            variant="body1"
-            align="center"
-            style={{ padding: "16px" }}
-          >
-            {t("COMMON.NO_DATA_FOUND")}
-          </Typography>
-        )}
+            },
+          }}
+        />
       </div>
     </Paper>
   );

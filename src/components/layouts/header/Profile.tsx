@@ -75,6 +75,7 @@ const Profile = () => {
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 fontSize: "16px",
+                whiteSpace: "nowrap",
               }}
             >
               {userName ? userName : ""}
