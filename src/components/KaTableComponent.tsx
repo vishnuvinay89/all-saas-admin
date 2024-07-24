@@ -50,7 +50,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
     setSelectedRowIds((prevSelected) =>
       prevSelected.includes(rowId)
         ? prevSelected.filter((id) => id !== rowId)
-        : [...prevSelected, rowId]
+        : [...prevSelected, rowId],
     );
   };
 
@@ -95,7 +95,9 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                   return (
                     <Checkbox
                       checked={selectedRowIds.includes(props.rowData.userId)}
-                      onChange={() => handleCheckboxChange(props.rowData.userId)}
+                      onChange={() =>
+                        handleCheckboxChange(props.rowData.userId)
+                      }
                     />
                   );
                 }

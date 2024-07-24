@@ -41,7 +41,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
   children,
 }) => {
   const isSmallScreen = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm")
+    theme.breakpoints.down("sm"),
   );
 
   return (

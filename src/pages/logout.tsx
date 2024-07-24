@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { logout } from '../services/LoginService';
+import { logout } from "../services/LoginService";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 function Logout() {
@@ -8,7 +8,7 @@ function Logout() {
   useEffect(() => {
     const userLogout = async () => {
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
+        const refreshToken = localStorage.getItem("refreshToken");
         if (refreshToken) {
           await logout(refreshToken);
         }
@@ -17,14 +17,13 @@ function Logout() {
       }
     };
     userLogout();
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
 
     router.replace("/login");
   }, []);
 
   return "";
 }
-
 
 export async function getStaticProps({ locale }: any) {
   return {
@@ -33,6 +32,5 @@ export async function getStaticProps({ locale }: any) {
     },
   };
 }
-
 
 export default Logout;

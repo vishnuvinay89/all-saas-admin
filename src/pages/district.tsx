@@ -12,7 +12,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
 import { getDistrictList, getStateList } from "@/services/MasterDataService";
-import { SortDirection  } from 'ka-table/enums';
+import { SortDirection } from "ka-table/enums";
 
 type StateDetail = {
   value: string;
@@ -44,17 +44,15 @@ const District: React.FC = () => {
         key: "label",
         title: t("MASTER.DISTRICT_NAMES"),
         dataType: DataType.String,
-        sortDirection: SortDirection.Ascend
-
+        sortDirection: SortDirection.Ascend,
       },
       {
         key: "actions",
         title: t("MASTER.ACTIONS"),
         dataType: DataType.String,
-
       },
     ],
-    [t]
+    [t],
   );
 
   const handleChange = (event: SelectChangeEvent<number>) => {
@@ -65,7 +63,7 @@ const District: React.FC = () => {
 
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
-    value: number
+    value: number,
   ) => {
     setPageOffset(value - 1);
   };
@@ -78,7 +76,7 @@ const District: React.FC = () => {
         options={[5, 10, 15]}
       />
     ),
-    [pageSize]
+    [pageSize],
   );
 
   const handleStateChange = useCallback(
@@ -93,7 +91,7 @@ const District: React.FC = () => {
         console.error("Error fetching district data", error);
       }
     },
-    []
+    [],
   );
 
   const handleSortChange = useCallback((event: SelectChangeEvent<string>) => {
@@ -115,7 +113,7 @@ const District: React.FC = () => {
       console.log(event.target.value);
       setSelectedFilter(event.target.value);
     },
-    []
+    [],
   );
 
   useEffect(() => {
@@ -135,19 +133,18 @@ const District: React.FC = () => {
 
     fetchStateData();
   }, []);
-  const handleSearch = (keyword: string) => {
-  };
+  const handleSearch = (keyword: string) => {};
 
   useEffect(() => {
     const sortAndPaginateData = () => {
       const sorted = [...districtData].sort((a, b) =>
         sortDirection === "asc"
           ? a.label.localeCompare(b.label)
-          : b.label.localeCompare(a.label)
+          : b.label.localeCompare(a.label),
       );
       const paginatedData = sorted.slice(
         pageOffset * pageLimit,
-        (pageOffset + 1) * pageLimit
+        (pageOffset + 1) * pageLimit,
       );
       setSortedDistricts(paginatedData);
       setPageCount(Math.ceil(districtData.length / pageLimit));
@@ -169,7 +166,7 @@ const District: React.FC = () => {
     showStateDropdown: false,
     selectedFilter,
     handleFilterChange,
-    handleSearch
+    handleSearch,
   };
 
   return (

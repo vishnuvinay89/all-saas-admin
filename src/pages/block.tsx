@@ -55,7 +55,7 @@ const Block: React.FC = () => {
         dataType: DataType.String,
       },
     ],
-    [t]
+    [t],
   );
 
   const handleChange = useCallback((event: SelectChangeEvent<number>) => {
@@ -67,7 +67,7 @@ const Block: React.FC = () => {
     (event: React.ChangeEvent<unknown>, value: number) => {
       setPageOffset(value - 1);
     },
-    []
+    [],
   );
 
   const PageSizeSelectorFunction = useCallback(
@@ -78,7 +78,7 @@ const Block: React.FC = () => {
         options={[5, 10, 15]}
       />
     ),
-    [handleChange, pageSize]
+    [handleChange, pageSize],
   );
 
   const handleStateChange = useCallback((event: SelectChangeEvent<string>) => {
@@ -89,7 +89,7 @@ const Block: React.FC = () => {
     (event: SelectChangeEvent<string>) => {
       setSelectedDistrict(event.target.value);
     },
-    []
+    [],
   );
 
   const handleSortChange = useCallback((event: SelectChangeEvent<string>) => {
@@ -113,15 +113,13 @@ const Block: React.FC = () => {
   const sortedBlocks = [...blockData].sort((a, b) =>
     sortDirection === "asc"
       ? a.label.localeCompare(b.label)
-      : b.label.localeCompare(a.label)
+      : b.label.localeCompare(a.label),
   );
   const paginatedData = sortedBlocks.slice(
     pageOffset * pageLimit,
-    (pageOffset + 1) * pageLimit
+    (pageOffset + 1) * pageLimit,
   );
-  const handleSearch = (keyword: string) => {
-
-  };
+  const handleSearch = (keyword: string) => {};
 
   const userProps = {
     userType: t("MASTER.BLOCKS"),
@@ -143,8 +141,7 @@ const Block: React.FC = () => {
     showStateDropdown: false,
     selectedFilter,
     handleFilterChange,
-  handleSearch:handleSearch
-
+    handleSearch: handleSearch,
   };
 
   return (

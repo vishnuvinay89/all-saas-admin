@@ -8,7 +8,7 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
 import { getStateList } from "@/services/MasterDataService";
-import { SortDirection  } from 'ka-table/enums';
+import { SortDirection } from "ka-table/enums";
 
 type StateDetail = {
   label: string;
@@ -36,8 +36,7 @@ const State: React.FC = () => {
         key: "label",
         title: t("MASTER.STATE_NAMES"),
         dataType: DataType.String,
-        sortDirection: SortDirection.Ascend
-
+        sortDirection: SortDirection.Ascend,
       },
       {
         key: "actions",
@@ -45,7 +44,7 @@ const State: React.FC = () => {
         dataType: DataType.String,
       },
     ],
-    [t]
+    [t],
   );
 
   const handleChange = useCallback((event: SelectChangeEvent<number>) => {
@@ -58,7 +57,7 @@ const State: React.FC = () => {
     (event: React.ChangeEvent<unknown>, value: number) => {
       setPageOffset(value - 1);
     },
-    []
+    [],
   );
 
   const handleSortChange = useCallback((event: SelectChangeEvent<string>) => {
@@ -79,10 +78,7 @@ const State: React.FC = () => {
     console.log("Delete row:", rowData);
   }, []);
 
-
-  const handleSearch = (keyword: string) => {
-
-  };
+  const handleSearch = (keyword: string) => {};
 
   useEffect(() => {
     const fetchStateData = async () => {
@@ -119,7 +115,6 @@ const State: React.FC = () => {
       showStateDropdown: false,
       selectedFilter,
       handleFilterChange: handleFilterChange,
-
     }),
     [
       t,
@@ -128,15 +123,13 @@ const State: React.FC = () => {
       handleSortChange,
       stateData,
       selectedFilter,
-      handleFilterChange
-      
-
-    ]
+      handleFilterChange,
+    ],
   );
 
   return (
     <div>
-      <HeaderComponent {...userProps } handleSearch={handleSearch}>
+      <HeaderComponent {...userProps} handleSearch={handleSearch}>
         <KaTableComponent
           columns={columns}
           data={stateData.map((stateDetail) => ({

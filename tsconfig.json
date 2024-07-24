@@ -16,6 +16,18 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/dashboard.js", "src/components/layouts/logo/LogoIcon.tsx", "src/components/layouts/logo/LogoIcon.tsx", "src/components/layouts/header/Header.tsx", "src/components/Link.tsx", "src/components/Link.tsx", "src/components/theme/theme.ts", "src/components/theme/theme.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/pages/dashboard.js",
+    "src/components/layouts/logo/LogoIcon.tsx",
+    "src/components/layouts/logo/LogoIcon.tsx",
+    "src/components/layouts/header/Header.tsx",
+    "src/components/Link.tsx",
+    "src/components/Link.tsx",
+    "src/components/theme/theme.ts",
+    "src/components/theme/theme.ts"
+  ],
   "exclude": ["node_modules"]
 }

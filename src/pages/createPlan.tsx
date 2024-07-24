@@ -8,8 +8,8 @@ const CreatePlan = () => {
   return (
     <ProtectedRoute>
       <>
-      <h1>{t("SIDEBAR.CREATE_PLAN")}</h1>
-</>
+        <h1>{t("SIDEBAR.CREATE_PLAN")}</h1>
+      </>
     </ProtectedRoute>
   );
 };

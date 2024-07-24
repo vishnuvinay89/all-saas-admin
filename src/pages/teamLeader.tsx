@@ -4,7 +4,6 @@ import UserTable from "@/components/UserTable";
 import { useTranslation } from "next-i18next";
 import { Role } from "@/utils/app.constant";
 
-
 const TeamLeader: React.FC = () => {
   const { t } = useTranslation();
   const handleAddTeamLeaderClick = () => {
@@ -12,6 +11,7 @@ const TeamLeader: React.FC = () => {
   return (
     <>
       <UserTable role={Role.TEAM_LEADER} searchPlaceholder={ t("TEAM_LEADERS.SEARCHBAR_PLACEHOLDER")} userType={t("SIDEBAR.TEAM_LEADERS")} handleAddUserClick={handleAddTeamLeaderClick}/>
+      
     </>
   );
 };

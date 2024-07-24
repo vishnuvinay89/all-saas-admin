@@ -98,18 +98,16 @@
 
 // export default Link;
 
-
-
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import clsx from 'clsx';
-import { useRouter } from 'next/router';
-import NextLink from 'next/link';
-import MuiLink, { LinkProps as MuiLinkProps } from '@mui/material/Link';
-import { styled } from '@mui/material/styles';
+import * as React from "react";
+import PropTypes from "prop-types";
+import clsx from "clsx";
+import { useRouter } from "next/router";
+import NextLink from "next/link";
+import MuiLink, { LinkProps as MuiLinkProps } from "@mui/material/Link";
+import { styled } from "@mui/material/styles";
 
 // Add support for the sx prop for consistency with the other branches.
-const Anchor: any = styled('a')({});
+const Anchor: any = styled("a")({});
 
 export interface NextLinkComposedProps {
   to: string | { pathname: string };
@@ -124,26 +122,40 @@ export interface NextLinkComposedProps {
   className?: string;
 }
 
-export const NextLinkComposed = React.forwardRef<HTMLAnchorElement, NextLinkComposedProps>(
-  function NextLinkComposed(props, ref) {
-    const { to, linkAs, href, replace, scroll, shallow, prefetch, locale, ...other } = props;
+export const NextLinkComposed = React.forwardRef<
+  HTMLAnchorElement,
+  NextLinkComposedProps
+>(function NextLinkComposed(props, ref) {
+  const {
+    to,
+    linkAs,
+    href,
+    replace,
+    scroll,
+    shallow,
+    prefetch,
+    locale,
+    ...other
+  } = props;
 
-    return (
-      <NextLink
-        href={to}
-        prefetch={prefetch}
-        as={linkAs}
-        replace={replace}
-        scroll={scroll}
-        shallow={shallow}
-        passHref
-        locale={locale}
-      >
-        <Anchor ref={ref as React.MutableRefObject<HTMLAnchorElement>} {...other} />
-      </NextLink>
-    );
-  }
-);
+  return (
+    <NextLink
+      href={to}
+      prefetch={prefetch}
+      as={linkAs}
+      replace={replace}
+      scroll={scroll}
+      shallow={shallow}
+      passHref
+      locale={locale}
+    >
+      <Anchor
+        ref={ref as React.MutableRefObject<HTMLAnchorElement>}
+        {...other}
+      />
+    </NextLink>
+  );
+});
 
 // NextLinkComposed.propTypes = {
 //   href: PropTypes.any,
@@ -167,50 +179,74 @@ export interface LinkProps extends MuiLinkProps {
 
 // A styled version of the Next.js Link component:
 // https://nextjs.org/docs/api-reference/next/link
-const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(function Link(props, ref) {
-  const {
-    activeClassName = 'active',
-    as: linkAs,
-    className: classNameProps,
-    href,
-    noLinkStyle,
-    role, // Link don't have roles.
+const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
+  function Link(props, ref) {
+    const {
+      activeClassName = "active",
+      as: linkAs,
+      className: classNameProps,
+      href,
+      noLinkStyle,
+      role, // Link don't have roles.
 
-    ...other
-  } = props;
+      ...other
+    } = props;
 
-  const router = useRouter();
-  const pathname = typeof href === 'string' ? href : href?.pathname;
-  const className = clsx(classNameProps, {
-    [activeClassName!]: router.pathname === pathname && activeClassName,
-  });
+    const router = useRouter();
+    const pathname = typeof href === "string" ? href : href?.pathname;
+    const className = clsx(classNameProps, {
+      [activeClassName!]: router.pathname === pathname && activeClassName,
+    });
 
-  const isExternal =
-    typeof href === 'string' && (href.indexOf('http') === 0 || href.indexOf('mailto:') === 0);
+    const isExternal =
+      typeof href === "string" &&
+      (href.indexOf("http") === 0 || href.indexOf("mailto:") === 0);
 
-  if (isExternal) {
-    if (noLinkStyle) {
-      return <Anchor className={className} href={href} ref={ref as React.MutableRefObject<HTMLAnchorElement>} {...other} />;
+    if (isExternal) {
+      if (noLinkStyle) {
+        return (
+          <Anchor
+            className={className}
+            href={href}
+            ref={ref as React.MutableRefObject<HTMLAnchorElement>}
+            {...other}
+          />
+        );
+      }
+
+      return (
+        <MuiLink
+          className={className}
+          href={href}
+          ref={ref as React.MutableRefObject<HTMLAnchorElement>}
+          {...other}
+        />
+      );
     }
 
-    return <MuiLink className={className} href={href} ref={ref as React.MutableRefObject<HTMLAnchorElement>} {...other} />;
-  }
+    if (noLinkStyle) {
+      return (
+        <NextLinkComposed
+          className={className}
+          ref={ref as React.MutableRefObject<HTMLAnchorElement>}
+          to={href}
+          {...other}
+        />
+      );
+    }
 
-  if (noLinkStyle) {
-    return <NextLinkComposed className={className} ref={ref as React.MutableRefObject<HTMLAnchorElement>} to={href} {...other} />;
-  }
-
-  return (
-    <MuiLink
-      component={NextLinkComposed}
-      linkAs={linkAs}
-      className={className}
-      ref={ref as React.MutableRefObject<HTMLAnchorElement>}
-      to={href}
-      {...other}
-    />
-  );
-});
+    return (
+      <MuiLink
+        component={NextLinkComposed}
+        linkAs={linkAs}
+        className={className}
+        ref={ref as React.MutableRefObject<HTMLAnchorElement>}
+        to={href}
+        {...other}
+      />
+    );
+  },
+);
 
 // Link.propTypes = {
 //   activeClassName: PropTypes.string,

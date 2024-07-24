@@ -25,6 +25,7 @@ const handleCloseAddLearnerModal = () => {
               open={openAddLearnerModal}
               onClose={handleCloseAddLearnerModal}
             />
+     
     </>
   );
 };

@@ -1,10 +1,10 @@
-import * as React from 'react';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import ListItemText from '@mui/material/ListItemText';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import * as React from "react";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import ListItemText from "@mui/material/ListItemText";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useTranslation } from "next-i18next";
 
 const ITEM_HEIGHT = 48;
@@ -27,14 +27,25 @@ interface MultipleSelectCheckmarksProps {
   disabled?: boolean;
 }
 
-const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({ names, codes, tagName, selectedCategories, onCategoryChange, disabled = false }) => {
+const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
+  names,
+  codes,
+  tagName,
+  selectedCategories,
+  onCategoryChange,
+  disabled = false,
+}) => {
   const { t } = useTranslation();
-  const handleChange = (event: SelectChangeEvent<typeof selectedCategories>) => {
+  const handleChange = (
+    event: SelectChangeEvent<typeof selectedCategories>,
+  ) => {
     const {
       target: { value },
     } = event;
-    const selectedNames = typeof value === 'string' ? value.split(',') : value;
-    const selectedCodes = selectedNames.map(name => codes[names.indexOf(name)]);
+    const selectedNames = typeof value === "string" ? value.split(",") : value;
+    const selectedCodes = selectedNames.map(
+      (name) => codes[names.indexOf(name)],
+    );
     onCategoryChange(selectedNames, selectedCodes);
   };
 
@@ -45,11 +56,10 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({ nam
         <Select
           labelId="multiple-checkbox-label"
           id="multiple-checkbox"
-          
           value={selectedCategories}
           onChange={handleChange}
           input={<OutlinedInput label={tagName} />}
-          renderValue={(selected) => selected.join(', ')}
+          renderValue={(selected) => selected.join(", ")}
           MenuProps={MenuProps}
         >
           <MenuItem value="">
