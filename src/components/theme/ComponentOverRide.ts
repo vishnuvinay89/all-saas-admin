@@ -1,6 +1,6 @@
 import { Components, Theme } from "@mui/material";
 
-const components: Components<Omit<Theme, 'components'>> = {
+const components: Components<Omit<Theme, "components">> = {
   MuiCssBaseline: {
     styleOverrides: {
       "*": {
@@ -90,7 +90,8 @@ const components: Components<Omit<Theme, 'components'>> = {
     },
   },
 
-  MuiGrid: { //grid item
+  MuiGrid: {
+    //grid item
     styleOverrides: {
       root: {
         paddingTop: "30px",

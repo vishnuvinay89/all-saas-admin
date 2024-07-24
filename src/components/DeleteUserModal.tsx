@@ -22,8 +22,8 @@ interface DeleteUserModalProps {
   otherReason: string;
   setOtherReason: (value: string) => void;
   handleDeleteAction: any;
-  confirmButtonDisable:boolean;
-  setConfirmButtonDisable:any
+  confirmButtonDisable: boolean;
+  setConfirmButtonDisable: any;
 }
 
 const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
@@ -34,15 +34,14 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
   otherReason,
   setOtherReason,
   handleDeleteAction,
-  confirmButtonDisable= true,
-  setConfirmButtonDisable
+  confirmButtonDisable = true,
+  setConfirmButtonDisable,
 }) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
   const reasons = [
     { value: "Incorrect Data Entry", label: t("COMMON.INCORRECT_DATA_ENTRY") },
     { value: "Duplicated User", label: t("COMMON.DUPLICATED_USER") },
-   
   ];
 
   const handleRadioChange = (value: string) => {
@@ -51,7 +50,6 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
     setConfirmButtonDisable(false);
   };
 
-  
   const handleOtherReasonChange = (event: any) => {
     setOtherReason(event.target.value);
   };
@@ -61,10 +59,10 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
       <CustomModal
         open={open}
         handleClose={onClose}
-        title= {t('COMMON.DELETE_USER')}
-        subtitle=    {t('COMMON.REASON_FOR_DELETION')}
-        primaryBtnText= {t('COMMON.DELETE_USER_WITH_REASON')}
-       // secondaryBtnText="Cancel"
+        title={t("COMMON.DELETE_USER")}
+        subtitle={t("COMMON.REASON_FOR_DELETION")}
+        primaryBtnText={t("COMMON.DELETE_USER_WITH_REASON")}
+        // secondaryBtnText="Cancel"
         primaryBtnClick={handleDeleteAction}
         primaryBtnDisabled={confirmButtonDisable}
         // secondaryBtnClick={handleSecondaryClick}
@@ -99,8 +97,6 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
                 <Divider />
               </>
             ))}
-            
-
           </Box>
         </>
       </CustomModal>

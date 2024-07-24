@@ -17,7 +17,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import CustomModal from "@/components/CustomModal";
 import { Box, TextField } from "@mui/material";
-import { SortDirection  } from 'ka-table/enums';
+import { SortDirection } from "ka-table/enums";
 
 type UserDetails = {
   userId: any;
@@ -38,8 +38,7 @@ const columns = [
     key: "cohortName",
     title: "Name",
     dataType: DataType.String,
-    sortDirection: SortDirection.Ascend
-
+    sortDirection: SortDirection.Ascend,
   },
   // {
   //   key: "centers",
@@ -90,7 +89,7 @@ const Cohorts: React.FC = () => {
   const handleOpen = () => {
     setOpen(true);
   };
-  
+
   const PagesSelector = () => (
     <>
       <Pagination
@@ -103,7 +102,7 @@ const Cohorts: React.FC = () => {
   );
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
-    value: number
+    value: number,
   ) => {
     setPageOffset(value - 1);
   };
@@ -227,8 +226,6 @@ const Cohorts: React.FC = () => {
     { name: "Delete", onClick: handleDelete, icon: DeleteIcon },
   ];
 
- 
-
   const onCloseEditMOdel = () => {
     setIsEditModalOpen(false);
   };
@@ -253,9 +250,7 @@ const Cohorts: React.FC = () => {
     onCloseEditMOdel();
     fetchUserList();
   };
-  const handleSearch = (keyword: string) => {
-
-  };
+  const handleSearch = (keyword: string) => {};
   const userProps = {
     userType: t("SIDEBAR.COHORTS"),
     searchPlaceHolder: t("COHORTS.SEARCHBAR_PLACEHOLDER"),
@@ -269,7 +264,7 @@ const Cohorts: React.FC = () => {
     handleBlockChange: handleBlockChange,
     handleSortChange: handleSortChange,
     handleFilterChange: handleFilterChange,
-    handleSearch:handleSearch
+    handleSearch: handleSearch,
   };
   return (
     <>
@@ -315,8 +310,7 @@ const Cohorts: React.FC = () => {
             extraActions={extraActions}
             showIcons={true}
             onEdit={handleEdit}
-          onDelete={handleDelete}
-          
+            onDelete={handleDelete}
           />
         </div>
       </HeaderComponent>

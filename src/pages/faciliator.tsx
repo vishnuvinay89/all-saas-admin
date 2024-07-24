@@ -9,7 +9,11 @@ const Faciliator: React.FC = () => {
 
   return (
     <>
-      <UserTable role={Role.TEACHER} userType= {t("SIDEBAR.FACILITATORS")} searchPlaceholder={ t("FACILITATORS.SEARCHBAR_PLACEHOLDER")}/>
+      <UserTable
+        role={Role.TEACHER}
+        userType={t("SIDEBAR.FACILITATORS")}
+        searchPlaceholder={t("FACILITATORS.SEARCHBAR_PLACEHOLDER")}
+      />
     </>
   );
 };

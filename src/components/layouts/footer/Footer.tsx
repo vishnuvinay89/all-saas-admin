@@ -4,9 +4,7 @@ import Link from "next/link";
 const Footer = () => {
   return (
     <Box sx={{ p: 3, textAlign: "center" }}>
-      <Typography>
-       {/* Footer */}
-      </Typography>
+      <Typography>{/* Footer */}</Typography>
     </Box>
   );
 };
