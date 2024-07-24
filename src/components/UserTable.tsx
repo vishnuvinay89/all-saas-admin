@@ -50,7 +50,8 @@ interface Cohort {
 interface UserTableProps {
     role: string;
     userType: string, 
-    searchPlaceholder: string
+    searchPlaceholder: string,
+    handleAddUserClick: any
   }
 const columns = [
   // {
@@ -124,7 +125,7 @@ const columns = [
   },
 ];
 
-const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholder}) => {
+const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholder, handleAddUserClick}) => {
     const [selectedState, setSelectedState] = React.useState<string[]>([]);
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
@@ -471,6 +472,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
     setOtherReason("");
     setIsDeleteModalOpen(false);
   };
+ 
   const handleDeleteUser = async (category: string) => {
     try {
       console.log(selectedUserId);
@@ -508,8 +510,9 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
     handleSortChange: handleSortChange,
     selectedFilter: selectedFilter,
     handleFilterChange: handleFilterChange,
-    handleSearch:handleSearch
-  };
+    handleSearch:handleSearch,
+    handleAddUserClick: handleAddUserClick
+    };
 
   return (
     <HeaderComponent {...userProps}>

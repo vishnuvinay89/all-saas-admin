@@ -7,10 +7,11 @@ import { Role } from "@/utils/app.constant";
 
 const TeamLeader: React.FC = () => {
   const { t } = useTranslation();
-
+  const handleAddTeamLeaderClick = () => {
+  };
   return (
     <>
-      <UserTable role={Role.TEAM_LEADER} searchPlaceholder={ t("TEAM_LEADERS.SEARCHBAR_PLACEHOLDER")} userType={t("SIDEBAR.TEAM_LEADERS")}/>
+      <UserTable role={Role.TEAM_LEADER} searchPlaceholder={ t("TEAM_LEADERS.SEARCHBAR_PLACEHOLDER")} userType={t("SIDEBAR.TEAM_LEADERS")} handleAddUserClick={handleAddTeamLeaderClick}/>
     </>
   );
 };

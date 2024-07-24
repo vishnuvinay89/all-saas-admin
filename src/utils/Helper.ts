@@ -29,4 +29,18 @@ export const generateUUID = () => {
     });
   };
   
+  export const generateUsernameAndPassword = (
+    stateCode: string,
+    role: string
+  ) => {
+    const currentYear = new Date().getFullYear().toString().slice(-2);
+    const randomNum = Math.floor(10000 + Math.random() * 90000).toString();
   
+    const username =
+      role === 'F'
+        ? `FSC${stateCode}${currentYear}${randomNum}`
+        : `SC${stateCode}${currentYear}${randomNum}`;
+    const password = randomNum;
+  
+    return { username, password };
+  };
