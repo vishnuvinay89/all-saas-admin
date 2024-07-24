@@ -9,7 +9,11 @@ const Learners: React.FC = () => {
 
   return (
     <>
-      <UserTable role={Role.STUDENT} userType={t("SIDEBAR.LEARNERS")} searchPlaceholder={t("LEARNERS.SEARCHBAR_PLACEHOLDER")}/>
+      <UserTable
+        role={Role.STUDENT}
+        userType={t("SIDEBAR.LEARNERS")}
+        searchPlaceholder={t("LEARNERS.SEARCHBAR_PLACEHOLDER")}
+      />
     </>
   );
 };

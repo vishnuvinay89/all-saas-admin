@@ -63,7 +63,11 @@ const Profile = () => {
               ml: 1,
             }}
           >
-            <Typography variant="body1" fontWeight="400" sx={{ fontSize: "16px" }}>
+            <Typography
+              variant="body1"
+              fontWeight="400"
+              sx={{ fontSize: "16px" }}
+            >
               Hi,
             </Typography>
             <Typography

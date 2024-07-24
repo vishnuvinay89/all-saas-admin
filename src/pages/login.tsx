@@ -45,10 +45,10 @@ const LoginPage = () => {
 
   const theme = useTheme<any>();
   const router = useRouter();
-  
+
   // Use useMediaQuery to detect screen size
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isMedium = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMedium = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
   const passwordRef = useRef<HTMLInputElement>(null);
   const loginButtonRef = useRef<HTMLButtonElement>(null);
@@ -88,7 +88,7 @@ const LoginPage = () => {
   };
 
   const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
+    event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     event.preventDefault();
   };
@@ -167,7 +167,7 @@ const LoginPage = () => {
   };
 
   return (
-    <Grid container sx={{ }}>
+    <Grid container sx={{}}>
       {!(isMobile || isMedium) && ( // Render only on desktop view
         <Grid
           item
@@ -176,7 +176,7 @@ const LoginPage = () => {
           sx={{
             background: `url(${loginImage.src}) no-repeat center center`,
             backgroundSize: "cover",
-            height: "100vh"
+            height: "100vh",
           }}
         />
       )}
@@ -196,7 +196,7 @@ const LoginPage = () => {
             maxWidth: 500,
             margin: "auto",
             padding: 4,
-            boxShadow: isMedium||isMobile? null: 3,
+            boxShadow: isMedium || isMobile ? null : 3,
           }}
         >
           <form onSubmit={handleFormSubmit}>
@@ -281,7 +281,7 @@ const LoginPage = () => {
               margin="normal"
               inputRef={passwordRef}
             />
-          
+
             <Box
               display="flex"
               alignItems="center"
@@ -306,7 +306,7 @@ const LoginPage = () => {
                 }}
                 sx={{
                   cursor: "pointer",
-                  marginTop:"15px",
+                  marginTop: "15px",
                   color: theme.palette.warning[300],
                 }}
               >

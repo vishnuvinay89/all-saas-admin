@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // const Login = dynamic(() => import('./Login'), { ssr: false });
 // const Dashboard = dynamic(() => import('./Dashboard'), { ssr: false });
@@ -13,24 +13,24 @@ const Home: React.FC = () => {
   const [loading, setLoading] = React.useState(true);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const token = localStorage.getItem('token');
+    if (typeof window !== "undefined" && window.localStorage) {
+      const token = localStorage.getItem("token");
       setLoading(false);
       if (token) {
-        push('/dashboard');
+        push("/dashboard");
       } else {
-       push('/login', undefined, { locale: 'en' });
-     }
+        push("/login", undefined, { locale: "en" });
+      }
     }
   }, []);
 
-  return <>{loading && <p>{t('COMMON.LOADING')}...</p>}</>;
+  return <>{loading && <p>{t("COMMON.LOADING")}...</p>}</>;
 };
 
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['common'])),
+      ...(await serverSideTranslations(locale, ["common"])),
     },
   };
 }

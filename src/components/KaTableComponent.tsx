@@ -50,7 +50,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
     setSelectedRowIds((prevSelected) =>
       prevSelected.includes(rowId)
         ? prevSelected.filter((id) => id !== rowId)
-        : [...prevSelected, rowId]
+        : [...prevSelected, rowId],
     );
   };
 
