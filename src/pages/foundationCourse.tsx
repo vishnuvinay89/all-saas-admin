@@ -1,127 +1,128 @@
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import ProtectedRoute from "../components/ProtectedRoute";
-import HeaderComponent from "@/components/HeaderComponent";
-import { Box, Button, Card, CircularProgress, Typography } from "@mui/material";
+import { Box, Card, Typography, Button } from "@mui/material";
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
 import CustomStepper from "@/components/Steper";
+import FilterSearchBar from "@/components/FilterSearchBar";
 import { useState } from "react";
+import { useRouter } from "next/router";
+
+import cardData from "@/pages/data/cardData";
 
 const FoundationCourse = () => {
+  const router = useRouter();
   const { t } = useTranslation();
   const [selectedCardId, setSelectedCardId] = useState(null);
+  const [grade, setGrade] = useState("");
+  const [medium, setMedium] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedOption, setSelectedOption] = useState("");
+  const [selectFilter, setSelectFilter] = useState("");
 
-  const userProps = {
-    searchPlaceHolder: "search",
-    showStateDropdown: false,
-    showAddNew: false,
+  const handleCardClick = (id: any) => {
+    router.push(`/cardDetails?cardId=${id}`);
   };
 
-  const handleCopyLink = () => {
-    const link = "https://example.com";
-    navigator.clipboard
-      .writeText(link)
-      .then(() => {
-        alert("Link copied to clipboard!");
-      })
-      .catch((err) => {
-        console.error("Failed to copy the link: ", err);
-      });
+  const handleGradeChange = (event: any) => {
+    setGrade(event.target.value);
   };
 
-  const handleCardClick = (id: string) => {
-    setSelectedCardId(id);
-  };  const cardData = [
-    { id: "1", state: "Andhra Pradesh", boardsUploaded: 1, totalBoards: 3, details: "Andhra Pradesh is a state in the southeastern coastal region of India." },
-    { id: "2", state: "Maharashtra", boardsUploaded: 2, totalBoards: 3, details: "Maharashtra is a state in the western peninsular region of India." },
-    { id: "3", state: "Karnataka", boardsUploaded: 3, totalBoards: 3, details: "Karnataka is a state in the southwestern region of India." },
-    { id: "4", state: "Tamil Nadu", boardsUploaded: 1, totalBoards: 3, details: "Tamil Nadu is a state in the southern part of India." },
-    { id: "5", state: "Kerala", boardsUploaded: 2, totalBoards: 3, details: "Kerala is a state on the southwestern Malabar Coast of India." },
-    { id: "6", state: "Telangana", boardsUploaded: 3, totalBoards: 3, details: "Telangana is a state in the south-central region of India." },
-    { id: "7", state: "Gujarat", boardsUploaded: 1, totalBoards: 3, details: "Gujarat is a state on the western coast of India." },
-    { id: "8", state: "Rajasthan", boardsUploaded: 2, totalBoards: 3, details: "Rajasthan is a state in northern India." },
-    { id: "9", state: "Madhya Pradesh", boardsUploaded: 3, totalBoards: 3, details: "Madhya Pradesh is a state in central India." },
-    { id: "10", state: "Uttar Pradesh", boardsUploaded: 1, totalBoards: 3, details: "Uttar Pradesh is a state in northern India." },
-  ];
+  const handleMediumChange = (event: any) => {
+    setMedium(event.target.value);
+  };
 
-  const selectedCard = cardData.find((card) => card.id === selectedCardId);
+  const handleSearchChange = (event: any) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleDropdownChange = (event: any) => {
+    setSelectedOption(event.target.value);
+  };
+  const handleFilter = (event: any) => {
+    setSelectFilter(event.target.value);
+  };
+
+  function handleCopyLink(state: string) {
+    throw new Error("Function not implemented.");
+  }
 
   return (
     <ProtectedRoute>
       <>
-        <HeaderComponent {...userProps}>
+        <FilterSearchBar
+          grade={grade}
+          medium={medium}
+          searchQuery={searchQuery}
+          handleGradeChange={handleGradeChange}
+          handleMediumChange={handleMediumChange}
+          handleSearchChange={handleSearchChange}
+          selectedOption={handleFilter}
+          handleDropdownChange={handleDropdownChange}
+          card={undefined}
+          selectFilter={undefined}
+          onBackClick={undefined}
+        />
+        <Box>
           <Box
             sx={{
               display: "grid",
               gridTemplateColumns: "1fr 2fr 1fr",
-              gap: "16px",
-              mb: 2,
             }}
           >
             <Typography>State</Typography>
             <Typography>Activity</Typography>
             <Typography>Copy Link</Typography>
           </Box>
-          {selectedCardId ? (
-            <Card
-              sx={{
-                mt: "16px",
-                p: "16px",
-                borderRadius: "8px",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                backgroundColor: "#f9f9f9",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: "16px",
-              }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <FolderOutlinedIcon />
-                <Typography variant="h6">{selectedCard.state}</Typography>
-              </Box>
-              <Box sx={{ flexGrow: 1 }}>
-                <CircularProgress completedSteps={selectedCard.boardsUploaded} />
-                <Typography sx={{ fontSize: "14px", mt: "8px" }}>
-                  ({selectedCard.boardsUploaded}/{selectedCard.totalBoards} Boards fully uploaded)
-                </Typography>
-              </Box>
-              <Button onClick={() => setSelectedCardId(null)} sx={{ mt: "16px" }}>
-                Back to list
-              </Button>
-            </Card>
-          ) : (
+          {!selectedCardId ? (
             cardData.map((card) => (
               <Card
                 key={card.id}
                 sx={{
                   display: "grid",
                   gridTemplateColumns: "1fr 2fr 1fr",
-                  alignItems: "center",
-                  padding: "16px",
-                  marginTop: "16px",
-                  gap: "16px",
+                  padding: "14px",
                   cursor: "pointer",
-                  backgroundColor: selectedCardId === card.id ? "#e0f7fa" : "white",
+                  backgroundColor:
+                    selectedCardId === card.id ? "#e0f7fa" : "white",
+                  border: "1px solid #0000001A",
+                  boxShadow: "none",
+                  transition: "background-color 0.3s",
+                  "&:hover": {
+                    backgroundColor: "#EAF2FF",
+                  },
+                  marginTop: "10px",
                 }}
                 onClick={() => handleCardClick(card.id)}
               >
-                <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Box
+                  sx={{ display: "flex", alignItems: "center", gap: "18px" }}
+                >
                   <FolderOutlinedIcon />
                   <Typography>{card.state}</Typography>
                 </Box>
-                <Box>
+                <Box
+                  sx={{ display: "flex", flexDirection: "column", gap: "8px" }}
+                >
                   <CustomStepper completedSteps={card.boardsUploaded} />
-                  <Typography sx={{ fontSize: "14px", mt: "8px" }}>
-                    ({card.boardsUploaded}/{card.totalBoards} Boards fully uploaded)
+                  <Typography
+                    sx={{
+                      fontSize: "14px",
+                      color: "#7C766F",
+                    }}
+                  >
+                    ({card.boardsUploaded}/{card.totalBoards} Boards fully
+                    uploaded)
                   </Typography>
                 </Box>
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Box
+                  sx={{ display: "grid", gridTemplateColumns: "1fr 2fr 1fr" }}
+                >
                   <Button
                     onClick={(e) => {
-                      e.stopPropagation(); 
-                      handleCopyLink();
+                      e.stopPropagation();
+                      handleCopyLink(card.state);
                     }}
                     sx={{ minWidth: "auto", padding: 0 }}
                   >
@@ -130,8 +131,10 @@ const FoundationCourse = () => {
                 </Box>
               </Card>
             ))
+          ) : (
+            <Typography>Select a card to view details</Typography>
           )}
-        </HeaderComponent>
+        </Box>
       </>
     </ProtectedRoute>
   );
@@ -139,7 +142,7 @@ const FoundationCourse = () => {
 
 export default FoundationCourse;
 
-export async function getStaticProps({ locale }: any) {
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
