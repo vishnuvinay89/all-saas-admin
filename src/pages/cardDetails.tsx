@@ -1,4 +1,3 @@
-// pages/cardDetails.js
 import { useRouter } from "next/router";
 import {
   Box,
@@ -15,17 +14,27 @@ import cardData from "@/pages/data/cardData";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import FilterSearchBar from "@/components/FilterSearchBar";
 import CustomStepper from "@/components/Steper";
-import { useState } from "react";
+import { useState, ChangeEvent, MouseEvent } from "react";
+
+interface Card {
+  id: string;
+  state: string;
+  boardsUploaded: number;
+  totalBoards: number;
+  boards: string[];
+}
 
 const CardDetails = () => {
   const router = useRouter();
   const { cardId } = router.query;
-  const [grade, setGrade] = useState("");
-  const [medium, setMedium] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedOption, setSelectedOption] = useState("");
 
-  const card = cardData.find((card) => card.id === cardId);
+  const [grade, setGrade] = useState<string>("");
+  const [medium, setMedium] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedOption, setSelectedOption] = useState<string>("");
+
+  // Ensure cardId is a string
+  const card = cardData.find((card) => card.id === (cardId as string));
 
   if (!card) {
     return <Typography>Card not found</Typography>;
@@ -35,30 +44,30 @@ const CardDetails = () => {
     router.back();
   };
 
-  const handleGradeChange = (event) => {
+  const handleGradeChange = (event: ChangeEvent<HTMLInputElement>) => {
     setGrade(event.target.value);
   };
 
-  const handleMediumChange = (event) => {
+  const handleMediumChange = (event: ChangeEvent<HTMLInputElement>) => {
     setMedium(event.target.value);
   };
 
-  const handleSearchChange = (event) => {
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
 
-  const handleDropdownChange = (event) => {
+  const handleDropdownChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setSelectedOption(event.target.value);
   };
 
-  const handleBoardClick = (board) => {
+  const handleBoardClick = (board: string) => {
     router.push({
       pathname: "/subjectDetails",
-      query: { boardId: board.id, cardId: card.id },
+      query: { boardId: board, cardId: card.id },
     });
   };
 
-  const handleCopyLink = (board) => {
+  const handleCopyLink = (board: string) => {
     // Implement copy link logic here
   };
 
@@ -73,7 +82,10 @@ const CardDetails = () => {
         handleSearchChange={handleSearchChange}
         selectedOption={selectedOption}
         handleDropdownChange={handleDropdownChange}
-      ></FilterSearchBar>
+        card={undefined}
+        selectFilter={undefined}
+        onBackClick={undefined}
+      />
       <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
         <IconButton onClick={handleBackClick}>
           <ArrowBackIcon />
@@ -134,6 +146,7 @@ const CardDetails = () => {
                   color: "#06A816",
                   "& .MuiCircularProgress-circle": {
                     strokeLinecap: "round",
+                    stroke: "#06A816",
                   },
                 }}
               />
@@ -143,7 +156,7 @@ const CardDetails = () => {
             </Box>
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <Button
-                onClick={(e) => {
+                onClick={(e: MouseEvent<HTMLButtonElement>) => {
                   e.stopPropagation();
                   handleCopyLink(board);
                 }}
@@ -161,7 +174,7 @@ const CardDetails = () => {
 
 export default CardDetails;
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
