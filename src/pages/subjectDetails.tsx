@@ -1,4 +1,3 @@
-// pages/subjectDetails.js
 import { useRouter } from "next/router";
 import {
   Box,
@@ -14,24 +13,33 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import cardData from "@/pages/data/cardData";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import FilterSearchBar from "@/components/FilterSearchBar";
-import CustomStepper from "@/components/Steper";
+import { ChangeEvent, MouseEvent } from "react";
+
+interface Card {
+  id: string;
+  state: string;
+  boardsUploaded: number;
+  totalBoards: number;
+  boards: string[];
+  subjects: string[];
+}
 
 const SubjectDetails = () => {
   const router = useRouter();
   const { boardId, cardId } = router.query;
 
-  const card = cardData.find((card) => card.id === cardId);
-  console.log(card);
+  // Ensure cardId is a string
+  const card = cardData.find((card) => card.id === (cardId as string));
 
   if (!card) {
-    return <Typography>Board not found</Typography>;
+    return <Typography>Card not found</Typography>;
   }
 
   const handleBackClick = () => {
     router.back();
   };
 
-  const handleCopyLink = (subject) => {
+  const handleCopyLink = (subject: string) => {
     // Implement copy link logic here
   };
 
@@ -46,34 +54,35 @@ const SubjectDetails = () => {
         handleSearchChange={() => {}}
         selectedOption=""
         handleDropdownChange={() => {}}
-      ></FilterSearchBar>
+        card={undefined}
+        selectFilter={undefined}
+        onBackClick={undefined}
+      />
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
           gap: "16px",
+          marginBottom: "16px",
         }}
       >
         <IconButton onClick={handleBackClick}>
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h4">{card.boards}</Typography>
+        <Typography variant="h4">{card.state}</Typography>
 
         <CircularProgress
           variant="determinate"
           value={(card.boardsUploaded / card.totalBoards) * 100}
           sx={{
             color: "#06A816",
-            "&.MuiCircularProgress-root": {
-              color: "#06A816",
-            },
             "& .MuiCircularProgress-circle": {
               strokeLinecap: "round",
             },
           }}
         />
         <Typography sx={{ fontSize: "14px" }}>
-          {card.boardsUploaded} / {card.totalBoards} {"subjects uploaded"}
+          {card.boardsUploaded} / {card.totalBoards} {"boards fully uploaded"}
         </Typography>
       </Box>
       <Box sx={{ marginTop: "16px" }}>
@@ -112,12 +121,9 @@ const SubjectDetails = () => {
             >
               <CircularProgress
                 variant="determinate"
-                // value={(board.uploaded / board.total) * 100}
+                // value={subject.uploaded / subject.total * 100}
                 sx={{
                   color: "#06A816",
-                  "& .MuiCircularProgress-root": {
-                    color: "#CDC5BD",
-                  },
                   "& .MuiCircularProgress-circle": {
                     strokeLinecap: "round",
                     stroke: "#06A816",
@@ -125,12 +131,15 @@ const SubjectDetails = () => {
                 }}
               />
               <Typography sx={{ fontSize: "14px" }}>
-                {/* {board.uploaded} / {board.total} {"subjects uploaded"} */}
+                {/* {subject.uploaded} / {subject.total} {"topics uploaded"} */}
               </Typography>
             </Box>
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <Button
-                onClick={() => handleCopyLink(subject)}
+                onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                  e.stopPropagation();
+                  handleCopyLink(subject);
+                }}
                 sx={{ minWidth: "auto", padding: 0 }}
               >
                 <InsertLinkOutlinedIcon />
@@ -145,7 +154,7 @@ const SubjectDetails = () => {
 
 export default SubjectDetails;
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
