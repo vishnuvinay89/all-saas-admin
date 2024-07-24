@@ -7,10 +7,9 @@ const ViewPlans = () => {
   return (
     <ProtectedRoute>
       <>
-      <h1>{t("SIDEBAR.VIEW_PLANS")}</h1>
+        <h1>{t("SIDEBAR.VIEW_PLANS")}</h1>
       </>
-     
-     </ProtectedRoute>
+    </ProtectedRoute>
   );
 };
 

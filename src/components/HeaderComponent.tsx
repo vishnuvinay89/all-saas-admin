@@ -68,7 +68,7 @@ const HeaderComponent = ({
   handleSortChange,
   handleFilterChange,
   showStateDropdown = true,
-  handleSearch
+  handleSearch,
 }: any) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
@@ -80,7 +80,7 @@ const HeaderComponent = ({
 
   const handleStateChangeWrapper = async (
     selectedNames: string[],
-    selectedCodes: string[]
+    selectedCodes: string[],
   ) => {
     if (selectedNames[0] === "") {
       // if(allDistricts.length!==0)
@@ -101,7 +101,7 @@ const HeaderComponent = ({
 
   const handleDistrictChangeWrapper = async (
     selected: string[],
-    selectedCodes: string[]
+    selectedCodes: string[],
   ) => {
     if (selected[0] === "") {
       handleBlockChange([], []);
@@ -118,11 +118,11 @@ const HeaderComponent = ({
 
   const handleBlockChangeWrapper = (
     selected: string[],
-    selectedCodes: string[]
+    selectedCodes: string[],
   ) => {
     handleBlockChange(selected, selectedCodes);
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -166,7 +166,7 @@ const HeaderComponent = ({
                 names={allStates.map(
                   (state) =>
                     state.label?.toLowerCase().charAt(0).toUpperCase() +
-                    state.label?.toLowerCase().slice(1)
+                    state.label?.toLowerCase().slice(1),
                 )}
                 codes={allStates.map((state) => state.value)}
                 tagName={t("FACILITATORS.ALL_STATES")}
@@ -210,11 +210,7 @@ const HeaderComponent = ({
         }}
       >
         <Box sx={{ flex: 1 }}>
-        <SearchBar onSearch={handleSearch} 
-          placeholder={searchPlaceHolder}
-
-        />
-
+          <SearchBar onSearch={handleSearch} placeholder={searchPlaceHolder} />
         </Box>
         <Box display={"flex"} gap={1}>
           <Tooltip title="Filter">

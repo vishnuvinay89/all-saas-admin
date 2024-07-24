@@ -1,7 +1,7 @@
-import SearchIcon from '@mui/icons-material/Search';
-import { IconButton, InputBase, Paper } from '@mui/material';
-import { styled } from '@mui/system';
-import React, { useState } from 'react';
+import SearchIcon from "@mui/icons-material/Search";
+import { IconButton, InputBase, Paper } from "@mui/material";
+import { styled } from "@mui/system";
+import React, { useState } from "react";
 
 interface SearchBarProps {
   onSearch: (keyword: string) => void;
@@ -9,11 +9,11 @@ interface SearchBarProps {
 }
 
 const SearchBox = styled(Paper)(({ theme }) => ({
-  padding: '2px 4px',
-  display: 'flex',
-  alignItems: 'center',
+  padding: "2px 4px",
+  display: "flex",
+  alignItems: "center",
   width: 400,
-  borderRadius: '8px',
+  borderRadius: "8px",
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -22,7 +22,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder }) => {
-  const [keyword, setKeyword] = useState('');
+  const [keyword, setKeyword] = useState("");
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === "") {
@@ -36,7 +36,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder }) => {
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       handleSearch();
     }
   };
@@ -48,7 +48,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder }) => {
         value={keyword}
         onChange={handleInputChange}
         onKeyPress={handleKeyPress}
-        inputProps={{ 'aria-label': 'search' }}
+        inputProps={{ "aria-label": "search" }}
       />
       <IconButton type="button" onClick={handleSearch}>
         <SearchIcon />

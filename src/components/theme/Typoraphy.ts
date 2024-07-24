@@ -1,7 +1,9 @@
 import { Palette } from "@mui/material";
 import { TypographyOptions } from "@mui/material/styles/createTypography";
 
-const typography: TypographyOptions | ((palette: Palette) => TypographyOptions) = {
+const typography:
+  | TypographyOptions
+  | ((palette: Palette) => TypographyOptions) = {
   fontFamily: "'DM Sans', sans-serif",
   body1: {
     fontWeight: 400, // or 'bold'

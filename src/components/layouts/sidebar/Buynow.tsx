@@ -2,7 +2,6 @@ import React from "react";
 import { Box } from "@mui/material";
 import sidebarBuynowsvg from "../../../../public/images/backgrounds/sidebar-buynow-bg.svg";
 
-
 const Buynow = () => (
   <Box pb={5} mt={5}>
     <Box
@@ -15,8 +14,7 @@ const Buynow = () => (
         borderRadius: "10px",
         overflow: "hidden",
       }}
-    >
-        </Box>
+    ></Box>
   </Box>
 );
 export default Buynow;

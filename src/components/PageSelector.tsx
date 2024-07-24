@@ -27,7 +27,7 @@ const PageSizeSelector = ({ handleChange, pageSize, options }: any) => {
         onClose={handleClose}
         onOpen={handleOpen}
         value={pageSize}
-        label= {t("COMMON.PAGE_SIZE")}
+        label={t("COMMON.PAGE_SIZE")}
         onChange={handleChange}
       >
         <MenuItem value="">
