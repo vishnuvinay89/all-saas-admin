@@ -22,7 +22,6 @@ import {
   getStateList,
   getDistrictList,
 } from "../services/MasterDataService";
-import { Archive } from "@mui/icons-material";
 
 const AllStates = [
   { name: "Maharashtra", code: "mh" },
@@ -69,6 +68,7 @@ const HeaderComponent = ({
   handleFilterChange,
   showStateDropdown = true,
   handleSearch,
+  handleAddUserClick
 }: any) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
@@ -271,6 +271,8 @@ const HeaderComponent = ({
           mt: isMobile ? "10px" : "16px",
           boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
         }}
+        onClick={handleAddUserClick}
+
       >
         <Tooltip title={t("COMMON.ADD_NEW")}>
           <Button
