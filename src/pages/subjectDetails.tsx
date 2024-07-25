@@ -13,7 +13,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import cardData from "@/pages/data/cardData";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import FilterSearchBar from "@/components/FilterSearchBar";
-import { ChangeEvent, MouseEvent } from "react";
+import { MouseEvent } from "react";
 
 interface Card {
   id: string;
@@ -28,7 +28,6 @@ const SubjectDetails = () => {
   const router = useRouter();
   const { boardId, cardId } = router.query;
 
-  // Ensure cardId is a string
   const card = cardData.find((card) => card.id === (cardId as string));
 
   if (!card) {
@@ -41,6 +40,10 @@ const SubjectDetails = () => {
 
   const handleCopyLink = (subject: string) => {
     // Implement copy link logic here
+  };
+
+  const handleCardClick = (subject: string) => {
+    router.push(`/importCsv?subject=${encodeURIComponent(subject)}`);
   };
 
   return (
@@ -101,6 +104,7 @@ const SubjectDetails = () => {
               },
               marginTop: "8px",
             }}
+            onClick={() => handleCardClick(subject)}
           >
             <Box
               sx={{
@@ -121,7 +125,6 @@ const SubjectDetails = () => {
             >
               <CircularProgress
                 variant="determinate"
-                // value={subject.uploaded / subject.total * 100}
                 sx={{
                   color: "#06A816",
                   "& .MuiCircularProgress-circle": {

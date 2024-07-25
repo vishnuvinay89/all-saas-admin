@@ -24,7 +24,7 @@ interface Card {
   boards: string[];
 }
 
-const CardDetails = () => {
+const StateDetails = () => {
   const router = useRouter();
   const { cardId } = router.query;
 
@@ -172,7 +172,7 @@ const CardDetails = () => {
   );
 };
 
-export default CardDetails;
+export default StateDetails;
 
 export async function getStaticProps({ locale }: { locale: string }) {
   return {

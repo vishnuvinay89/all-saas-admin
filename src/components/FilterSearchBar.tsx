@@ -25,40 +25,54 @@ const FilterSearchBar = ({
   card,
   selectFilter,
   onBackClick,
+  showGradeMedium = true,
+  showFoundaitonCourse = true,
 }) => {
   return (
     <>
-      <Box>
-        <Typography variant="h1">Foundation Course</Typography>
-      </Box>
-      <Box sx={{ p: 1, display: "flex", mb: 2, gap: 2 }}>
-        <FormControl variant="outlined" size="small" sx={{ minWidth: "120px" }}>
-          <InputLabel id="grade-label">Grade</InputLabel>
-          <Select
-            labelId="grade-label"
-            value={grade}
-            onChange={handleGradeChange}
-            label="Grade"
+      {showFoundaitonCourse && (
+        <Box>
+          <Typography variant="h1">Foundation Course</Typography>
+        </Box>
+      )}
+      {showGradeMedium && (
+        <Box sx={{ p: 1, display: "flex", mb: 2, gap: 2 }}>
+          <FormControl
+            variant="outlined"
+            size="small"
+            sx={{ minWidth: "120px" }}
           >
-            <MenuItem value="grade1">Grade 1</MenuItem>
-            <MenuItem value="grade2">Grade 2</MenuItem>
-            <MenuItem value="grade3">Grade 3</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl variant="outlined" size="small" sx={{ minWidth: "120px" }}>
-          <InputLabel id="medium-label">Medium</InputLabel>
-          <Select
-            labelId="medium-label"
-            value={medium}
-            onChange={handleMediumChange}
-            label="Medium"
+            <InputLabel id="grade-label">Grade</InputLabel>
+            <Select
+              labelId="grade-label"
+              value={grade}
+              onChange={handleGradeChange}
+              label="Grade"
+            >
+              <MenuItem value="grade1">Grade 1</MenuItem>
+              <MenuItem value="grade2">Grade 2</MenuItem>
+              <MenuItem value="grade3">Grade 3</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl
+            variant="outlined"
+            size="small"
+            sx={{ minWidth: "120px" }}
           >
-            <MenuItem value="english">English</MenuItem>
-            <MenuItem value="hindi">Hindi</MenuItem>
-            <MenuItem value="marathi">Marathi</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
+            <InputLabel id="medium-label">Medium</InputLabel>
+            <Select
+              labelId="medium-label"
+              value={medium}
+              onChange={handleMediumChange}
+              label="Medium"
+            >
+              <MenuItem value="english">English</MenuItem>
+              <MenuItem value="hindi">Hindi</MenuItem>
+              <MenuItem value="marathi">Marathi</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+      )}
 
       {card && (
         <Box sx={{ display: "flex", alignItems: "center", gap: 3, mb: 2 }}>
@@ -123,7 +137,7 @@ const FilterSearchBar = ({
           <Select
             labelId="filter-label"
             value={selectFilter}
-            onChange={selectedOption}
+            onChange={handleDropdownChange}
             label="Filter"
           >
             <MenuItem value="Option 1">Option 1</MenuItem>

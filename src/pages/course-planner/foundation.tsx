@@ -1,6 +1,6 @@
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import ProtectedRoute from "../components/ProtectedRoute";
+import ProtectedRoute from "../../components/ProtectedRoute";
 import { Box, Card, Typography, Button } from "@mui/material";
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 
 import cardData from "@/pages/data/cardData";
 
-const FoundationCourse = () => {
+const Foundation = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const [selectedCardId, setSelectedCardId] = useState(null);
@@ -22,7 +22,7 @@ const FoundationCourse = () => {
   const [selectFilter, setSelectFilter] = useState("");
 
   const handleCardClick = (id: any) => {
-    router.push(`/cardDetails?cardId=${id}`);
+    router.push(`/stateDetails?cardId=${id}`);
   };
 
   const handleGradeChange = (event: any) => {
@@ -140,7 +140,7 @@ const FoundationCourse = () => {
   );
 };
 
-export default FoundationCourse;
+export default Foundation;
 
 export async function getStaticProps({ locale }: { locale: string }) {
   return {
