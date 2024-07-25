@@ -35,9 +35,9 @@ type UserDetails = {
 type FilterDetails = {
   role: any;
   status?: any;
-  district?: any;
-  state?: any;
-  block?: any;
+  districts?: any;
+  states?: any;
+  blocks?: any;
 };
 
 interface Cohort {
@@ -182,14 +182,14 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
     setSelectedState(selected);
 
     if (selected[0] === "") {
-      if (filters.status) setFilters({ role: role, status: filters.status });
+      if (filters.status) setFilters({  status: filters.status, role: role });
       else setFilters({ role: role });
     } else {
       const stateCodes = code?.join(",");
       setSelectedStateCode(stateCodes);
       if (filters.status)
-        setFilters({ role: role, status: filters.status, state: stateCodes });
-      else setFilters({ role: role, state: stateCodes });
+        setFilters({  status: filters.status, states: stateCodes, role: role });
+      else setFilters({  states: stateCodes , role: role});
     }
 
     console.log("Selected categories:", typeof code[0]);
@@ -226,14 +226,16 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
     if (selected[0] === "") {
       if (filters.status) {
         setFilters({
-          role: role,
           status: filters.status,
-          state: selectedStateCode,
+          states: selectedStateCode,
+          role: role
+
         });
       } else {
         setFilters({
-          role: role,
-          state: selectedStateCode,
+          states: selectedStateCode,
+          role: role
+
         });
       }
     } else {
@@ -241,16 +243,18 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
       setSelectedDistrictCode(districts);
       if (filters.status) {
         setFilters({
-          role: role,
           status: filters.status,
-          state: selectedStateCode,
-          district: districts,
+          states: selectedStateCode,
+          districts: districts,
+          role: role
+
         });
       } else {
         setFilters({
-          role: role,
-          state: selectedStateCode,
-          district: districts,
+          states: selectedStateCode,
+          districts: districts,
+          role: role
+
         });
       }
     }
@@ -261,16 +265,18 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
     if (selected[0] === "") {
       if (filters.status) {
         setFilters({
-          role: role,
           status: filters.status,
-          state: selectedStateCode,
-          district: selectedDistrictCode,
+          states: selectedStateCode,
+          districts: selectedDistrictCode,
+          role: role
+
         });
       } else {
         setFilters({
-          role: role,
-          state: selectedStateCode,
-          district: selectedDistrictCode,
+          states: selectedStateCode,
+          districts: selectedDistrictCode,
+          role: role
+
         });
       }
     } else {
@@ -278,18 +284,20 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
       setSelectedBlockCode(blocks);
       if (filters.status) {
         setFilters({
-          role: role,
           status: filters.status,
-          state: selectedStateCode,
-          district: selectedDistrictCode,
-          block: blocks,
+          states: selectedStateCode,
+          districts: selectedDistrictCode,
+          blocks: blocks,
+          role: role
+
         });
       } else {
         setFilters({
-          role: role,
-          state: selectedStateCode,
-          district: selectedDistrictCode,
-          block: blocks,
+          states: selectedStateCode,
+          districts: selectedDistrictCode,
+          blocks: blocks,
+          role: role
+
         });
       }
     }
