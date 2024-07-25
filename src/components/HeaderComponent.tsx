@@ -21,20 +21,7 @@ import {
   getStateList,
   getDistrictList,
 } from "../services/MasterDataService";
-import { Archive } from "@mui/icons-material";
 
-const AllStates = [
-  { name: "Maharashtra", code: "mh" },
-  { name: "Gujarat", code: "gj" },
-];
-const AllDistrict = [
-  { name: "Mu", code: "MUM" },
-  { name: "Pu", code: "PN" },
-];
-const AllBlocks = [
-  { name: "Baner", code: "BA" },
-  { name: "Hinjewadi", code: "HJ" },
-];
 interface State {
   value: string;
   label: string;
@@ -70,6 +57,7 @@ const HeaderComponent = ({
   showAddNew,
   showStateDropdown = true,
   handleSearch,
+  handleAddUserClick,
 }: any) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
@@ -81,7 +69,7 @@ const HeaderComponent = ({
 
   const handleStateChangeWrapper = async (
     selectedNames: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => {
     if (selectedNames[0] === "") {
       // if(allDistricts.length!==0)
@@ -102,7 +90,7 @@ const HeaderComponent = ({
 
   const handleDistrictChangeWrapper = async (
     selected: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => {
     if (selected[0] === "") {
       handleBlockChange([], []);
@@ -119,7 +107,7 @@ const HeaderComponent = ({
 
   const handleBlockChangeWrapper = (
     selected: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => {
     handleBlockChange(selected, selectedCodes);
   };
@@ -167,7 +155,7 @@ const HeaderComponent = ({
                 names={allStates.map(
                   (state) =>
                     state.label?.toLowerCase().charAt(0).toUpperCase() +
-                    state.label?.toLowerCase().slice(1),
+                    state.label?.toLowerCase().slice(1)
                 )}
                 codes={allStates.map((state) => state.value)}
                 tagName={t("FACILITATORS.ALL_STATES")}

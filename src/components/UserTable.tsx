@@ -35,9 +35,9 @@ type UserDetails = {
 type FilterDetails = {
   role: any;
   status?: any;
-  district?: any;
-  state?: any;
-  block?: any;
+  districts?: any;
+  states?: any;
+  blocks?: any;
 };
 
 interface Cohort {
@@ -48,10 +48,11 @@ interface Cohort {
   customField: any[];
 }
 interface UserTableProps {
-  role: string;
-  userType: string;
-  searchPlaceholder: string;
-}
+    role: string;
+    userType: string, 
+    searchPlaceholder: string,
+    handleAddUserClick: any
+  }
 const columns = [
   // {
   //   key: "userId",
@@ -117,12 +118,8 @@ const columns = [
   },
 ];
 
-const UserTable: React.FC<UserTableProps> = ({
-  role,
-  userType,
-  searchPlaceholder,
-}) => {
-  const [selectedState, setSelectedState] = React.useState<string[]>([]);
+const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholder, handleAddUserClick}) => {
+    const [selectedState, setSelectedState] = React.useState<string[]>([]);
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
@@ -185,14 +182,14 @@ const UserTable: React.FC<UserTableProps> = ({
     setSelectedState(selected);
 
     if (selected[0] === "") {
-      if (filters.status) setFilters({ role: role, status: filters.status });
+      if (filters.status) setFilters({  status: filters.status, role: role });
       else setFilters({ role: role });
     } else {
       const stateCodes = code?.join(",");
       setSelectedStateCode(stateCodes);
       if (filters.status)
-        setFilters({ role: role, status: filters.status, state: stateCodes });
-      else setFilters({ role: role, state: stateCodes });
+        setFilters({  status: filters.status, states: stateCodes, role: role });
+      else setFilters({  states: stateCodes , role: role});
     }
 
     console.log("Selected categories:", typeof code[0]);
@@ -229,14 +226,16 @@ const UserTable: React.FC<UserTableProps> = ({
     if (selected[0] === "") {
       if (filters.status) {
         setFilters({
-          role: role,
           status: filters.status,
-          state: selectedStateCode,
+          states: selectedStateCode,
+          role: role
+
         });
       } else {
         setFilters({
-          role: role,
-          state: selectedStateCode,
+          states: selectedStateCode,
+          role: role
+
         });
       }
     } else {
@@ -244,16 +243,18 @@ const UserTable: React.FC<UserTableProps> = ({
       setSelectedDistrictCode(districts);
       if (filters.status) {
         setFilters({
-          role: role,
           status: filters.status,
-          state: selectedStateCode,
-          district: districts,
+          states: selectedStateCode,
+          districts: districts,
+          role: role
+
         });
       } else {
         setFilters({
-          role: role,
-          state: selectedStateCode,
-          district: districts,
+          states: selectedStateCode,
+          districts: districts,
+          role: role
+
         });
       }
     }
@@ -264,16 +265,18 @@ const UserTable: React.FC<UserTableProps> = ({
     if (selected[0] === "") {
       if (filters.status) {
         setFilters({
-          role: role,
           status: filters.status,
-          state: selectedStateCode,
-          district: selectedDistrictCode,
+          states: selectedStateCode,
+          districts: selectedDistrictCode,
+          role: role
+
         });
       } else {
         setFilters({
-          role: role,
-          state: selectedStateCode,
-          district: selectedDistrictCode,
+          states: selectedStateCode,
+          districts: selectedDistrictCode,
+          role: role
+
         });
       }
     } else {
@@ -281,18 +284,20 @@ const UserTable: React.FC<UserTableProps> = ({
       setSelectedBlockCode(blocks);
       if (filters.status) {
         setFilters({
-          role: role,
           status: filters.status,
-          state: selectedStateCode,
-          district: selectedDistrictCode,
-          block: blocks,
+          states: selectedStateCode,
+          districts: selectedDistrictCode,
+          blocks: blocks,
+          role: role
+
         });
       } else {
         setFilters({
-          role: role,
-          state: selectedStateCode,
-          district: selectedDistrictCode,
-          block: blocks,
+          states: selectedStateCode,
+          districts: selectedDistrictCode,
+          blocks: blocks,
+          role: role
+
         });
       }
     }
@@ -434,6 +439,7 @@ const UserTable: React.FC<UserTableProps> = ({
     setOtherReason("");
     setIsDeleteModalOpen(false);
   };
+ 
   const handleDeleteUser = async (category: string) => {
     try {
       console.log(selectedUserId);
@@ -471,8 +477,9 @@ const UserTable: React.FC<UserTableProps> = ({
     handleSortChange: handleSortChange,
     selectedFilter: selectedFilter,
     handleFilterChange: handleFilterChange,
-    handleSearch: handleSearch,
-  };
+    handleSearch:handleSearch,
+    handleAddUserClick: handleAddUserClick
+    };
 
   return (
     <HeaderComponent {...userProps}>
