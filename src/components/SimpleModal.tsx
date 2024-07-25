@@ -9,7 +9,7 @@ import React, { ReactNode } from 'react';
 
 import manageUserStore from '@/store/manageUserStore';
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, useMediaQuery } from '@mui/material';
 import { useTranslation } from 'next-i18next';
 
 interface SimpleModalProps {
@@ -37,6 +37,10 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
   const { t } = useTranslation();
   const store = manageUserStore();
   const theme = useTheme<any>();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
 
   const modalStyle = {
     paddingTop: '0',
@@ -47,15 +51,12 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '85%',
+    width: isSmallScreen ? '90%' : isLargeScreen ? '68%' : '85%',
     maxHeight: '80vh',
     overflowY: 'auto',
     backgroundColor: '#fff',
     borderRadius: theme.shape.borderRadius,
     boxShadow: theme.shadows[5],
-    '@media (min-width: 600px)': {
-      width: '450px',
-    },
   };
 
   const titleStyle = {
@@ -77,7 +78,6 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
         <Box
           display={'flex'}
           justifyContent={'space-between'}
-          // sx={{ padding: '18px 16px' }}
           sx={titleStyle}
         >
           <Box marginBottom={'0px'}>

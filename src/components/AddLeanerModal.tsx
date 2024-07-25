@@ -8,7 +8,7 @@ import { createUser, getFormRead } from '@/services/CreateUserService';
 import { generateUsernameAndPassword } from '@/utils/Helper';
 import { FormData } from '@/utils/Interfaces';
 import { FormContext, FormContextType, Role, RoleId } from '@/utils/app.constant';
-import { Box, Button, Typography, useTheme } from '@mui/material';
+import { Box, Button, Typography, useTheme, useMediaQuery } from '@mui/material';
 import { IChangeEvent } from '@rjsf/core';
 import { RJSFSchema } from '@rjsf/utils';
 import React, { useEffect } from 'react';
@@ -20,6 +20,7 @@ import {
 } from "../services/MasterDataService";
 import MultipleSelectCheckmarks from "./FormControl";
 import { showToastMessage } from './Toastify';
+import AreaSelection from './AreaSelection';
 
 interface AddLearnerModalProps {
   open: boolean;
@@ -52,6 +53,9 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
   const [dynamicForm, setDynamicForm] = React.useState<any>(false);
   const { t } = useTranslation();
   const theme = useTheme<any>();
+  const isMobile = useMediaQuery("(max-width:600px)");
+  const isMediumScreen = useMediaQuery("(max-width:986px)");
+  
   const handleStateChangeWrapper = async (
     selectedNames: string[],
     selectedCodes: string[],
@@ -372,52 +376,19 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
     {t('LEARNERS.FIRST_SELECT_REQUIRED_FIELDS')}           </Typography>
           )
            }
-        <MultipleSelectCheckmarks
-                names={allStates.map(
-                  (state) =>
-                    state.label?.toLowerCase().charAt(0).toUpperCase() +
-                    state.label?.toLowerCase().slice(1),
-                )}
-                codes={allStates.map((state) => state.value)}
-                tagName={t("FACILITATORS.ALL_STATES")}
-                selectedCategories={selectedState}
-                onCategoryChange={handleStateChangeWrapper}
-                overall={false}
-              />
-              <MultipleSelectCheckmarks
-                names={allDistricts.map((districts) => districts.label)}
-                codes={allDistricts.map((districts) => districts.value)}
-                tagName={t("FACILITATORS.ALL_DISTRICTS")}
-                selectedCategories={selectedDistrict}
-                onCategoryChange={handleDistrictChangeWrapper}
-                disabled={selectedState.length === 0 || selectedState[0] === ""}
-                overall={false}
-
-              />
-              <MultipleSelectCheckmarks
-                names={allBlocks.map((blocks) => blocks.label)}
-                codes={allBlocks.map((blocks) => blocks.value)}
-                tagName={t("FACILITATORS.ALL_BLOCKS")}
-                selectedCategories={selectedBlock}
-                onCategoryChange={handleBlockChangeWrapper}
-                disabled={
-                  selectedDistrict.length === 0 || selectedDistrict[0] === ""
-                }
-                overall={false}
-
-              />
-               <MultipleSelectCheckmarks
-                names={allCenters.map((centers) => centers.label)}
-                codes={allCenters.map((centers) => centers.value)}
-                tagName={t("CENTERS.CENTERS")}
-                selectedCategories={selectedCenter}
-                onCategoryChange={handleCenterChangeWrapper}
-                disabled={
-                  selectedBlock.length === 0 || selectedCenter[0] === ""
-                }
-                overall={false}
-
-              />
+         <AreaSelection
+          allStates={allStates}
+          allDistricts={allDistricts}
+          allBlocks={allBlocks}
+          selectedState={selectedState}
+          selectedDistrict={selectedDistrict}
+          selectedBlock={selectedBlock}
+          handleStateChangeWrapper={handleStateChangeWrapper}
+          handleDistrictChangeWrapper={handleDistrictChangeWrapper}
+          handleBlockChangeWrapper={handleBlockChangeWrapper}
+          isMobile={isMobile}
+          isMediumScreen={isMediumScreen}
+        />
         </Box>
         
         

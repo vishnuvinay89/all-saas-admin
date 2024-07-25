@@ -22,8 +22,7 @@ import {
   getStateList,
   getDistrictList,
 } from "../services/MasterDataService";
-
-
+import AreaSelection from "./AreaSelection";
 interface State {
   value: string;
   label: string;
@@ -139,54 +138,19 @@ const HeaderComponent = ({
       }}
     >
       {showStateDropdown && (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            backgroundColor: theme.palette.secondary["200"],
-            p: isMobile ? "8px" : "16px",
-            borderRadius: "8px",
-            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <Grid container spacing={isMobile ? 1 : 2}>
-            <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
-              <MultipleSelectCheckmarks
-                names={allStates.map(
-                  (state) =>
-                    state.label?.toLowerCase().charAt(0).toUpperCase() +
-                    state.label?.toLowerCase().slice(1),
-                )}
-                codes={allStates.map((state) => state.value)}
-                tagName={t("FACILITATORS.ALL_STATES")}
-                selectedCategories={selectedState}
-                onCategoryChange={handleStateChangeWrapper}
-              />
-            </Grid>
-            <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
-              <MultipleSelectCheckmarks
-                names={allDistricts.map((districts) => districts.label)}
-                codes={allDistricts.map((districts) => districts.value)}
-                tagName={t("FACILITATORS.ALL_DISTRICTS")}
-                selectedCategories={selectedDistrict}
-                onCategoryChange={handleDistrictChangeWrapper}
-                disabled={selectedState.length === 0 || selectedState[0] === ""}
-              />
-            </Grid>
-            <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
-              <MultipleSelectCheckmarks
-                names={allBlocks.map((blocks) => blocks.label)}
-                codes={allBlocks.map((blocks) => blocks.value)}
-                tagName={t("FACILITATORS.ALL_BLOCKS")}
-                selectedCategories={selectedBlock}
-                onCategoryChange={handleBlockChangeWrapper}
-                disabled={
-                  selectedDistrict.length === 0 || selectedDistrict[0] === ""
-                }
-              />
-            </Grid>
-          </Grid>
-        </Box>
+        <AreaSelection
+          allStates={allStates}
+          allDistricts={allDistricts}
+          allBlocks={allBlocks}
+          selectedState={selectedState}
+          selectedDistrict={selectedDistrict}
+          selectedBlock={selectedBlock}
+          handleStateChangeWrapper={handleStateChangeWrapper}
+          handleDistrictChangeWrapper={handleDistrictChangeWrapper}
+          handleBlockChangeWrapper={handleBlockChangeWrapper}
+          isMobile={isMobile}
+          isMediumScreen={isMediumScreen}
+        />
       )}
       <Typography variant="h2" sx={{ mt: isMobile ? "12px" : "20px" }}>
         {userType}
@@ -261,11 +225,9 @@ const HeaderComponent = ({
           boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
         }}
         onClick={handleAddUserClick}
-
       >
         <Tooltip title={t("COMMON.ADD_NEW")}>
           <Button
-            //  variant="contained"
             startIcon={<AddIcon />}
             sx={{
               textTransform: "none",
