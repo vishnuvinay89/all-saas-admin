@@ -6,14 +6,12 @@ import { Role } from "@/utils/app.constant";
 
 const Faciliator: React.FC = () => {
   const { t } = useTranslation();
-
+  const handleAddFaciliatorClick = () => {
+  };
   return (
     <>
-      <UserTable
-        role={Role.TEACHER}
-        userType={t("SIDEBAR.FACILITATORS")}
-        searchPlaceholder={t("FACILITATORS.SEARCHBAR_PLACEHOLDER")}
-      />
+      <UserTable role={Role.TEACHER} userType= {t("SIDEBAR.FACILITATORS")} searchPlaceholder={ t("FACILITATORS.SEARCHBAR_PLACEHOLDER")}handleAddUserClick={handleAddFaciliatorClick}/>
+    
     </>
   );
 };

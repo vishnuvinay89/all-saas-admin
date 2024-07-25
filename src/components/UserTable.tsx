@@ -48,10 +48,11 @@ interface Cohort {
   customField: any[];
 }
 interface UserTableProps {
-  role: string;
-  userType: string;
-  searchPlaceholder: string;
-}
+    role: string;
+    userType: string, 
+    searchPlaceholder: string,
+    handleAddUserClick: any
+  }
 const columns = [
   // {
   //   key: "userId",
@@ -117,12 +118,8 @@ const columns = [
   },
 ];
 
-const UserTable: React.FC<UserTableProps> = ({
-  role,
-  userType,
-  searchPlaceholder,
-}) => {
-  const [selectedState, setSelectedState] = React.useState<string[]>([]);
+const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholder, handleAddUserClick}) => {
+    const [selectedState, setSelectedState] = React.useState<string[]>([]);
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
@@ -434,6 +431,7 @@ const UserTable: React.FC<UserTableProps> = ({
     setOtherReason("");
     setIsDeleteModalOpen(false);
   };
+ 
   const handleDeleteUser = async (category: string) => {
     try {
       console.log(selectedUserId);
@@ -471,8 +469,9 @@ const UserTable: React.FC<UserTableProps> = ({
     handleSortChange: handleSortChange,
     selectedFilter: selectedFilter,
     handleFilterChange: handleFilterChange,
-    handleSearch: handleSearch,
-  };
+    handleSearch:handleSearch,
+    handleAddUserClick: handleAddUserClick
+    };
 
   return (
     <HeaderComponent {...userProps}>

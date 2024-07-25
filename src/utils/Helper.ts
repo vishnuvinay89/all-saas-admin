@@ -19,12 +19,30 @@ export const generateUUID = () => {
     return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
   });
 };
-export const getDeviceId = () => {
-  return new Promise((resolve) => {
-    FingerprintJS.get((components: any[]) => {
-      const values = components.map((component) => component.value);
-      const deviceId = FingerprintJS.x64hash128(values.join(""), 31);
-      resolve(deviceId);
+
+
+  export const getDeviceId = () => {
+    return new Promise((resolve) => {
+      FingerprintJS.get((components: any[]) => {
+        const values = components.map((component) => component.value);
+        const deviceId = FingerprintJS.x64hash128(values.join(''), 31);
+        resolve(deviceId);
+      });
     });
-  });
-};
+  };
+  
+  export const generateUsernameAndPassword = (
+    stateCode: string,
+    role: string
+  ) => {
+    const currentYear = new Date().getFullYear().toString().slice(-2);
+    const randomNum = Math.floor(10000 + Math.random() * 90000).toString();
+  
+    const username =
+      role === 'F'
+        ? `FSC${stateCode}${currentYear}${randomNum}`
+        : `SC${stateCode}${currentYear}${randomNum}`;
+    const password = randomNum;
+  
+    return { username, password };
+  }
