@@ -2,9 +2,12 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { logout } from "../services/LoginService";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Loader from "@/components/Loader";
+import { useTranslation } from "react-i18next";
 
 function Logout() {
   const router = useRouter();
+  const { t } = useTranslation();
   useEffect(() => {
     const userLogout = async () => {
       try {
@@ -18,11 +21,10 @@ function Logout() {
     };
     userLogout();
     localStorage.removeItem("token");
-
     router.replace("/login");
   }, []);
 
-  return "";
+  return <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />;
 }
 
 export async function getStaticProps({ locale }: any) {

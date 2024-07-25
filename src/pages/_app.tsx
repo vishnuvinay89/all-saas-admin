@@ -12,7 +12,8 @@ import { telemetryFactory } from "../utils/telemetry";
 import FullLayout from "@/components/layouts/FullLayout";
 import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material/styles";
 import customTheme from "../styles/customTheme";
-import "./../styles/style.css";
+import "./../styles/globals.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     telemetryFactory.init();
@@ -36,17 +37,21 @@ function App({ Component, pageProps }: AppProps) {
     }
   };
 
+  const queryClient = new QueryClient();
+
   return (
-    <AuthProvider>
-      <CssVarsProvider theme={customTheme}>
-        {renderComponent()}
-        <ToastContainer
-          position="bottom-left"
-          autoClose={3000}
-          stacked={false}
-        />
-      </CssVarsProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <CssVarsProvider theme={customTheme}>
+          {renderComponent()}
+          <ToastContainer
+            position="bottom-left"
+            autoClose={3000}
+            stacked={false}
+          />
+        </CssVarsProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
