@@ -35,3 +35,9 @@ body {
   color: "inherit";
   cursor: "pointer";
 }
+
+.ka-thead-background {
+  z-index: 1;
+  background: #a8a6a6;
+  color: white;
+}

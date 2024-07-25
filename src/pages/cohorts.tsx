@@ -5,19 +5,24 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState, useEffect } from "react";
 import HeaderComponent from "@/components/HeaderComponent";
 import { useTranslation } from "next-i18next";
-
 import Pagination from "@mui/material/Pagination";
-
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
-import { getCohortList, updateCohortUpdate } from "@/services/cohortService";
+import {
+  getCohortList,
+  updateCohortUpdate,
+} from "@/services/CohortService/cohortService";
 import { Role, Storage } from "@/utils/app.constant";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import CustomModal from "@/components/CustomModal";
-import { Box, TextField } from "@mui/material";
+import { Box, TextField, Typography } from "@mui/material";
 import { SortDirection } from "ka-table/enums";
+import Loader from "@/components/Loader";
+import Image from "next/image";
+import glass from "../../public/images/empty_hourglass.svg";
+import { useCohortList } from "@/services/CohortService/cohortListHook";
 
 type UserDetails = {
   userId: any;
@@ -28,28 +33,15 @@ type UserDetails = {
   centers?: any;
   Programs?: any;
 };
+
+// colums in table
 const columns = [
-  // {
-  //   key: "userId",
-  //   title: "ID",
-  //   dataType: DataType.String,
-  // },
   {
     key: "cohortName",
     title: "Name",
     dataType: DataType.String,
     sortDirection: SortDirection.Ascend,
   },
-  // {
-  //   key: "centers",
-  //   title: "Centers",
-  //   dataType: DataType.String,
-  // },
-  // {
-  //   key: "programs",
-  //   title: "Programs",
-  //   dataType: DataType.String,
-  // },
   {
     key: "actions",
     title: "Actions",
@@ -57,6 +49,9 @@ const columns = [
   },
 ];
 const Cohorts: React.FC = () => {
+  // use hooks
+  const { t } = useTranslation();
+  // handle states
   const [selectedState, setSelectedState] = React.useState<string[]>([]);
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
   const [selectedBlock, setSelectedBlock] = React.useState<string[]>([]);
@@ -64,20 +59,36 @@ const Cohorts: React.FC = () => {
   const [pageOffset, setPageOffset] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
   const [selectedFilter, setSelectedFilter] = useState("All");
-
-  const [data, setData] = useState<UserDetails[]>([]);
-  const { t } = useTranslation();
+  const [cohortData, setCohortData] = useState<UserDetails[]>([]);
   const [pageSize, setPageSize] = React.useState<string | number>("");
   const [open, setOpen] = React.useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] =
     React.useState<boolean>(false);
-
   const [selectedCohortId, setSelectedCohortId] = React.useState<string>("");
   const [editModelOpen, setIsEditModalOpen] = React.useState<boolean>(false);
   const [confirmButtonDisable, setConfirmButtonDisable] =
     React.useState<boolean>(false);
   const [inputName, setInputName] = React.useState<string>("");
   const [cohortName, setCohortName] = React.useState<string>("");
+  const [loading, setLoading] = useState<boolean | undefined>(undefined);
+  const [userId, setUserId] = useState("");
+
+  // use api calls
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const user_Id = localStorage.getItem("userId") || "";
+      setUserId(user_Id);
+    }
+  }, []);
+
+  const { data, error, isLoading } = useCohortList(userId);
+  useEffect(() => {
+    if (data) {
+      setCohortData(data);
+    }
+  }, [data]);
+
+  // handle functions
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
     setPageSize(event.target.value);
     setPageLimit(Number(event.target.value));
@@ -103,7 +114,7 @@ const Cohorts: React.FC = () => {
   );
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
-    value: number,
+    value: number
   ) => {
     setPageOffset(value - 1);
   };
@@ -165,7 +176,7 @@ const Cohorts: React.FC = () => {
       const resp = await getCohortList(userId);
       const result = resp?.cohortData;
 
-      setData(result);
+      setCohortData(result);
     } catch (error) {
       console.error("Error fetching user list:", error);
     }
@@ -177,51 +188,31 @@ const Cohorts: React.FC = () => {
     setSelectedFilter(event.target.value as string);
   };
 
-  const fetchUserList = async () => {
-    try {
-      const limit = pageLimit;
-      // const page = 0;
-      const offset = pageOffset;
-      // const sort = ["createdAt", "asc"];
-      const filters = { role: Role.TEACHER };
-      const userId = localStorage.getItem(Storage.USER_ID) || "";
-
-      const resp = await getCohortList(userId);
-      const result = resp;
-      console.log("result", result);
-      const cohortName = result?.[0]?.cohortName;
-      setData(result);
-      setInputName(cohortName);
-      const childData = result?.[0]?.childData;
-      
-    } catch (error) {
-      console.error("Error fetching user list:", error);
-    }
-  };
-  useEffect(() => {
-    fetchUserList();
-  }, [pageOffset, pageLimit]);
-
   const handleEdit = (rowData: any) => {
-    console.log("Edit row:", rowData);
+    setLoading(true);
     // Handle edit action here
     setIsEditModalOpen(true);
     if (rowData) {
       const cohortId = rowData?.cohortId;
       setSelectedCohortId(cohortId);
+      const cohortName = rowData?.cohortName;
+      setInputName(cohortName);
+      setLoading(false);
     }
+    setLoading(false);
     setConfirmButtonDisable(false);
   };
 
   const handleDelete = (rowData: any) => {
+    setLoading(true);
     setConfirmationModalOpen(true);
     if (rowData) {
       const cohortId = rowData?.cohortId;
       setSelectedCohortId(cohortId);
+      setLoading(false);
     }
     handleActionForDelete();
-    console.log("Delete row:", rowData);
-    // Handle delete action here
+    setLoading(false);
   };
 
   // add  extra buttons
@@ -240,21 +231,27 @@ const Cohorts: React.FC = () => {
   };
 
   const handleUpdateAction = async () => {
+    setLoading(true);
     setConfirmButtonDisable(true);
-
     if (selectedCohortId) {
       let cohortDetails = {
         name: inputName,
       };
       const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
+      setLoading(false);
       console.log("resp:", resp);
     } else {
+      setLoading(false);
       console.log("No cohort Id Selected");
     }
     onCloseEditMOdel();
-    fetchUserList();
+    // fetchUserList();
+    setLoading(false);
   };
+
   const handleSearch = (keyword: string) => {};
+
+  // props to send in header
   const userProps = {
     userType: t("SIDEBAR.COHORTS"),
     searchPlaceHolder: t("COHORTS.SEARCHBAR_PLACEHOLDER"),
@@ -304,10 +301,12 @@ const Cohorts: React.FC = () => {
         modalOpen={confirmationModalOpen}
       />
       <HeaderComponent {...userProps}>
-        <div>
+        {loading ? (
+          <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
+        ) : data?.length > 0 ? (
           <KaTableComponent
             columns={columns}
-            data={data}
+            data={cohortData}
             limit={pageLimit}
             offset={pageOffset}
             PagesSelector={PagesSelector}
@@ -317,7 +316,14 @@ const Cohorts: React.FC = () => {
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
-        </div>
+        ) : (
+          <Box display="flex">
+            <Image src={glass} alt="" />
+            <Typography marginTop="10px">
+              {t("COMMON.NO_USER_FOUND")}
+            </Typography>
+          </Box>
+        )}
       </HeaderComponent>
     </>
   );

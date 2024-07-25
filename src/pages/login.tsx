@@ -29,6 +29,7 @@ import { logEvent } from "@/utils/googleAnalytics";
 import { showToastMessage } from "@/components/Toastify";
 import Link from "@mui/material/Link";
 import loginImage from "../../public/6300830.jpg";
+import { useUserIdStore } from "@/store/useUserIdStore";
 
 const LoginPage = () => {
   const { t } = useTranslation();
@@ -45,6 +46,7 @@ const LoginPage = () => {
 
   const theme = useTheme<any>();
   const router = useRouter();
+  const { setUserId } = useUserIdStore();
 
   // Use useMediaQuery to detect screen size
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -88,7 +90,7 @@ const LoginPage = () => {
   };
 
   const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>,
+    event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
   };
@@ -115,6 +117,9 @@ const LoginPage = () => {
 
             const userResponse = await getUserId();
             localStorage.setItem("userId", userResponse?.userId);
+            // Update Zustand store
+            setUserId(userResponse?.userId || "");
+
             localStorage.setItem("name", userResponse?.name);
             const tenantId = userResponse?.tenantData?.[0]?.tenantId;
             localStorage.setItem("tenantId", tenantId);
