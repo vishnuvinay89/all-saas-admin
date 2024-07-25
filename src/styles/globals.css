@@ -41,3 +41,7 @@ body {
   background: #a8a6a6;
   color: white;
 }
+
+.ka-tbody .ka-tr {
+  border-bottom: 2px solid #ececec;
+}

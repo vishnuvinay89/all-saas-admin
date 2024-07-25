@@ -76,8 +76,8 @@ const Cohorts: React.FC = () => {
   // use api calls
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
-      const user_Id = localStorage.getItem("userId") || "";
-      setUserId(user_Id);
+      const userId = localStorage.getItem(Storage.USER_ID) || "";
+      setUserId(userId);
     }
   }, []);
 
