@@ -6,9 +6,9 @@ export interface userListParam {
   filters: {
     role: string;
     status?: string;
-    state?: string;
-    district?: string;
-    block?: string;
+    states?: string;
+    districts?: string;
+    blocks?: string;
   };
   fields?: any;
   sort?: object;

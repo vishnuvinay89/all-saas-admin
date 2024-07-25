@@ -23,18 +23,7 @@ import {
   getDistrictList,
 } from "../services/MasterDataService";
 
-const AllStates = [
-  { name: "Maharashtra", code: "mh" },
-  { name: "Gujarat", code: "gj" },
-];
-const AllDistrict = [
-  { name: "Mu", code: "MUM" },
-  { name: "Pu", code: "PN" },
-];
-const AllBlocks = [
-  { name: "Baner", code: "BA" },
-  { name: "Hinjewadi", code: "HJ" },
-];
+
 interface State {
   value: string;
   label: string;

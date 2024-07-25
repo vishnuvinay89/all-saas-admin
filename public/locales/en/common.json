@@ -62,7 +62,8 @@
   },
   "LEARNERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Learners..",
-    "NEW_LEARNER": "New Learner"
+    "NEW_LEARNER": "New Learner",
+    "FIRST_SELECT_REQUIRED_FIELDS":"First select required fields"
 
   },
   "TEAM_LEADERS": {

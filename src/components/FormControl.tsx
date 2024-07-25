@@ -25,6 +25,7 @@ interface MultipleSelectCheckmarksProps {
   selectedCategories: string[];
   onCategoryChange: (selectedNames: string[], selectedCodes: string[]) => void;
   disabled?: boolean;
+  overall?:boolean
 }
 
 const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
@@ -34,6 +35,7 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
   selectedCategories,
   onCategoryChange,
   disabled = false,
+  overall=true
 }) => {
   const { t } = useTranslation();
   const handleChange = (
@@ -62,9 +64,11 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
           renderValue={(selected) => selected.join(", ")}
           MenuProps={MenuProps}
         >
-          <MenuItem value="">
+         {overall && ( <MenuItem value="">
             <em> {t("COMMON.ALL")}</em>
           </MenuItem>
+         )
+         }
           {names.map((name) => (
             <MenuItem key={name} value={name}>
               {/* <Checkbox checked={selectedCategories.indexOf(name) > -1} /> */}
