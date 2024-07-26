@@ -18,7 +18,7 @@ import Loader from "../components/Loader";
 import { deleteUser } from "../services/DeleteUser";
 import { getCohortList } from "../services/GetCohortList";
 import { userList } from "../services/UserList";
-
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 type UserDetails = {
   userId: any;
   username: any;
@@ -516,8 +516,9 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
       ) : (
         loading === false &&
         data.length === 0 && (
-          <Box display="flex">
-            <Image src={glass} alt="" />
+          <Box display="flex" marginLeft="40%" gap="20px">
+            {/* <Image src={glass} alt="" /> */}
+            <PersonSearchIcon fontSize="large" />
             <Typography marginTop="10px">
               {t("COMMON.NO_USER_FOUND")}
             </Typography>
