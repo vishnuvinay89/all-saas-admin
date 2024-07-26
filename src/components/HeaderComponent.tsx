@@ -1,27 +1,24 @@
-import * as React from "react";
-import { useState, useEffect } from "react";
+import SearchBar from "@/components/layouts/header/SearchBar";
+import AddIcon from "@mui/icons-material/Add";
 import {
+  Box,
+  Button,
+  FormControl,
   MenuItem,
   Typography,
-  Box,
-  FormControl,
-  useMediaQuery,
-  Grid,
-  Button,
-  InputLabel,
+  useMediaQuery
 } from "@mui/material";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import AddIcon from "@mui/icons-material/Add";
-import SearchBar from "@/components/layouts/header/SearchBar";
-import { useTranslation } from "next-i18next";
-import MultipleSelectCheckmarks from "./FormControl";
+import Select from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
+import { useTranslation } from "next-i18next";
+import { useEffect, useState } from "react";
 import {
   getBlockList,
-  getStateList,
   getDistrictList,
+  getStateList,
 } from "../services/MasterDataService";
-
+import AreaSelection from "./AreaSelection";
+import {transformArray} from "../utils/Helper"
 interface State {
   value: string;
   label: string;
@@ -53,8 +50,8 @@ const HeaderComponent = ({
   handleBlockChange,
   handleSortChange,
   handleFilterChange,
-  showSort,
-  showAddNew,
+  showSort=true,
+  showAddNew=true,
   showStateDropdown = true,
   handleSearch,
   handleAddUserClick,
@@ -63,16 +60,16 @@ const HeaderComponent = ({
   const theme = useTheme<any>();
   const isMobile = useMediaQuery("(max-width:600px)");
   const isMediumScreen = useMediaQuery("(max-width:986px)");
-  const [allStates, setAllStates] = useState<State[]>([]);
-  const [allDistricts, setAllDistricts] = useState<District[]>([]);
-  const [allBlocks, setAllBlocks] = useState<Block[]>([]);
+  const [states, setStates] = useState<State[]>([]);
+  const [districts, setDistricts] = useState<District[]>([]);
+  const [blocks, setBlocks] = useState<Block[]>([]);
 
   const handleStateChangeWrapper = async (
     selectedNames: string[],
     selectedCodes: string[]
   ) => {
     if (selectedNames[0] === "") {
-      // if(allDistricts.length!==0)
+      // if(districts.length!==0)
       // {
       //   handleDistrictChange([], []);
       //   handleBlockChange([], []);
@@ -81,7 +78,7 @@ const HeaderComponent = ({
     try {
       const response = await getDistrictList(selectedCodes);
       const result = response?.result;
-      setAllDistricts(result);
+      setDistricts(result);
     } catch (error) {
       console.log(error);
     }
@@ -98,7 +95,7 @@ const HeaderComponent = ({
     try {
       const response = await getBlockList(selectedCodes);
       const result = response?.result;
-      setAllBlocks(result);
+      setBlocks(result);
     } catch (error) {
       console.log(error);
     }
@@ -117,8 +114,8 @@ const HeaderComponent = ({
       try {
         const response = await getStateList();
         const result = response?.result;
-        setAllStates(result);
-        console.log(typeof allStates);
+        setStates(result);
+        console.log(typeof states);
       } catch (error) {
         console.log(error);
       }
@@ -139,54 +136,20 @@ const HeaderComponent = ({
       }}
     >
       {showStateDropdown && (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            backgroundColor: theme.palette.secondary["200"],
-            p: isMobile ? "8px" : "16px",
-            borderRadius: "8px",
-            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <Grid container spacing={isMobile ? 1 : 2}>
-            <Grid item xs={12} sm={isMediumScreen ? 12 : 4}>
-              <MultipleSelectCheckmarks
-                names={allStates.map(
-                  (state) =>
-                    state.label?.toLowerCase().charAt(0).toUpperCase() +
-                    state.label?.toLowerCase().slice(1)
-                )}
-                codes={allStates.map((state) => state.value)}
-                tagName={t("FACILITATORS.ALL_STATES")}
-                selectedCategories={selectedState}
-                onCategoryChange={handleStateChangeWrapper}
-              />
-            </Grid>
-            <Grid item xs={12} sm={isMediumScreen ? 12 : 4}>
-              <MultipleSelectCheckmarks
-                names={allDistricts.map((districts) => districts.label)}
-                codes={allDistricts.map((districts) => districts.value)}
-                tagName={t("FACILITATORS.ALL_DISTRICTS")}
-                selectedCategories={selectedDistrict}
-                onCategoryChange={handleDistrictChangeWrapper}
-                disabled={selectedState.length === 0 || selectedState[0] === ""}
-              />
-            </Grid>
-            <Grid item xs={12} sm={isMediumScreen ? 12 : 4}>
-              <MultipleSelectCheckmarks
-                names={allBlocks.map((blocks) => blocks.label)}
-                codes={allBlocks.map((blocks) => blocks.value)}
-                tagName={t("FACILITATORS.ALL_BLOCKS")}
-                selectedCategories={selectedBlock}
-                onCategoryChange={handleBlockChangeWrapper}
-                disabled={
-                  selectedDistrict.length === 0 || selectedDistrict[0] === ""
-                }
-              />
-            </Grid>
-          </Grid>
-        </Box>
+        <AreaSelection
+
+        states={transformArray(states)}
+             districts={transformArray(districts)}
+             blocks={transformArray(blocks)}
+        selectedState={selectedState}
+        selectedDistrict={selectedDistrict}
+        selectedBlock={selectedBlock}
+        handleStateChangeWrapper={handleStateChangeWrapper}
+        handleDistrictChangeWrapper={handleDistrictChangeWrapper}
+        handleBlockChangeWrapper={handleBlockChangeWrapper}
+        isMobile={isMobile}
+        isMediumScreen={isMediumScreen}
+      />
       )}
       <Typography variant="h2" sx={{ mt: isMobile ? "12px" : "20px" }}>
         {userType}
@@ -259,6 +222,8 @@ const HeaderComponent = ({
             mt: isMobile ? "10px" : "16px",
             boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
           }}
+          onClick={handleAddUserClick}
+
         >
           <Button
             //  variant="contained"
@@ -268,7 +233,7 @@ const HeaderComponent = ({
               fontSize: "14px",
               color: theme.palette.primary["100"],
             }}
-          >
+         >
             {t("COMMON.ADD_NEW")}
           </Button>
         </Box>

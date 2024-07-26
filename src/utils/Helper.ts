@@ -46,3 +46,23 @@ export const generateUUID = () => {
   
     return { username, password };
   }
+  interface State {
+    value: string;
+    label: string;
+  }
+  
+  const transformLabel = (label: string): string => {
+    return label
+      .toLowerCase() // Convert to lowercase to standardize
+      .replace(/_/g, ' ') // Replace underscores with spaces
+      .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize the first letter of each word
+  };
+  
+ export  const transformArray = (arr: State[]): State[] => {
+    return arr.map(item => ({
+      ...item,
+      label: transformLabel(item.label)
+    }));
+  };
+  
+  

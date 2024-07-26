@@ -89,6 +89,18 @@ const columns = [
     width: 160,
   },
   {
+    key: "gender",
+    title: "Gender",
+    dataType: DataType.String,
+    width: 160,
+  },
+  {
+    key: "mobile",
+    title: "Mobile Number",
+    dataType: DataType.String,
+    width: 160,
+  },
+  {
     key: "state",
     title: "State",
     dataType: DataType.String,
@@ -373,12 +385,14 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
           const stateField = user.customFields.find(
             (field: any) => field.name === "states",
           );
+          
 
           return {
             userId: user.userId,
             username: user.username,
             name: user.name,
             role: user.role,
+            gender:user.gender,
             mobile: user.mobile,
             age: ageField ? ageField.value : null,
             district: districtField ? districtField.value : null,
