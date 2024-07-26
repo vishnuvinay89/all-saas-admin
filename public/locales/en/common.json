@@ -91,7 +91,9 @@
     "IMPORT_PLANNER": "Import Planner",
     "REMOVE_FILE": "Remove",
     "IMPORT_PLANNER_TO_UPLOADING": "Click on ‘Import Planner’ to start uploading ",
-    "TOPIC_DETAILS": "Topic Details"
+    "TOPIC_DETAILS": "Topic Details",
+    "BROWSE_FILE": "Browse File",
+    "UPLOAD": "Upload"
   },
   "MASTER": {
     "STATE": "State",

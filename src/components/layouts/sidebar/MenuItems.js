@@ -59,8 +59,8 @@ const Menuitems = [
         href: "/course-planner/foundation",
       },
       {
-        title: "SIDEBAR.VIEW_PLANS",
-        href: "/viewPlans",
+        title: "SIDEBAR.MAIN_COURSE",
+        href: "/mainCourse",
       },
     ],
   },

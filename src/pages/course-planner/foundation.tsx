@@ -1,19 +1,29 @@
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useTranslation } from "next-i18next";
-import ProtectedRoute from "../../components/ProtectedRoute";
-import { Box, Card, Typography, Button } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Box,
+  Card,
+  Typography,
+  Button,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
 import CustomStepper from "@/components/Steper";
 import FilterSearchBar from "@/components/FilterSearchBar";
-import { useState } from "react";
 import { useRouter } from "next/router";
-
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next";
+import ProtectedRoute from "../../components/ProtectedRoute";
 import cardData from "@/pages/data/cardData";
 
 const Foundation = () => {
   const router = useRouter();
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
   const [selectedCardId, setSelectedCardId] = useState(null);
   const [grade, setGrade] = useState("");
   const [medium, setMedium] = useState("");
@@ -40,8 +50,9 @@ const Foundation = () => {
   const handleDropdownChange = (event: any) => {
     setSelectedOption(event.target.value);
   };
-  const handleFilter = (event: any) => {
-    setSelectFilter(event.target.value);
+
+  const handleFilter = (value: string) => {
+    setSelectFilter(value);
   };
 
   const handleCopyLink = (state: string) => {
@@ -55,6 +66,7 @@ const Foundation = () => {
       }
     );
   };
+
   return (
     <ProtectedRoute>
       <>
@@ -65,20 +77,27 @@ const Foundation = () => {
           handleGradeChange={handleGradeChange}
           handleMediumChange={handleMediumChange}
           handleSearchChange={handleSearchChange}
-          selectedOption={handleFilter}
-          handleDropdownChange={handleDropdownChange}
+          selectedOption={selectedOption}
+          handleDropdownChange={(event) => handleFilter(event.target.value)}
           card={undefined}
-          selectFilter={undefined}
+          selectFilter={selectFilter}
           onBackClick={undefined}
         />
+
         <Box>
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: "1fr 2fr 1fr",
+              gridTemplateColumns: isSmallScreen
+                ? "1fr"
+                : isMediumScreen
+                  ? "1fr 2fr 1fr"
+                  : "1fr 2fr 1fr",
+              gap: isSmallScreen ? "8px" : "16px",
+              mb: 2,
             }}
           >
-            <Typography>{t("SIDEBAR.STATE")}</Typography>
+            <Typography>{t("MASTER.STATE")}</Typography>
             <Typography>{t("COURSE_PLANNER.ACTIVITY")}</Typography>
             <Typography>{t("COURSE_PLANNER.COPY_LINK")}</Typography>
           </Box>
@@ -88,7 +107,7 @@ const Foundation = () => {
                 key={card.id}
                 sx={{
                   display: "grid",
-                  gridTemplateColumns: "1fr 2fr 1fr",
+                  gridTemplateColumns: isSmallScreen ? "1fr" : "1fr 2fr 1fr",
                   padding: "14px",
                   cursor: "pointer",
                   backgroundColor:
@@ -115,7 +134,7 @@ const Foundation = () => {
                   <CustomStepper completedSteps={card.boardsUploaded} />
                   <Typography
                     sx={{
-                      fontSize: "14px",
+                      fontSize: isSmallScreen ? "12px" : "14px",
                       color: "#7C766F",
                     }}
                   >
@@ -123,9 +142,7 @@ const Foundation = () => {
                     {t("COURSE_PLANNER.BOARDS_FULLY_UPLOADED")})
                   </Typography>
                 </Box>
-                <Box
-                  sx={{ display: "grid", gridTemplateColumns: "1fr 2fr 1fr" }}
-                >
+                <Box sx={{ display: "flex", alignItems: "center" }}>
                   <Button
                     onClick={(e) => {
                       e.stopPropagation();
