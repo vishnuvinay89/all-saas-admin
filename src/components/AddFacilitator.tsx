@@ -17,6 +17,7 @@ import { RJSFSchema } from "@rjsf/utils";
 import { useTranslation } from "next-i18next";
 import AreaSelection from "./AreaSelection";
 import { showToastMessage } from "./Toastify";
+import {transformArray} from "../utils/Helper"
 
 import {
   Typography,
@@ -43,9 +44,9 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
   const [openModal, setOpenModal] = React.useState(false);
   const [uiSchema, setUiSchema] = React.useState<any>();
   const { t } = useTranslation();
-  const [allStates, setAllStates] = React.useState<FieldProp[]>([]);
-  const [allDistricts, setAllDistricts] = React.useState<FieldProp[]>([]);
-  const [allBlocks, setAllBlocks] = React.useState<FieldProp[]>([]);
+  const [states, setStates] = React.useState<FieldProp[]>([]);
+  const [districts, setDistricts] = React.useState<FieldProp[]>([]);
+  const [blocks, setBlocks] = React.useState<FieldProp[]>([]);
   const [allCenters, setAllCenters] = React.useState<FieldProp[]>([]);
   const isMobile = useMediaQuery("(max-width:600px)");
   const isMediumScreen = useMediaQuery("(max-width:986px)");
@@ -64,7 +65,7 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
     try {
       const response = await getDistrictList(selectedCodes);
       const result = response?.result;
-      setAllDistricts(result);
+      setDistricts(result);
     } catch (error) {
       console.log(error);
     }
@@ -90,7 +91,7 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
     try {
       const response = await getBlockList(selectedCodes);
       const result = response?.result;
-      setAllBlocks(result);
+      setBlocks(result);
     } catch (error) {
       console.log(error);
     }
@@ -148,8 +149,8 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
       try {
         const response = await getStateList();
         const result = response?.result;
-        setAllStates(result);
-        console.log(typeof allStates);
+        setStates(result);
+        console.log(typeof states);
       } catch (error) {
         console.log(error);
       }
@@ -276,10 +277,7 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
 try{
   const response = await createUser(apiBody);
   onClose();
-  setAllStates([]);
-  setAllCenters([]);
-  setAllBlocks([]);
-  setAllCenters([]);
+ 
   showToastMessage(t('FACILITATORS.FACILITATOR_CREATED_SUCCESSFULLY'), 'success');
 
 }
@@ -317,9 +315,9 @@ catch(error)
               </Typography>
             )}
             <AreaSelection
-              allStates={allStates}
-              allDistricts={allDistricts}
-              allBlocks={allBlocks}
+             states={transformArray(states)}
+             districts={transformArray(districts)}
+             blocks={transformArray(blocks)}
               selectedState={selectedState}
               selectedDistrict={selectedDistrict}
               selectedBlock={selectedBlock}
@@ -328,7 +326,7 @@ catch(error)
               handleBlockChangeWrapper={handleBlockChangeWrapper}
               isMobile={isMobile}
               isMediumScreen={isMediumScreen}
-              isBlockSelection={true}
+              isCenterSelection={true}
               allCenters={allCenters}
               selectedCenter={selectedCenter}
               handleCenterChangeWrapper={handleCenterChangeWrapper}

@@ -32,6 +32,7 @@ import {
 import MultipleSelectCheckmarks from "./FormControl";
 import { showToastMessage } from "./Toastify";
 import AreaSelection from "./AreaSelection";
+import {transformArray} from "../utils/Helper"
 
 interface AddLearnerModalProps {
   open: boolean;
@@ -44,10 +45,10 @@ interface FieldProp {
 const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
   const [schema, setSchema] = React.useState<any>();
   const [uiSchema, setUiSchema] = React.useState<any>();
-  const [allStates, setAllStates] = React.useState<FieldProp[]>([]);
-  const [allDistricts, setAllDistricts] = React.useState<FieldProp[]>([]);
-  const [allBlocks, setAllBlocks] = React.useState<FieldProp[]>([]);
-  const [allCenters, setAllCenters] = React.useState<FieldProp[]>([]);
+  const [states, SetStates] = React.useState<FieldProp[]>([]);
+  const [districts, SetDistricts] = React.useState<FieldProp[]>([]);
+  const [blocks, setBlocks] = React.useState<FieldProp[]>([]);
+  const [centers, setCenters] = React.useState<FieldProp[]>([]);
 
   const [selectedState, setSelectedState] = React.useState<string[]>([]);
   const [selectedStateCode, setSelectedStateCode] = React.useState("");
@@ -74,7 +75,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
     try {
       const response = await getDistrictList(selectedCodes);
       const result = response?.result;
-      setAllDistricts(result);
+      SetDistricts(result);
     } catch (error) {
       console.log(error);
     }
@@ -91,7 +92,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
     try {
       const response = await getBlockList(selectedCodes);
       const result = response?.result;
-      setAllBlocks(result);
+      setBlocks(result);
     } catch (error) {
       console.log(error);
     }
@@ -149,8 +150,8 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
       try {
         const response = await getStateList();
         const result = response?.result;
-        setAllStates(result);
-        console.log(typeof allStates);
+        SetStates(result);
+        console.log(typeof states);
       } catch (error) {
         console.log(error);
       }
@@ -389,9 +390,9 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
               </Typography>
             )}
             <AreaSelection
-              allStates={allStates}
-              allDistricts={allDistricts}
-              allBlocks={allBlocks}
+                states={transformArray(states)}
+                districts={transformArray(districts)}
+                blocks={transformArray(blocks)}
               selectedState={selectedState}
               selectedDistrict={selectedDistrict}
               selectedBlock={selectedBlock}
@@ -400,8 +401,8 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
               handleBlockChangeWrapper={handleBlockChangeWrapper}
               isMobile={isMobile}
               isMediumScreen={isMediumScreen}
-              isBlockSelection={true}
-              allCenters={allCenters}
+              isCenterSelection={true}
+              allCenters={centers}
               selectedCenter={selectedCenter}
               handleCenterChangeWrapper={handleCenterChangeWrapper}
             />

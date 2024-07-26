@@ -18,7 +18,7 @@ import {
   getStateList,
 } from "../services/MasterDataService";
 import AreaSelection from "./AreaSelection";
-
+import {transformArray} from "../utils/Helper"
 interface State {
   value: string;
   label: string;
@@ -50,7 +50,7 @@ const HeaderComponent = ({
   handleBlockChange,
   handleSortChange,
   handleFilterChange,
-  showSort,
+  showSort=true,
   showAddNew=true,
   showStateDropdown = true,
   handleSearch,
@@ -60,16 +60,16 @@ const HeaderComponent = ({
   const theme = useTheme<any>();
   const isMobile = useMediaQuery("(max-width:600px)");
   const isMediumScreen = useMediaQuery("(max-width:986px)");
-  const [allStates, setAllStates] = useState<State[]>([]);
-  const [allDistricts, setAllDistricts] = useState<District[]>([]);
-  const [allBlocks, setAllBlocks] = useState<Block[]>([]);
+  const [states, setStates] = useState<State[]>([]);
+  const [districts, setDistricts] = useState<District[]>([]);
+  const [blocks, setBlocks] = useState<Block[]>([]);
 
   const handleStateChangeWrapper = async (
     selectedNames: string[],
     selectedCodes: string[]
   ) => {
     if (selectedNames[0] === "") {
-      // if(allDistricts.length!==0)
+      // if(districts.length!==0)
       // {
       //   handleDistrictChange([], []);
       //   handleBlockChange([], []);
@@ -78,7 +78,7 @@ const HeaderComponent = ({
     try {
       const response = await getDistrictList(selectedCodes);
       const result = response?.result;
-      setAllDistricts(result);
+      setDistricts(result);
     } catch (error) {
       console.log(error);
     }
@@ -95,7 +95,7 @@ const HeaderComponent = ({
     try {
       const response = await getBlockList(selectedCodes);
       const result = response?.result;
-      setAllBlocks(result);
+      setBlocks(result);
     } catch (error) {
       console.log(error);
     }
@@ -114,8 +114,8 @@ const HeaderComponent = ({
       try {
         const response = await getStateList();
         const result = response?.result;
-        setAllStates(result);
-        console.log(typeof allStates);
+        setStates(result);
+        console.log(typeof states);
       } catch (error) {
         console.log(error);
       }
@@ -137,9 +137,10 @@ const HeaderComponent = ({
     >
       {showStateDropdown && (
         <AreaSelection
-        allStates={allStates}
-        allDistricts={allDistricts}
-        allBlocks={allBlocks}
+
+        states={transformArray(states)}
+             districts={transformArray(districts)}
+             blocks={transformArray(blocks)}
         selectedState={selectedState}
         selectedDistrict={selectedDistrict}
         selectedBlock={selectedBlock}
