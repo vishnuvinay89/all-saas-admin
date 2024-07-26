@@ -88,16 +88,12 @@ const Foundation = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: isSmallScreen
-                ? "1fr"
-                : isMediumScreen
-                  ? "1fr 2fr 1fr"
-                  : "1fr 2fr 1fr",
+              gridTemplateColumns: "1fr 2fr 1fr",
               gap: isSmallScreen ? "8px" : "16px",
               mb: 2,
             }}
           >
-            <Typography>{t("MASTER.STATE")}</Typography>
+            <Typography>{t("SIDEBAR.STATE")}</Typography>
             <Typography>{t("COURSE_PLANNER.ACTIVITY")}</Typography>
             <Typography>{t("COURSE_PLANNER.COPY_LINK")}</Typography>
           </Box>
