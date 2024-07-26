@@ -54,8 +54,8 @@ const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
 }) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  const isMediumScreen = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
   return (
     <>
@@ -64,7 +64,9 @@ const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
           <Typography
             variant="h1"
             sx={{
-              fontSize: isSmallScreen ? '18px' : isMediumScreen ? '32px' : '24px',
+              fontSize: "24px",
+              fontWeight: "bold",
+              mb: 2,
             }}
           >
             {t("SIDEBAR.FOUNDATION_COURSE")}
@@ -142,7 +144,7 @@ const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
           <Typography
             variant="h2"
             sx={{
-              fontSize: isSmallScreen ? '18px' : isMediumScreen ? '24px' : '28px',
+              fontSize: "24px",
             }}
           >
             {card.state}
@@ -157,7 +159,8 @@ const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
           >
             <CustomStepper completedSteps={card.boardsUploaded} />
             <Typography sx={{ fontSize: "14px", color: "#7C766F" }}>
-              ({card.boardsUploaded}/{card.totalBoards} {t("COURSE_PLANNER.BOARDS_FULLY_UPLOADED")})
+              ({card.boardsUploaded}/{card.totalBoards}{" "}
+              {t("COURSE_PLANNER.BOARDS_FULLY_UPLOADED")})
             </Typography>
           </Box>
         </Box>

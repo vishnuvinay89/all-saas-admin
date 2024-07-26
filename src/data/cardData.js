@@ -22,7 +22,7 @@ const cardData = [
   {
     id: "3",
     state: "Karnataka",
-    boardsUploaded: 4,
+    boardsUploaded: 2,
     totalBoards: 3,
     details: "Karnataka is a state in the southwestern region of India.",
     boards: ["Karnataka Board", "ICSE", "NIOS"],
@@ -41,7 +41,7 @@ const cardData = [
     id: "5",
     state: "Kerala",
     boardsUploaded: 2,
-    totalBoards: 4,
+    totalBoards: 2,
     details: "Kerala is a state on the southwestern Malabar Coast of India.",
     boards: ["Kerala Board", "ICSE", "CBSE"],
     subjects: ["Malayalam", "Science", "Maths"],

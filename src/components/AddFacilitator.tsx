@@ -170,7 +170,7 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
         if (typeof window !== "undefined" && window.localStorage) {
           const CenterList = localStorage.getItem("CenterList");
           const centerOptions = CenterList ? JSON.parse(CenterList) : [];
-          var centerOptionsList = centerOptions.map(
+          var centerOptionsList = centerOptions?.map(
             (center: { cohortId: string; cohortName: string }) => ({
               value: center.cohortId,
               label: center.cohortName,
