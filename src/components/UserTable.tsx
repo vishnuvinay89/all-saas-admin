@@ -390,10 +390,10 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
           return {
             userId: user.userId,
             username: user.username,
-            name: user.name,
+            name: user.name.charAt(0).toUpperCase() + user.name.slice(1).toLowerCase(),
             role: user.role,
             gender:user.gender,
-            mobile: user.mobile,
+            mobile: user.mobile==="NAN"?"":user.mobile,
             age: ageField ? ageField.value : null,
             district: districtField ? districtField.value : null,
             state: stateField ? stateField.value : null,
