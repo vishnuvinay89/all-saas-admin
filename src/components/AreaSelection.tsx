@@ -86,12 +86,12 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
       <Grid container spacing={isMobile ? 1 : 2}>
         <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
           <MultipleSelectCheckmarks
-            names={states.map(
+            names={states?.map(
               (state) =>
                 state.label?.toLowerCase().charAt(0).toUpperCase() +
                 state.label?.toLowerCase().slice(1)
             )}
-            codes={states.map((state) => state.value)}
+            codes={states?.map((state) => state.value)}
             tagName={t("FACILITATORS.ALL_STATES")}
             selectedCategories={selectedState}
             onCategoryChange={handleStateChangeWrapper}
@@ -100,8 +100,8 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
         </Grid>
         <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
           <MultipleSelectCheckmarks
-            names={districts.map((districts) => districts.label)}
-            codes={districts.map((districts) => districts.value)}
+            names={districts?.map((districts) => districts.label)}
+            codes={districts?.map((districts) => districts.value)}
             tagName={t("FACILITATORS.ALL_DISTRICTS")}
             selectedCategories={selectedDistrict}
             onCategoryChange={handleDistrictChangeWrapper}
@@ -111,8 +111,8 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
         </Grid>
         <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
           <MultipleSelectCheckmarks
-            names={blocks.map((blocks) => blocks.label)}
-            codes={blocks.map((blocks) => blocks.value)}
+            names={blocks?.map((blocks) => blocks.label)}
+            codes={blocks?.map((blocks) => blocks.value)}
             tagName={t("FACILITATORS.ALL_BLOCKS")}
             selectedCategories={selectedBlock}
             onCategoryChange={handleBlockChangeWrapper}

@@ -32,7 +32,7 @@ import {
 import MultipleSelectCheckmarks from "./FormControl";
 import { showToastMessage } from "./Toastify";
 import AreaSelection from "./AreaSelection";
-import {transformArray} from "../utils/Helper"
+import { transformArray } from "../utils/Helper";
 
 interface AddLearnerModalProps {
   open: boolean;
@@ -160,15 +160,14 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
     fetchData();
   }, []);
   useEffect(() => {
-    if(!open)
-    {
-     setSelectedBlock([]);
-   setSelectedDistrict([]);
-   setSelectedState([]);
-   setSelectedCenter([]);
-   setDynamicForm(false)
+    if (!open) {
+      setSelectedBlock([]);
+      setSelectedDistrict([]);
+      setSelectedState([]);
+      setSelectedCenter([]);
+      setDynamicForm(false);
     }
-   }, [onClose, open]);
+  }, [onClose, open]);
 
   useEffect(() => {
     const getAddLearnerFormData = async () => {
@@ -342,6 +341,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
             padding: theme.spacing(1),
             fontWeight: "500",
             width: "48%",
+            marginLeft:"50%"
           }}
           onClick={secondaryActionHandler}
         >
@@ -390,9 +390,9 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
               </Typography>
             )}
             <AreaSelection
-                states={transformArray(states)}
-                districts={transformArray(districts)}
-                blocks={transformArray(blocks)}
+              states={transformArray(states)}
+              districts={transformArray(districts)}
+              blocks={transformArray(blocks)}
               selectedState={selectedState}
               selectedDistrict={selectedDistrict}
               selectedBlock={selectedBlock}

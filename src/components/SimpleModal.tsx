@@ -51,7 +51,7 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: isSmallScreen ? '90%' : isLargeScreen ? '68%' : '85%',
+    width: isSmallScreen ? '90%' : isLargeScreen ? '55%' : '85%',
     maxHeight: '80vh',
     overflowY: 'auto',
     backgroundColor: '#fff',
@@ -106,7 +106,7 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
         <Divider />
 
         {showFooter ? (
-          <Box sx={{ padding: '20px 16px' }} display={'flex'}>
+          <Box alignContent={"center"} alignItems={"center"} justifyContent={"center"} display={'flex'}>
             {primaryText && (
               <Button
                 variant="contained"
@@ -115,15 +115,14 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
                   '&.Mui-disabled': {
                     backgroundColor: theme?.palette?.primary?.main,
                   },
-                  minWidth: '84px',
-                  height: '2.5rem',
+                //  minWidth: '84px',
+                //  height: '2.5rem',
                   padding: theme.spacing(1),
                   fontWeight: '500',
-                  width: '100%',
+                 // width: '100%',
                 }}
                 onClick={primaryActionHandler}
               >
-                {primaryText}
               </Button>
             )}
 
