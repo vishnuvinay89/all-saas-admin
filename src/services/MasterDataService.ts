@@ -1,8 +1,19 @@
-import { get } from "./RestClient";
-export const getStateList = async (): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/options/read/states?context=USERS`;
+import { get, post } from "./RestClient";
+export interface StateListParam {
+  limit?: number;
+  //  page: number;
+ 
+  fieldName?: any;
+  sort?: object;
+  offset?: number;
+}
+export const getStateBlockDistrictList = async (  {
+  
+  fieldName}:StateListParam,): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/options/read`;
   try {
-    const response = await get(apiUrl);
+    const response = await post(apiUrl,{
+      fieldName});
     return response?.data;
   } catch (error) {
     console.error("error in fetching user details", error);

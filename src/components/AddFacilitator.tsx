@@ -26,7 +26,7 @@ import {
 import {
   getBlockList,
   getDistrictList,
-  getStateList,
+  getStateBlockDistrictList,
 } from "../services/MasterDataService";
 interface AddFacilitatorModalprops {
   open: boolean;
@@ -63,7 +63,14 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
     selectedCodes: string[]
   ) => {
     try {
-      const response = await getDistrictList(selectedCodes);
+      const object={
+          
+        "controllingfieldfk": selectedStateCode,
+      
+        "fieldName": "districts"
+        
+      }
+      const response = await getStateBlockDistrictList(object);
       const result = response?.result;
       setDistricts(result);
     } catch (error) {
@@ -89,7 +96,15 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
       handleBlockChange([], []);
     }
     try {
-      const response = await getBlockList(selectedCodes);
+      const object={
+          
+        "controllingfieldfk": selectedDistrictCode,
+      
+        "fieldName": "blocks"
+        
+      }
+         const response = await getStateBlockDistrictList(object);
+   //   const response = await getBlockList(selectedCodes);
       const result = response?.result;
       setBlocks(result);
     } catch (error) {
@@ -147,7 +162,13 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getStateList();
+        const object={
+          // "limit": 20,
+          // "offset": 0,
+          "fieldName": "states",
+          
+        }
+        const response = await getStateBlockDistrictList(object);
         const result = response?.result;
         setStates(result);
         console.log(typeof states);

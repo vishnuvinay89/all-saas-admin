@@ -11,7 +11,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
-import { getDistrictList, getStateList } from "@/services/MasterDataService";
+import { getDistrictList, getStateBlockDistrictList } from "@/services/MasterDataService";
 import { SortDirection } from "ka-table/enums";
 import Image from "next/image";
 import glass from "../../public/images/empty_hourglass.svg";
@@ -134,7 +134,15 @@ const District: React.FC = () => {
   useEffect(() => {
     const fetchStateData = async () => {
       try {
-        const data = await getStateList();
+        const object=
+        {
+          
+           "controllingfieldfk": selectedState,
+         
+           "fieldName": "districts"
+           
+         }
+        const data = await getStateBlockDistrictList(object);
         setStateData(data.result || []);
         const initialSelectedState = data.result[0]?.value || "";
         setSelectedState(initialSelectedState);

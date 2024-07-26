@@ -27,7 +27,7 @@ import { useTranslation } from "react-i18next";
 import {
   getBlockList,
   getDistrictList,
-  getStateList,
+  getStateBlockDistrictList ,
 } from "../services/MasterDataService";
 import MultipleSelectCheckmarks from "./FormControl";
 import { showToastMessage } from "./Toastify";
@@ -73,7 +73,15 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
     selectedCodes: string[]
   ) => {
     try {
-      const response = await getDistrictList(selectedCodes);
+      const object=
+        {
+          
+           "controllingfieldfk": selectedStateCode,
+         
+           "fieldName": "districts"
+           
+         }
+            const response = await getStateBlockDistrictList(object);
       const result = response?.result;
       SetDistricts(result);
     } catch (error) {
@@ -90,7 +98,15 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
       handleBlockChange([], []);
     }
     try {
-      const response = await getBlockList(selectedCodes);
+      const object=
+      {
+        
+         "controllingfieldfk": selectedDistrictCode,
+       
+         "fieldName": "blocks"
+         
+       }
+      const response = await getStateBlockDistrictList(object);
       const result = response?.result;
       setBlocks(result);
     } catch (error) {
@@ -147,8 +163,14 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
   const handleCenterChange = (selected: string[], code: string[]) => {};
   useEffect(() => {
     const fetchData = async () => {
+
       try {
-        const response = await getStateList();
+        const object={
+         
+          "fieldName": "states",
+          
+        }
+        const response = await getStateBlockDistrictList(object);
         const result = response?.result;
         SetStates(result);
         console.log(typeof states);
