@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, Button, IconButton } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  IconButton,
+  CircularProgress,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import FilterSearchBar from "@/components/FilterSearchBar";
 import { useRouter } from "next/router";
@@ -8,6 +16,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import AttachmentIcon from "@mui/icons-material/Attachment";
 import FileUploadDialog from "@/components/FileUploadDialog";
 import { useTranslation } from "react-i18next";
+import Loader from "@/components/Loader";
 
 const ImportCsv = () => {
   const router = useRouter();
@@ -16,17 +25,29 @@ const ImportCsv = () => {
   const [subjectDetails, setSubjectDetails] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
-    if (typeof subject === "string") {
-      const card = cardData.find((card) => card.subjects.includes(subject));
-      if (card) {
-        setSubjectDetails({
-          ...card,
-          subject,
-        });
-      }
-    }
+    const fetchData = async () => {
+      // Simulate data fetching
+      setTimeout(() => {
+        if (typeof subject === "string") {
+          const card = cardData.find((card) => card.subjects.includes(subject));
+          if (card) {
+            setSubjectDetails({
+              ...card,
+              subject,
+            });
+          }
+        }
+        setLoading(false);
+      }, 2000); // Simulated loading time
+    };
+
+    fetchData();
   }, [subject]);
 
   const handleBackClick = () => {
@@ -76,25 +97,33 @@ const ImportCsv = () => {
     );
   };
 
+  if (loading) {
+    return <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />;
+  }
+
   if (!subjectDetails) {
-    return <Typography>Loading...</Typography>;
+    return <Typography>{t("COURSE_PLANNER.CARD_NOT_FOUND")}</Typography>;
   }
 
   return (
-    <Box>
+    <Box sx={{ padding: isSmallScreen ? "16px" : "32px" }}>
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           marginBottom: "16px",
+          flexDirection: isSmallScreen ? "column" : "row",
+          gap: isSmallScreen ? "16px" : "0",
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
           <IconButton onClick={handleBackClick}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h4">{subjectDetails.subject}</Typography>
+          <Typography variant={isSmallScreen ? "h5" : "h4"}>
+            {subjectDetails.subject}
+          </Typography>
         </Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
           <Button
@@ -164,12 +193,12 @@ const ImportCsv = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "calc(75vh - 200px)",
+          height: isSmallScreen ? "50vh" : "calc(75vh - 200px)",
           padding: "16px",
         }}
       >
         <Typography
-          variant="h3"
+          variant={isSmallScreen ? "h4" : "h3"}
           sx={{
             textAlign: "center",
             fontWeight: "bold",

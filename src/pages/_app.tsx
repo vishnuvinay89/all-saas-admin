@@ -14,6 +14,8 @@ import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material/s
 import customTheme from "../styles/customTheme";
 import "./../styles/style.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import "react-circular-progressbar/dist/styles.css";
+
 function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     telemetryFactory.init();
