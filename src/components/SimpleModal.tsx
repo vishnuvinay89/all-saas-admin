@@ -51,7 +51,7 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: isSmallScreen ? '90%' : isLargeScreen ? '55%' : '85%',
+    width: isSmallScreen ? '90%' : isLargeScreen ? '65%' : '85%',
     maxHeight: '80vh',
     overflowY: 'auto',
     backgroundColor: '#fff',
