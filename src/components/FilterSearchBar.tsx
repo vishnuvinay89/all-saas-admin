@@ -9,12 +9,33 @@ import {
   InputAdornment,
   IconButton,
   Typography,
+  SelectChangeEvent,
 } from "@mui/material";
 import { Search, ArrowBack as ArrowBackIcon } from "@mui/icons-material";
 import CustomStepper from "./Steper";
 import { useTranslation } from "next-i18next";
 
-const FilterSearchBar = ({
+interface FilterSearchBarProps {
+  grade: string;
+  medium: string;
+  searchQuery: string;
+  handleGradeChange: (event: SelectChangeEvent<string>) => void;
+  handleMediumChange: (event: SelectChangeEvent<string>) => void;
+  handleSearchChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  selectedOption: string;
+  handleDropdownChange: (event: SelectChangeEvent<string>) => void;
+  card?: {
+    state: string;
+    boardsUploaded: number;
+    totalBoards: number;
+  };
+  selectFilter?: string;
+  onBackClick?: () => void;
+  showGradeMedium?: boolean;
+  showFoundaitonCourse?: boolean;
+}
+
+const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
   grade,
   medium,
   searchQuery,
@@ -24,8 +45,8 @@ const FilterSearchBar = ({
   selectedOption,
   handleDropdownChange,
   card,
-  selectFilter,
-  onBackClick,
+  selectFilter = "",
+  onBackClick = () => {},
   showGradeMedium = true,
   showFoundaitonCourse = true,
 }) => {
@@ -40,14 +61,8 @@ const FilterSearchBar = ({
       )}
       {showGradeMedium && (
         <Box sx={{ p: 1, display: "flex", mb: 2, gap: 2 }}>
-          <FormControl
-            variant="outlined"
-            size="small"
-            sx={{ minWidth: "120px" }}
-          >
-            <InputLabel id="grade-label">
-              {t("COURSE_PLANNER.GRADE")}
-            </InputLabel>
+          <FormControl variant="outlined" size="small" sx={{ minWidth: "120px" }}>
+            <InputLabel id="grade-label">{t("COURSE_PLANNER.GRADE")}</InputLabel>
             <Select
               labelId="grade-label"
               value={grade}
@@ -59,14 +74,8 @@ const FilterSearchBar = ({
               <MenuItem value="grade3">Grade 3</MenuItem>
             </Select>
           </FormControl>
-          <FormControl
-            variant="outlined"
-            size="small"
-            sx={{ minWidth: "120px" }}
-          >
-            <InputLabel id="medium-label">
-              {t("COURSE_PLANNER.MEDIUM")}
-            </InputLabel>
+          <FormControl variant="outlined" size="small" sx={{ minWidth: "120px" }}>
+            <InputLabel id="medium-label">{t("COURSE_PLANNER.MEDIUM")}</InputLabel>
             <Select
               labelId="medium-label"
               value={medium}
@@ -89,27 +98,14 @@ const FilterSearchBar = ({
           <Typography variant="h2">{card.state}</Typography>
           <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
             <CustomStepper completedSteps={card.boardsUploaded} />
-            <Typography
-              sx={{
-                fontSize: "14px",
-                color: "#7C766F",
-              }}
-            >
-              ({card.boardsUploaded}/{card.totalBoards}{" "}
-              {t("COURSE_PLANNER.BOARDS_FULLY_UPLOADED")})
+            <Typography sx={{ fontSize: "14px", color: "#7C766F" }}>
+              ({card.boardsUploaded}/{card.totalBoards} {t("COURSE_PLANNER.BOARDS_FULLY_UPLOADED")})
             </Typography>
           </Box>
         </Box>
       )}
 
-      <Box
-        sx={{
-          display: "flex",
-          gap: "8px",
-          width: "100%",
-          mb: 3,
-        }}
-      >
+      <Box sx={{ display: "flex", gap: "8px", width: "100%", mb: 3 }}>
         <TextField
           value={searchQuery}
           onChange={handleSearchChange}
@@ -136,14 +132,8 @@ const FilterSearchBar = ({
             ),
           }}
         />
-        <FormControl
-          variant="outlined"
-          size="small"
-          sx={{ minWidth: "120px", padding: "3px" }}
-        >
-          <InputLabel id="filter-label">
-            {t("COURSE_PLANNER.FILTER")}
-          </InputLabel>
+        <FormControl variant="outlined" size="small" sx={{ minWidth: "120px", padding: "3px" }}>
+          <InputLabel id="filter-label">{t("COURSE_PLANNER.FILTER")}</InputLabel>
           <Select
             labelId="filter-label"
             value={selectFilter}

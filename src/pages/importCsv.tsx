@@ -59,7 +59,7 @@ const ImportCsv = () => {
         query: {
           fileName: selectedFile.name,
           subject: subjectDetails?.subject || "",
-        }, // Pass file name and other relevant details as query parameters
+        },
       });
     }
   };

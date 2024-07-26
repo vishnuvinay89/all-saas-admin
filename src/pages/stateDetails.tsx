@@ -6,6 +6,7 @@ import {
   Button,
   CircularProgress,
   IconButton,
+  SelectChangeEvent,
 } from "@mui/material";
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
@@ -44,11 +45,11 @@ const StateDetails = () => {
     router.back();
   };
 
-  const handleGradeChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleGradeChange = (event: SelectChangeEvent<string>) => {
     setGrade(event.target.value);
   };
 
-  const handleMediumChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleMediumChange = (event: SelectChangeEvent<string>) => {
     setMedium(event.target.value);
   };
 
@@ -56,7 +57,7 @@ const StateDetails = () => {
     setSearchQuery(event.target.value);
   };
 
-  const handleDropdownChange = (event: ChangeEvent<HTMLSelectElement>) => {
+  const handleDropdownChange = (event: SelectChangeEvent<string>) => {
     setSelectedOption(event.target.value);
   };
 
@@ -91,8 +92,8 @@ const StateDetails = () => {
         selectedOption={selectedOption}
         handleDropdownChange={handleDropdownChange}
         card={undefined}
-        selectFilter={undefined}
-        onBackClick={undefined}
+        selectFilter={""} 
+        onBackClick={() => {}}
       />
       <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
         <IconButton onClick={handleBackClick}>

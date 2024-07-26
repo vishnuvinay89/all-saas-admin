@@ -11,6 +11,7 @@ import {
 import UploadIcon from "@mui/icons-material/Upload";
 import CloseIcon from "@mui/icons-material/Close";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
+import { useTranslation } from "react-i18next";
 
 interface FileUploadDialogProps {
   open: boolean;
@@ -29,105 +30,115 @@ const FileUploadDialog: React.FC<FileUploadDialogProps> = ({
   onRemoveFile,
   onUpload,
 }) => {
+  const { t } = useTranslation();
+
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle sx={{ position: "relative" }}>
-        <Typography variant="h2">Import Planner</Typography>
-        <IconButton
-          onClick={onClose}
-          sx={{
-            position: "absolute",
-            right: "16px",
-            top: "16px",
-            color: "#000000",
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-        <Divider sx={{ marginTop: "16px" }} />
-      </DialogTitle>
-      <DialogContent>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "16px",
-          }}
-        >
-          <IconButton
+    <Box>
+      <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Box
             sx={{
-              borderRadius: "8px",
-              borderColor: "#1E1B16",
-              color: "#1E1B16",
-              "&:hover": {
-                borderColor: "#1E1B16",
-                color: "#1E1B16",
-              },
-            }}
-            component="label"
-          >
-            <UploadIcon />
-            <input type="file" hidden accept=".csv" onChange={onFileChange} />
-          </IconButton>
-          <Button
-            variant="outlined"
-            component="label"
-            sx={{
-              borderRadius: "8px",
-              padding: "8px 16px",
-              borderColor: "black",
-              color: "black",
-              "&:hover": {
-                borderColor: "black",
-                color: "black",
-              },
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "10px",
             }}
           >
-            Browse Files
-            <input type="file" hidden accept=".csv" onChange={onFileChange} />
-          </Button>
-          {selectedFile && (
-            <Box
+            <Typography variant="h2">Import Planner</Typography>
+            <IconButton
+              onClick={onClose}
               sx={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                marginTop: "16px",
-                padding: "8px",
-                borderRadius: "8px",
-                backgroundColor: "#f0f0f0",
+                color: "#000000",
               }}
             >
-              <FileCopyIcon sx={{ color: "#2196F3" }} />
-              <Typography variant="body2" sx={{ flexGrow: 1 }}>
-                {selectedFile.name}
-              </Typography>
-              <IconButton onClick={onRemoveFile}>
-                <CloseIcon sx={{ color: "#2196F3" }} />
-              </IconButton>
-            </Box>
-          )}
-          <Button
-            variant="contained"
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <Divider sx={{ marginTop: "16px" }} />
+        </Box>{" "}
+        <DialogContent>
+          <Box
             sx={{
-              width: "100%",
-              borderRadius: "8px",
-              backgroundColor: "#000000",
-              color: "#FFFFFF",
-              "&:hover": {
-                backgroundColor: "#333333",
-              },
-              marginTop: "16px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "16px",
             }}
-            onClick={onUpload}
           >
-            Upload
-          </Button>
-        </Box>
-      </DialogContent>
-    </Dialog>
+            <IconButton
+              sx={{
+                borderRadius: "8px",
+                borderColor: "#1E1B16",
+                color: "#1E1B16",
+                "&:hover": {
+                  borderColor: "#1E1B16",
+                  color: "#1E1B16",
+                },
+              }}
+              component="label"
+            >
+              <UploadIcon />
+              <input type="file" hidden accept=".csv" onChange={onFileChange} />
+            </IconButton>
+            <Button
+              variant="outlined"
+              component="label"
+              sx={{
+                borderRadius: "8px",
+                padding: "8px 16px",
+                borderColor: "black",
+                color: "black",
+                "&:hover": {
+                  borderColor: "black",
+                  color: "black",
+                },
+              }}
+            >
+              {t("COURSE_PLANNER.BROWSE_FILE")}
+              <input type="file" hidden accept=".csv" onChange={onFileChange} />
+            </Button>
+            {selectedFile && (
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  marginTop: "16px",
+                  padding: "8px",
+                  borderRadius: "8px",
+                  backgroundColor: "#f0f0f0",
+                }}
+              >
+                <FileCopyIcon sx={{ color: "black" }} />
+                <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                  {selectedFile.name}
+                </Typography>
+                <IconButton onClick={onRemoveFile}>
+                  <CloseIcon sx={{ color: "black" }} />
+                </IconButton>
+              </Box>
+            )}
+            <Button
+              variant="contained"
+              sx={{
+                width: "100%",
+                borderRadius: "8px",
+                backgroundColor: "#000000",
+                color: "#FFFFFF",
+                "&:hover": {
+                  backgroundColor: "#333333",
+                },
+                marginTop: "16px",
+              }}
+              onClick={onUpload}
+            >
+              {t("COURSE_PLANNER.UPLOAD")}
+            </Button>
+          </Box>
+        </DialogContent>
+      </Dialog>
+    </Box>
   );
 };
 

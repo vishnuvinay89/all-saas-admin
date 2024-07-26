@@ -96,6 +96,7 @@ const SubjectDetails = () => {
               display: "grid",
               gridTemplateColumns: "1fr 2fr 1fr",
               padding: "14px",
+              cursor: "pointer",
               border: "1px solid #0000001A",
               boxShadow: "none",
               transition: "background-color 0.3s",

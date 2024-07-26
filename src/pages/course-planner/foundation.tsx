@@ -65,12 +65,12 @@ const Foundation = () => {
           handleGradeChange={handleGradeChange}
           handleMediumChange={handleMediumChange}
           handleSearchChange={handleSearchChange}
-          selectedOption={handleFilter}
-          handleDropdownChange={handleDropdownChange}
+          selectedOption={selectedOption} 
+          handleDropdownChange={(event) => handleFilter(event.target.value)} 
           card={undefined}
           selectFilter={undefined}
           onBackClick={undefined}
-        />
+        />{" "}
         <Box>
           <Box
             sx={{
