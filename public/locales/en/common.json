@@ -48,7 +48,9 @@
     "LEARNERS": "Learners",
     "TEAM_LEADERS": "Team Leaders",
     "CREATE_PLAN": "Create Plan",
-    "VIEW_PLANS": "View Plans"
+    "VIEW_PLANS": "View Plans",
+    "FOUNDATION_COURSE": "Foundation Course",
+    "MAIN_COURSE": "Main Course"
   },
   "FACILITATORS": {
     "ALL_STATES": "All States",
@@ -69,6 +71,21 @@
   },
   "COHORTS": {
     "SEARCHBAR_PLACEHOLDER": "Search Cohorts.."
+  },
+  "COURSE_PLANNER": {
+    "GRADE": "Grade",
+    "MEDIUM": "Medium",
+    "FILTER": "Filter",
+    "BOARDS_FULLY_UPLOADED": "Boards fully uploaded",
+    "ACTIVITY": "Activity",
+    "COPY_LINK": "Copy Link",
+    "SEARCH": "Search",
+    "DATA_NOT_FOUND": "Data not found",
+    "SUBJECTS_UPLOADED": "Subjects uploaded",
+    "IMPORT_PLANNER": "Import Planner",
+    "REMOVE_FILE": "Remove",
+    "IMPORT_PLANNER_TO_UPLOADING": "Click on ‘Import Planner’ to start uploading ",
+    "TOPIC_DETAILS": "Topic Details"
   },
   "MASTER": {
     "STATE": "State",

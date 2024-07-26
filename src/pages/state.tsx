@@ -9,6 +9,11 @@ import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
 import { getStateList } from "@/services/MasterDataService";
 import { SortDirection } from "ka-table/enums";
+import Loader from "@/components/Loader";
+import Image from "next/image";
+import glass from "../../public/images/empty_hourglass.svg";
+import { Box, Typography } from "@mui/material";
+import DeleteUserModal from "@/components/DeleteUserModal"; // Import your DeleteUserModal component
 
 type StateDetail = {
   label: string;
@@ -22,13 +27,18 @@ const State: React.FC = () => {
   const [pageLimit, setPageLimit] = useState<number>(10);
   const [stateData, setStateData] = useState<StateDetail[]>([]);
   const [selectedSort, setSelectedSort] = useState<string>("Sort");
-  const [sortBy, setSortBy] = useState<["label", "asc" | "desc"]>([
-    "label",
-    "asc",
-  ]);
+  const [sortBy, setSortBy] = useState<["label", "asc" | "desc"]>(["label", "asc"]);
   const [pageCount, setPageCount] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
   const [selectedFilter, setSelectedFilter] = useState<string>("All");
+  const [loading, setLoading] = useState<boolean>(true);
+  
+  // Modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const [selectedState, setSelectedState] = useState<StateDetail | null>(null);
+  const [confirmButtonDisable, setConfirmButtonDisable] = useState<boolean>(false);
+  const [selectedReason, setSelectedReason] = useState<string>("");
+  const [otherReason, setOtherReason] = useState<string>("");
 
   const columns = useMemo(
     () => [
@@ -44,7 +54,7 @@ const State: React.FC = () => {
         dataType: DataType.String,
       },
     ],
-    [t],
+    [t]
   );
 
   const handleChange = useCallback((event: SelectChangeEvent<number>) => {
@@ -57,7 +67,7 @@ const State: React.FC = () => {
     (event: React.ChangeEvent<unknown>, value: number) => {
       setPageOffset(value - 1);
     },
-    [],
+    []
   );
 
   const handleSortChange = useCallback((event: SelectChangeEvent<string>) => {
@@ -75,14 +85,31 @@ const State: React.FC = () => {
   }, []);
 
   const handleDelete = useCallback((rowData: any) => {
-    console.log("Delete row:", rowData);
+    setSelectedState(rowData); // Set the selected state to be deleted
+    setIsDeleteModalOpen(true); // Open the delete confirmation modal
   }, []);
+
+  const handleDeleteUser = useCallback(() => {
+    if (selectedState) {
+      // Add your delete logic here
+      console.log("Deleting user:", selectedState);
+
+      // Close the modal after deletion
+      setIsDeleteModalOpen(false);
+    }
+  }, [selectedState]);
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setSelectedState(null);
+  };
 
   const handleSearch = (keyword: string) => {};
 
   useEffect(() => {
     const fetchStateData = async () => {
       try {
+        setLoading(true);
         const data = await getStateList();
         const sortedData = [...data.result].sort((a, b) => {
           const [field, order] = sortBy;
@@ -98,6 +125,8 @@ const State: React.FC = () => {
         setStateData(paginatedData);
       } catch (error) {
         console.error("Error fetching state data", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -113,6 +142,8 @@ const State: React.FC = () => {
       handleSortChange: handleSortChange,
       states: stateData.map((stateDetail) => stateDetail.label),
       showStateDropdown: false,
+      showAddNew: true,
+      showSort: true,
       selectedFilter,
       handleFilterChange: handleFilterChange,
     }),
@@ -124,41 +155,65 @@ const State: React.FC = () => {
       stateData,
       selectedFilter,
       handleFilterChange,
-    ],
+    ]
   );
 
   return (
     <div>
       <HeaderComponent {...userProps} handleSearch={handleSearch}>
-        <KaTableComponent
-          columns={columns}
-          data={stateData.map((stateDetail) => ({
-            label:
-              stateDetail.label?.toLocaleLowerCase().charAt(0).toUpperCase() +
-              stateDetail.label?.toLocaleLowerCase().slice(1),
-          }))}
-          limit={pageLimit}
-          offset={pageOffset}
-          PagesSelector={() => (
-            <Pagination
-              color="primary"
-              count={pageCount}
-              page={pageOffset + 1}
-              onChange={handlePaginationChange}
-            />
-          )}
-          PageSizeSelector={() => (
-            <PageSizeSelector
-              handleChange={handleChange}
-              pageSize={pageSize}
-              options={[5, 10, 15]}
-            />
-          )}
-          extraActions={[]}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
+        {loading ? (
+          <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
+        ) : stateData.length !== 0 ? (
+          <KaTableComponent
+            columns={columns}
+            data={stateData.map((stateDetail) => ({
+              label:
+                stateDetail.label?.toLocaleLowerCase().charAt(0).toUpperCase() +
+                stateDetail.label?.toLocaleLowerCase().slice(1),
+            }))}
+            limit={pageLimit}
+            offset={pageOffset}
+            PagesSelector={() => (
+              <Pagination
+                color="primary"
+                count={pageCount}
+                page={pageOffset + 1}
+                onChange={handlePaginationChange}
+              />
+            )}
+            PageSizeSelector={() => (
+              <PageSizeSelector
+                handleChange={handleChange}
+                pageSize={pageSize}
+                options={[5, 10, 15]}
+              />
+            )}
+            extraActions={[]}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        ) : (
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <Image src={glass} alt="" />
+            <Typography marginTop="10px">
+              {t("COMMON.NO_DATA_FOUND")}
+            </Typography>
+          </Box>
+        )}
       </HeaderComponent>
+
+      {/* DeleteUserModal Component */}
+      <DeleteUserModal
+        open={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        selectedValue={selectedReason}
+        setSelectedValue={setSelectedReason}
+        handleDeleteAction={handleDeleteUser}
+        otherReason={otherReason}
+        setOtherReason={setOtherReason}
+        confirmButtonDisable={confirmButtonDisable}
+        setConfirmButtonDisable={setConfirmButtonDisable}
+      />
     </div>
   );
 };

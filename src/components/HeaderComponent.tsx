@@ -9,7 +9,6 @@ import {
   Grid,
   Button,
   InputLabel,
-  Tooltip,
 } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import AddIcon from "@mui/icons-material/Add";
@@ -22,7 +21,6 @@ import {
   getStateList,
   getDistrictList,
 } from "../services/MasterDataService";
-
 
 interface State {
   value: string;
@@ -55,9 +53,11 @@ const HeaderComponent = ({
   handleBlockChange,
   handleSortChange,
   handleFilterChange,
+  showSort,
+  showAddNew,
   showStateDropdown = true,
   handleSearch,
-  handleAddUserClick
+  handleAddUserClick,
 }: any) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
@@ -69,7 +69,7 @@ const HeaderComponent = ({
 
   const handleStateChangeWrapper = async (
     selectedNames: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => {
     if (selectedNames[0] === "") {
       // if(allDistricts.length!==0)
@@ -90,7 +90,7 @@ const HeaderComponent = ({
 
   const handleDistrictChangeWrapper = async (
     selected: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => {
     if (selected[0] === "") {
       handleBlockChange([], []);
@@ -107,7 +107,7 @@ const HeaderComponent = ({
 
   const handleBlockChangeWrapper = (
     selected: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => {
     handleBlockChange(selected, selectedCodes);
   };
@@ -150,12 +150,12 @@ const HeaderComponent = ({
           }}
         >
           <Grid container spacing={isMobile ? 1 : 2}>
-            <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
+            <Grid item xs={12} sm={isMediumScreen ? 12 : 4}>
               <MultipleSelectCheckmarks
                 names={allStates.map(
                   (state) =>
                     state.label?.toLowerCase().charAt(0).toUpperCase() +
-                    state.label?.toLowerCase().slice(1),
+                    state.label?.toLowerCase().slice(1)
                 )}
                 codes={allStates.map((state) => state.value)}
                 tagName={t("FACILITATORS.ALL_STATES")}
@@ -163,7 +163,7 @@ const HeaderComponent = ({
                 onCategoryChange={handleStateChangeWrapper}
               />
             </Grid>
-            <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
+            <Grid item xs={12} sm={isMediumScreen ? 12 : 4}>
               <MultipleSelectCheckmarks
                 names={allDistricts.map((districts) => districts.label)}
                 codes={allDistricts.map((districts) => districts.value)}
@@ -173,7 +173,7 @@ const HeaderComponent = ({
                 disabled={selectedState.length === 0 || selectedState[0] === ""}
               />
             </Grid>
-            <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
+            <Grid item xs={12} sm={isMediumScreen ? 12 : 4}>
               <MultipleSelectCheckmarks
                 names={allBlocks.map((blocks) => blocks.label)}
                 codes={allBlocks.map((blocks) => blocks.value)}
@@ -202,30 +202,28 @@ const HeaderComponent = ({
           <SearchBar onSearch={handleSearch} placeholder={searchPlaceHolder} />
         </Box>
         <Box display={"flex"} gap={1}>
-          <Tooltip title="Filter">
-            <FormControl sx={{ minWidth: "120px" }}>
-              <Select
-                value={selectedFilter}
-                onChange={handleFilterChange}
-                displayEmpty
-                style={{
-                  borderRadius: "8px",
-                  height: "40px",
-                  fontSize: "14px",
-                }}
-              >
-                <MenuItem value="All">
-                  <em>All</em>
+          <FormControl sx={{ minWidth: "120px" }}>
+            <Select
+              value={selectedFilter}
+              onChange={handleFilterChange}
+              displayEmpty
+              style={{
+                borderRadius: "8px",
+                height: "40px",
+                fontSize: "14px",
+              }}
+            >
+              <MenuItem value="All">
+                <em>All</em>
+              </MenuItem>
+              {Filter?.map((filter, index) => (
+                <MenuItem value={filter} key={index}>
+                  {filter}
                 </MenuItem>
-                {Filter?.map((filter, index) => (
-                  <MenuItem value={filter} key={index}>
-                    {filter}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Tooltip>
-          <Tooltip title={t("COMMON.SORT")}>
+              ))}
+            </Select>
+          </FormControl>
+          {showSort && (
             <FormControl sx={{ minWidth: "120px" }}>
               <Select
                 value={selectedSort}
@@ -245,25 +243,23 @@ const HeaderComponent = ({
                 ))}
               </Select>
             </FormControl>
-          </Tooltip>
+          )}
         </Box>
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "40px",
-          width: isMobile || isMediumScreen ? "100%" : "200px",
-          borderRadius: "20px",
-          border: "1px solid #1E1B16",
-          mt: isMobile ? "10px" : "16px",
-          boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-        }}
-        onClick={handleAddUserClick}
-
-      >
-        <Tooltip title={t("COMMON.ADD_NEW")}>
+      {showAddNew && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "40px",
+            width: isMobile || isMediumScreen ? "100%" : "200px",
+            borderRadius: "20px",
+            border: "1px solid #1E1B16",
+            mt: isMobile ? "10px" : "16px",
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+          }}
+        >
           <Button
             //  variant="contained"
             startIcon={<AddIcon />}
@@ -275,8 +271,8 @@ const HeaderComponent = ({
           >
             {t("COMMON.ADD_NEW")}
           </Button>
-        </Tooltip>
-      </Box>
+        </Box>
+      )}
       {children}
     </Box>
   );
