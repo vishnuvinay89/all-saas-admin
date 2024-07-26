@@ -175,5 +175,14 @@
     "EMAIL": "Email",
     "YEAR_OF_ JOINING_SCP": "Year of joining SCP",
     "ASSIGN_CENTERS": "Assign Centers"
+  },
+  "TABLE_TITLE": {
+    "NAME": "Name",
+    "STATUS": "Status",
+    "CREATED_DATE": "Created Date",
+    "UPDATED_DATE": "Updated Date",
+    "CREATED_BY": "Created By",
+    "UPDATED_BY": "Updated By",
+    "ACTIONS": "Actions"
   }
 }
