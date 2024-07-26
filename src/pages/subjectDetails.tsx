@@ -16,7 +16,7 @@ import FilterSearchBar from "@/components/FilterSearchBar";
 import { MouseEvent } from "react";
 
 interface Card {
-  id: string;
+  id: number;
   state: string;
   boardsUploaded: number;
   totalBoards: number;

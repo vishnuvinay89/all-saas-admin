@@ -10,6 +10,8 @@ import {
   IconButton,
   Typography,
   SelectChangeEvent,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { Search, ArrowBack as ArrowBackIcon } from "@mui/icons-material";
 import CustomStepper from "./Steper";
@@ -51,18 +53,44 @@ const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
   showFoundaitonCourse = true,
 }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.between('sm', 'md'));
 
   return (
     <>
       {showFoundaitonCourse && (
         <Box>
-          <Typography variant="h1">{t("SIDEBAR.FOUNDATION_COURSE")}</Typography>
+          <Typography
+            variant="h1"
+            sx={{
+              fontSize: isSmallScreen ? '18px' : isMediumScreen ? '32px' : '24px',
+            }}
+          >
+            {t("SIDEBAR.FOUNDATION_COURSE")}
+          </Typography>
         </Box>
       )}
       {showGradeMedium && (
-        <Box sx={{ p: 1, display: "flex", mb: 2, gap: 2 }}>
-          <FormControl variant="outlined" size="small" sx={{ minWidth: "120px" }}>
-            <InputLabel id="grade-label">{t("COURSE_PLANNER.GRADE")}</InputLabel>
+        <Box
+          sx={{
+            p: 1,
+            display: "flex",
+            mb: 2,
+            gap: 2,
+            flexWrap: "wrap",
+          }}
+        >
+          <FormControl
+            variant="outlined"
+            size="small"
+            sx={{
+              minWidth: isSmallScreen ? "100px" : "120px",
+            }}
+          >
+            <InputLabel id="grade-label">
+              {t("COURSE_PLANNER.GRADE")}
+            </InputLabel>
             <Select
               labelId="grade-label"
               value={grade}
@@ -74,8 +102,16 @@ const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
               <MenuItem value="grade3">Grade 3</MenuItem>
             </Select>
           </FormControl>
-          <FormControl variant="outlined" size="small" sx={{ minWidth: "120px" }}>
-            <InputLabel id="medium-label">{t("COURSE_PLANNER.MEDIUM")}</InputLabel>
+          <FormControl
+            variant="outlined"
+            size="small"
+            sx={{
+              minWidth: isSmallScreen ? "100px" : "120px",
+            }}
+          >
+            <InputLabel id="medium-label">
+              {t("COURSE_PLANNER.MEDIUM")}
+            </InputLabel>
             <Select
               labelId="medium-label"
               value={medium}
@@ -91,12 +127,34 @@ const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
       )}
 
       {card && (
-        <Box sx={{ display: "flex", alignItems: "center", gap: 3, mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 3,
+            mb: 2,
+            flexWrap: "wrap",
+          }}
+        >
           <IconButton onClick={onBackClick}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h2">{card.state}</Typography>
-          <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
+          <Typography
+            variant="h2"
+            sx={{
+              fontSize: isSmallScreen ? '18px' : isMediumScreen ? '24px' : '28px',
+            }}
+          >
+            {card.state}
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 3,
+              alignItems: "center",
+              flexWrap: "wrap",
+            }}
+          >
             <CustomStepper completedSteps={card.boardsUploaded} />
             <Typography sx={{ fontSize: "14px", color: "#7C766F" }}>
               ({card.boardsUploaded}/{card.totalBoards} {t("COURSE_PLANNER.BOARDS_FULLY_UPLOADED")})
@@ -105,7 +163,15 @@ const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
         </Box>
       )}
 
-      <Box sx={{ display: "flex", gap: "8px", width: "100%", mb: 3 }}>
+      <Box
+        sx={{
+          display: "flex",
+          gap: "8px",
+          width: "100%",
+          mb: 3,
+          flexWrap: "wrap",
+        }}
+      >
         <TextField
           value={searchQuery}
           onChange={handleSearchChange}
@@ -114,7 +180,7 @@ const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
           size="small"
           sx={{
             flexGrow: 1,
-            width: "80%",
+            width: isSmallScreen ? "100%" : "calc(80% - 16px)",
             height: "48px",
             borderRadius: "28px",
             "& .MuiOutlinedInput-root": {
@@ -132,8 +198,17 @@ const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
             ),
           }}
         />
-        <FormControl variant="outlined" size="small" sx={{ minWidth: "120px", padding: "3px" }}>
-          <InputLabel id="filter-label">{t("COURSE_PLANNER.FILTER")}</InputLabel>
+        <FormControl
+          variant="outlined"
+          size="small"
+          sx={{
+            minWidth: isSmallScreen ? "100px" : "120px",
+            padding: "3px",
+          }}
+        >
+          <InputLabel id="filter-label">
+            {t("COURSE_PLANNER.FILTER")}
+          </InputLabel>
           <Select
             labelId="filter-label"
             value={selectFilter}

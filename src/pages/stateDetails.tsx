@@ -92,27 +92,9 @@ const StateDetails = () => {
         selectedOption={selectedOption}
         handleDropdownChange={handleDropdownChange}
         card={undefined}
-        selectFilter={""} 
+        selectFilter={""}
         onBackClick={() => {}}
-      />
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
-        <IconButton onClick={handleBackClick}>
-          <ArrowBackIcon />
-        </IconButton>
-        <Typography variant="h4">{card.state}</Typography>
-        <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
-          <CustomStepper completedSteps={card.boardsUploaded} />
-          <Typography
-            sx={{
-              fontSize: "14px",
-              color: "#7C766F",
-            }}
-          >
-            ({card.boardsUploaded}/{card.totalBoards}
-            {t("COURSE_PLANNER.BOARDS_FULLY_UPLOADED")})
-          </Typography>
-        </Box>
-      </Box>
+      ></FilterSearchBar>
       <Box sx={{ marginTop: "16px" }}>
         {card.boards.map((board, index) => (
           <Card
