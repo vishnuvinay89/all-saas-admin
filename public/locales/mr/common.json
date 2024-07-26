@@ -29,6 +29,26 @@
     "EDIT": "संपादित करा",
     "DELETE": "हटवा"
   },
+  "SIDEBAR": {
+    "FOUNDATION_COURSE": "मूलभूत अभ्यासक्रम",
+    "MAIN_COURSE": "मुख्य अभ्यासक्रम"
+  },
+  "COURSE_PLANNER": {
+    "GRADE": "इयत्ता",
+    "MEDIUM": "माध्यम",
+    "FILTER": "फिल्टर",
+    "BOARDS_FULLY_UPLOADED": "बोर्ड्स पूर्णपणे अपलोड केले",
+    "ACTIVITY": "क्रियाकलाप",
+    "COPY_LINK": "लिंक कॉपी करा",
+    "SEARCH": "शोधा",
+    "DATA_NOT_FOUND": "डेटा आढळला नाही",
+    "SUBJECTS_UPLOADED": "विषय अपलोड केले",
+    "IMPORT_PLANNER": "आयात नियोजक",
+    "REMOVE_FILE": "फाईल काढा",
+    "IMPORT_PLANNER_TO_UPLOADING": "अपलोड करण्यास सुरुवात करण्यासाठी 'आयात नियोजक' वर क्लिक करा",
+    "TOPIC_DETAILS": "विषय तपशील"
+  },
+
   "MASTER": {
     "STATE": "राज्य",
     "SORT": "क्रमवारी लावा",

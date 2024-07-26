@@ -1,7 +1,6 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import HeaderComponent from "@/components/HeaderComponent";
 import Pagination from "@mui/material/Pagination";
 import Box from "@mui/material/Box";
@@ -12,6 +11,11 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
 import { useMediaQuery } from "@mui/material";
+import Loader from "@/components/Loader";
+import Image from "next/image";
+import glass from "../../public/images/empty_hourglass.svg";
+import Typography from "@mui/material/Typography";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // Static Data
 const staticStateData = [
@@ -35,12 +39,26 @@ const Block: React.FC = () => {
   const [pageLimit, setPageLimit] = useState<number>(10);
   const [stateData] = useState(staticStateData);
   const [districtData] = useState(staticDistrictData);
-  const [blockData] = useState(staticBlockData);
+  const [blockData, setBlockData] = useState(staticBlockData);
   const [pageSize, setPageSize] = useState<number>(10);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const [loading, setLoading] = useState<boolean>(true);
   const isMobile = useMediaQuery("(max-width:600px)");
   const isMediumScreen = useMediaQuery("(max-width:986px)");
+
+  useEffect(() => {
+    const fetchData = () => {
+      setLoading(true);
+      // Simulate fetching data
+      setTimeout(() => {
+        setBlockData(staticBlockData);
+        setLoading(false);
+      }, 1000);
+    };
+
+    fetchData();
+  }, []);
 
   const columns = useMemo(
     () => [
@@ -147,97 +165,109 @@ const Block: React.FC = () => {
   return (
     <React.Fragment>
       <HeaderComponent {...userProps}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            gap: 5,
-            marginTop: 2,
-            "@media (max-width: 580px)": {
-              marginTop: 10,
-              flexDirection: "column",
-              alignItems: "center",
-            },
-          }}
-        >
-          <Box sx={{ width: "100%" }}>
-            <FormControl sx={{ width: "100%" }}>
-              <InputLabel
-                sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
-                id="state-select-label"
-              >
-                States
-              </InputLabel>
-              <Select
-                labelId="state-select-label"
-                id="state-select"
-                value={selectedState}
-                onChange={handleStateChange}
-              >
-                {stateData.map((stateDetail) => (
-                  <MenuItem key={stateDetail.value} value={stateDetail.value}>
-                    {stateDetail.label
-                      ?.toLocaleLowerCase()
-                      .charAt(0)
-                      .toUpperCase() +
-                      stateDetail.label?.toLocaleLowerCase().slice(1)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+        {loading ? (
+          <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
+        ) : blockData.length === 0 ? (
+          <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column">
+            <Image src={glass} alt="" />
+            <Typography marginTop="10px">{t("COMMON.NO_DATA_FOUND")}</Typography>
           </Box>
-          <Box sx={{ width: "100%" }}>
-            <FormControl sx={{ width: "100%" }}>
-              <InputLabel
-                sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
-                id="district-select-label"
-              >
-                Districts
-              </InputLabel>
-              <Select
-                labelId="district-select-label"
-                id="district-select"
-                value={selectedDistrict}
-                onChange={handleDistrictChange}
-              >
-                {districtData.map((districtDetail) => (
-                  <MenuItem
-                    key={districtDetail.value}
-                    value={districtDetail.value}
+        ) : (
+          <>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                gap: 5,
+                marginTop: 2,
+                "@media (max-width: 580px)": {
+                  marginTop: 10,
+                  flexDirection: "column",
+                  alignItems: "center",
+                },
+              }}
+            >
+              <Box sx={{ width: "100%" }}>
+                <FormControl sx={{ width: "100%" }}>
+                  <InputLabel
+                    sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
+                    id="state-select-label"
                   >
-                    {districtDetail.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-        </Box>
+                    States
+                  </InputLabel>
+                  <Select
+                    labelId="state-select-label"
+                    id="state-select"
+                    value={selectedState}
+                    onChange={handleStateChange}
+                  >
+                    {stateData.map((stateDetail) => (
+                      <MenuItem key={stateDetail.value} value={stateDetail.value}>
+                        {stateDetail.label
+                          ?.toLocaleLowerCase()
+                          .charAt(0)
+                          .toUpperCase() +
+                          stateDetail.label?.toLocaleLowerCase().slice(1)}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+              <Box sx={{ width: "100%" }}>
+                <FormControl sx={{ width: "100%" }}>
+                  <InputLabel
+                    sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
+                    id="district-select-label"
+                  >
+                    Districts
+                  </InputLabel>
+                  <Select
+                    labelId="district-select-label"
+                    id="district-select"
+                    value={selectedDistrict}
+                    onChange={handleDistrictChange}
+                  >
+                    {districtData.map((districtDetail) => (
+                      <MenuItem
+                        key={districtDetail.value}
+                        value={districtDetail.value}
+                      >
+                        {districtDetail.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </Box>
 
-        <KaTableComponent
-          columns={columns}
-          data={paginatedData.map((block) => ({
-            block: block.label,
-            actions: "Action buttons",
-          }))}
-          limit={pageLimit}
-          offset={pageOffset}
-          PagesSelector={() => (
-            <Pagination
-              color="primary"
-              count={Math.ceil(blockData.length / pageLimit)}
-              page={pageOffset + 1}
-              onChange={handlePaginationChange}
+            <KaTableComponent
+              columns={columns}
+              data={paginatedData.map((block) => ({
+                block: block.label,
+                actions: "Action buttons",
+              }))}
+              limit={pageLimit}
+              offset={pageOffset}
+              PagesSelector={() => (
+                <Pagination
+                  color="primary"
+                  count={Math.ceil(blockData.length / pageLimit)}
+                  page={pageOffset + 1}
+                  onChange={handlePaginationChange}
+                />
+              )}
+              PageSizeSelector={PageSizeSelectorFunction}
+              extraActions={[]}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
             />
-          )}
-          PageSizeSelector={PageSizeSelectorFunction}
-          extraActions={[]}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
+          </>
+        )}
       </HeaderComponent>
     </React.Fragment>
   );
 };
+
 export async function getStaticProps({ locale }: any) {
   return {
     props: {

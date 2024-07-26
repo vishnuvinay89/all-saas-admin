@@ -13,6 +13,11 @@ import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
 import { getDistrictList, getStateList } from "@/services/MasterDataService";
 import { SortDirection } from "ka-table/enums";
+import Image from "next/image";
+import glass from "../../public/images/empty_hourglass.svg";
+import CustomModal from "@/components/CustomModal";
+import ConfirmationModal from "@/components/ConfirmationModal";
+import { Typography } from "@mui/material";
 
 type StateDetail = {
   value: string;
@@ -37,6 +42,10 @@ const District: React.FC = () => {
   const [pageCount, setPageCount] = useState<number>(1);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const [confirmationModalOpen, setConfirmationModalOpen] =
+    useState<boolean>(false);
+  const [selectedDistrictForDelete, setSelectedDistrictForDelete] =
+    useState<DistrictDetail | null>(null);
 
   const columns = useMemo(
     () => [
@@ -104,9 +113,15 @@ const District: React.FC = () => {
     console.log("Edit row:", rowData);
   }, []);
 
-  const handleDelete = useCallback((rowData: any) => {
-    console.log("Delete row:", rowData);
+  const handleDelete = useCallback((rowData: DistrictDetail) => {
+    setSelectedDistrictForDelete(rowData);
+    setConfirmationModalOpen(true);
   }, []);
+
+  const handleConfirmDelete = useCallback(() => {
+    console.log("Delete row:", selectedDistrictForDelete);
+    setConfirmationModalOpen(false);
+  }, [selectedDistrictForDelete]);
 
   const handleFilterChange = useCallback(
     async (event: SelectChangeEvent<string>) => {
@@ -133,6 +148,7 @@ const District: React.FC = () => {
 
     fetchStateData();
   }, []);
+
   const handleSearch = (keyword: string) => {};
 
   useEffect(() => {
@@ -171,66 +187,52 @@ const District: React.FC = () => {
 
   return (
     <React.Fragment>
+      <CustomModal
+        open={confirmationModalOpen}
+        handleClose={() => setConfirmationModalOpen(false)}
+        title={t("COMMON.CONFIRM_DELETE")}
+        primaryBtnText={t("COMMON.DELETE")}
+        secondaryBtnText={t("COMMON.CANCEL")}
+        primaryBtnClick={handleConfirmDelete}
+      >
+        <Box>{t("COMMON.ARE_YOU_SURE_DELETE")}</Box>
+      </CustomModal>
       <HeaderComponent {...userProps}>
-        <Box
-          sx={{
-            minWidth: 240,
-            marginTop: 2,
-            "@media (max-width: 580px)": {
-              marginTop: 3,
-              marginBottom: 3,
-              flexDirection: "column",
-              alignItems: "center",
-            },
-          }}
-        >
-          <FormControl sx={{ minWidth: 340 }}>
-            <InputLabel id="state-select-label">States</InputLabel>
-            <Select
-              labelId="state-select-label"
-              id="state-select"
-              value={selectedState}
-              label="State"
-              onChange={handleStateChange}
-            >
-              {stateData.map((stateDetail) => (
-                <MenuItem key={stateDetail.value} value={stateDetail.value}>
-                  {stateDetail.label
-                    ?.toLocaleLowerCase()
-                    .charAt(0)
-                    .toUpperCase() +
-                    stateDetail.label?.toLocaleLowerCase().slice(1)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
-        <KaTableComponent
-          columns={columns}
-          data={sortedDistricts.map((districtDetail) => ({
-            label:
-              districtDetail.label
-                ?.toLocaleLowerCase()
-                .charAt(0)
-                .toUpperCase() +
-              districtDetail.label?.toLocaleLowerCase().slice(1),
-            actions: "Action buttons",
-          }))}
-          limit={pageLimit}
-          offset={pageOffset}
-          PagesSelector={() => (
-            <Pagination
-              color="primary"
-              count={pageCount}
-              page={pageOffset + 1}
-              onChange={handlePaginationChange}
-            />
-          )}
-          PageSizeSelector={PageSizeSelectorFunction}
-          extraActions={[]}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
+        {districtData.length > 0 ? (
+          <KaTableComponent
+            columns={columns}
+            data={sortedDistricts.map((districtDetail) => ({
+              label:
+                districtDetail.label
+                  ?.toLocaleLowerCase()
+                  .charAt(0)
+                  .toUpperCase() +
+                districtDetail.label?.toLocaleLowerCase().slice(1),
+              actions: "Action buttons",
+            }))}
+            limit={pageLimit}
+            offset={pageOffset}
+            PagesSelector={() => (
+              <Pagination
+                color="primary"
+                count={pageCount}
+                page={pageOffset + 1}
+                onChange={handlePaginationChange}
+              />
+            )}
+            PageSizeSelector={PageSizeSelectorFunction}
+            extraActions={[]}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        ) : (
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <Image src={glass} alt="" />
+            <Typography marginTop="10px">
+              {t("COMMON.NO_DATA_FOUND")}
+            </Typography>
+          </Box>
+        )}
       </HeaderComponent>
     </React.Fragment>
   );
