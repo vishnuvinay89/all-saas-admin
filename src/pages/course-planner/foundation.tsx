@@ -101,7 +101,7 @@ const Foundation = () => {
         ) : (
           <Box>
             <Box
-              sx={{
+              sx={{ 
                 display: "grid",
                 gridTemplateColumns: "1fr 2fr 1fr",
                 gap: isSmallScreen ? "8px" : "16px",
@@ -115,7 +115,7 @@ const Foundation = () => {
             {!selectedCardId ? (
               cardData.map((card) => (
                 <Card
-                  key={card.id}
+                  key={card.id}   
                   sx={{
                     display: "grid",
                     gridTemplateColumns: "1fr 2fr 1fr",
