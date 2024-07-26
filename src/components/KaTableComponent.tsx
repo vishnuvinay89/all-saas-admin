@@ -26,7 +26,7 @@ interface KaTableComponentProps {
     onClick: (rowData: any) => void;
     icon: React.ElementType;
   }[];
-
+  paginationEnable?: boolean;
   showIcons?: boolean;
 }
 
@@ -37,7 +37,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   limit,
   PagesSelector,
   PageSizeSelector,
-
+  paginationEnable = true,
   extraActions,
   onEdit,
   onDelete,
@@ -50,7 +50,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
     setSelectedRowIds((prevSelected) =>
       prevSelected.includes(rowId)
         ? prevSelected.filter((id) => id !== rowId)
-        : [...prevSelected, rowId],
+        : [...prevSelected, rowId]
     );
   };
 
@@ -67,7 +67,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
         <Table
           {...tableProps}
           paging={{
-            enabled: true,
+            enabled: paginationEnable,
             pageIndex: 0,
             pageSize: limit,
             pageSizes: pageSizes,
