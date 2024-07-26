@@ -59,7 +59,7 @@ export const generateUUID = () => {
   };
   
  export  const transformArray = (arr: State[]): State[] => {
-    return arr.map(item => ({
+    return arr?.map(item => ({
       ...item,
       label: transformLabel(item.label)
     }));

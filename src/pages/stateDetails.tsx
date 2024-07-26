@@ -11,7 +11,7 @@ import {
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import cardData from "@/pages/data/cardData";
+import cardData from "@/data/cardData";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import FilterSearchBar from "@/components/FilterSearchBar";
 import CustomStepper from "@/components/Steper";

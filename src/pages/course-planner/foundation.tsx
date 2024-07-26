@@ -15,7 +15,7 @@ import { useRouter } from "next/router";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import ProtectedRoute from "../../components/ProtectedRoute";
-import cardData from "@/pages/data/cardData";
+import cardData from "@/data/cardData";
 
 const Foundation = () => {
   const router = useRouter();

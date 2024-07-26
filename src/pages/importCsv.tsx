@@ -3,7 +3,7 @@ import { Box, Typography, Button, IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import FilterSearchBar from "@/components/FilterSearchBar";
 import { useRouter } from "next/router";
-import cardData from "@/pages/data/cardData";
+import cardData from "@/data/cardData";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import AttachmentIcon from "@mui/icons-material/Attachment";
 import FileUploadDialog from "@/components/FileUploadDialog";
