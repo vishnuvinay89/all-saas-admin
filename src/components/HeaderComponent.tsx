@@ -1,25 +1,21 @@
-import * as React from "react";
-import { useState, useEffect } from "react";
+import SearchBar from "@/components/layouts/header/SearchBar";
+import AddIcon from "@mui/icons-material/Add";
 import {
+  Box,
+  Button,
+  FormControl,
   MenuItem,
   Typography,
-  Box,
-  FormControl,
-  useMediaQuery,
-  Grid,
-  Button,
-  InputLabel,
+  useMediaQuery
 } from "@mui/material";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import AddIcon from "@mui/icons-material/Add";
-import SearchBar from "@/components/layouts/header/SearchBar";
-import { useTranslation } from "next-i18next";
-import MultipleSelectCheckmarks from "./FormControl";
+import Select from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
+import { useTranslation } from "next-i18next";
+import { useEffect, useState } from "react";
 import {
   getBlockList,
-  getStateList,
   getDistrictList,
+  getStateList,
 } from "../services/MasterDataService";
 import AreaSelection from "./AreaSelection";
 
@@ -225,6 +221,8 @@ const HeaderComponent = ({
             mt: isMobile ? "10px" : "16px",
             boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
           }}
+          onClick={handleAddUserClick}
+
         >
           <Button
             //  variant="contained"
@@ -234,7 +232,7 @@ const HeaderComponent = ({
               fontSize: "14px",
               color: theme.palette.primary["100"],
             }}
-          >
+         >
             {t("COMMON.ADD_NEW")}
           </Button>
         </Box>
