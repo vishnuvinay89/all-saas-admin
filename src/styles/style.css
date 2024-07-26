@@ -7,3 +7,8 @@
 .ka-tbody .ka-tr {
   border-bottom: 2px solid #ececec;
 }
+
+.table-header {
+  font-family: "Poppins", sans-serif;
+  font-size: small;
+}

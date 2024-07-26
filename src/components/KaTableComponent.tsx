@@ -104,6 +104,11 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                 return null;
               },
             },
+            headCell: {
+              content: (props) => {
+                return <div className="table-header">{props.column.title}</div>;
+              },
+            },
           }}
         />
       </div>

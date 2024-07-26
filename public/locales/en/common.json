@@ -26,8 +26,7 @@
     "DELETE": "Delete",
     "NO_DATA_FOUND": "No data found",
     "SUBMIT": "Submit",
-    "BACK":"Back"
-
+    "BACK": "Back"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -63,8 +62,7 @@
   "LEARNERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Learners..",
     "NEW_LEARNER": "New Learner",
-    "FIRST_SELECT_REQUIRED_FIELDS":"First select required fields"
-
+    "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields"
   },
   "TEAM_LEADERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders.."
@@ -160,5 +158,14 @@
     "EMAIL": "Email",
     "YEAR_OF_ JOINING_SCP": "Year of joining SCP",
     "ASSIGN_CENTERS": "Assign Centers"
+  },
+  "TABLE_TITLE": {
+    "NAME": "Name",
+    "STATUS": "Status",
+    "CREATED_DATE": "Created Date",
+    "UPDATED_DATE": "Updated Date",
+    "CREATED_BY": "Created By",
+    "UPDATED_BY": "Updated By",
+    "ACTIONS": "Actions"
   }
 }

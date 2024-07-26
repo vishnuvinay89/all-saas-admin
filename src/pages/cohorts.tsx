@@ -34,45 +34,51 @@ type UserDetails = {
   Programs?: any;
 };
 
-// colums in table
-const columns = [
-  {
-    key: "cohortName",
-    title: "Name",
-    dataType: DataType.String,
-    sortDirection: SortDirection.Ascend,
-  },
-  {
-    key: "status",
-    title: "Status",
-    dataType: DataType.String,
-  },
-  {
-    key: "createdDate",
-    title: "createdDate",
-    dataType: DataType.String,
-  },
-  {
-    key: "updatedDate",
-    title: "updatedDate",
-    dataType: DataType.String,
-  },
-  {
-    key: "createdBy",
-    title: "Created By",
-    dataType: DataType.String,
-  },
-  {
-    key: "updatedBy",
-    title: "Updated Date",
-    dataType: DataType.String,
-  },
-
-  { key: "actions", title: "Actions", dataType: DataType.String },
-];
 const Cohorts: React.FC = () => {
   // use hooks
   const { t } = useTranslation();
+
+  // colums in table
+  const columns = [
+    {
+      key: "cohortName",
+      title: t("TABLE_TITLE.NAME"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+    },
+    {
+      key: "status",
+      title: t("TABLE_TITLE.STATUS"),
+      dataType: DataType.String,
+    },
+    {
+      key: "createdDate",
+      title: t("TABLE_TITLE.CREATED_DATE"),
+      dataType: DataType.String,
+    },
+    {
+      key: "updatedDate",
+      title: t("TABLE_TITLE.UPDATED_DATE"),
+      dataType: DataType.String,
+    },
+    {
+      key: "createdBy",
+      title: t("TABLE_TITLE.CREATED_BY"),
+      dataType: DataType.String,
+    },
+    {
+      key: "updatedBy",
+      title: t("TABLE_TITLE.UPDATED_BY"),
+      dataType: DataType.String,
+    },
+
+    {
+      key: "actions",
+      title: t("TABLE_TITLE.ACTIONS"),
+      dataType: DataType.String,
+    },
+  ];
+
   // handle states
   const [selectedState, setSelectedState] = React.useState<string[]>([]);
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
