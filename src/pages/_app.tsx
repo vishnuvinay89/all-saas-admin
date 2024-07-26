@@ -12,7 +12,7 @@ import { telemetryFactory } from "../utils/telemetry";
 import FullLayout from "@/components/layouts/FullLayout";
 import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material/styles";
 import customTheme from "../styles/customTheme";
-import "./../styles/globals.css";
+import "./../styles/style.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 function App({ Component, pageProps }: AppProps) {
   useEffect(() => {

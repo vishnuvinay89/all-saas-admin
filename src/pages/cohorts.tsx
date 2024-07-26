@@ -34,23 +34,51 @@ type UserDetails = {
   Programs?: any;
 };
 
-// colums in table
-const columns = [
-  {
-    key: "cohortName",
-    title: "Name",
-    dataType: DataType.String,
-    sortDirection: SortDirection.Ascend,
-  },
-  {
-    key: "actions",
-    title: "Actions",
-    dataType: DataType.String,
-  },
-];
 const Cohorts: React.FC = () => {
   // use hooks
   const { t } = useTranslation();
+
+  // colums in table
+  const columns = [
+    {
+      key: "cohortName",
+      title: t("TABLE_TITLE.NAME"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+    },
+    {
+      key: "status",
+      title: t("TABLE_TITLE.STATUS"),
+      dataType: DataType.String,
+    },
+    {
+      key: "createdDate",
+      title: t("TABLE_TITLE.CREATED_DATE"),
+      dataType: DataType.String,
+    },
+    {
+      key: "updatedDate",
+      title: t("TABLE_TITLE.UPDATED_DATE"),
+      dataType: DataType.String,
+    },
+    {
+      key: "createdBy",
+      title: t("TABLE_TITLE.CREATED_BY"),
+      dataType: DataType.String,
+    },
+    {
+      key: "updatedBy",
+      title: t("TABLE_TITLE.UPDATED_BY"),
+      dataType: DataType.String,
+    },
+
+    {
+      key: "actions",
+      title: t("TABLE_TITLE.ACTIONS"),
+      dataType: DataType.String,
+    },
+  ];
+
   // handle states
   const [selectedState, setSelectedState] = React.useState<string[]>([]);
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
@@ -81,12 +109,34 @@ const Cohorts: React.FC = () => {
     }
   }, []);
 
-  const { data, error, isLoading } = useCohortList(userId);
-  useEffect(() => {
-    if (data) {
-      setCohortData(data);
+  // const { data, error, isLoading } = useCohortList(userId);
+  // useEffect(() => {
+  //   if (data) {
+  //     setCohortData(data);
+  //   }
+  // }, [data]);
+
+  const fetchUserList = async () => {
+    try {
+      const limit = pageLimit;
+      // const page = 0;
+      const offset = pageOffset;
+      // const sort = ["createdAt", "asc"];
+      const filters = { role: Role.TEACHER };
+      const userId = localStorage.getItem(Storage.USER_ID) || "";
+
+      const resp = await getCohortList(userId);
+      const result = resp;
+      console.log("result", result);
+
+      setCohortData(result);
+    } catch (error) {
+      console.error("Error fetching user list:", error);
     }
-  }, [data]);
+  };
+  useEffect(() => {
+    fetchUserList();
+  }, [pageOffset, pageLimit]);
 
   // handle functions
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
@@ -245,7 +295,7 @@ const Cohorts: React.FC = () => {
       console.log("No cohort Id Selected");
     }
     onCloseEditMOdel();
-    // fetchUserList();
+    fetchUserList();
     setLoading(false);
   };
 
@@ -291,7 +341,7 @@ const Cohorts: React.FC = () => {
         </Box>
       </CustomModal>
       <ConfirmationModal
-        message={t("CENTERS.REQUEST_TO_DELETE_HAS_BEEN_SENT")}
+        message={t("CENTERS.REQUEST_TO_DELETE")}
         handleAction={handleActionForDelete}
         buttonNames={{
           primary: t("COMMON.YES"),
@@ -303,12 +353,13 @@ const Cohorts: React.FC = () => {
       <HeaderComponent {...userProps}>
         {loading ? (
           <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
-        ) : data?.length > 0 ? (
+        ) : cohortData?.length > 0 ? (
           <KaTableComponent
             columns={columns}
             data={cohortData}
             limit={pageLimit}
             offset={pageOffset}
+            paginationEnable={false}
             PagesSelector={PagesSelector}
             PageSizeSelector={PageSizeSelectorFunction}
             extraActions={extraActions}
@@ -318,8 +369,7 @@ const Cohorts: React.FC = () => {
           />
         ) : (
           <Box display="flex">
-            <Image src={glass} alt="" />
-            <Typography marginTop="10px">
+            <Typography marginTop="10px" textAlign={"center"}>
               {t("COMMON.NO_USER_FOUND")}
             </Typography>
           </Box>
