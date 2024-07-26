@@ -55,7 +55,7 @@ const HeaderComponent = ({
   handleSortChange,
   handleFilterChange,
   showSort,
-  showAddNew,
+  showAddNew=true,
   showStateDropdown = true,
   handleSearch,
   handleAddUserClick,
