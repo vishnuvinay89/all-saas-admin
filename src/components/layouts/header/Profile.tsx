@@ -82,7 +82,7 @@ const Profile = () => {
                 whiteSpace: "nowrap",
               }}
             >
-              {userName ? userName : ""}
+              {userName ?  userName.charAt(0).toUpperCase() +userName.slice(1).toLowerCase() : ""}
             </Typography>
             <FeatherIcon icon="chevron-down" size="20" />
           </Box>
@@ -107,7 +107,7 @@ const Profile = () => {
               aria-label="secondary mailbox folder"
               onClick={handleClose4}
             >
-              <ListItemButton>
+              {/* <ListItemButton>
                 <ListItemText primary="Edit Profile" />
               </ListItemButton>
               <ListItemButton>
@@ -115,7 +115,7 @@ const Profile = () => {
               </ListItemButton>
               <ListItemButton>
                 <ListItemText primary="Change Password" />
-              </ListItemButton>
+              </ListItemButton> */}
               <ListItemButton>
                 <ListItemText primary="My Settings" />
               </ListItemButton>
