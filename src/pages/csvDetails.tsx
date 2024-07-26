@@ -1,4 +1,10 @@
-import { Box, Typography, Button, IconButton } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  IconButton,
+  CircularProgress,
+} from "@mui/material";
 import { useRouter } from "next/router";
 import FilterSearchBar from "@/components/FilterSearchBar";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -8,6 +14,7 @@ import { useState, useEffect } from "react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import FileUploadDialog from "@/components/FileUploadDialog";
 import { useTranslation } from "react-i18next";
+import Loader from "@/components/Loader"; // Ensure Loader component is imported
 
 const FileDetails = () => {
   const router = useRouter();
@@ -15,11 +22,20 @@ const FileDetails = () => {
   const { t } = useTranslation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (fileName) {
-      setSelectedFile({ name: fileName } as File);
-    }
+    const fetchFileData = async () => {
+      // Simulate data fetching
+      setTimeout(() => {
+        if (fileName) {
+          setSelectedFile({ name: fileName } as File);
+        }
+        setLoading(false);
+      }, 2000); // Simulated loading time
+    };
+
+    fetchFileData();
   }, [fileName]);
 
   const handleBackClick = () => {
@@ -69,6 +85,7 @@ const FileDetails = () => {
       setSelectedFile(file);
     }
   };
+
   const handleUpload = () => {
     if (selectedFile) {
       router.push({
@@ -79,6 +96,10 @@ const FileDetails = () => {
       });
     }
   };
+
+  if (loading) {
+    return <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />;
+  }
 
   return (
     <Box>
@@ -197,9 +218,9 @@ const FileDetails = () => {
         onClose={handleDialogClose}
         onFileChange={handleFileChange}
         selectedFile={selectedFile}
-        onRemoveFile={handleRemoveFile} // Add this prop
-        onUpload={handleUpload} // Add this prop
-      />{" "}
+        onRemoveFile={handleRemoveFile}
+        onUpload={handleUpload}
+      />
     </Box>
   );
 };
