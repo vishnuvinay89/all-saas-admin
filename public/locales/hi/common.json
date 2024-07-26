@@ -28,6 +28,26 @@
     "EDIT": "संपादित करें",
     "DELETE": "हटाएं"
   },
+  "SIDEBAR": {
+    "FOUNDATION_COURSE": "आधार पाठ्यक्रम",
+    "MAIN_COURSE": "मुख्य पाठ्यक्रम"
+  },
+
+  "COURSE_PLANNER": {
+    "GRADE": "कक्षा",
+    "MEDIUM": "माध्यम",
+    "FILTER": "फिल्टर",
+    "BOARDS_FULLY_UPLOADED": "बोर्ड्स पूरी तरह से अपलोड हुए",
+    "ACTIVITY": "गतिविधि",
+    "COPY_LINK": "लिंक कॉपी करें",
+    "SEARCH": "खोजें",
+    "DATA_NOT_FOUND": "डेटा नहीं मिला",
+    "SUBJECTS_UPLOADED": "विषय अपलोड किए गए",
+    "IMPORT_PLANNER": "आयात नियोजक",
+    "REMOVE_FILE": "फाइल हटाएं",
+    "IMPORT_PLANNER_TO_UPLOADING": "अपलोड शुरू करने के लिए 'आयात नियोजक' पर क्लिक करें",
+    "TOPIC_DETAILS": "विषय विवरण"
+  },
   "MASTER": {
     "STATE": "राज्य",
     "SORT": "क्रमबद्ध करें",

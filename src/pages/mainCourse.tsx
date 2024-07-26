@@ -1,20 +1,21 @@
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import ProtectedRoute from "../components/ProtectedRoute";
+import HeaderComponent from "@/components/HeaderComponent";
 
-const CreatePlan = () => {
+const MainCourse = () => {
   const { t } = useTranslation();
-
   return (
     <ProtectedRoute>
       <>
-        <h1>{t("SIDEBAR.CREATE_PLAN")}</h1>
+        <h1>{t("SIDEBAR.MAIN_COURSE")}</h1>
+        <HeaderComponent></HeaderComponent>
       </>
     </ProtectedRoute>
   );
 };
 
-export default CreatePlan;
+export default MainCourse;
 export async function getStaticProps({ locale }: any) {
   return {
     props: {

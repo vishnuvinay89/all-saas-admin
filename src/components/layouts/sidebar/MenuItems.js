@@ -55,8 +55,8 @@ const Menuitems = [
     href: "/course-planner",
     subOptions: [
       {
-        title: "SIDEBAR.CREATE_PLAN",
-        href: "/createPlan",
+        title: "SIDEBAR.FOUNDATION_COURSE",
+        href: "/course-planner/foundation",
       },
       {
         title: "SIDEBAR.VIEW_PLANS",

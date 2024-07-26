@@ -28,6 +28,25 @@
   "COHORTS": {
     "SEARCHBAR_PLACEHOLDER": "କୋହର୍ଟସ୍ ସନ୍ଧାନ କରନ୍ତୁ.."
   },
+  "SIDEBAR": {
+    "FOUNDATION_COURSE": "ମୂଳ ପାଠ୍ୟକ୍ରମ",
+    "MAIN_COURSE": "ମୁଖ୍ୟ ପାଠ୍ୟକ୍ରମ"
+  },
+  "COURSE_PLANNER": {
+    "GRADE": "ଶ୍ରେଣୀ",
+    "MEDIUM": "ମାଧ୍ୟମ",
+    "FILTER": "ଫିଲ୍ଟର",
+    "BOARDS_FULLY_UPLOADED": "ବୋର୍ଡ୍ସ ସମ୍ପୂର୍ଣ୍ଣ ଅପଲୋଡ୍ ହେଲା",
+    "ACTIVITY": "କାର୍ଯ୍ୟକଳାପ",
+    "COPY_LINK": "ଲିଙ୍କ କପି କରନ୍ତୁ",
+    "SEARCH": "ସନ୍ଧାନ",
+    "DATA_NOT_FOUND": "ଡାଟା ମିଳିଲା ନାହିଁ",
+    "SUBJECTS_UPLOADED": "ବିଷୟ ଅପଲୋଡ୍ ହେଲା",
+    "IMPORT_PLANNER": "ଆୟାତ ପ୍ଲାନର",
+    "REMOVE_FILE": "ଫାଇଲ୍ ବାହାର କରନ୍ତୁ",
+    "IMPORT_PLANNER_TO_UPLOADING": "ଅପଲୋଡ୍ ଆରମ୍ଭ କରିବାକୁ ‘ଆୟାତ ପ୍ଲାନର’ ଉପରେ କ୍ଲିକ୍ କରନ୍ତୁ",
+    "TOPIC_DETAILS": "ବିଷୟ ବିବରଣୀ"
+  },
   "MASTER": {
     "STATE": "ରାଜ୍ୟ",
     "SORT": "ଛାଟାନ୍ତୁ",
