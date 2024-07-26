@@ -15,6 +15,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import FilterSearchBar from "@/components/FilterSearchBar";
 import CustomStepper from "@/components/Steper";
 import { useState, ChangeEvent, MouseEvent } from "react";
+import { useTranslation } from "react-i18next";
 
 interface Card {
   id: string;
@@ -27,17 +28,16 @@ interface Card {
 const StateDetails = () => {
   const router = useRouter();
   const { cardId } = router.query;
-
+  const { t } = useTranslation();
   const [grade, setGrade] = useState<string>("");
   const [medium, setMedium] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedOption, setSelectedOption] = useState<string>("");
 
-  // Ensure cardId is a string
   const card = cardData.find((card) => card.id === (cardId as string));
 
   if (!card) {
-    return <Typography>Card not found</Typography>;
+    return <Typography>{t("COURSE_PLANNER.DATA_NOT_FOUND")}</Typography>;
   }
 
   const handleBackClick = () => {
@@ -67,8 +67,16 @@ const StateDetails = () => {
     });
   };
 
-  const handleCopyLink = (board: string) => {
-    // Implement copy link logic here
+  const handleCopyLink = (state: string) => {
+    const link = `${window.location.origin}/course-planner/foundation/${state}`;
+    navigator.clipboard.writeText(link).then(
+      () => {
+        alert("Link copied to clipboard");
+      },
+      (err) => {
+        console.error("Failed to copy link: ", err);
+      }
+    );
   };
 
   return (
@@ -99,7 +107,8 @@ const StateDetails = () => {
               color: "#7C766F",
             }}
           >
-            ({card.boardsUploaded}/{card.totalBoards} Boards fully uploaded)
+            ({card.boardsUploaded}/{card.totalBoards}
+            {t("COURSE_PLANNER.BOARDS_FULLY_UPLOADED")})
           </Typography>
         </Box>
       </Box>
@@ -151,7 +160,8 @@ const StateDetails = () => {
                 }}
               />
               <Typography sx={{ fontSize: "14px" }}>
-                {card.boardsUploaded} / {card.totalBoards} {"subjects uploaded"}
+                {card.boardsUploaded} / {card.totalBoards}{" "}
+                {t("COURSE_PLANNER.SUBJECTS_UPLOADED")}
               </Typography>
             </Box>
             <Box sx={{ display: "flex", justifyContent: "center" }}>

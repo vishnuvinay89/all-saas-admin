@@ -7,11 +7,12 @@ import cardData from "@/pages/data/cardData";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import AttachmentIcon from "@mui/icons-material/Attachment";
 import FileUploadDialog from "@/components/FileUploadDialog";
+import { useTranslation } from "react-i18next";
 
 const ImportCsv = () => {
   const router = useRouter();
   const { subject } = router.query;
-
+  const { t } = useTranslation();
   const [subjectDetails, setSubjectDetails] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -55,7 +56,10 @@ const ImportCsv = () => {
     if (selectedFile) {
       router.push({
         pathname: "/csvDetails",
-        query: { fileName: selectedFile.name, subject: subjectDetails?.subject || "" }, // Pass file name and other relevant details as query parameters
+        query: {
+          fileName: selectedFile.name,
+          subject: subjectDetails?.subject || "",
+        }, // Pass file name and other relevant details as query parameters
       });
     }
   };
@@ -105,7 +109,7 @@ const ImportCsv = () => {
             }}
             onClick={handleClickOpen}
           >
-            Import CSV
+            {t("COURSE_PLANNER.IMPORT_PLANNER")}
           </Button>
           <Button
             variant="outlined"
@@ -120,7 +124,7 @@ const ImportCsv = () => {
             }}
             onClick={handleRemoveFile}
           >
-            Remove
+            {t("COURSE_PLANNER.REMOVE_FILE")}
           </Button>
           <Button
             sx={{
@@ -160,7 +164,7 @@ const ImportCsv = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "calc(75vh - 200px)", 
+          height: "calc(75vh - 200px)",
           padding: "16px",
         }}
       >
@@ -172,7 +176,7 @@ const ImportCsv = () => {
             color: "#000000",
           }}
         >
-          Click on ‘Import Planner’ to start uploading
+          {t("COURSE_PLANNER.IMPORT_PLANNER_TO_UPLOADING")}
         </Typography>
       </Box>
 

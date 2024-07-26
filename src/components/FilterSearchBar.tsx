@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { Search, ArrowBack as ArrowBackIcon } from "@mui/icons-material";
 import CustomStepper from "./Steper";
+import { useTranslation } from "next-i18next";
 
 const FilterSearchBar = ({
   grade,
@@ -28,11 +29,13 @@ const FilterSearchBar = ({
   showGradeMedium = true,
   showFoundaitonCourse = true,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <>
       {showFoundaitonCourse && (
         <Box>
-          <Typography variant="h1">Foundation Course</Typography>
+          <Typography variant="h1">{t("SIDEBAR.FOUNDATION_COURSE")}</Typography>
         </Box>
       )}
       {showGradeMedium && (
@@ -42,7 +45,9 @@ const FilterSearchBar = ({
             size="small"
             sx={{ minWidth: "120px" }}
           >
-            <InputLabel id="grade-label">Grade</InputLabel>
+            <InputLabel id="grade-label">
+              {t("COURSE_PLANNER.GRADE")}
+            </InputLabel>
             <Select
               labelId="grade-label"
               value={grade}
@@ -59,7 +64,9 @@ const FilterSearchBar = ({
             size="small"
             sx={{ minWidth: "120px" }}
           >
-            <InputLabel id="medium-label">Medium</InputLabel>
+            <InputLabel id="medium-label">
+              {t("COURSE_PLANNER.MEDIUM")}
+            </InputLabel>
             <Select
               labelId="medium-label"
               value={medium}
@@ -88,7 +95,8 @@ const FilterSearchBar = ({
                 color: "#7C766F",
               }}
             >
-              ({card.boardsUploaded}/{card.totalBoards} Boards fully uploaded)
+              ({card.boardsUploaded}/{card.totalBoards}{" "}
+              {t("COURSE_PLANNER.BOARDS_FULLY_UPLOADED")})
             </Typography>
           </Box>
         </Box>
@@ -105,7 +113,7 @@ const FilterSearchBar = ({
         <TextField
           value={searchQuery}
           onChange={handleSearchChange}
-          placeholder="Search"
+          placeholder={t("COURSE_PLANNER.SEARCH")}
           variant="outlined"
           size="small"
           sx={{
@@ -133,7 +141,9 @@ const FilterSearchBar = ({
           size="small"
           sx={{ minWidth: "120px", padding: "3px" }}
         >
-          <InputLabel id="filter-label">Filter</InputLabel>
+          <InputLabel id="filter-label">
+            {t("COURSE_PLANNER.FILTER")}
+          </InputLabel>
           <Select
             labelId="filter-label"
             value={selectFilter}

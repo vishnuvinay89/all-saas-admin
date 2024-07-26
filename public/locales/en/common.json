@@ -26,8 +26,7 @@
     "DELETE": "Delete",
     "NO_DATA_FOUND": "No data found",
     "SUBMIT": "Submit",
-    "BACK":"Back"
-
+    "BACK": "Back"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -65,14 +64,28 @@
   "LEARNERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Learners..",
     "NEW_LEARNER": "New Learner",
-    "FIRST_SELECT_REQUIRED_FIELDS":"First select required fields"
-
+    "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields"
   },
   "TEAM_LEADERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders.."
   },
   "COHORTS": {
     "SEARCHBAR_PLACEHOLDER": "Search Cohorts.."
+  },
+  "COURSE_PLANNER": {
+    "GRADE": "Grade",
+    "MEDIUM": "Medium",
+    "FILTER": "Filter",
+    "BOARDS_FULLY_UPLOADED": "Boards fully uploaded",
+    "ACTIVITY": "Activity",
+    "COPY_LINK": "Copy Link",
+    "SEARCH": "Search",
+    "DATA_NOT_FOUND": "Data not found",
+    "SUBJECTS_UPLOADED": "Subjects uploaded",
+    "IMPORT_PLANNER": "Import Planner",
+    "REMOVE_FILE": "Remove",
+    "IMPORT_PLANNER_TO_UPLOADING": "Click on ‘Import Planner’ to start uploading ",
+    "TOPIC_DETAILS": "Topic Details"
   },
   "MASTER": {
     "STATE": "State",

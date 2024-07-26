@@ -6,14 +6,15 @@ import AttachmentIcon from "@mui/icons-material/Attachment";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { useState, useEffect } from "react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import FileUploadDialog from "@/components/FileUploadDialog"; // Import the FileUploadDialog component
+import FileUploadDialog from "@/components/FileUploadDialog";
+import { useTranslation } from "react-i18next";
 
 const FileDetails = () => {
   const router = useRouter();
   const { fileName, subject } = router.query;
-
+  const { t } = useTranslation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false); // State to control dialog visibility
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     if (fileName) {
@@ -38,11 +39,11 @@ const FileDetails = () => {
   };
 
   const handleImportClick = () => {
-    setDialogOpen(true); // Open the dialog
+    setDialogOpen(true);
   };
 
   const handleRemoveFile = () => {
-    setSelectedFile(null); // Clear the selected file
+    setSelectedFile(null);
   };
 
   const handleDownloadFile = () => {
@@ -59,7 +60,7 @@ const FileDetails = () => {
   };
 
   const handleDialogClose = () => {
-    setDialogOpen(false); // Close the dialog
+    setDialogOpen(false);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,9 +107,9 @@ const FileDetails = () => {
                 backgroundColor: "#333333",
               },
             }}
-            onClick={handleImportClick} // Open dialog
+            onClick={handleImportClick}
           >
-            Import CSV
+            {t("COURSE_PLANNER.IMPORT_PLANNER")}
           </Button>
           <Button
             sx={{
@@ -158,14 +159,11 @@ const FileDetails = () => {
               },
             }}
             onClick={handleRemoveFile}
-            disabled={!selectedFile} // Disable if no file is selected
+            disabled={!selectedFile}
           >
-            Remove
+            {t("COURSE_PLANNER.REMOVE_FILE")}
           </Button>
-          <Button
-            onClick={handleDownloadFile}
-            disabled={!selectedFile} // Disable if no file is selected
-          >
+          <Button onClick={handleDownloadFile} disabled={!selectedFile}>
             <ArrowDownwardIcon
               sx={{
                 cursor: selectedFile ? "pointer" : "default",
@@ -190,7 +188,9 @@ const FileDetails = () => {
         showFoundaitonCourse={false}
       />
       <Box>
-        <Typography variant="h3">Topic Details</Typography>
+        <Typography variant="h3">
+          {t("COURSE_PLANNER.TOPIC_DETAILS")}
+        </Typography>
       </Box>
       <FileUploadDialog
         open={dialogOpen}

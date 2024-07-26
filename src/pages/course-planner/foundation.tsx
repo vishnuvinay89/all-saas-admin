@@ -44,10 +44,17 @@ const Foundation = () => {
     setSelectFilter(event.target.value);
   };
 
-  function handleCopyLink(state: string) {
-    throw new Error("Function not implemented.");
-  }
-
+  const handleCopyLink = (state: string) => {
+    const link = `${window.location.origin}/course-planner/foundation/${state}`;
+    navigator.clipboard.writeText(link).then(
+      () => {
+        alert("Link copied to clipboard");
+      },
+      (err) => {
+        console.error("Failed to copy link: ", err);
+      }
+    );
+  };
   return (
     <ProtectedRoute>
       <>
@@ -71,9 +78,9 @@ const Foundation = () => {
               gridTemplateColumns: "1fr 2fr 1fr",
             }}
           >
-            <Typography>State</Typography>
-            <Typography>Activity</Typography>
-            <Typography>Copy Link</Typography>
+            <Typography>{t("SIDEBAR.STATE")}</Typography>
+            <Typography>{t("COURSE_PLANNER.ACTIVITY")}</Typography>
+            <Typography>{t("COURSE_PLANNER.COPY_LINK")}</Typography>
           </Box>
           {!selectedCardId ? (
             cardData.map((card) => (
@@ -112,8 +119,8 @@ const Foundation = () => {
                       color: "#7C766F",
                     }}
                   >
-                    ({card.boardsUploaded}/{card.totalBoards} Boards fully
-                    uploaded)
+                    ({card.boardsUploaded}/{card.totalBoards}{" "}
+                    {t("COURSE_PLANNER.BOARDS_FULLY_UPLOADED")})
                   </Typography>
                 </Box>
                 <Box
@@ -132,7 +139,7 @@ const Foundation = () => {
               </Card>
             ))
           ) : (
-            <Typography>Select a card to view details</Typography>
+            <Typography>{""}</Typography>
           )}
         </Box>
       </>
