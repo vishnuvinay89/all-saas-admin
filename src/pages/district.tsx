@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import KaTableComponent from "../components/KaTableComponent";
-import { DataType } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import HeaderComponent from "@/components/HeaderComponent";
 import Pagination from "@mui/material/Pagination";
@@ -12,12 +11,12 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
 import { getDistrictList, getStateBlockDistrictList } from "@/services/MasterDataService";
-import { SortDirection } from "ka-table/enums";
 import Image from "next/image";
 import glass from "../../public/images/empty_hourglass.svg";
 import CustomModal from "@/components/CustomModal";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { Typography } from "@mui/material";
+import { SortDirection, DataType } from "ka-table/enums";
 
 type StateDetail = {
   value: string;
@@ -61,7 +60,7 @@ const District: React.FC = () => {
         dataType: DataType.String,
       },
     ],
-    [t],
+    [t]
   );
 
   const handleChange = (event: SelectChangeEvent<number>) => {
@@ -72,7 +71,7 @@ const District: React.FC = () => {
 
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
-    value: number,
+    value: number
   ) => {
     setPageOffset(value - 1);
   };
@@ -85,7 +84,7 @@ const District: React.FC = () => {
         options={[5, 10, 15]}
       />
     ),
-    [pageSize],
+    [pageSize]
   );
 
   const handleStateChange = useCallback(
@@ -100,7 +99,7 @@ const District: React.FC = () => {
         console.error("Error fetching district data", error);
       }
     },
-    [],
+    []
   );
 
   const handleSortChange = useCallback((event: SelectChangeEvent<string>) => {
@@ -128,7 +127,7 @@ const District: React.FC = () => {
       console.log(event.target.value);
       setSelectedFilter(event.target.value);
     },
-    [],
+    []
   );
 
   useEffect(() => {
@@ -164,11 +163,11 @@ const District: React.FC = () => {
       const sorted = [...districtData].sort((a, b) =>
         sortDirection === "asc"
           ? a.label.localeCompare(b.label)
-          : b.label.localeCompare(a.label),
+          : b.label.localeCompare(a.label)
       );
       const paginatedData = sorted.slice(
         pageOffset * pageLimit,
-        (pageOffset + 1) * pageLimit,
+        (pageOffset + 1) * pageLimit
       );
       setSortedDistricts(paginatedData);
       setPageCount(Math.ceil(districtData.length / pageLimit));

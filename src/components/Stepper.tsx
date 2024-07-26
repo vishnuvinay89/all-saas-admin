@@ -1,8 +1,8 @@
-import React from "react";
+// CustomStepper.js
 import { Box } from "@mui/material";
 
 const CustomStepper = ({ completedSteps = 0 }) => {
-  const totalSteps = 3;
+  const totalSteps = 3; // Total number of steps
   const stepWidth = "24px";
   const stepHeight = "4px";
 

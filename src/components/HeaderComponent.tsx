@@ -199,7 +199,7 @@ const HeaderComponent = ({
               }}
             >
               <MenuItem value="All">
-                <em>All</em>
+                <em>{t("COMMON.ALL")}</em>
               </MenuItem>
               {Filter?.map((filter, index) => (
                 <MenuItem value={filter} key={index}>

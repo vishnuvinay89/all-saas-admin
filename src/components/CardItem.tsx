@@ -1,10 +1,9 @@
-// components/CardItem.tsx
 import React, { MouseEvent } from "react";
-import { Box, Card, Typography, Button, CircularProgress } from "@mui/material";
+import { Box, Card, Typography, Button } from "@mui/material";
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
-import CustomStepper from "@/components/CustomSteper"; // Ensure CustomStepper is imported correctly
-
+import CustomStepper from "@/components/Steper";
+import { useTranslation } from "react-i18next";
 interface CardItemProps {
   card: {
     id: number;
@@ -24,6 +23,8 @@ const CardItem: React.FC<CardItemProps> = ({
   onCopyLink,
   selected,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Card
       sx={{
@@ -49,7 +50,8 @@ const CardItem: React.FC<CardItemProps> = ({
       <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
         <CustomStepper completedSteps={card.boardsUploaded} />
         <Typography sx={{ fontSize: "14px" }}>
-          {card.boardsUploaded} / {card.totalBoards} {"boards fully uploaded"}
+          {card.boardsUploaded} / {card.totalBoards}{" "}
+          {t("COURSE_PLANNER.BOARDS_FULLY_UPLOADED")}
         </Typography>
       </Box>
       <Box sx={{ display: "flex", justifyContent: "center" }}>

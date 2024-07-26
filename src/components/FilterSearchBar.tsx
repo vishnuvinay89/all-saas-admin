@@ -9,12 +9,35 @@ import {
   InputAdornment,
   IconButton,
   Typography,
+  SelectChangeEvent,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { Search, ArrowBack as ArrowBackIcon } from "@mui/icons-material";
 import CustomStepper from "./Steper";
 import { useTranslation } from "next-i18next";
 
-const FilterSearchBar = ({
+interface FilterSearchBarProps {
+  grade: string;
+  medium: string;
+  searchQuery: string;
+  handleGradeChange: (event: SelectChangeEvent<string>) => void;
+  handleMediumChange: (event: SelectChangeEvent<string>) => void;
+  handleSearchChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  selectedOption: string;
+  handleDropdownChange: (event: SelectChangeEvent<string>) => void;
+  card?: {
+    state: string;
+    boardsUploaded: number;
+    totalBoards: number;
+  };
+  selectFilter?: string;
+  onBackClick?: () => void;
+  showGradeMedium?: boolean;
+  showFoundaitonCourse?: boolean;
+}
+
+const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
   grade,
   medium,
   searchQuery,
@@ -24,26 +47,48 @@ const FilterSearchBar = ({
   selectedOption,
   handleDropdownChange,
   card,
-  selectFilter,
-  onBackClick,
+  selectFilter = "",
+  onBackClick = () => {},
   showGradeMedium = true,
   showFoundaitonCourse = true,
 }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
   return (
     <>
       {showFoundaitonCourse && (
         <Box>
-          <Typography variant="h1">{t("SIDEBAR.FOUNDATION_COURSE")}</Typography>
+          <Typography
+            variant="h1"
+            sx={{
+              fontSize: "24px",
+              fontWeight: "bold",
+              mb: 2,
+            }}
+          >
+            {t("SIDEBAR.FOUNDATION_COURSE")}
+          </Typography>
         </Box>
       )}
       {showGradeMedium && (
-        <Box sx={{ p: 1, display: "flex", mb: 2, gap: 2 }}>
+        <Box
+          sx={{
+            p: 1,
+            display: "flex",
+            mb: 2,
+            gap: 2,
+            flexWrap: "wrap",
+          }}
+        >
           <FormControl
             variant="outlined"
             size="small"
-            sx={{ minWidth: "120px" }}
+            sx={{
+              minWidth: isSmallScreen ? "100px" : "120px",
+            }}
           >
             <InputLabel id="grade-label">
               {t("COURSE_PLANNER.GRADE")}
@@ -62,7 +107,9 @@ const FilterSearchBar = ({
           <FormControl
             variant="outlined"
             size="small"
-            sx={{ minWidth: "120px" }}
+            sx={{
+              minWidth: isSmallScreen ? "100px" : "120px",
+            }}
           >
             <InputLabel id="medium-label">
               {t("COURSE_PLANNER.MEDIUM")}
@@ -82,19 +129,36 @@ const FilterSearchBar = ({
       )}
 
       {card && (
-        <Box sx={{ display: "flex", alignItems: "center", gap: 3, mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 3,
+            mb: 2,
+            flexWrap: "wrap",
+          }}
+        >
           <IconButton onClick={onBackClick}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h2">{card.state}</Typography>
-          <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
+          <Typography
+            variant="h2"
+            sx={{
+              fontSize: "24px",
+            }}
+          >
+            {card.state}
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 3,
+              alignItems: "center",
+              flexWrap: "wrap",
+            }}
+          >
             <CustomStepper completedSteps={card.boardsUploaded} />
-            <Typography
-              sx={{
-                fontSize: "14px",
-                color: "#7C766F",
-              }}
-            >
+            <Typography sx={{ fontSize: "14px", color: "#7C766F" }}>
               ({card.boardsUploaded}/{card.totalBoards}{" "}
               {t("COURSE_PLANNER.BOARDS_FULLY_UPLOADED")})
             </Typography>
@@ -108,6 +172,7 @@ const FilterSearchBar = ({
           gap: "8px",
           width: "100%",
           mb: 3,
+          flexWrap: "wrap",
         }}
       >
         <TextField
@@ -118,7 +183,7 @@ const FilterSearchBar = ({
           size="small"
           sx={{
             flexGrow: 1,
-            width: "80%",
+            width: isSmallScreen ? "100%" : "calc(80% - 16px)",
             height: "48px",
             borderRadius: "28px",
             "& .MuiOutlinedInput-root": {
@@ -139,7 +204,10 @@ const FilterSearchBar = ({
         <FormControl
           variant="outlined"
           size="small"
-          sx={{ minWidth: "120px", padding: "3px" }}
+          sx={{
+            minWidth: isSmallScreen ? "100px" : "120px",
+            padding: "3px",
+          }}
         >
           <InputLabel id="filter-label">
             {t("COURSE_PLANNER.FILTER")}
