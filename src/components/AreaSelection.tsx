@@ -18,8 +18,8 @@ interface Block {
   label: string;
 }
 interface Centers {
-  value: string;
-  label: string;
+  cohortId: string;
+  name: string;
 }
 interface DropdownBoxProps {
   states: State[];
@@ -125,8 +125,8 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
         {isCenterSelection && (
           <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
             <MultipleSelectCheckmarks
-              names={allCenters?.map((centers) => centers.label)}
-              codes={allCenters?.map((centers) => centers.value)}
+              names={allCenters?.map((centers) => centers.name)}
+              codes={allCenters?.map((centers) => centers.cohortId)}
               tagName={t("CENTERS.CENTERS")}
               selectedCategories={selectedCenter}
               onCategoryChange={handleCenterChangeWrapper}
