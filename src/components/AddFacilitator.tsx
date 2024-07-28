@@ -37,7 +37,7 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
   const {
     states, districts, blocks, allCenters, isMobile, isMediumScreen,
     selectedState, selectedStateCode, selectedDistrict, selectedDistrictCode,
-    selectedCenter, dynamicForm, selectedBlock, selectedBlockCode,
+    selectedCenter, dynamicForm, selectedBlock, selectedBlockCode, selectedCenterCode,
     handleStateChangeWrapper, handleDistrictChangeWrapper, handleBlockChangeWrapper, handleCenterChangeWrapper
   } = useLocationState(open, onClose);
 
@@ -107,7 +107,7 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
         {
           tenantId: "ef99949b-7f3a-4a5f-806a-e67e683e38f3",
           roleId: RoleId.TEACHER,
-          cohortId: ["3f6825ab-9c94-4ee4-93e8-ef21e27dcc67"],
+          cohortId: [selectedCenterCode],
         },
       ],
       customFields: [],

@@ -1,17 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useMediaQuery } from '@mui/material';
-import { getStateBlockDistrictList } from '../services/MasterDataService'; // Update the import path as needed
+import { getStateBlockDistrictList, getCenterList } from '../services/MasterDataService'; // Update the import path as needed
 
 interface FieldProp {
   value: string;
   label: string;
 }
+interface CenterProp {
+    cohortId: string;
+    name: string;
+  }
 
 export const useLocationState = (open: boolean, onClose: () => void) => {
   const [states, setStates] = useState<FieldProp[]>([]);
   const [districts, setDistricts] = useState<FieldProp[]>([]);
   const [blocks, setBlocks] = useState<FieldProp[]>([]);
-  const [allCenters, setAllCenters] = useState<FieldProp[]>([]);
+  const [allCenters, setAllCenters] = useState<CenterProp[]>([]);
   const isMobile = useMediaQuery("(max-width:600px)");
   const isMediumScreen = useMediaQuery("(max-width:986px)");
   const [selectedState, setSelectedState] = useState<string[]>([]);
@@ -22,6 +26,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
   const [dynamicForm, setDynamicForm] = useState<any>(false);
   const [selectedBlock, setSelectedBlock] = useState<string[]>([]);
   const [selectedBlockCode, setSelectedBlockCode] = useState("");
+ const [selectedCenterCode, setSelectedCenterCode] = useState("");
 
   const handleStateChangeWrapper = useCallback(async (
     selectedNames: string[],
@@ -62,7 +67,37 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
     handleDistrictChange(selected, selectedCodes);
   }, [selectedDistrictCode]);
 
-  const handleBlockChangeWrapper = useCallback((selected: string[], selectedCodes: string[]) => {
+  const handleBlockChangeWrapper = useCallback(async(selected: string[], selectedCodes: string[]) => {
+    if (selected[0] === "") {
+        handleCenterChange([], []);
+      }
+      try {
+        const object = {
+            "limit":200,
+            "offset": 0,
+            "filters": {
+                "type": "COHORT",
+                "status": [
+                    "active"
+                ],
+                "states": selectedStateCode,
+                "districts": selectedDistrictCode,
+                "blocks": selectedBlockCode
+            }
+        };
+        const response = await getCenterList(object);
+     //   const result = response?.result?.cohortDetails;
+        const dataArray=response.result.results.cohortDetails;
+
+        const cohortInfo = dataArray.map((item: any) => ({
+            cohortId: item.cohortId,
+            name: item.name
+        }));
+        console.log(dataArray)
+       setAllCenters(cohortInfo);
+      } catch (error) {
+        console.log(error);
+      }
     handleBlockChange(selected, selectedCodes);
   }, []);
 
@@ -91,12 +126,17 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
     setSelectedBlock(selected);
     const blocks = code?.join(",");
     setSelectedBlockCode(blocks);
-    setDynamicForm(true);
     console.log("Selected categories:", selected);
   }, []);
 
   const handleCenterChange = useCallback((selected: string[], code: string[]) => {
     // handle center change logic
+    setSelectedCenter(selected);
+    const centers = code?.join(",");
+    setSelectedCenterCode(centers)
+    setDynamicForm(true);
+
+    console.log("Selected categories:", selected)
   }, []);
 
   useEffect(() => {
@@ -131,6 +171,6 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
     states, districts, blocks, allCenters, isMobile, isMediumScreen,
     selectedState, selectedStateCode, selectedDistrict, selectedDistrictCode,
     selectedCenter, dynamicForm, selectedBlock, selectedBlockCode,
-    handleStateChangeWrapper, handleDistrictChangeWrapper, handleBlockChangeWrapper, handleCenterChangeWrapper
+    handleStateChangeWrapper, handleDistrictChangeWrapper, handleBlockChangeWrapper, handleCenterChangeWrapper,selectedCenterCode
   };
 };

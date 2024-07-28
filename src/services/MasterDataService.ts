@@ -7,6 +7,14 @@ export interface StateListParam {
   sort?: object;
   offset?: number;
 }
+export interface CenterListParam {
+  limit?: number;
+ 
+  filters?: any;
+  offset?: number;
+ 
+
+}
 export const getStateBlockDistrictList = async (  {
   
   fieldName}:StateListParam,): Promise<any> => {
@@ -14,6 +22,20 @@ export const getStateBlockDistrictList = async (  {
   try {
     const response = await post(apiUrl,{
       fieldName});
+    return response?.data;
+  } catch (error) {
+    console.error("error in fetching user details", error);
+    return error;
+  }
+};
+
+export const getCenterList = async (  {
+  
+  filters, limit, offset}:CenterListParam,): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/search`;
+  try {
+    const response = await post(apiUrl,{
+      filters, limit, offset});
     return response?.data;
   } catch (error) {
     console.error("error in fetching user details", error);

@@ -65,6 +65,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
     handleDistrictChangeWrapper,
     handleBlockChangeWrapper,
     handleCenterChangeWrapper,
+    selectedCenterCode
   } = useLocationState(open, onClose);
 
   useEffect(() => {
@@ -130,7 +131,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
         {
           tenantId: "ef99949b-7f3a-4a5f-806a-e67e683e38f3",
           roleId: RoleId.STUDENT,
-          cohortId: [cohortId],
+          cohortId: [selectedCenterCode],
         },
       ],
       customFields: [],
