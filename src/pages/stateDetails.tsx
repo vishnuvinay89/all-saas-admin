@@ -4,7 +4,6 @@ import {
   Card,
   Typography,
   Button,
-  CircularProgress,
   IconButton,
   useTheme,
   useMediaQuery,
@@ -38,7 +37,6 @@ const StateDetails = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // Simulate data fetching
       setTimeout(() => {
         const foundCard = cardData.find((c) => c.id === cardId);
         setCard(foundCard);
@@ -130,94 +128,79 @@ const StateDetails = () => {
         </Box>
       </Box>
       <Box sx={{ marginTop: "16px" }}>
-        {card.boards.map(
-          (
-            board:
-              | string
-              | number
-              | bigint
-              | boolean
-              | React.ReactElement<
-                  any,
-                  string | React.JSXElementConstructor<any>
-                >
-              | Iterable<React.ReactNode>
-              | Promise<React.AwaitedReactNode>
-              | null
-              | undefined,
-            index: React.Key | null | undefined
-          ) => (
-            <Card
-              key={index}
+        {card.boards.map((board: string, index: number) => (
+          <Card
+            key={index}
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "1fr 2fr 1fr",
+              alignItems: "center",
+              cursor: "pointer",
+              border: "1px solid #0000001A",
+              boxShadow: "none",
+              transition: "background-color 0.3s",
+              "&:hover": {
+                backgroundColor: "#EAF2FF",
+              },
+              marginTop: "8px",
+              padding: "16px",
+            }}
+            onClick={() => {
+              if (typeof board === "string") {
+                handleBoardClick(board);
+              }
+            }}
+          >
+            <Box
               sx={{
-                display: "grid",
-                gridTemplateColumns: "1fr 2fr 1fr",
+                display: "flex",
                 alignItems: "center",
-                cursor: "pointer",
-                border: "1px solid #0000001A",
-                boxShadow: "none",
-                transition: "background-color 0.3s",
-                "&:hover": {
-                  backgroundColor: "#EAF2FF",
-                },
-                marginTop: "8px",
-                padding: "16px",
-              }}
-              onClick={() => {
-                if (typeof board === "string") {
-                  handleBoardClick(board);
-                }
+                gap: "8px",
               }}
             >
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
+              <FolderOutlinedIcon />
+              <Typography variant="h6" sx={{ fontSize: "16px" }}>
+                {board}
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "16px",
+              }}
+            >
+              <Box sx={{ width: "40px", height: "40px" }}>
+                <CircularProgressbar
+                  value={(card.boardsUploaded / card.totalBoards) * 100}
+                  strokeWidth={10}
+                  styles={buildStyles({
+                    pathColor: "#06A816",
+                    trailColor: "#E6E6E6",
+                    strokeLinecap: "round",
+                  })}
+                />
+              </Box>
+              <Typography sx={{ fontSize: "14px" }}>
+                {card.boardsUploaded} / {card.totalBoards}{" "}
+                {t("COURSE_PLANNER.SUBJECTS_UPLOADED")}
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (typeof board === "string") {
+                    handleCopyLink(board);
+                  }
                 }}
+                sx={{ minWidth: "auto", padding: 0 }}
               >
-                <FolderOutlinedIcon />
-                <Typography variant="h6" sx={{ fontSize: "16px" }}>
-                  {board}
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "16px",
-                }}
-              >
-                <Box sx={{ width: "40px", height: "40px" }}>
-                  <CircularProgressbar
-                    value={(card.boardsUploaded / card.totalBoards) * 100}
-                    strokeWidth={10}
-                    styles={buildStyles({
-                      pathColor: "#06A816",
-                      trailColor: "#E6E6E6",
-                      strokeLinecap: "round",
-                    })}
-                  />
-                </Box>
-                <Typography sx={{ fontSize: "14px" }}>
-                  {card.boardsUploaded} / {card.totalBoards}{" "}
-                  {t("COURSE_PLANNER.SUBJECTS_UPLOADED")}
-                </Typography>
-              </Box>
-              <Box sx={{ display: "flex", justifyContent: "center" }}>
-                <Button
-                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                    e.stopPropagation();
-                    handleCopyLink(board as string);
-                  }}
-                  sx={{ minWidth: "auto", padding: 0 }}
-                >
-                  <InsertLinkOutlinedIcon />
-                </Button>
-              </Box>
-            </Card>
-          )
-        )}
+                <InsertLinkOutlinedIcon />
+              </Button>
+            </Box>
+          </Card>
+        ))}{" "}
       </Box>
     </Box>
   );
