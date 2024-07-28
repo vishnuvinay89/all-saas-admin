@@ -1,0 +1,136 @@
+import { useState, useEffect, useCallback } from 'react';
+import { useMediaQuery } from '@mui/material';
+import { getStateBlockDistrictList } from '../services/MasterDataService'; // Update the import path as needed
+
+interface FieldProp {
+  value: string;
+  label: string;
+}
+
+export const useLocationState = (open: boolean, onClose: () => void) => {
+  const [states, setStates] = useState<FieldProp[]>([]);
+  const [districts, setDistricts] = useState<FieldProp[]>([]);
+  const [blocks, setBlocks] = useState<FieldProp[]>([]);
+  const [allCenters, setAllCenters] = useState<FieldProp[]>([]);
+  const isMobile = useMediaQuery("(max-width:600px)");
+  const isMediumScreen = useMediaQuery("(max-width:986px)");
+  const [selectedState, setSelectedState] = useState<string[]>([]);
+  const [selectedStateCode, setSelectedStateCode] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState<string[]>([]);
+  const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
+  const [selectedCenter, setSelectedCenter] = useState<string[]>([]);
+  const [dynamicForm, setDynamicForm] = useState<any>(false);
+  const [selectedBlock, setSelectedBlock] = useState<string[]>([]);
+  const [selectedBlockCode, setSelectedBlockCode] = useState("");
+
+  const handleStateChangeWrapper = useCallback(async (
+    selectedNames: string[],
+    selectedCodes: string[]
+  ) => {
+    try {
+      const object = {
+        controllingfieldfk: selectedStateCode,
+        fieldName: "districts",
+      };
+      const response = await getStateBlockDistrictList(object);
+      const result = response?.result;
+      setDistricts(result);
+    } catch (error) {
+      console.log(error);
+    }
+    handleStateChange(selectedNames, selectedCodes);
+  }, [selectedStateCode]);
+
+  const handleDistrictChangeWrapper = useCallback(async (
+    selected: string[],
+    selectedCodes: string[]
+  ) => {
+    if (selected[0] === "") {
+      handleBlockChange([], []);
+    }
+    try {
+      const object = {
+        controllingfieldfk: selectedDistrictCode,
+        fieldName: "blocks",
+      };
+      const response = await getStateBlockDistrictList(object);
+      const result = response?.result;
+      setBlocks(result);
+    } catch (error) {
+      console.log(error);
+    }
+    handleDistrictChange(selected, selectedCodes);
+  }, [selectedDistrictCode]);
+
+  const handleBlockChangeWrapper = useCallback((selected: string[], selectedCodes: string[]) => {
+    handleBlockChange(selected, selectedCodes);
+  }, []);
+
+  const handleCenterChangeWrapper = useCallback((selected: string[], selectedCodes: string[]) => {
+    handleCenterChange(selected, selectedCodes);
+  }, []);
+
+  const handleStateChange = useCallback((selected: string[], code: string[]) => {
+    setSelectedDistrict([]);
+    setSelectedBlock([]);
+    setSelectedState(selected);
+    const stateCodes = code?.join(",");
+    setSelectedStateCode(stateCodes);
+    console.log("Selected categories:", typeof code[0]);
+  }, []);
+
+  const handleDistrictChange = useCallback((selected: string[], code: string[]) => {
+    setSelectedBlock([]);
+    setSelectedDistrict(selected);
+    const districts = code?.join(",");
+    setSelectedDistrictCode(districts);
+    console.log("Selected categories:", selected);
+  }, []);
+
+  const handleBlockChange = useCallback((selected: string[], code: string[]) => {
+    setSelectedBlock(selected);
+    const blocks = code?.join(",");
+    setSelectedBlockCode(blocks);
+    setDynamicForm(true);
+    console.log("Selected categories:", selected);
+  }, []);
+
+  const handleCenterChange = useCallback((selected: string[], code: string[]) => {
+    // handle center change logic
+  }, []);
+
+  useEffect(() => {
+    if (!open) {
+      setSelectedBlock([]);
+      setSelectedDistrict([]);
+      setSelectedState([]);
+      setSelectedCenter([]);
+      setDynamicForm(false);
+    }
+  }, [onClose, open]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const object = {
+          fieldName: "states",
+        };
+        const response = await getStateBlockDistrictList(object);
+        const result = response?.result;
+        setStates(result);
+        console.log(typeof states);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return {
+    states, districts, blocks, allCenters, isMobile, isMediumScreen,
+    selectedState, selectedStateCode, selectedDistrict, selectedDistrictCode,
+    selectedCenter, dynamicForm, selectedBlock, selectedBlockCode,
+    handleStateChangeWrapper, handleDistrictChangeWrapper, handleBlockChangeWrapper, handleCenterChangeWrapper
+  };
+};

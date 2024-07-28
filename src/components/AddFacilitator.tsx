@@ -1,10 +1,13 @@
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "next-i18next";
+import { IChangeEvent } from "@rjsf/core";
+import { RJSFSchema } from "@rjsf/utils";
+import { Typography, useMediaQuery } from "@mui/material";
 import {
   GenerateSchemaAndUiSchema,
   customFields,
 } from "@/components/GeneratedSchemas";
 import { FormContext, FormContextType } from "@/utils/app.constant";
-import React, { useEffect } from "react";
-
 import DynamicForm from "@/components/DynamicForm";
 import SendCredentialModal from "@/components/SendCredentialModal";
 import SimpleModal from "@/components/SimpleModal";
@@ -12,173 +15,31 @@ import { createUser, getFormRead } from "@/services/CreateUserService";
 import { generateUsernameAndPassword } from "@/utils/Helper";
 import { FormData } from "@/utils/Interfaces";
 import { RoleId } from "@/utils/app.constant";
-import { IChangeEvent } from "@rjsf/core";
-import { RJSFSchema } from "@rjsf/utils";
-import { useTranslation } from "next-i18next";
 import AreaSelection from "./AreaSelection";
 import { showToastMessage } from "./Toastify";
-import {transformArray} from "../utils/Helper"
+import { transformArray } from "../utils/Helper";
+import { useLocationState } from "@/utils/useLocationState"; 
 
-import {
-  Typography,
-  useMediaQuery
-} from "@mui/material";
-import {
-  getBlockList,
-  getDistrictList,
-  getStateBlockDistrictList,
-} from "../services/MasterDataService";
 interface AddFacilitatorModalprops {
   open: boolean;
   onClose: () => void;
 }
-interface FieldProp {
-  value: string;
-  label: string;
-}
+
 const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
   open,
   onClose,
 }) => {
-  const [schema, setSchema] = React.useState<any>();
-  const [openModal, setOpenModal] = React.useState(false);
-  const [uiSchema, setUiSchema] = React.useState<any>();
   const { t } = useTranslation();
-  const [states, setStates] = React.useState<FieldProp[]>([]);
-  const [districts, setDistricts] = React.useState<FieldProp[]>([]);
-  const [blocks, setBlocks] = React.useState<FieldProp[]>([]);
-  const [allCenters, setAllCenters] = React.useState<FieldProp[]>([]);
-  const isMobile = useMediaQuery("(max-width:600px)");
-  const isMediumScreen = useMediaQuery("(max-width:986px)");
-  const [selectedState, setSelectedState] = React.useState<string[]>([]);
-  const [selectedStateCode, setSelectedStateCode] = React.useState("");
-  const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
-  const [selectedDistrictCode, setSelectedDistrictCode] = React.useState("");
-  const [selectedCenter, setSelectedCenter] = React.useState<string[]>([]);
-  const [dynamicForm, setDynamicForm] = React.useState<any>(false);
-   const [selectedBlock, setSelectedBlock] = React.useState<string[]>([]);
-  const [selectedBlockCode, setSelectedBlockCode] = React.useState("");
-  const handleStateChangeWrapper = async (
-    selectedNames: string[],
-    selectedCodes: string[]
-  ) => {
-    try {
-      const object={
-          
-        "controllingfieldfk": selectedStateCode,
-      
-        "fieldName": "districts"
-        
-      }
-      const response = await getStateBlockDistrictList(object);
-      const result = response?.result;
-      setDistricts(result);
-    } catch (error) {
-      console.log(error);
-    }
-    handleStateChange(selectedNames, selectedCodes);
-  };
-  useEffect(() => {
-   if(!open)
-   {
-    setSelectedBlock([]);
-  setSelectedDistrict([]);
-  setSelectedState([]);
-  setSelectedCenter([]);
-  setDynamicForm(false)
-   }
-  }, [onClose, open]);
-  const handleDistrictChangeWrapper = async (
-    selected: string[],
-    selectedCodes: string[]
-  ) => {
-    if (selected[0] === "") {
-      handleBlockChange([], []);
-    }
-    try {
-      const object={
-          
-        "controllingfieldfk": selectedDistrictCode,
-      
-        "fieldName": "blocks"
-        
-      }
-         const response = await getStateBlockDistrictList(object);
-   //   const response = await getBlockList(selectedCodes);
-      const result = response?.result;
-      setBlocks(result);
-    } catch (error) {
-      console.log(error);
-    }
-    handleDistrictChange(selected, selectedCodes);
-  };
+  const [schema, setSchema] = useState<any>();
+  const [openModal, setOpenModal] = useState(false);
+  const [uiSchema, setUiSchema] = useState<any>();
 
-  const handleBlockChangeWrapper = (
-    selected: string[],
-    selectedCodes: string[]
-  ) => {
-    handleBlockChange(selected, selectedCodes);
-  };
-  const handleCenterChangeWrapper = (
-    selected: string[],
-    selectedCodes: string[]
-  ) => {
-    handleCenterChange(selected, selectedCodes);
-  };
-  const handleStateChange = async (selected: string[], code: string[]) => {
-    setSelectedDistrict([]);
-    setSelectedBlock([]);
-
-    setSelectedState(selected);
-
-    {
-      const stateCodes = code?.join(",");
-      setSelectedStateCode(stateCodes);
-    }
-
-    console.log("Selected categories:", typeof code[0]);
-  };
-
-  const handleDistrictChange = (selected: string[], code: string[]) => {
-    setSelectedBlock([]);
-    setSelectedDistrict(selected);
-
-    {
-      const districts = code?.join(",");
-      setSelectedDistrictCode(districts);
-    }
-    console.log("Selected categories:", selected);
-  };
-  const handleBlockChange = (selected: string[], code: string[]) => {
-    setSelectedBlock(selected);
-
-    const blocks = code?.join(",");
-    setSelectedBlockCode(blocks);
-
-    setDynamicForm(true);
-    console.log("Selected categories:", selected);
-  };
-  const handleCenterChange = (selected: string[], code: string[]) => {};
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const object={
-          // "limit": 20,
-          // "offset": 0,
-          "fieldName": "states",
-          
-        }
-        const response = await getStateBlockDistrictList(object);
-        const result = response?.result;
-        setStates(result);
-        console.log(typeof states);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const {
+    states, districts, blocks, allCenters, isMobile, isMediumScreen,
+    selectedState, selectedStateCode, selectedDistrict, selectedDistrictCode,
+    selectedCenter, dynamicForm, selectedBlock, selectedBlockCode,
+    handleStateChangeWrapper, handleDistrictChangeWrapper, handleBlockChangeWrapper, handleCenterChangeWrapper
+  } = useLocationState(open, onClose);
 
   useEffect(() => {
     const getAddLearnerFormData = async () => {
@@ -281,31 +142,15 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
       }
     });
 
-  
-    // apiBody.customFields.push({
-    //   fieldId: teamLeaderData?.state?.blockId,
-    //   value: [teamLeaderData?.state?.blockCode],
-    // });
-    // apiBody.customFields.push({
-    //   fieldId: teamLeaderData?.state?.stateId,
-    //   value: [teamLeaderData?.state?.stateCode],
-    // });
-    // apiBody.customFields.push({
-    //   fieldId: teamLeaderData?.state?.districtId,
-    //   value: [teamLeaderData?.state?.districtCode],
-    // });
     console.log(apiBody);
 try{
   const response = await createUser(apiBody);
   onClose();
- 
   showToastMessage(t('FACILITATORS.FACILITATOR_CREATED_SUCCESSFULLY'), 'success');
-
 }
 catch(error)
 {
   console.log(error);
-
 }
   };
 
@@ -331,27 +176,27 @@ catch(error)
         modalTitle={t("FACILITATORS.NEW_FACILITATOR")}
       >
         {!dynamicForm && (
-              <Typography>
-                {t("LEARNERS.FIRST_SELECT_REQUIRED_FIELDS")}{" "}
-              </Typography>
-            )}
-            <AreaSelection
-             states={transformArray(states)}
-             districts={transformArray(districts)}
-             blocks={transformArray(blocks)}
-              selectedState={selectedState}
-              selectedDistrict={selectedDistrict}
-              selectedBlock={selectedBlock}
-              handleStateChangeWrapper={handleStateChangeWrapper}
-              handleDistrictChangeWrapper={handleDistrictChangeWrapper}
-              handleBlockChangeWrapper={handleBlockChangeWrapper}
-              isMobile={isMobile}
-              isMediumScreen={isMediumScreen}
-              isCenterSelection={true}
-              allCenters={allCenters}
-              selectedCenter={selectedCenter}
-              handleCenterChangeWrapper={handleCenterChangeWrapper}
-            />
+          <Typography>
+            {t("LEARNERS.FIRST_SELECT_REQUIRED_FIELDS")}{" "}
+          </Typography>
+        )}
+        <AreaSelection
+          states={transformArray(states)}
+          districts={transformArray(districts)}
+          blocks={transformArray(blocks)}
+          selectedState={selectedState}
+          selectedDistrict={selectedDistrict}
+          selectedBlock={selectedBlock}
+          handleStateChangeWrapper={handleStateChangeWrapper}
+          handleDistrictChangeWrapper={handleDistrictChangeWrapper}
+          handleBlockChangeWrapper={handleBlockChangeWrapper}
+          isMobile={isMobile}
+          isMediumScreen={isMediumScreen}
+          isCenterSelection={true}
+          allCenters={allCenters}
+          selectedCenter={selectedCenter}
+          handleCenterChangeWrapper={handleCenterChangeWrapper}
+        />
         {dynamicForm && schema && uiSchema && (
           <DynamicForm
             schema={schema}
@@ -365,7 +210,6 @@ catch(error)
           />
         )}
       </SimpleModal>
-
       <SendCredentialModal open={openModal} onClose={onCloseModal} />
     </>
   );

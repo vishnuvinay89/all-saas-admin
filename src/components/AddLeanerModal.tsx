@@ -13,26 +13,20 @@ import {
   Role,
   RoleId,
 } from "@/utils/app.constant";
+import { useLocationState } from "@/utils/useLocationState";
 import {
   Box,
   Button,
   Typography,
-  useTheme,
-  useMediaQuery,
+  useTheme
 } from "@mui/material";
 import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  getBlockList,
-  getDistrictList,
-  getStateBlockDistrictList ,
-} from "../services/MasterDataService";
-import MultipleSelectCheckmarks from "./FormControl";
-import { showToastMessage } from "./Toastify";
-import AreaSelection from "./AreaSelection";
 import { transformArray } from "../utils/Helper";
+import AreaSelection from "./AreaSelection";
+import { showToastMessage } from "./Toastify";
 
 interface AddLearnerModalProps {
   open: boolean;
@@ -45,151 +39,33 @@ interface FieldProp {
 const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
   const [schema, setSchema] = React.useState<any>();
   const [uiSchema, setUiSchema] = React.useState<any>();
-  const [states, SetStates] = React.useState<FieldProp[]>([]);
-  const [districts, SetDistricts] = React.useState<FieldProp[]>([]);
-  const [blocks, setBlocks] = React.useState<FieldProp[]>([]);
-  const [centers, setCenters] = React.useState<FieldProp[]>([]);
 
-  const [selectedState, setSelectedState] = React.useState<string[]>([]);
-  const [selectedStateCode, setSelectedStateCode] = React.useState("");
-  const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
-  const [selectedDistrictCode, setSelectedDistrictCode] = React.useState("");
-  const [selectedCenter, setSelectedCenter] = React.useState<string[]>([]);
-
-  const [selectedBlock, setSelectedBlock] = React.useState<string[]>([]);
-  const [selectedBlockCode, setSelectedBlockCode] = React.useState("");
   const [credentials, setCredentials] = React.useState({
     username: "",
     password: "",
   });
-  const [dynamicForm, setDynamicForm] = React.useState<any>(false);
   const { t } = useTranslation();
   const theme = useTheme<any>();
-  const isMobile = useMediaQuery("(max-width:600px)");
-  const isMediumScreen = useMediaQuery("(max-width:986px)");
-
-  const handleStateChangeWrapper = async (
-    selectedNames: string[],
-    selectedCodes: string[]
-  ) => {
-    try {
-      const object=
-        {
-          
-           "controllingfieldfk": selectedStateCode,
-         
-           "fieldName": "districts"
-           
-         }
-            const response = await getStateBlockDistrictList(object);
-      const result = response?.result;
-      SetDistricts(result);
-    } catch (error) {
-      console.log(error);
-    }
-    handleStateChange(selectedNames, selectedCodes);
-  };
-
-  const handleDistrictChangeWrapper = async (
-    selected: string[],
-    selectedCodes: string[]
-  ) => {
-    if (selected[0] === "") {
-      handleBlockChange([], []);
-    }
-    try {
-      const object=
-      {
-        
-         "controllingfieldfk": selectedDistrictCode,
-       
-         "fieldName": "blocks"
-         
-       }
-      const response = await getStateBlockDistrictList(object);
-      const result = response?.result;
-      setBlocks(result);
-    } catch (error) {
-      console.log(error);
-    }
-    handleDistrictChange(selected, selectedCodes);
-  };
-
-  const handleBlockChangeWrapper = (
-    selected: string[],
-    selectedCodes: string[]
-  ) => {
-    handleBlockChange(selected, selectedCodes);
-  };
-  const handleCenterChangeWrapper = (
-    selected: string[],
-    selectedCodes: string[]
-  ) => {
-    handleCenterChange(selected, selectedCodes);
-  };
-  const handleStateChange = async (selected: string[], code: string[]) => {
-    setSelectedDistrict([]);
-    setSelectedBlock([]);
-
-    setSelectedState(selected);
-
-    {
-      const stateCodes = code?.join(",");
-      setSelectedStateCode(stateCodes);
-    }
-
-    console.log("Selected categories:", typeof code[0]);
-  };
-
-  const handleDistrictChange = (selected: string[], code: string[]) => {
-    setSelectedBlock([]);
-    setSelectedDistrict(selected);
-
-    {
-      const districts = code?.join(",");
-      setSelectedDistrictCode(districts);
-    }
-    console.log("Selected categories:", selected);
-  };
-  const handleBlockChange = (selected: string[], code: string[]) => {
-    setSelectedBlock(selected);
-
-    const blocks = code?.join(",");
-    setSelectedBlockCode(blocks);
-
-    setDynamicForm(true);
-    console.log("Selected categories:", selected);
-  };
-  const handleCenterChange = (selected: string[], code: string[]) => {};
-  useEffect(() => {
-    const fetchData = async () => {
-
-      try {
-        const object={
-         
-          "fieldName": "states",
-          
-        }
-        const response = await getStateBlockDistrictList(object);
-        const result = response?.result;
-        SetStates(result);
-        console.log(typeof states);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchData();
-  }, []);
-  useEffect(() => {
-    if (!open) {
-      setSelectedBlock([]);
-      setSelectedDistrict([]);
-      setSelectedState([]);
-      setSelectedCenter([]);
-      setDynamicForm(false);
-    }
-  }, [onClose, open]);
+  const {
+    states,
+    districts,
+    blocks,
+    allCenters,
+    isMobile,
+    isMediumScreen,
+    selectedState,
+    selectedStateCode,
+    selectedDistrict,
+    selectedDistrictCode,
+    selectedCenter,
+    dynamicForm,
+    selectedBlock,
+    selectedBlockCode,
+    handleStateChangeWrapper,
+    handleDistrictChangeWrapper,
+    handleBlockChangeWrapper,
+    handleCenterChangeWrapper,
+  } = useLocationState(open, onClose);
 
   useEffect(() => {
     const getAddLearnerFormData = async () => {
@@ -363,7 +239,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
             padding: theme.spacing(1),
             fontWeight: "500",
             width: "48%",
-            marginLeft:"50%"
+            marginLeft: "50%",
           }}
           onClick={secondaryActionHandler}
         >
@@ -424,7 +300,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
               isMobile={isMobile}
               isMediumScreen={isMediumScreen}
               isCenterSelection={true}
-              allCenters={centers}
+              allCenters={allCenters}
               selectedCenter={selectedCenter}
               handleCenterChangeWrapper={handleCenterChangeWrapper}
             />
