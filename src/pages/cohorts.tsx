@@ -23,6 +23,15 @@ import Loader from "@/components/Loader";
 import Image from "next/image";
 import glass from "../../public/images/empty_hourglass.svg";
 import { useCohortList } from "@/services/CohortService/cohortListHook";
+import { getFormRead } from "@/services/CreateUserService";
+import {
+  GenerateSchemaAndUiSchema,
+  customFields,
+} from "@/components/GeneratedSchemas";
+import SimpleModal from "@/components/SimpleModal";
+import DynamicForm from "@/components/DynamicForm";
+import { IChangeEvent } from "@rjsf/core";
+import { RJSFSchema } from "@rjsf/utils";
 
 type UserDetails = {
   userId: any;
@@ -100,7 +109,11 @@ const Cohorts: React.FC = () => {
   const [cohortName, setCohortName] = React.useState<string>("");
   const [loading, setLoading] = useState<boolean | undefined>(undefined);
   const [userId, setUserId] = useState("");
-
+  const [formData, setFormData] = React.useState<string[]>([]);
+  const [schema, setSchema] = React.useState<any>();
+  const [uiSchema, setUiSchema] = React.useState<any>();
+  const [openAddNewCohort, setOpenAddNewCohort] =
+    React.useState<boolean>(false);
   // use api calls
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -134,8 +147,38 @@ const Cohorts: React.FC = () => {
       console.error("Error fetching user list:", error);
     }
   };
+
+  const getFormData = async () => {
+    const res = await getFormRead("cohorts", "cohort");
+
+    const formDatas = res?.fields;
+    console.log("formDatas", formDatas);
+    setFormData(formDatas);
+  };
+
+  useEffect(() => {
+    const getAddLearnerFormData = async () => {
+      try {
+        const response = await getFormRead("cohorts", "cohort");
+        console.log("sortedFields", response);
+
+        if (response) {
+          const { schema, uiSchema } = GenerateSchemaAndUiSchema(response, t);
+          console.log("schema", schema);
+          console.log("uiSchema", uiSchema);
+          setSchema(schema);
+          setUiSchema(uiSchema);
+        }
+      } catch (error) {
+        console.error("Error fetching form data:", error);
+      }
+    };
+    getAddLearnerFormData();
+  }, []);
+
   useEffect(() => {
     fetchUserList();
+    getFormData();
   }, [pageOffset, pageLimit]);
 
   // handle functions
@@ -301,6 +344,38 @@ const Cohorts: React.FC = () => {
 
   const handleSearch = (keyword: string) => {};
 
+  const onCloseAddNewCohort = () => {
+    setOpenAddNewCohort(false);
+  };
+
+  const handleAddUserClick = () => {
+    setOpenAddNewCohort(true);
+  };
+
+  const handleChangeForm = (event: IChangeEvent<any>) => {
+    console.log("Form data changed:", event.formData);
+    // setFormData({
+    //   ...formData,
+    //   [event.target.name]: event.target.value
+    // });
+  };
+
+  const handleSubmit = async (
+    data: IChangeEvent<any, RJSFSchema, any>,
+    event: React.FormEvent<any>
+  ) => {
+    const target = event.target as HTMLFormElement;
+    const elementsArray = Array.from(target.elements);
+
+    console.log("elementsArray", elementsArray);
+    console.log("target", target);
+    console.log("Form data submitted:", data.formData);
+  };
+
+  const handleError = () => {
+    console.log("error");
+  };
+
   // props to send in header
   const userProps = {
     userType: t("SIDEBAR.COHORTS"),
@@ -316,6 +391,8 @@ const Cohorts: React.FC = () => {
     handleSortChange: handleSortChange,
     handleFilterChange: handleFilterChange,
     handleSearch: handleSearch,
+    showAddNew: true,
+    handleAddUserClick: handleAddUserClick,
   };
   return (
     <>
@@ -375,6 +452,25 @@ const Cohorts: React.FC = () => {
           </Box>
         )}
       </HeaderComponent>
+      <SimpleModal
+        open={openAddNewCohort}
+        onClose={onCloseAddNewCohort}
+        showFooter={false}
+        modalTitle={"New Cohort"}
+      >
+        {schema && uiSchema && (
+          <DynamicForm
+            schema={schema}
+            uiSchema={uiSchema}
+            onSubmit={handleSubmit}
+            onChange={handleChangeForm}
+            onError={handleError}
+            widgets={{}}
+            showErrorList={true}
+            customFields={customFields}
+          ></DynamicForm>
+        )}
+      </SimpleModal>
     </>
   );
 };

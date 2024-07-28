@@ -101,7 +101,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                     />
                   );
                 }
-                return null;
+                return <div className="table-cell">{props.value}</div>;
               },
             },
             headCell: {
