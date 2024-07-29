@@ -10,13 +10,13 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
-import { getDistrictList, getStateBlockDistrictList } from "@/services/MasterDataService";
-import Image from "next/image";
-import glass from "../../public/images/empty_hourglass.svg";
 import CustomModal from "@/components/CustomModal";
-import ConfirmationModal from "@/components/ConfirmationModal";
-import { Typography } from "@mui/material";
 import { SortDirection, DataType } from "ka-table/enums";
+import {
+  getStateBlockDistrictList,
+  getDistrictsForState,
+} from "@/services/MasterDataService";
+import formatLabel from "@/utils/formatLabel";
 
 type StateDetail = {
   value: string;
@@ -24,13 +24,13 @@ type StateDetail = {
 };
 
 type DistrictDetail = {
+  value: string;
   label: string;
 };
 
 const District: React.FC = () => {
   const { t } = useTranslation();
   const [selectedState, setSelectedState] = useState<string>("");
-  const [selectedDistrict, setSelectedDistrict] = useState<string>("-");
   const [selectedSort, setSelectedSort] = useState<string>("Sort");
   const [pageOffset, setPageOffset] = useState<number>(0);
   const [pageLimit, setPageLimit] = useState<number>(10);
@@ -45,6 +45,8 @@ const District: React.FC = () => {
     useState<boolean>(false);
   const [selectedDistrictForDelete, setSelectedDistrictForDelete] =
     useState<DistrictDetail | null>(null);
+
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("");
 
   const columns = useMemo(
     () => [
@@ -91,10 +93,14 @@ const District: React.FC = () => {
     async (event: SelectChangeEvent<string>) => {
       const selectedState = event.target.value;
       setSelectedState(selectedState);
+
       try {
-        const data = await getDistrictList(selectedState);
+        const data = await getDistrictsForState({
+          controllingfieldfk: selectedState,
+          fieldName: "districts",
+        });
         setDistrictData(data.result || []);
-        setSelectedDistrict(data.result[0]?.label || "-");
+        setSelectedDistrict("-");
       } catch (error) {
         console.error("Error fetching district data", error);
       }
@@ -122,44 +128,53 @@ const District: React.FC = () => {
     setConfirmationModalOpen(false);
   }, [selectedDistrictForDelete]);
 
-  const handleFilterChange = useCallback(
-    async (event: SelectChangeEvent<string>) => {
-      console.log(event.target.value);
-      setSelectedFilter(event.target.value);
-    },
-    []
-  );
+  const handleFilterChange = useCallback((event: SelectChangeEvent<string>) => {
+    console.log(event.target.value);
+    setSelectedFilter(event.target.value);
+  }, []);
 
   useEffect(() => {
     const fetchStateData = async () => {
       try {
-        const object=
-        {
-          
-           "controllingfieldfk": selectedState,
-         
-           "fieldName": "districts"
-           
-         }
-        const data = await getStateBlockDistrictList(object);
-        setStateData(data.result || []);
-        const initialSelectedState = data.result[0]?.value || "";
-        setSelectedState(initialSelectedState);
-        const districtData = await getDistrictList(initialSelectedState);
-        setDistrictData(districtData.result || []);
-        setSelectedDistrict(districtData.result[0]?.label || "-");
+        const data = await getStateBlockDistrictList({ fieldName: "states" });
+        if (data?.result) {
+          setStateData(data.result);
+          const initialSelectedState = data.result[0]?.value || "";
+          setSelectedState(initialSelectedState);
+
+          const initialDistrictData = await getDistrictsForState({
+            controllingfieldfk: initialSelectedState,
+            fieldName: "districts",
+          });
+          if (initialDistrictData?.result) {
+            setDistrictData(initialDistrictData.result);
+          } else {
+            console.error(
+              "No initial district data returned:",
+              initialDistrictData
+            );
+            setDistrictData([]);
+          }
+        } else {
+          console.error("No state data returned:", data);
+          setStateData([]);
+        }
       } catch (error) {
         console.error("Error fetching state data", error);
+        setStateData([]);
       }
     };
 
     fetchStateData();
   }, []);
 
-  const handleSearch = (keyword: string) => {};
-
   useEffect(() => {
     const sortAndPaginateData = () => {
+      if (districtData.length === 0) {
+        setSortedDistricts([]);
+        setPageCount(1);
+        return;
+      }
       const sorted = [...districtData].sort((a, b) =>
         sortDirection === "asc"
           ? a.label.localeCompare(b.label)
@@ -170,7 +185,7 @@ const District: React.FC = () => {
         (pageOffset + 1) * pageLimit
       );
       setSortedDistricts(paginatedData);
-      setPageCount(Math.ceil(districtData.length / pageLimit));
+      setPageCount(Math.ceil(sorted.length / pageLimit));
     };
 
     sortAndPaginateData();
@@ -182,15 +197,16 @@ const District: React.FC = () => {
     selectedSort,
     handleStateChange,
     handleSortChange,
-    states: stateData.map((state) => state.label) || [],
+    states: stateData.map((state) => state.value) || [],
     districts: districtData.map((district) => district.label) || [],
     selectedState,
-    selectedDistrict,
     showStateDropdown: false,
     selectedFilter,
     handleFilterChange,
-    handleSearch,
+    handleSearch: () => {},
   };
+
+  const showPagination = sortedDistricts.length > 10;
 
   return (
     <React.Fragment>
@@ -205,41 +221,48 @@ const District: React.FC = () => {
         <Box>{t("COMMON.ARE_YOU_SURE_DELETE")}</Box>
       </CustomModal>
       <HeaderComponent {...userProps}>
-        {districtData.length > 0 ? (
-          <KaTableComponent
-            columns={columns}
-            data={sortedDistricts.map((districtDetail) => ({
-              label:
-                districtDetail.label
-                  ?.toLocaleLowerCase()
-                  .charAt(0)
-                  .toUpperCase() +
-                districtDetail.label?.toLocaleLowerCase().slice(1),
-              actions: "Action buttons",
-            }))}
-            limit={pageLimit}
-            offset={pageOffset}
-            PagesSelector={() => (
+        <Box display="flex" gap={2}>
+          <FormControl variant="outlined" sx={{ minWidth: 220 }}>
+            <InputLabel id="state-select-label">{t("MASTER.STATE")}</InputLabel>
+            <Select
+              labelId="state-select-label"
+              id="state-select"
+              value={selectedState}
+              onChange={handleStateChange}
+              label={t("MASTER.STATE")}
+            >
+              {stateData.map((state) => (
+                <MenuItem key={state.value} value={state.value}>
+                  {formatLabel(state.label)}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+        <KaTableComponent
+          columns={columns}
+          data={sortedDistricts.map((districtDetail) => ({
+            label: formatLabel(districtDetail.label),
+            actions: "Action buttons",
+          }))}
+          limit={pageLimit}
+          offset={pageOffset}
+          PagesSelector={() =>
+            showPagination && (
               <Pagination
                 color="primary"
                 count={pageCount}
                 page={pageOffset + 1}
                 onChange={handlePaginationChange}
               />
-            )}
-            PageSizeSelector={PageSizeSelectorFunction}
-            extraActions={[]}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        ) : (
-          <Box display="flex" alignItems="center" justifyContent="center">
-            <Image src={glass} alt="" />
-            <Typography marginTop="10px">
-              {t("COMMON.NO_DATA_FOUND")}
-            </Typography>
-          </Box>
-        )}
+            )
+          }
+          PageSizeSelector={PageSizeSelectorFunction}
+          extraActions={[]}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          noData={!!(sortedDistricts.length === 0 ? "No Data Found" : "")}
+        />
       </HeaderComponent>
     </React.Fragment>
   );

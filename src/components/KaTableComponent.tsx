@@ -28,6 +28,7 @@ interface KaTableComponentProps {
   }[];
   paginationEnable?: boolean;
   showIcons?: boolean;
+  noData?: boolean;
 }
 
 const KaTableComponent: React.FC<KaTableComponentProps> = ({
@@ -43,6 +44,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   onDelete,
   showIcons,
   pageSizes,
+  noData,
 }) => {
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
 
@@ -68,7 +70,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
           {...tableProps}
           paging={{
             enabled: paginationEnable,
-            pageIndex: 0,
+            pageIndex: offset,
             pageSize: limit,
             pageSizes: pageSizes,
             position: PagingPosition.Bottom,
@@ -94,10 +96,8 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                 if (props.column.key === "selection-cell") {
                   return (
                     <Checkbox
-                      checked={selectedRowIds.includes(props.rowData.userId)}
-                      onChange={() =>
-                        handleCheckboxChange(props.rowData.userId)
-                      }
+                      checked={selectedRowIds.includes(props.rowData.id)}
+                      onChange={() => handleCheckboxChange(props.rowData.id)}
                     />
                   );
                 }
@@ -109,6 +109,9 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                 return <div className="table-header">{props.column.title}</div>;
               },
             },
+          }}
+          noData={{
+            text: "No Data Found",
           }}
         />
       </div>

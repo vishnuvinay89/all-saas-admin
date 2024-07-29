@@ -27,16 +27,20 @@ const State: React.FC = () => {
   const [pageLimit, setPageLimit] = useState<number>(10);
   const [stateData, setStateData] = useState<StateDetail[]>([]);
   const [selectedSort, setSelectedSort] = useState<string>("Sort");
-  const [sortBy, setSortBy] = useState<["label", "asc" | "desc"]>(["label", "asc"]);
+  const [sortBy, setSortBy] = useState<["label", "asc" | "desc"]>([
+    "label",
+    "asc",
+  ]);
   const [pageCount, setPageCount] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
   const [selectedFilter, setSelectedFilter] = useState<string>("All");
   const [loading, setLoading] = useState<boolean>(true);
-  
+
   // Modal state
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedState, setSelectedState] = useState<StateDetail | null>(null);
-  const [confirmButtonDisable, setConfirmButtonDisable] = useState<boolean>(false);
+  const [confirmButtonDisable, setConfirmButtonDisable] =
+    useState<boolean>(false);
   const [selectedReason, setSelectedReason] = useState<string>("");
   const [otherReason, setOtherReason] = useState<string>("");
 
@@ -110,14 +114,11 @@ const State: React.FC = () => {
     const fetchStateData = async () => {
       try {
         setLoading(true);
-        const object=
-        {
-          
-           "controllingfieldfk": selectedState,
-         
-           "fieldName": "districts"
-           
-         }
+        const object = {
+          controllingfieldfk: selectedState,
+
+          fieldName: "districts",
+        };
         const data = await getStateBlockDistrictList(object);
         const sortedData = [...data.result].sort((a, b) => {
           const [field, order] = sortBy;
@@ -166,6 +167,8 @@ const State: React.FC = () => {
     ]
   );
 
+  const showPagination = stateData.length > 10;
+
   return (
     <div>
       <HeaderComponent {...userProps} handleSearch={handleSearch}>
@@ -181,14 +184,16 @@ const State: React.FC = () => {
             }))}
             limit={pageLimit}
             offset={pageOffset}
-            PagesSelector={() => (
-              <Pagination
-                color="primary"
-                count={pageCount}
-                page={pageOffset + 1}
-                onChange={handlePaginationChange}
-              />
-            )}
+            PagesSelector={() =>
+              showPagination && (
+                <Pagination
+                  color="primary"
+                  count={pageCount}
+                  page={pageOffset + 1}
+                  onChange={handlePaginationChange}
+                />
+              )
+            }
             PageSizeSelector={() => (
               <PageSizeSelector
                 handleChange={handleChange}
