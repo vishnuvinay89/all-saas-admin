@@ -28,7 +28,7 @@ interface KaTableComponentProps {
   }[];
   paginationEnable?: boolean;
   showIcons?: boolean;
-  noData?: boolean;
+  noData?: any;
 }
 
 const KaTableComponent: React.FC<KaTableComponentProps> = ({

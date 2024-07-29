@@ -13,8 +13,6 @@ import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 import {
-  getBlockList,
-  getDistrictList,
   getStateBlockDistrictList,
 } from "../services/MasterDataService";
 import AreaSelection from "./AreaSelection";
