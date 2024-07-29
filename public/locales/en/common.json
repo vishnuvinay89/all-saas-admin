@@ -13,6 +13,7 @@
     "INCORRECT_DATA_ENTRY": "Incorrect Data Entry",
     "DUPLICATED_USER": "Duplicate User",
     "NO_USER_FOUND": "User not found",
+    "NO_CENTER_FOUND": "Centers not found",
     "ALL": "All",
     "NO_GO_BACK": "No, go back",
     "YES": "Yes",
@@ -26,7 +27,8 @@
     "DELETE": "Delete",
     "NO_DATA_FOUND": "No data found",
     "SUBMIT": "Submit",
-    "BACK": "Back"
+    "BACK": "Back",
+    "CANCEL": "Cancel"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -124,7 +126,8 @@
     "RENAME": "Rename",
     "CENTER_RENAMED": "Center Renamed Successfully!",
     "SEND_REQUEST": "Send Request",
-    "REQUEST_TO_DELETE_HAS_BEEN_SENT": "Request to Delete has been sent"
+    "REQUEST_TO_DELETE_HAS_BEEN_SENT": "Request to Delete has been sent",
+    "SURE_DELETE_COHORT": "Are you sure you want to Delete Center ?"
   },
   "FORM": {
     "FULL_NAME": "Full Name",

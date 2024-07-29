@@ -1,16 +1,30 @@
 import { get, post, put } from "../RestClient";
 
-export const getCohortList = async (userId: string): Promise<any> => {
-  console.log("SS", userId);
-  let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/mycohorts/${userId}?children=true&customField`;
+export interface cohortListFilter {
+  type: string;
+  status: string[];
+  states: string;
+  districts: string;
+  blocks: string;
+}
+
+export interface cohortListData {
+  limit: Number;
+  offset: Number;
+}
+
+export const getCohortList = async (data: cohortListData): Promise<any> => {
+  let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/search`;
+
   try {
-    const response = await get(apiUrl);
+    const response = await post(apiUrl, data);
     return response?.data?.result;
   } catch (error) {
-    console.error("Error in getting cohort details", error);
-    throw error;
+    console.error("Error in Getting cohort List Details", error);
+    return error;
   }
 };
+
 
 export const updateCohortUpdate = async (
   userId: string,
@@ -24,7 +38,7 @@ export const updateCohortUpdate = async (
 
   try {
     const response = await put(apiUrl, { name, status });
-    return response?.data?.result;
+    return response?.data;
   } catch (error) {
     console.error("Error in updating cohort details", error);
     throw error;

@@ -1,16 +1,10 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Modal,
-  Typography
-} from '@mui/material';
-import React, { ReactNode } from 'react';
+import { Box, Button, Divider, Modal, Typography } from "@mui/material";
+import React, { ReactNode } from "react";
 
-import manageUserStore from '@/store/manageUserStore';
-import CloseSharpIcon from '@mui/icons-material/CloseSharp';
-import { useTheme, useMediaQuery } from '@mui/material';
-import { useTranslation } from 'next-i18next';
+import manageUserStore from "@/store/manageUserStore";
+import CloseSharpIcon from "@mui/icons-material/CloseSharp";
+import { useTheme, useMediaQuery } from "@mui/material";
+import { useTranslation } from "next-i18next";
 
 interface SimpleModalProps {
   secondaryActionHandler?: () => void;
@@ -37,32 +31,32 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
   const { t } = useTranslation();
   const store = manageUserStore();
   const theme = useTheme<any>();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  const isMediumScreen = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
-  const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
 
   const modalStyle = {
-    paddingTop: '0',
+    paddingTop: "0",
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
     paddingBottom: theme.spacing(2),
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: isSmallScreen ? '90%' : isLargeScreen ? '65%' : '85%',
-    maxHeight: '80vh',
-    overflowY: 'auto',
-    backgroundColor: '#fff',
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: isSmallScreen ? "90%" : isLargeScreen ? "65%" : "85%",
+    maxHeight: "80vh",
+    overflowY: "auto",
+    backgroundColor: "#fff",
     borderRadius: theme.shape.borderRadius,
     boxShadow: theme.shadows[5],
   };
 
   const titleStyle = {
-    position: 'sticky',
-    top: '0',
-    backgroundColor: '#fff',
+    position: "sticky",
+    top: "0",
+    backgroundColor: "#fff",
     padding: theme.spacing(2),
     zIndex: 9999,
     borderBottom: `1px solid ${theme.palette.divider}`,
@@ -75,16 +69,12 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
       aria-describedby="child-modal-description"
     >
       <Box sx={modalStyle}>
-        <Box
-          display={'flex'}
-          justifyContent={'space-between'}
-          sx={titleStyle}
-        >
-          <Box marginBottom={'0px'}>
+        <Box display={"flex"} justifyContent={"space-between"} sx={titleStyle}>
+          <Box marginBottom={"0px"}>
             <Typography
               variant="h2"
               sx={{
-                color: theme.palette.warning['A200'],
+                color: theme.palette.warning["A200"],
               }}
               component="h2"
             >
@@ -94,7 +84,7 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
           <Box>
             <CloseSharpIcon
               sx={{
-                cursor: 'pointer',
+                cursor: "pointer",
               }}
               onClick={onClose}
               aria-label="Close"
@@ -106,24 +96,28 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
         <Divider />
 
         {showFooter ? (
-          <Box alignContent={"center"} alignItems={"center"} justifyContent={"center"} display={'flex'}>
+          <Box
+            alignContent={"center"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            display={"flex"}
+          >
             {primaryText && (
               <Button
                 variant="contained"
                 color="primary"
                 sx={{
-                  '&.Mui-disabled': {
+                  "&.Mui-disabled": {
                     backgroundColor: theme?.palette?.primary?.main,
                   },
-                //  minWidth: '84px',
-                //  height: '2.5rem',
+                  //  minWidth: '84px',
+                  //  height: '2.5rem',
                   padding: theme.spacing(1),
-                  fontWeight: '500',
-                 // width: '100%',
+                  fontWeight: "500",
+                  // width: '100%',
                 }}
                 onClick={primaryActionHandler}
-              >
-              </Button>
+              ></Button>
             )}
 
             {secondaryText && (
@@ -131,14 +125,14 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
                 variant="contained"
                 color="primary"
                 sx={{
-                  '&.Mui-disabled': {
+                  "&.Mui-disabled": {
                     backgroundColor: theme?.palette?.primary?.main,
                   },
-                  minWidth: '84px',
-                  height: '2.5rem',
+                  minWidth: "84px",
+                  height: "2.5rem",
                   padding: theme.spacing(1),
-                  fontWeight: '500',
-                  width: '100%',
+                  fontWeight: "500",
+                  width: "100%",
                 }}
                 onClick={secondaryActionHandler}
               >

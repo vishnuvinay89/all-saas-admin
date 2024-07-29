@@ -9,10 +9,11 @@ import Pagination from "@mui/material/Pagination";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import {
+  createCohort,
   getCohortList,
   updateCohortUpdate,
 } from "@/services/CohortService/cohortService";
-import { Role, Storage } from "@/utils/app.constant";
+import { Role, SORT, Status, Storage } from "@/utils/app.constant";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationModal from "@/components/ConfirmationModal";
@@ -32,7 +33,15 @@ import SimpleModal from "@/components/SimpleModal";
 import DynamicForm from "@/components/DynamicForm";
 import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
+import { CustomField } from "@/utils/Interfaces";
 
+type cohortFilterDetails = {
+  type?: string;
+  status?: any;
+  states?: string;
+  districts?: string;
+  blocks?: string;
+};
 type UserDetails = {
   userId: any;
   username: any;
@@ -43,6 +52,13 @@ type UserDetails = {
   Programs?: any;
 };
 
+interface CohortDetails {
+  name: string;
+  type: string;
+  parentId: string | null;
+  customFields: CustomField[];
+}
+
 const Cohorts: React.FC = () => {
   // use hooks
   const { t } = useTranslation();
@@ -50,7 +66,7 @@ const Cohorts: React.FC = () => {
   // colums in table
   const columns = [
     {
-      key: "cohortName",
+      key: "name",
       title: t("TABLE_TITLE.NAME"),
       dataType: DataType.String,
       sortDirection: SortDirection.Ascend,
@@ -61,25 +77,25 @@ const Cohorts: React.FC = () => {
       dataType: DataType.String,
     },
     {
-      key: "createdDate",
+      key: "createdAt",
       title: t("TABLE_TITLE.CREATED_DATE"),
       dataType: DataType.String,
     },
     {
-      key: "updatedDate",
+      key: "updatedAt",
       title: t("TABLE_TITLE.UPDATED_DATE"),
       dataType: DataType.String,
     },
-    {
-      key: "createdBy",
-      title: t("TABLE_TITLE.CREATED_BY"),
-      dataType: DataType.String,
-    },
-    {
-      key: "updatedBy",
-      title: t("TABLE_TITLE.UPDATED_BY"),
-      dataType: DataType.String,
-    },
+    // {
+    //   key: "createdBy",
+    //   title: t("TABLE_TITLE.CREATED_BY"),
+    //   dataType: DataType.String,
+    // },
+    // {
+    //   key: "updatedBy",
+    //   title: t("TABLE_TITLE.UPDATED_BY"),
+    //   dataType: DataType.String,
+    // },
 
     {
       key: "actions",
@@ -93,11 +109,9 @@ const Cohorts: React.FC = () => {
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
   const [selectedBlock, setSelectedBlock] = React.useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState("Sort");
-  const [pageOffset, setPageOffset] = useState(0);
-  const [pageLimit, setPageLimit] = useState(10);
   const [selectedFilter, setSelectedFilter] = useState("All");
   const [cohortData, setCohortData] = useState<UserDetails[]>([]);
-  const [pageSize, setPageSize] = React.useState<string | number>("");
+  const [pageSize, setPageSize] = React.useState<string | number>("10");
   const [open, setOpen] = React.useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] =
     React.useState<boolean>(false);
@@ -114,6 +128,16 @@ const Cohorts: React.FC = () => {
   const [uiSchema, setUiSchema] = React.useState<any>();
   const [openAddNewCohort, setOpenAddNewCohort] =
     React.useState<boolean>(false);
+
+  const [pageCount, setPageCount] = useState(1);
+  const [pageOffset, setPageOffset] = useState(0);
+  const [pageLimit, setPageLimit] = useState(10);
+  const [pageSizeArray, setPageSizeArray] = React.useState<number[]>([]);
+  const [filters, setFilters] = useState<cohortFilterDetails>({
+    type: "COHORT",
+  });
+  const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
+
   // use api calls
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -122,28 +146,38 @@ const Cohorts: React.FC = () => {
     }
   }, []);
 
-  // const { data, error, isLoading } = useCohortList(userId);
-  // useEffect(() => {
-  //   if (data) {
-  //     setCohortData(data);
-  //   }
-  // }, [data]);
-
   const fetchUserList = async () => {
+    setLoading(true);
     try {
       const limit = pageLimit;
-      // const page = 0;
-      const offset = pageOffset;
-      // const sort = ["createdAt", "asc"];
-      const filters = { role: Role.TEACHER };
-      const userId = localStorage.getItem(Storage.USER_ID) || "";
+      const offset = pageOffset * limit;
+      const sort = sortBy;
+      const data = {
+        limit: limit,
+        offset: offset,
+        sort: sort,
+        filters: filters,
+      };
+      const resp = await getCohortList(data);
+      if (resp) {
+        const result = resp?.results?.cohortDetails;
+        setCohortData(result);
+        const totalCount = resp?.count;
+        if (totalCount >= 15) {
+          setPageSizeArray([5, 10, 15]);
+        } else if (totalCount >= 10) {
+          setPageSizeArray([5, 10]);
+        } else if (totalCount >= 5 || totalCount < 5) {
+          setPageSizeArray([5]);
+        }
 
-      const resp = await getCohortList(userId);
-      const result = resp;
-      console.log("result", result);
+        const pageCount = Math.ceil(totalCount / pageLimit);
+        setPageCount(pageCount);
 
-      setCohortData(result);
+        setLoading(false);
+      }
     } catch (error) {
+      setLoading(false);
       console.error("Error fetching user list:", error);
     }
   };
@@ -179,7 +213,7 @@ const Cohorts: React.FC = () => {
   useEffect(() => {
     fetchUserList();
     getFormData();
-  }, [pageOffset, pageLimit]);
+  }, [pageOffset, pageLimit, sortBy, filters]);
 
   // handle functions
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
@@ -187,24 +221,6 @@ const Cohorts: React.FC = () => {
     setPageLimit(Number(event.target.value));
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const PagesSelector = () => (
-    <>
-      <Pagination
-        color="primary"
-        count={100}
-        page={pageOffset + 1}
-        onChange={handlePaginationChange}
-      />
-    </>
-  );
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
     value: number
@@ -212,9 +228,22 @@ const Cohorts: React.FC = () => {
     setPageOffset(value - 1);
   };
 
+  const PagesSelector = () => (
+    <Pagination
+      color="primary"
+      count={pageCount}
+      page={pageOffset + 1}
+      onChange={handlePaginationChange}
+    />
+  );
+
   const PageSizeSelectorFunction = ({}) => (
     <>
-      <PageSizeSelector handleChange={handleChange} pageSize={pageSize} />
+      <PageSizeSelector
+        handleChange={handleChange}
+        pageSize={pageSize}
+        options={pageSizeArray}
+      />
     </>
   );
 
@@ -238,47 +267,67 @@ const Cohorts: React.FC = () => {
   const handleActionForDelete = async () => {
     if (selectedCohortId) {
       let cohortDetails = {
-        status: "active",
+        status: Status.ARCHIVED,
       };
       const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
-      console.log("resp:", resp);
+      console.log(resp);
+      if (resp?.responseCode === 200) {
+        console.log(resp?.params?.successmessage);
+        fetchUserList();
+      } else {
+        console.log("Cohort Not Archived");
+      }
     } else {
+      console.log("No Cohort Selected");
     }
   };
 
   const handleSortChange = async (event: SelectChangeEvent) => {
-    //console.log(event.target.value)
-    try {
-      const limit = pageLimit;
-      const offset = pageOffset;
-      let sort;
-      switch (event.target.value) {
-        case "Z-A":
-          sort = ["name", "desc"];
-          break;
-        case "A-Z":
-          sort = ["name", "asc"];
-          break;
-        default:
-          sort = ["createdAt", "asc"];
-          break;
-      }
-
-      const userId = localStorage.getItem(Storage.USER_ID) || "";
-      const filters = { role: Role.TEACHER };
-      const resp = await getCohortList(userId);
-      const result = resp?.cohortData;
-
-      setCohortData(result);
-    } catch (error) {
-      console.error("Error fetching user list:", error);
+    if (event.target.value === "Z-A") {
+      setSortBy(["name", SORT.DESCENDING]);
+    } else if (event.target.value === "A-Z") {
+      setSortBy(["name", SORT.ASCENDING]);
+    } else {
+      setSortBy(["createdAt", SORT.ASCENDING]);
     }
     setSelectedSort(event.target.value as string);
+  };
+
+  const handleSearch = (keyword: string) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      name: keyword,
+    }));
   };
 
   const handleFilterChange = async (event: SelectChangeEvent) => {
     console.log(event.target.value as string);
     setSelectedFilter(event.target.value as string);
+
+    if (event.target.value === "Active") {
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        status: ["active"],
+      }));
+    } else if (event.target.value === "Archived") {
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        status: ["archived"],
+      }));
+    } else if (event.target.value === "All") {
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        status: "",
+      }));
+    } else {
+      setFilters((prevFilters) => {
+        const { status, ...restFilters } = prevFilters;
+        return {
+          ...restFilters,
+        };
+      });
+    }
+    // console.log(filters);
   };
 
   const handleEdit = (rowData: any) => {
@@ -288,7 +337,7 @@ const Cohorts: React.FC = () => {
     if (rowData) {
       const cohortId = rowData?.cohortId;
       setSelectedCohortId(cohortId);
-      const cohortName = rowData?.cohortName;
+      const cohortName = rowData?.name;
       setInputName(cohortName);
       setLoading(false);
     }
@@ -304,7 +353,6 @@ const Cohorts: React.FC = () => {
       setSelectedCohortId(cohortId);
       setLoading(false);
     }
-    handleActionForDelete();
     setLoading(false);
   };
 
@@ -342,8 +390,6 @@ const Cohorts: React.FC = () => {
     setLoading(false);
   };
 
-  const handleSearch = (keyword: string) => {};
-
   const onCloseAddNewCohort = () => {
     setOpenAddNewCohort(false);
   };
@@ -364,12 +410,29 @@ const Cohorts: React.FC = () => {
     data: IChangeEvent<any, RJSFSchema, any>,
     event: React.FormEvent<any>
   ) => {
-    const target = event.target as HTMLFormElement;
-    const elementsArray = Array.from(target.elements);
+    const formData = data.formData;
 
-    console.log("elementsArray", elementsArray);
-    console.log("target", target);
-    console.log("Form data submitted:", data.formData);
+    // const parentId = localStorage.getItem("blockParentId");
+    const cohortDetails: CohortDetails = {
+      name: formData.name,
+      type: "COHORT",
+      parentId: parentId,
+      customFields: [],
+    };
+
+    Object.entries(formData).forEach(([fieldKey, fieldValue]) => {
+      const fieldSchema = schema.properties[fieldKey];
+      const fieldId = fieldSchema?.fieldId;
+      if (fieldId !== null) {
+        cohortDetails?.customFields?.push({
+          fieldId: fieldId,
+          value: formData.cohort_type,
+        });
+      }
+    });
+    const cohortData = await createCohort(cohortDetails);
+    setOpenAddNewCohort(false);
+    fetchUserList();
   };
 
   const handleError = () => {
@@ -418,11 +481,11 @@ const Cohorts: React.FC = () => {
         </Box>
       </CustomModal>
       <ConfirmationModal
-        message={t("CENTERS.REQUEST_TO_DELETE")}
+        message={t("CENTERS.SURE_DELETE_COHORT")}
         handleAction={handleActionForDelete}
         buttonNames={{
           primary: t("COMMON.YES"),
-          secondary: t("COMMON.NO_GO_BACK"),
+          secondary: t("COMMON.CANCEL"),
         }}
         handleCloseModal={handleCloseModal}
         modalOpen={confirmationModalOpen}
@@ -436,18 +499,24 @@ const Cohorts: React.FC = () => {
             data={cohortData}
             limit={pageLimit}
             offset={pageOffset}
-            paginationEnable={false}
+            paginationEnable={true}
             PagesSelector={PagesSelector}
             PageSizeSelector={PageSizeSelectorFunction}
+            pageSizes={pageSizeArray}
             extraActions={extraActions}
             showIcons={true}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
         ) : (
-          <Box display="flex">
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="20vh"
+          >
             <Typography marginTop="10px" textAlign={"center"}>
-              {t("COMMON.NO_USER_FOUND")}
+              {t("COMMON.NO_CENTER_FOUND")}
             </Typography>
           </Box>
         )}

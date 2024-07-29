@@ -41,12 +41,13 @@ const ActionIcon: React.FC<ActionCellProps> = ({
             flexDirection: "column",
             alignItems: "center",
             cursor: "pointer",
-            opacity: 0.5, // Reduced opacity to make it appear disabled
-            pointerEvents: "auto", // Enable pointer events to allow click
+            // pointerEvents: "none",
           }}
         >
           <EditIcon sx={{ color: "rgba(0, 0, 0, 0.5)" }} />
-          <Typography variant="body2">Edit</Typography>
+          <Typography variant="body2" color={"black"}>
+            {t("COMMON.EDIT")}
+          </Typography>
         </Box>
       </Tooltip>
       <Tooltip title={t("COMMON.DELETE")}>
@@ -62,7 +63,7 @@ const ActionIcon: React.FC<ActionCellProps> = ({
           }}
         >
           <DeleteIcon sx={{ color: "rgb(244, 67, 54)" }} />
-          <Typography variant="body2">Delete</Typography>
+          <Typography variant="body2"> {t("COMMON.DELETE")}</Typography>  
         </Box>
       </Tooltip>
     </Box>

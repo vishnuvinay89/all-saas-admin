@@ -9,6 +9,8 @@ import { IPagingProps } from "ka-table/props";
 import { updatePageIndex, updatePageSize } from "ka-table/actionCreators";
 import ActionCell from "./ActionCell";
 import ActionIcon from "./ActionIcon";
+import { format } from "date-fns";
+import { DataKey, DateFormat } from "@/utils/app.constant";
 
 interface KaTableComponentProps {
   columns: ITableProps["columns"];
@@ -82,13 +84,24 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
             },
             cell: {
               content: (props) => {
-                if (props.column.key === "actions") {
+                if (props.column.key === DataKey.ACTIONS) {
                   return (
                     <ActionIcon
                       rowData={props.rowData}
                       onEdit={onEdit}
                       onDelete={onDelete}
                     />
+                  );
+                }
+                if (props.column.key === DataKey.UPDATEDAT) {
+                  return format(
+                    props.rowData?.updatedAt,
+                    DateFormat.YYYY_MM_DD
+                  );
+                } else if (props.column.key === DataKey.CREATEDAT) {
+                  return format(
+                    props.rowData?.createdAt,
+                    DateFormat.YYYY_MM_DD
                   );
                 }
                 if (props.column.key === "selection-cell") {

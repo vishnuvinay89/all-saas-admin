@@ -33,7 +33,7 @@ const PageSizeSelector = ({ handleChange, pageSize, options }: any) => {
         <MenuItem value="">
           <em>None</em>
         </MenuItem>
-        {options.map((option: any) => (
+        {options?.map((option: any) => (
           <MenuItem key={option} value={option}>
             {option}
           </MenuItem>
