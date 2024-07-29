@@ -53,10 +53,10 @@ type UserDetails = {
 };
 
 interface CohortDetails {
-  name: string;
-  type: string;
-  parentId: string | null;
-  customFields: CustomField[];
+  name?: string;
+  type?: string;
+  parentId?: string | null;
+  customFields?: CustomField[];
 }
 
 const Cohorts: React.FC = () => {
@@ -412,7 +412,7 @@ const Cohorts: React.FC = () => {
   ) => {
     const formData = data.formData;
 
-    // const parentId = localStorage.getItem("blockParentId");
+    const parentId = localStorage.getItem("blockParentId") || "";
     const cohortDetails: CohortDetails = {
       name: formData.name,
       type: "COHORT",
