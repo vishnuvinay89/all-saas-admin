@@ -67,7 +67,9 @@
     "SEARCHBAR_PLACEHOLDER": "Search Learners..",
     "NEW_LEARNER": "New Learner",
     "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
-    "LEARNER_CREATED_SUCCESSFULLY": "Leaner has been Successfully Created!"
+    "LEARNER_CREATED_SUCCESSFULLY": "Leaner has been Successfully Created!",
+    "LEARNER_UPDATED_SUCCESSFULLY": "Leaner has been Successfully Updated!"
+
   },
   "TEAM_LEADERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders.."

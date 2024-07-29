@@ -3,7 +3,7 @@ import HeaderComponent from "@/components/HeaderComponent";
 import PageSizeSelector from "@/components/PageSelector";
 import { SORT, Status } from "@/utils/app.constant";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
+import EditIcon from '@mui/icons-material/Edit';
 import Box from "@mui/material/Box";
 import Pagination from "@mui/material/Pagination";
 import { SelectChangeEvent } from "@mui/material/Select";
@@ -17,8 +17,14 @@ import KaTableComponent from "../components/KaTableComponent";
 import Loader from "../components/Loader";
 import { deleteUser } from "../services/DeleteUser";
 import { getCohortList } from "../services/GetCohortList";
-import { userList } from "../services/UserList";
+import { userList , getUserDetails} from "../services/UserList";
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import AddLearnerModal from '@/components/AddLeanerModal';
+import {
+  
+  Role,
+  FieldIds,
+} from "@/utils/app.constant";
 type UserDetails = {
   userId: any;
   username: any;
@@ -152,9 +158,26 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [confirmButtonDisable, setConfirmButtonDisable] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState("All");
-  const [loading, setLoading] = useState<boolean | undefined>(undefined);
+  const [pagination, setPagination] = useState(true);
+   const [selectedFilter, setSelectedFilter] = useState("All");
+   const [formdata, setFormData] = useState<any>();
 
+  const [loading, setLoading] = useState<boolean | undefined>(undefined);
+  const [openAddLearnerModal, setOpenAddLearnerModal] = React.useState(false);
+  const [userId, setUserId] = useState();
+
+  const handleOpenAddLearnerModal = () => {
+    console.log("hello")
+   setOpenAddLearnerModal(true);
+ };
+ 
+ const handleCloseAddLearnerModal = () => {
+   setOpenAddLearnerModal(false);
+ };
+   const handleAddLearnerClick = () => {
+     handleOpenAddLearnerModal();
+   };
+ 
   const [filters, setFilters] = useState<FilterDetails>({
     role: role,
   });
@@ -327,8 +350,41 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
 
     setSelectedSort(event.target.value as string);
   };
-  const handleEdit = (rowData: any) => {
+  const handleEdit =async (rowData: any) => {
     console.log("Edit row:", rowData);
+   
+    try{
+      const userId=rowData.userId;
+      setUserId(userId)
+      const fieldValue=true
+      const response=await getUserDetails(userId, fieldValue);
+      if(Role.STUDENT===role)
+      {
+        const initialFormData = {
+          name: response?.userData.name,
+          mobile: String(response?.userData.mobile),
+          age:parseInt(String(response?.userData?.customFields.find((field: any) => field.fieldId === FieldIds.AGE).value)),
+          gender: response?.userData?.customFields.find((field: any) => field.fieldId === FieldIds.GENDER).value,
+          mobilisation_method:[response?.userData?.customFields.find((field: any) => field.fieldId === FieldIds.MOBILISATION_METHOD).value],
+          primary_work:[response?.userData?.customFields.find((field: any) => field.fieldId === FieldIds.PRIMARY_WORK).value],
+          father_name:response?.userData?.customFields.find((field: any) => field.name === 'father_name').value,
+          class:[response?.userData?.customFields.find((field: any) => field.fieldId === FieldIds.CLASS).value],
+          drop_out_reason:[response?.userData?.customFields.find((field: any) =>field.fieldId === FieldIds.DROP_OUT_REASON).value],
+          marital_status:[response?.userData?.customFields.find((field: any) => field.fieldId === FieldIds.MARITAL_STATUS).value],
+          phone_type_available:[response?.userData?.customFields.find((field: any) =>field.fieldId  === FieldIds.PHONE_TYPE_AVAILABLE).value],
+          own_phone_check:response?.userData?.customFields.find((field: any) =>field.fieldId  === FieldIds.OWN_PHONE_CHECK).value
+        }
+        setFormData(initialFormData)
+      
+      }
+      handleOpenAddLearnerModal();
+
+    }
+    catch(error)
+   {
+      console.log(error)
+   }
+   // console.log("responce",responce)
     // Handle edit action here
   };
 
@@ -364,9 +420,16 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
         } else if (resp?.totalCount >= 10) {
           // setPageSize(resp?.totalCount);
           setPageSizeArray([5, 10]);
-        } else if (resp?.totalCount >= 5 || resp?.totalCount < 5) {
-          // setPageSize(resp?.totalCount);
+        }
+        else if(resp?.totalCount>5)
+        {
+          setPagination(false)
+
           setPageSizeArray([5]);
+
+        } else if (resp?.totalCount <= 5 ) {
+          setPagination(false)
+          // setPageSize(resp?.totalCount);
           //PageSizeSelectorFunction();
         }
 
@@ -512,6 +575,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
           showIcons={true}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          pagination={pagination}
         />
       ) : (
         loading === false &&
@@ -551,6 +615,13 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
         confirmButtonDisable={confirmButtonDisable}
         setConfirmButtonDisable={setConfirmButtonDisable}
       />
+       <AddLearnerModal
+              open={openAddLearnerModal}
+              onClose={handleCloseAddLearnerModal}
+              formData={formdata}
+              isEditModal={true}
+              userId={userId}
+            />
     </HeaderComponent>
   );
 };
