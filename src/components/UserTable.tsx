@@ -17,8 +17,12 @@ import KaTableComponent from "../components/KaTableComponent";
 import Loader from "../components/Loader";
 import { deleteUser } from "../services/DeleteUser";
 import { getCohortList } from "../services/GetCohortList";
-import { userList } from "../services/UserList";
-import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import { userList, getUserDetails } from "../services/UserList";
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import AddLearnerModal from "@/components/AddLeanerModal";
+import AddFacilitatorModal from "./AddFacilitator";
+import { Role } from "@/utils/app.constant";
+import { getFormRead } from "@/services/CreateUserService";
 type UserDetails = {
   userId: any;
   username: any;
@@ -48,11 +52,11 @@ interface Cohort {
   customField: any[];
 }
 interface UserTableProps {
-    role: string;
-    userType: string, 
-    searchPlaceholder: string,
-    handleAddUserClick: any
-  }
+  role: string;
+  userType: string;
+  searchPlaceholder: string;
+  handleAddUserClick: any;
+}
 const columns = [
   // {
   //   key: "userId",
@@ -130,8 +134,13 @@ const columns = [
   },
 ];
 
-const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholder, handleAddUserClick}) => {
-    const [selectedState, setSelectedState] = React.useState<string[]>([]);
+const UserTable: React.FC<UserTableProps> = ({
+  role,
+  userType,
+  searchPlaceholder,
+  handleAddUserClick,
+}) => {
+  const [selectedState, setSelectedState] = React.useState<string[]>([]);
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
@@ -152,8 +161,38 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [confirmButtonDisable, setConfirmButtonDisable] = useState(false);
+  const [pagination, setPagination] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const [formdata, setFormData] = useState<any>();
+
   const [loading, setLoading] = useState<boolean | undefined>(undefined);
+  const [openAddLearnerModal, setOpenAddLearnerModal] = React.useState(false);
+  const [userId, setUserId] = useState();
+
+  const handleOpenAddLearnerModal = () => {
+    console.log("hello");
+    setOpenAddLearnerModal(true);
+  };
+
+  const handleCloseAddLearnerModal = () => {
+    setOpenAddLearnerModal(false);
+  };
+  const handleAddLearnerClick = () => {
+    handleOpenAddLearnerModal();
+  };
+  const [openAddFacilitatorModal, setOpenAddFacilitatorModal] =
+    React.useState(false);
+  const handleOpenAddFacilitatorModal = () => {
+    setOpenAddFacilitatorModal(true);
+  };
+
+  const handleCloseAddFacilitatorModal = () => {
+    setOpenAddFacilitatorModal(false);
+  };
+
+  const handleAddFaciliatorClick = () => {
+    handleOpenAddFacilitatorModal();
+  };
 
   const [filters, setFilters] = useState<FilterDetails>({
     role: role,
@@ -166,7 +205,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
 
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
-    value: number,
+    value: number
   ) => {
     setPageOffset(value - 1);
   };
@@ -194,14 +233,14 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
     setSelectedState(selected);
 
     if (selected[0] === "") {
-      if (filters.status) setFilters({  status: filters.status, role: role });
+      if (filters.status) setFilters({ status: filters.status, role: role });
       else setFilters({ role: role });
     } else {
       const stateCodes = code?.join(",");
       setSelectedStateCode(stateCodes);
       if (filters.status)
-        setFilters({  status: filters.status, states: stateCodes, role: role });
-      else setFilters({  states: stateCodes , role: role});
+        setFilters({ status: filters.status, states: stateCodes, role: role });
+      else setFilters({ states: stateCodes, role: role });
     }
 
     console.log("Selected categories:", typeof code[0]);
@@ -240,14 +279,12 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
         setFilters({
           status: filters.status,
           states: selectedStateCode,
-          role: role
-
+          role: role,
         });
       } else {
         setFilters({
           states: selectedStateCode,
-          role: role
-
+          role: role,
         });
       }
     } else {
@@ -258,15 +295,13 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
           status: filters.status,
           states: selectedStateCode,
           districts: districts,
-          role: role
-
+          role: role,
         });
       } else {
         setFilters({
           states: selectedStateCode,
           districts: districts,
-          role: role
-
+          role: role,
         });
       }
     }
@@ -280,15 +315,13 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
           status: filters.status,
           states: selectedStateCode,
           districts: selectedDistrictCode,
-          role: role
-
+          role: role,
         });
       } else {
         setFilters({
           states: selectedStateCode,
           districts: selectedDistrictCode,
-          role: role
-
+          role: role,
         });
       }
     } else {
@@ -300,16 +333,14 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
           states: selectedStateCode,
           districts: selectedDistrictCode,
           blocks: blocks,
-          role: role
-
+          role: role,
         });
       } else {
         setFilters({
           states: selectedStateCode,
           districts: selectedDistrictCode,
           blocks: blocks,
-          role: role
-
+          role: role,
         });
       }
     }
@@ -327,8 +358,67 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
 
     setSelectedSort(event.target.value as string);
   };
-  const handleEdit = (rowData: any) => {
+  const handleEdit = async (rowData: any) => {
     console.log("Edit row:", rowData);
+
+    try {
+      const userId = rowData.userId;
+      setUserId(userId);
+      const fieldValue = true;
+      const response = await getUserDetails(userId, fieldValue);
+      if(Role.STUDENT === role)
+      {
+      const formFields = await getFormRead("USERS", "STUDENT");
+
+      console.log("response", response);
+      console.log("formFields", formFields);
+      // map according to formFields
+
+      let initialFormData: any = {};
+      formFields.fields.map((item: any) => {
+        if (item.coreField) {
+          // initialFormData[item.name] = response?.userData[item.name] || "";
+
+          if (item?.isMultiSelect) {
+            initialFormData[item.name] = response?.userData[item.name] ? [response.userData[item.name]] :  response.userData[item.name] || '';
+          } else {
+            if (item?.type === 'numeric') {
+              initialFormData[item.name] = Number(response.userData[item.name]);
+            } else if (item?.type === 'text') {
+              initialFormData[item.name] = String(response.userData[item.name]);
+            } else {
+              initialFormData[item.name] = response?.userData[item.name];
+            }
+          }
+
+        } else {
+          const field = response?.userData?.customFields.find( (field: any) => field.fieldId === item.fieldId);
+
+          if (item?.isMultiSelect) {
+            initialFormData[item.name] = [field.value];
+          } else {
+            if (item?.type === 'numeric') {
+              initialFormData[item.name] = Number(field.value);
+            } else if (item?.type === 'text') {
+              initialFormData[item.name] = String(field.value);
+            } else {
+              initialFormData[item.name] = field.value;
+            }
+          }
+        }
+      });
+
+      setFormData(initialFormData);
+      handleOpenAddLearnerModal();
+
+      console.log("initialFormData", initialFormData);
+    }
+
+    
+    } catch (error) {
+      console.log(error);
+    }
+    // console.log("responce",responce)
     // Handle edit action here
   };
 
@@ -364,9 +454,13 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
         } else if (resp?.totalCount >= 10) {
           // setPageSize(resp?.totalCount);
           setPageSizeArray([5, 10]);
-        } else if (resp?.totalCount >= 5 || resp?.totalCount < 5) {
-          // setPageSize(resp?.totalCount);
+        } else if (resp?.totalCount > 5) {
+          setPagination(false);
+
           setPageSizeArray([5]);
+        } else if (resp?.totalCount <= 5) {
+          setPagination(false);
+          // setPageSize(resp?.totalCount);
           //PageSizeSelectorFunction();
         }
 
@@ -374,26 +468,27 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
         console.log(result);
         const finalResult = result.map((user: any) => {
           const ageField = user.customFields.find(
-            (field: any) => field.name === "age",
+            (field: any) => field.name === "age"
           );
           const blockField = user.customFields.find(
-            (field: any) => field.name === "blocks",
+            (field: any) => field.name === "blocks"
           );
           const districtField = user.customFields.find(
-            (field: any) => field.name === "districts",
+            (field: any) => field.name === "districts"
           );
           const stateField = user.customFields.find(
-            (field: any) => field.name === "states",
+            (field: any) => field.name === "states"
           );
-          
 
           return {
             userId: user.userId,
             username: user.username,
-            name: user.name.charAt(0).toUpperCase() + user.name.slice(1).toLowerCase(),
+            name:
+              user.name.charAt(0).toUpperCase() +
+              user.name.slice(1).toLowerCase(),
             role: user.role,
-            gender:user.gender,
-            mobile: user.mobile==="NaN"?"":user.mobile,
+            gender: user.gender,
+            mobile: user.mobile === "NaN" ? "" : user.mobile,
             age: ageField ? ageField.value : null,
             district: districtField ? districtField.value : null,
             state: stateField ? stateField.value : null,
@@ -429,14 +524,14 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
           data.map(async (user) => {
             const response = await getCohortList(user.userId);
             const cohortNames = response?.result?.cohortData?.map(
-              (cohort: Cohort) => cohort.name,
+              (cohort: Cohort) => cohort.name
             );
 
             return {
               ...user,
               centers: cohortNames?.join(" , "),
             };
-          }),
+          })
         );
 
         setData(newData);
@@ -453,7 +548,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
     setOtherReason("");
     setIsDeleteModalOpen(false);
   };
- 
+
   const handleDeleteUser = async (category: string) => {
     try {
       console.log(selectedUserId);
@@ -491,9 +586,9 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
     handleSortChange: handleSortChange,
     selectedFilter: selectedFilter,
     handleFilterChange: handleFilterChange,
-    handleSearch:handleSearch,
-    handleAddUserClick: handleAddUserClick
-    };
+    handleSearch: handleSearch,
+    handleAddUserClick: handleAddUserClick,
+  };
 
   return (
     <HeaderComponent {...userProps}>
@@ -512,6 +607,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
           showIcons={true}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          pagination={pagination}
         />
       ) : (
         loading === false &&
@@ -550,6 +646,20 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
         setOtherReason={setOtherReason}
         confirmButtonDisable={confirmButtonDisable}
         setConfirmButtonDisable={setConfirmButtonDisable}
+      />
+      <AddLearnerModal
+        open={openAddLearnerModal}
+        onClose={handleCloseAddLearnerModal}
+        formData={formdata}
+        isEditModal={true}
+        userId={userId}
+      />
+      <AddFacilitatorModal
+        open={openAddFacilitatorModal}
+        onClose={handleCloseAddFacilitatorModal}
+        formData={formdata}
+        isEditModal={true}
+        userId={userId}
       />
     </HeaderComponent>
   );

@@ -1,4 +1,4 @@
-import { post } from "./RestClient";
+import { post, get } from "./RestClient";
 
 export interface userListParam {
   limit: number;
@@ -38,3 +38,22 @@ export const userList = async ({
     throw error;
   }
 };
+
+
+export const getUserDetails = async (
+  userId?: string | string[],
+  fieldValue?: boolean
+): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/read/${userId}?fieldvalue=${fieldValue}`;
+  try {
+    const response = await get(apiUrl);
+    return response?.data?.result;
+  } catch (error) {
+    console.error('error in fetching user details', error);
+    return error;
+  }
+};
+
+
+
+

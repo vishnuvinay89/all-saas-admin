@@ -58,7 +58,9 @@
     "ALL_BLOCKS": "All Blocks",
     "NEW_FACILITATOR": "New Facilitator",
     "SEARCHBAR_PLACEHOLDER": "Search Facilitators..",
-    "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher has been Successfully Created"
+    "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher has been Successfully Created",
+    "FACILITATOR_UPDATED_SUCCESSFULLY": "Teacher has been Successfully Updated!"
+
   },
   "NAVBAR": {
     "SEARCHBAR_PLACEHOLDER": "Search course, topic, student, pdf etc.."
@@ -67,7 +69,9 @@
     "SEARCHBAR_PLACEHOLDER": "Search Learners..",
     "NEW_LEARNER": "New Learner",
     "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
-    "LEARNER_CREATED_SUCCESSFULLY": "Leaner has been Successfully Created!"
+    "LEARNER_CREATED_SUCCESSFULLY": "Leaner has been Successfully Created!",
+    "LEARNER_UPDATED_SUCCESSFULLY": "Leaner has been Successfully Updated!"
+
   },
   "TEAM_LEADERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders.."
