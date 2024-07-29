@@ -58,7 +58,9 @@
     "ALL_BLOCKS": "All Blocks",
     "NEW_FACILITATOR": "New Facilitator",
     "SEARCHBAR_PLACEHOLDER": "Search Facilitators..",
-    "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher has been Successfully Created"
+    "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher has been Successfully Created",
+    "FACILITATOR_UPDATED_SUCCESSFULLY": "Teacher has been Successfully Updated!"
+
   },
   "NAVBAR": {
     "SEARCHBAR_PLACEHOLDER": "Search course, topic, student, pdf etc.."
