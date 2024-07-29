@@ -117,23 +117,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     onChange(event);
   }
 
-  const customValidate = (formData: any, errors: any) => {
-    if (formData.name && /\d/.test(formData.name)) {
-      errors.name.addError(t('FORM_ERROR_MESSAGES.NAME_CANNOT_INCLUDE_DIGITS'));
-    }
-
-    if (formData.father_name && /\d/.test(formData.father_name)) {
-      errors.father_name.addError(t('FORM_ERROR_MESSAGES.NAME_CANNOT_INCLUDE_DIGITS'));
-    }
-
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (formData.email && !emailPattern.test(formData.email)) {
-      errors.email.addError(t('FORM_ERROR_MESSAGES.INVALID_EMAIL_FORMAT'));
-    }
-
-    return errors;
-  };
-
+  
   return (
     <div>
       <FormWithMaterialUI
@@ -150,7 +134,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         onError={handleError}
         transformErrors={transformErrors}
         fields={customFields}
-        customValidate={customValidate} // Add customValidate function here
+      
       >
         {children}
       </FormWithMaterialUI>
