@@ -12,6 +12,7 @@ import { SortDirection } from "ka-table/enums";
 import Loader from "@/components/Loader";
 import { Box } from "@mui/material";
 import CustomModal from "@/components/CustomModal";
+import { transformLabel } from "@/utils/Helper";
 
 type StateDetail = {
   label: string;
@@ -170,9 +171,7 @@ const State: React.FC = () => {
           <KaTableComponent
             columns={columns}
             data={stateData.map((stateDetail) => ({
-              label:
-                stateDetail.label?.toLocaleLowerCase().charAt(0).toUpperCase() +
-                stateDetail.label?.toLocaleLowerCase().slice(1),
+              label: transformLabel(stateDetail.label),
             }))}
             limit={pageLimit}
             offset={pageOffset}

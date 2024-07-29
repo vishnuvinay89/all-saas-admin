@@ -51,7 +51,7 @@ export const generateUUID = () => {
     label: string;
   }
   
-  const transformLabel = (label: string): string => {
+  export const transformLabel = (label: string): string => {
     return label
       .toLowerCase() // Convert to lowercase to standardize
       .replace(/_/g, ' ') // Replace underscores with spaces

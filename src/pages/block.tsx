@@ -16,8 +16,8 @@ import {
   getDistrictsForState,
   getBlocksForDistricts,
 } from "@/services/MasterDataService";
-import formatLabel from "@/utils/formatLabel";
 import CustomModal from "@/components/CustomModal";
+import { transformLabel } from "@/utils/Helper";
 
 type StateDetail = {
   value: string;
@@ -138,11 +138,9 @@ const Block: React.FC = () => {
     []
   );
 
-  const handleEdit = useCallback((rowData: any) => {
-  }, []);
+  const handleEdit = useCallback((rowData: any) => {}, []);
 
-  const handleDelete = useCallback((rowData: any) => {
-  }, []);
+  const handleDelete = useCallback((rowData: any) => {}, []);
 
   const handleConfirmDelete = useCallback(() => {
     setConfirmationModalOpen(false);
@@ -226,7 +224,7 @@ const Block: React.FC = () => {
                 >
                   {stateData.map((stateDetail) => (
                     <MenuItem key={stateDetail.value} value={stateDetail.value}>
-                      {formatLabel(stateDetail.label)}
+                      {transformLabel(stateDetail.label)}
                     </MenuItem>
                   ))}
                 </Select>
@@ -252,7 +250,7 @@ const Block: React.FC = () => {
                       key={districtDetail.value}
                       value={districtDetail.value}
                     >
-                      {formatLabel(districtDetail.label)}
+                      {transformLabel(districtDetail.label)}
                     </MenuItem>
                   ))}
                 </Select>
@@ -267,7 +265,7 @@ const Block: React.FC = () => {
               <KaTableComponent
                 columns={columns}
                 data={blockData.map((block) => ({
-                  block: formatLabel(block.label),
+                  block: transformLabel(block.label),
                   actions: "Action buttons",
                 }))}
                 limit={pageLimit}

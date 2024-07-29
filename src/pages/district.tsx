@@ -16,7 +16,7 @@ import {
   getStateBlockDistrictList,
   getDistrictsForState,
 } from "@/services/MasterDataService";
-import formatLabel from "@/utils/formatLabel";
+import { transformLabel } from "@/utils/Helper";
 
 type StateDetail = {
   value: string;
@@ -233,7 +233,7 @@ const District: React.FC = () => {
             >
               {stateData.map((state) => (
                 <MenuItem key={state.value} value={state.value}>
-                  {formatLabel(state.label)}
+                  {transformLabel(state.label)}
                 </MenuItem>
               ))}
             </Select>
@@ -242,7 +242,7 @@ const District: React.FC = () => {
         <KaTableComponent
           columns={columns}
           data={sortedDistricts.map((districtDetail) => ({
-            label: formatLabel(districtDetail.label),
+            label: transformLabel(districtDetail.label),
             actions: "Action buttons",
           }))}
           limit={pageLimit}
@@ -261,7 +261,7 @@ const District: React.FC = () => {
           extraActions={[]}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          noData={!!(sortedDistricts.length === 0 ? "No Data Found" : "")}
+          noData={districtData.length === 0}
         />
       </HeaderComponent>
     </React.Fragment>

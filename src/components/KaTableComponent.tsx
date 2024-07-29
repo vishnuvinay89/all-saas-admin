@@ -1,14 +1,10 @@
-// components/KaTableComponent.tsx
-
 import React, { useState } from "react";
 import { ITableProps, Table } from "ka-table";
 import { SortingMode, PagingPosition } from "ka-table/enums";
 import { Paper, Checkbox } from "@mui/material";
 import "ka-table/style.css";
-import { IPagingProps } from "ka-table/props";
-import { updatePageIndex, updatePageSize } from "ka-table/actionCreators";
-import ActionCell from "./ActionCell";
 import ActionIcon from "./ActionIcon";
+import { useTranslation } from "react-i18next";
 
 interface KaTableComponentProps {
   columns: ITableProps["columns"];
@@ -49,6 +45,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   pagination = true,
 }) => {
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
+  const { t } = useTranslation();
 
   const handleCheckboxChange = (rowId: number) => {
     setSelectedRowIds((prevSelected) =>
@@ -122,7 +119,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
             },
           }}
           noData={{
-            text: "No Data Found",
+            text: t("COURSE_PLANNER.DATA_NOT_FOUND"),
           }}
         />
       </div>
