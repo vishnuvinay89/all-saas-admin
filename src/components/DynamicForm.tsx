@@ -126,7 +126,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
       errors.father_name.addError(t('FORM_ERROR_MESSAGES.NAME_CANNOT_INCLUDE_DIGITS'));
     }
 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (formData.email && !emailPattern.test(formData.email)) {
       errors.email.addError(t('FORM_ERROR_MESSAGES.INVALID_EMAIL_FORMAT'));
     }
