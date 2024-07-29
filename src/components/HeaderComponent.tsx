@@ -6,7 +6,7 @@ import {
   FormControl,
   MenuItem,
   Typography,
-  useMediaQuery
+  useMediaQuery,
 } from "@mui/material";
 import Select from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
@@ -15,10 +15,10 @@ import { useEffect, useState } from "react";
 import {
   getBlockList,
   getDistrictList,
-  getStateList,
+  getStateBlockDistrictList,
 } from "../services/MasterDataService";
 import AreaSelection from "./AreaSelection";
-import {transformArray} from "../utils/Helper"
+import { transformArray } from "../utils/Helper";
 interface State {
   value: string;
   label: string;
@@ -50,8 +50,8 @@ const HeaderComponent = ({
   handleBlockChange,
   handleSortChange,
   handleFilterChange,
-  showSort=true,
-  showAddNew=true,
+  showSort = true,
+  showAddNew = true,
   showStateDropdown = true,
   handleSearch,
   handleAddUserClick,
@@ -76,7 +76,15 @@ const HeaderComponent = ({
       // }
     }
     try {
-      const response = await getDistrictList(selectedCodes);
+      const object=
+      {
+        
+         "controllingfieldfk": selectedState,
+       
+         "fieldName": "districts"
+         
+       }
+      const response = await getStateBlockDistrictList(object);
       const result = response?.result;
       setDistricts(result);
     } catch (error) {
@@ -93,7 +101,15 @@ const HeaderComponent = ({
       handleBlockChange([], []);
     }
     try {
-      const response = await getBlockList(selectedCodes);
+      const object=
+      {
+        
+         "controllingfieldfk": selectedDistrict,
+       
+         "fieldName": "blocks"
+         
+       }
+      const response = await getStateBlockDistrictList(object);
       const result = response?.result;
       setBlocks(result);
     } catch (error) {
@@ -112,7 +128,13 @@ const HeaderComponent = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getStateList();
+        const object={
+          // "limit": 20,
+          // "offset": 0,
+          "fieldName": "states",
+          
+        }
+        const response = await getStateBlockDistrictList(object);
         const result = response?.result;
         setStates(result);
         console.log(typeof states);
@@ -137,19 +159,18 @@ const HeaderComponent = ({
     >
       {showStateDropdown && (
         <AreaSelection
-
-        states={transformArray(states)}
-             districts={transformArray(districts)}
-             blocks={transformArray(blocks)}
-        selectedState={selectedState}
-        selectedDistrict={selectedDistrict}
-        selectedBlock={selectedBlock}
-        handleStateChangeWrapper={handleStateChangeWrapper}
-        handleDistrictChangeWrapper={handleDistrictChangeWrapper}
-        handleBlockChangeWrapper={handleBlockChangeWrapper}
-        isMobile={isMobile}
-        isMediumScreen={isMediumScreen}
-      />
+          states={transformArray(states)}
+          districts={transformArray(districts)}
+          blocks={transformArray(blocks)}
+          selectedState={selectedState}
+          selectedDistrict={selectedDistrict}
+          selectedBlock={selectedBlock}
+          handleStateChangeWrapper={handleStateChangeWrapper}
+          handleDistrictChangeWrapper={handleDistrictChangeWrapper}
+          handleBlockChangeWrapper={handleBlockChangeWrapper}
+          isMobile={isMobile}
+          isMediumScreen={isMediumScreen}
+        />
       )}
       <Typography variant="h2" sx={{ mt: isMobile ? "12px" : "20px" }}>
         {userType}
@@ -223,7 +244,6 @@ const HeaderComponent = ({
             boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
           }}
           onClick={handleAddUserClick}
-
         >
           <Button
             //  variant="contained"
@@ -233,7 +253,7 @@ const HeaderComponent = ({
               fontSize: "14px",
               color: theme.palette.primary["100"],
             }}
-         >
+          >
             {t("COMMON.ADD_NEW")}
           </Button>
         </Box>

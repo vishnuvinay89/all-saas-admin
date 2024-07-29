@@ -7,7 +7,7 @@ import Pagination from "@mui/material/Pagination";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
-import { getStateList } from "@/services/MasterDataService";
+import { getStateBlockDistrictList } from "@/services/MasterDataService";
 import { SortDirection } from "ka-table/enums";
 import Loader from "@/components/Loader";
 import Image from "next/image";
@@ -110,7 +110,15 @@ const State: React.FC = () => {
     const fetchStateData = async () => {
       try {
         setLoading(true);
-        const data = await getStateList();
+        const object=
+        {
+          
+           "controllingfieldfk": selectedState,
+         
+           "fieldName": "districts"
+           
+         }
+        const data = await getStateBlockDistrictList(object);
         const sortedData = [...data.result].sort((a, b) => {
           const [field, order] = sortBy;
           return order === "asc"
