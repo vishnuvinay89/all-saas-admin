@@ -195,8 +195,10 @@
     "MAX_LENGTH_DIGITS_ERROR": "Maximum {{maxLength}} Digits allowed",
     "MIN_LENGTH_CHARACTERS_ERROR": "Minimum {{minLength}} characters required",
     "MAX_LENGTH_CHARACTERS_ERROR": "Maximum {{maxLength}} characters allowed",
-    "NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED": "Numbers and special characters are not allowed"
-  },
+    "NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED": "Numbers and special characters are not allowed",
+     "NAME_CANNOT_INCLUDE_DIGITS":"Name can not include digits",
+    "INVALID_EMAIL_FORMAT":"Invalid email format"
+},
   "TABLE_TITLE": {
     "NAME": "Name",
     "STATUS": "Status",
