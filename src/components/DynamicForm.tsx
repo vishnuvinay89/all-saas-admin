@@ -20,6 +20,8 @@ interface DynamicFormProps {
   onChange: (event: IChangeEvent<any>) => void;
   onError: (errors: any) => void;
   showErrorList: boolean;
+
+
   widgets: {
     [key: string]: React.FC<WidgetProps<any, RJSFSchema, any>>;
   };
@@ -39,6 +41,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   customFields,
   children,
 }) => {
+  console.log(formData)
   const widgets = {
     MultiSelectCheckboxes: MultiSelectCheckboxes,
     CustomRadioWidget: CustomRadioWidget,
@@ -113,7 +116,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   }
 
   function handleChange(event: any) {
-    console.log('Form data event:', event);
+    console.log('Form data changed:', event.formData);
     onChange(event);
   }
 
@@ -123,7 +126,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
       <FormWithMaterialUI
         schema={schema}
         uiSchema={uiSchema}
-        formData={formData}
+      formData={formData}
         onChange={handleChange}
         onSubmit={onSubmit}
         validator={validator}

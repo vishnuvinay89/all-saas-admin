@@ -4,7 +4,7 @@ import {
   customFields,
 } from "@/components/GeneratedSchemas";
 import SimpleModal from "@/components/SimpleModal";
-import { createUser, getFormRead } from "@/services/CreateUserService";
+import { createUser, getFormRead , updateUser} from "@/services/CreateUserService";
 import { generateUsernameAndPassword } from "@/utils/Helper";
 import { FormData } from "@/utils/Interfaces";
 import {
@@ -31,12 +31,15 @@ import { showToastMessage } from "./Toastify";
 interface AddLearnerModalProps {
   open: boolean;
   onClose: () => void;
+  formData?:object;
+  isEditModal?:boolean;
+  userId?:string
 }
 interface FieldProp {
   value: string;
   label: string;
 }
-const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
+const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose, formData , isEditModal=false, userId}) => {
   const [schema, setSchema] = React.useState<any>();
   const [uiSchema, setUiSchema] = React.useState<any>();
 
@@ -80,6 +83,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
         if (response) {
           const { schema, uiSchema } = GenerateSchemaAndUiSchema(response, t);
           setSchema(schema);
+          console.log(schema)
           setUiSchema(uiSchema);
         }
       } catch (error) {
@@ -143,6 +147,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
       console.log(
         `FieldID: ${fieldId}, FieldValue: ${fieldValue}, type: ${typeof fieldValue}`
       );
+        
 
       if (fieldId === null || fieldId === "null") {
         if (typeof fieldValue !== "object") {
@@ -164,8 +169,11 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
           });
         }
       }
-    });
 
+     
+    });
+   if(!isEditModal)
+   {
     apiBody.customFields.push({
       fieldId: "a717bb68-5c8a-45cb-b6dd-376caa605736",
       value: [selectedBlockCode],
@@ -178,10 +186,36 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
       fieldId: "aecb84c9-fe4c-4960-817f-3d228c0c7300",
       value: [selectedDistrictCode],
     });
+   }
+   
     try {
-      const response = await createUser(apiBody);
+      if(isEditModal && userId)
+      {
+        console.log(apiBody)
+        const userData={
+         "name":apiBody.name,
+         "mobile": apiBody.mobile,
+         "father_name":apiBody.father_name
+
+        };
+        const customFields=apiBody.customFields;
+        console.log(customFields)
+        const object=
+        {
+          "userData":userData,
+          "customFields":customFields
+        }
+        const response = await updateUser(userId,object)
+        showToastMessage(t("LEARNERS.LEARNER_UPDATED_SUCCESSFULLY"), "success");
+
+
+      }
+      else{  
+        const response = await createUser(apiBody);
+        showToastMessage(t("LEARNERS.LEARNER_CREATED_SUCCESSFULLY"), "success");
+
+      }
       onClose();
-      showToastMessage(t("LEARNERS.LEARNER_CREATED_SUCCESSFULLY"), "success");
     } catch (error) {
       onClose();
       console.log(error);
@@ -307,7 +341,23 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
             />
           </Box>
         </>
-        {dynamicForm && schema && uiSchema && (
+
+
+        {formData ? ( schema && uiSchema && (
+          <DynamicForm
+            schema={schema}
+            uiSchema={uiSchema}
+            onSubmit={handleSubmit}
+            onChange={handleChange}
+            onError={handleError}
+            widgets={{}}
+            showErrorList={true}
+            customFields={customFields}
+            formData={formData}
+          >
+            {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
+          </DynamicForm>
+        )) :( dynamicForm && schema && uiSchema && (
           <DynamicForm
             schema={schema}
             uiSchema={uiSchema}
@@ -320,7 +370,8 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose }) => {
           >
             {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
           </DynamicForm>
-        )}
+        ))}
+        
       </SimpleModal>
     </>
   );
