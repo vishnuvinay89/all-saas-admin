@@ -30,6 +30,7 @@ interface KaTableComponentProps {
   }[];
   paginationEnable?: boolean;
   showIcons?: boolean;
+  pagination?: boolean;
 }
 
 const KaTableComponent: React.FC<KaTableComponentProps> = ({
@@ -45,6 +46,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   onDelete,
   showIcons,
   pageSizes,
+  pagination = true,
 }) => {
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
 
@@ -61,6 +63,15 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
     data,
     rowKeyField: "id",
     sortingMode: SortingMode.Single,
+    ...(pagination && {
+      paging: {
+        enabled: paginationEnable,
+        pageIndex: 0,
+        pageSize: limit,
+        pageSizes: pageSizes,
+        position: PagingPosition.Bottom,
+      },
+    }),
   };
 
   return (
@@ -68,13 +79,6 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
       <div className="ka-table-wrapper">
         <Table
           {...tableProps}
-          paging={{
-            enabled: paginationEnable,
-            pageIndex: 0,
-            pageSize: limit,
-            pageSizes: pageSizes,
-            position: PagingPosition.Bottom,
-          }}
           childComponents={{
             pagingSizes: {
               content: (props) => <PageSizeSelector {...props} />,

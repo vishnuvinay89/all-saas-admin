@@ -1,6 +1,11 @@
-import { get, post } from './RestClient';
+import { get, post, patch } from './RestClient';
 import { createUserParam } from '../utils/Interfaces';
-
+export interface UserDetailParam {
+  userData?: object;
+ 
+  customFields?: any;
+  
+}
 export const getFormRead = async (
   context: string,
   contextType: string
@@ -33,5 +38,20 @@ export const createUser = async (userData: any): Promise<any> => {
   } catch (error) {
     console.error('error in getting cohort list', error);
     // throw error;
+  }
+};
+
+export const updateUser = async (
+  userId: string,
+  {userData,
+  customFields}: UserDetailParam
+): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/update/${userId}`;
+  try {
+    const response = await patch(apiUrl, {userData, customFields});
+    return response;
+  } catch (error) {
+    console.error("error in fetching user details", error);
+    return error;
   }
 };

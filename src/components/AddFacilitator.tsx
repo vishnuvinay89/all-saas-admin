@@ -7,11 +7,11 @@ import {
   GenerateSchemaAndUiSchema,
   customFields,
 } from "@/components/GeneratedSchemas";
-import { FormContext, FormContextType } from "@/utils/app.constant";
+import { FormContext, FormContextType, Role } from "@/utils/app.constant";
 import DynamicForm from "@/components/DynamicForm";
 import SendCredentialModal from "@/components/SendCredentialModal";
 import SimpleModal from "@/components/SimpleModal";
-import { createUser, getFormRead } from "@/services/CreateUserService";
+import { createUser, getFormRead, updateUser } from "@/services/CreateUserService";
 import { generateUsernameAndPassword } from "@/utils/Helper";
 import { FormData } from "@/utils/Interfaces";
 import { RoleId } from "@/utils/app.constant";
@@ -23,10 +23,16 @@ import { useLocationState } from "@/utils/useLocationState";
 interface AddFacilitatorModalprops {
   open: boolean;
   onClose: () => void;
+  formData?:object;
+  isEditModal?:boolean;
+  userId?:string
 }
 
 const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
   open,
+  formData,
+  isEditModal=false,
+  userId,
   onClose,
 }) => {
   const { t } = useTranslation();
@@ -98,7 +104,7 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
     console.log("Form data submitted:", formData);
     const schemaProperties = schema.properties;
 
-    const { username, password } = generateUsernameAndPassword("MH", "F");
+    const { username, password } = generateUsernameAndPassword(selectedStateCode,Role.TEACHER);
 
     let apiBody: any = {
       username: username,
@@ -143,10 +149,45 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
     });
 
     console.log(apiBody);
+    if(!isEditModal)
+    {
+     apiBody.customFields.push({
+       fieldId: "a717bb68-5c8a-45cb-b6dd-376caa605736",
+       value: [selectedBlockCode],
+     });
+     apiBody.customFields.push({
+       fieldId: "61b5909a-0b45-4282-8721-e614fd36d7bd",
+       value: [selectedStateCode],
+     });
+     apiBody.customFields.push({
+       fieldId: "aecb84c9-fe4c-4960-817f-3d228c0c7300",
+       value: [selectedDistrictCode],
+     });
+    }
 try{
-  const response = await createUser(apiBody);
+  if(isEditModal && userId)
+  {
+    const userData={
+      "name":apiBody.name,
+      "mobile": apiBody.mobile,
+
+     };
+     const customFields=apiBody.customFields;
+     console.log(customFields)
+     const object=
+     {
+       "userData":userData,
+       "customFields":customFields
+     }
+     const response = await updateUser(userId,object)
+     showToastMessage(t("LEARNERS.LEARNER_UPDATED_SUCCESSFULLY"), "success");
+  }else{
+    const response = await createUser(apiBody);
+    showToastMessage(t('FACILITATORS.FACILITATOR_CREATED_SUCCESSFULLY'), 'success');
+  }
   onClose();
-  showToastMessage(t('FACILITATORS.FACILITATOR_CREATED_SUCCESSFULLY'), 'success');
+
+
 }
 catch(error)
 {
@@ -197,7 +238,9 @@ catch(error)
           selectedCenter={selectedCenter}
           handleCenterChangeWrapper={handleCenterChangeWrapper}
         />
-        {dynamicForm && schema && uiSchema && (
+       
+
+{formData ? ( schema && uiSchema && (
           <DynamicForm
             schema={schema}
             uiSchema={uiSchema}
@@ -207,8 +250,24 @@ catch(error)
             widgets={{}}
             showErrorList={true}
             customFields={customFields}
-          />
-        )}
+            formData={formData}
+          >
+            {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
+          </DynamicForm>
+        )) :( dynamicForm && schema && uiSchema && (
+          <DynamicForm
+            schema={schema}
+            uiSchema={uiSchema}
+            onSubmit={handleSubmit}
+            onChange={handleChange}
+            onError={handleError}
+            widgets={{}}
+            showErrorList={true}
+            customFields={customFields}
+          >
+            {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
+          </DynamicForm>
+        ))}
       </SimpleModal>
       <SendCredentialModal open={openModal} onClose={onCloseModal} />
     </>
