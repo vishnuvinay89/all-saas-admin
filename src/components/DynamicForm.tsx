@@ -28,6 +28,7 @@ interface DynamicFormProps {
   };
   children?: ReactNode;
 }
+
 const DynamicForm: React.FC<DynamicFormProps> = ({
   schema,
   uiSchema,
@@ -44,11 +45,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   };
   const { t } = useTranslation();
 
-  // console.log('CustomErrorList', CustomErrorList);
-
   const handleError = (errors: any) => {
     if (errors.length > 0) {
-      // Adjust the selector based on the actual structure of the form element names
       const property = errors[0].property?.replace(/^root\./, '');
       const errorField = document.querySelector(
         `[name$="${property}"]`
@@ -57,7 +55,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
       if (errorField) {
         errorField.focus();
       } else {
-        // If the name-based selector fails, try to select by ID as a fallback
         const fallbackField = document.getElementById(property) as HTMLElement;
         if (fallbackField) {
           fallbackField.focus();
@@ -73,16 +70,11 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     return errors.map((error: any) => {
       switch (error.name) {
         case 'required': {
-          // error.message = t('FORM_ERROR_MESSAGES.FIELD_REQUIRED', {
-          //   field: t(`FORM.${schema.properties[error.property].title}`),
-          // });
-
           error.message = t('FORM_ERROR_MESSAGES.THIS_IS_REQUIRED_FIELD');
           break;
         }
         case 'pattern': {
           const property = error.property.substring(1);
-          console.log('schema===>', schema);
           if (schema.properties?.[property]?.validation?.includes('numeric')) {
             error.message = t('FORM_ERROR_MESSAGES.ENTER_ONLY_DIGITS');
           } else if (
@@ -125,6 +117,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     onChange(event);
   }
 
+  
   return (
     <div>
       <FormWithMaterialUI
@@ -141,6 +134,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         onError={handleError}
         transformErrors={transformErrors}
         fields={customFields}
+      
       >
         {children}
       </FormWithMaterialUI>

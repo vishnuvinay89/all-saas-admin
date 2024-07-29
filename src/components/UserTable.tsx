@@ -393,7 +393,7 @@ const UserTable: React.FC<UserTableProps> = ({ role , userType, searchPlaceholde
             name: user.name.charAt(0).toUpperCase() + user.name.slice(1).toLowerCase(),
             role: user.role,
             gender:user.gender,
-            mobile: user.mobile==="NAN"?"":user.mobile,
+            mobile: user.mobile==="NaN"?"":user.mobile,
             age: ageField ? ageField.value : null,
             district: districtField ? districtField.value : null,
             state: stateField ? stateField.value : null,
