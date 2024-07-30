@@ -358,126 +358,67 @@ const UserTable: React.FC<UserTableProps> = ({
 
     setSelectedSort(event.target.value as string);
   };
+  const mapFields = (formFields: any, response: any) => {
+    let initialFormData: any = {};
+    formFields.fields.forEach((item: any) => {
+      const userData = response?.userData;
+      const customField = userData?.customFields?.find((field: any) => field.fieldId === item.fieldId);
+  
+      const getValue = (data: any, field: any) => {
+        if (item?.isMultiSelect) {
+          if (item?.type === 'checkbox') {
+            return String(field.value).split(',');
+          }
+          return [field.value];
+        } else {
+          if (item?.type === 'numeric') {
+            return Number(field.value);
+          } else if (item?.type === 'text') {
+            return String(field.value);
+          } else {
+            return field.value;
+          }
+        }
+      };
+  
+      if (item.coreField) {
+        initialFormData[item.name] = item?.isMultiSelect
+          ? userData[item.name] ? [userData[item.name]] : userData[item.name] || ''
+          : item?.type === 'numeric' ? Number(userData[item.name])
+            : item?.type === 'text' ? String(userData[item.name])
+              : userData[item.name];
+      } else {
+        initialFormData[item.name] = getValue(userData, customField);
+      }
+    });
+    return initialFormData;
+  };
   const handleEdit = async (rowData: any) => {
     console.log("Edit row:", rowData);
-
+  
     try {
       const userId = rowData.userId;
       setUserId(userId);
       const fieldValue = true;
       const response = await getUserDetails(userId, fieldValue);
-      console.log(role)
-      if(Role.STUDENT === role)
-      {
-      const formFields = await getFormRead("USERS", "STUDENT");
-
+      console.log(role);
+  
+      let formFields;
+      if (Role.STUDENT === role) {
+        formFields = await getFormRead("USERS", "STUDENT");
+        setFormData(mapFields(formFields, response));
+        handleOpenAddLearnerModal();
+      } else if (Role.TEACHER === role) {
+        formFields = await getFormRead("USERS", "TEACHER");
+        setFormData(mapFields(formFields, response));
+        handleOpenAddFacilitatorModal();
+      }
+  
       console.log("response", response);
       console.log("formFields", formFields);
-      // map according to formFields
-
-      let initialFormData: any = {};
-      formFields.fields.map((item: any) => {
-        if (item.coreField) {
-          // initialFormData[item.name] = response?.userData[item.name] || "";
-
-          if (item?.isMultiSelect) {
-            initialFormData[item.name] = response?.userData[item.name] ? [response.userData[item.name]] :  response.userData[item.name] || '';
-          } else {
-            if (item?.type === 'numeric') {
-              initialFormData[item.name] = Number(response.userData[item.name]);
-            } else if (item?.type === 'text') {
-              initialFormData[item.name] = String(response.userData[item.name]);
-            } else {
-              initialFormData[item.name] = response?.userData[item.name];
-            }
-          }
-
-        } else {
-          const field = response?.userData?.customFields.find( (field: any) => field.fieldId === item.fieldId);
-
-          if (item?.isMultiSelect) {
-            initialFormData[item.name] = [field.value];
-          } else {
-            if (item?.type === 'numeric') {
-              initialFormData[item.name] = Number(field.value);
-            } else if (item?.type === 'text') {
-              initialFormData[item.name] = String(field.value);
-            } else {
-              initialFormData[item.name] = field.value;
-            }
-          }
-        }
-      });
-
-      setFormData(initialFormData);
-      handleOpenAddLearnerModal();
-
-      console.log("initialFormData", initialFormData);
-    }
-    else(Role.TEACHER === role)
-    {
-      const formFields = await getFormRead("USERS", "TEACHER");
-
-      console.log("response", response);
-      console.log("formFields", formFields);
-      // map according to formFields
-
-      let initialFormData: any = {};
-      formFields.fields.map((item: any) => {
-        if (item.coreField) {
-          // initialFormData[item.name] = response?.userData[item.name] || "";
-
-          if (item?.isMultiSelect) {
-            initialFormData[item.name] = response?.userData[item.name] ? [response.userData[item.name]] :  response.userData[item.name] || '';
-          } else {
-            if (item?.type === 'numeric') {
-              initialFormData[item.name] = Number(response.userData[item.name]);
-            } else if (item?.type === 'text') {
-              initialFormData[item.name] = String(response.userData[item.name]);
-            } 
-            
-            else {
-              initialFormData[item.name] = response?.userData[item.name];
-            }
-          }
-
-        } else {
-          const field = response?.userData?.customFields.find( (field: any) => field.fieldId === item.fieldId);
-
-          if (item?.isMultiSelect) {
-             if(item?.type === 'checkbox')
-            {
-              console.log(item.name)
-              initialFormData[item.name]=String(field.value).split(',')
-              console.log(field.value)
-            }
-            else
-            initialFormData[item.name] = [field.value];
-          } else {
-            if (item?.type === 'numeric') {
-              initialFormData[item.name] = Number(field.value);
-            } else if (item?.type === 'text') {
-              initialFormData[item.name] = String(field.value);
-            } 
-           
-            else {
-              initialFormData[item.name] = field.value;
-            }
-          }
-        }
-      });
-
-     
-      setFormData(initialFormData);
-      handleOpenAddFacilitatorModal();
-    }
-
-    
     } catch (error) {
       console.log(error);
     }
-    // console.log("responce",responce)
-    // Handle edit action here
   };
 
   const handleDelete = (rowData: any) => {
