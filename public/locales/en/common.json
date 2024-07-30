@@ -193,7 +193,8 @@
     "UNIT_NAME": "Unit Name",
     "DESIGNATION":"Designation",
     "SUBJECTS_I_TEACH":"Subject Teach",
-    "MY_MAIN_SUBJECTS":"Main subjects"
+    "MY_MAIN_SUBJECTS":"Main subjects",
+    "NUMBER_OF_CLUSTERS_I_TEACH":"Number of cluster"
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",
