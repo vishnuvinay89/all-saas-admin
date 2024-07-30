@@ -1,8 +1,8 @@
-import { deleteApi, get, post } from "./RestClient";
+import { deleteApi, patch, post } from "./RestClient";
 export interface StateListParam {
   limit?: number;
   //  page: number;
-  controllingfieldfk?: any
+  controllingfieldfk?: any;
   fieldName?: any;
   sort?: object;
   offset?: number;
@@ -22,7 +22,9 @@ export const getStateBlockDistrictList = async ({
 }): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/options/read`;
   try {
-    const requestBody: { fieldName: string; controllingfieldfk?: string } = { fieldName };
+    const requestBody: { fieldName: string; controllingfieldfk?: string } = {
+      fieldName,
+    };
 
     if (controllingfieldfk) {
       requestBody.controllingfieldfk = controllingfieldfk;
@@ -105,6 +107,20 @@ export const deleteState = async (option: string): Promise<any> => {
     return response?.data;
   } catch (error) {
     console.error("Error deleting state", error);
+    return error;
+  }
+};
+
+export const createState = async (
+  fieldId: string,
+  fieldParams: { options: { name: string; value: string }[] }
+): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/update/${fieldId}`;
+  try {
+    const response = await patch(apiUrl, { fieldParams });
+    return response?.data;
+  } catch (error) {
+    console.error("Error creating state", error);
     return error;
   }
 };
