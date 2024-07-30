@@ -1,21 +1,31 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import KaTableComponent from "../components/KaTableComponent";
-import { DataType } from "ka-table/enums";
+import { DataType, SortDirection } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import HeaderComponent from "@/components/HeaderComponent";
 import Pagination from "@mui/material/Pagination";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
-import { getStateBlockDistrictList } from "@/services/MasterDataService";
-import { SortDirection } from "ka-table/enums";
+import {
+  getStateBlockDistrictList,
+  deleteState,
+} from "@/services/MasterDataService";
 import Loader from "@/components/Loader";
-import { Box } from "@mui/material";
-import CustomModal from "@/components/CustomModal";
+import {
+  Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+} from "@mui/material";
 import { transformLabel } from "@/utils/Helper";
 
 type StateDetail = {
   label: string;
+  value: string;
 };
 
 const State: React.FC = () => {
@@ -32,11 +42,9 @@ const State: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [selectedFilter, setSelectedFilter] = useState<string>("All");
   const [loading, setLoading] = useState<boolean>(true);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
-  const [selectedState, setSelectedState] = useState<StateDetail | null>(null);
-  const [confirmationModalOpen, setConfirmationModalOpen] =
+  const [confirmationDialogOpen, setConfirmationDialogOpen] =
     useState<boolean>(false);
-  const [selectedDistrictForDelete, setSelectedDistrictForDelete] =
+  const [selectedStateForDelete, setSelectedStateForDelete] =
     useState<StateDetail | null>(null);
 
   const columns = useMemo(
@@ -82,13 +90,27 @@ const State: React.FC = () => {
   const handleEdit = useCallback((rowData: any) => {}, []);
 
   const handleDelete = useCallback((rowData: StateDetail) => {
-    setSelectedDistrictForDelete(rowData);
-    setConfirmationModalOpen(true);
+    console.log("delete", rowData);
+    setSelectedStateForDelete(rowData);
+    setConfirmationDialogOpen(true);
   }, []);
 
-  const handleConfirmDelete = useCallback(() => {
-    setConfirmationModalOpen(false);
-  }, [selectedDistrictForDelete]);
+  const handleConfirmDelete = useCallback(async () => {
+    if (selectedStateForDelete) {
+      try {
+        await deleteState(selectedStateForDelete.value);
+        console.log("deleted from api", selectedStateForDelete.value);
+        setStateData((prevStateData) =>
+          prevStateData.filter(
+            (state) => state.value !== selectedStateForDelete.value
+          )
+        );
+      } catch (error) {
+        console.error("Error deleting state", error);
+      }
+    }
+    setConfirmationDialogOpen(false);
+  }, [selectedStateForDelete]);
 
   const handleSearch = (keyword: string) => {};
 
@@ -96,12 +118,7 @@ const State: React.FC = () => {
     const fetchStateData = async () => {
       try {
         setLoading(true);
-        const object = {
-          controllingfieldfk: selectedState,
-
-          fieldName: "districts",
-        };
-        const data = await getStateBlockDistrictList(object);
+        const data = await getStateBlockDistrictList({ fieldName: "states" });
         const sortedData = [...data.result].sort((a, b) => {
           const [field, order] = sortBy;
           return order === "asc"
@@ -153,16 +170,28 @@ const State: React.FC = () => {
 
   return (
     <div>
-      <CustomModal
-        open={confirmationModalOpen}
-        handleClose={() => setConfirmationModalOpen(false)}
-        title={t("COMMON.CONFIRM_DELETE")}
-        primaryBtnText={t("COMMON.DELETE")}
-        secondaryBtnText={t("COMMON.CANCEL")}
-        primaryBtnClick={handleConfirmDelete}
+      <Dialog
+        open={confirmationDialogOpen}
+        onClose={() => setConfirmationDialogOpen(false)}
       >
-        <Box>{t("COMMON.ARE_YOU_SURE_DELETE")}</Box>
-      </CustomModal>
+        <DialogTitle>{t("COMMON.CONFIRM_DELETE")}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {t("COMMON.ARE_YOU_SURE_DELETE")}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setConfirmationDialogOpen(false)}
+            color="primary"
+          >
+            {t("COMMON.CANCEL")}
+          </Button>
+          <Button onClick={handleConfirmDelete} color="primary" autoFocus>
+            {t("COMMON.DELETE")}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <HeaderComponent {...userProps} handleSearch={handleSearch}>
         {loading ? (
@@ -172,6 +201,7 @@ const State: React.FC = () => {
             columns={columns}
             data={stateData.map((stateDetail) => ({
               label: transformLabel(stateDetail.label),
+              value: stateDetail.value,
             }))}
             limit={pageLimit}
             offset={pageOffset}

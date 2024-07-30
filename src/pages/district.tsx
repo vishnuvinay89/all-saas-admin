@@ -222,7 +222,7 @@ const District: React.FC = () => {
       </CustomModal>
       <HeaderComponent {...userProps}>
         <Box display="flex" gap={2}>
-          <FormControl variant="outlined" sx={{ minWidth: 220 }}>
+          <FormControl variant="outlined" sx={{ minWidth: 220,marginTop: 2 }}>
             <InputLabel id="state-select-label">{t("MASTER.STATE")}</InputLabel>
             <Select
               labelId="state-select-label"
