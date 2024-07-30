@@ -1,5 +1,5 @@
 import SearchIcon from "@mui/icons-material/Search";
-import { IconButton, InputBase, Paper } from "@mui/material";
+import { IconButton, InputBase, Paper, useMediaQuery } from "@mui/material";
 import { styled } from "@mui/system";
 import React, { useState } from "react";
 
@@ -12,8 +12,12 @@ const SearchBox = styled(Paper)(({ theme }) => ({
   padding: "2px 4px",
   display: "flex",
   alignItems: "center",
-  width: 400,
+  width: "100%",
+  maxWidth: 400,
   borderRadius: "8px",
+  [theme.breakpoints.down("sm")]: {
+    maxWidth: "100%",
+  },
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -23,6 +27,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder }) => {
   const [keyword, setKeyword] = useState("");
+  const isSmallScreen = useMediaQuery((theme: any) =>
+    theme.breakpoints.down("sm")
+  );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === "") {
@@ -44,7 +51,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder }) => {
   return (
     <SearchBox>
       <StyledInputBase
-        placeholder={placeholder}
+        placeholder={isSmallScreen ? placeholder : placeholder}
         value={keyword}
         onChange={handleInputChange}
         onKeyPress={handleKeyPress}
