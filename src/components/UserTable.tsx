@@ -21,6 +21,7 @@ import { userList, getUserDetails } from "../services/UserList";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import AddLearnerModal from "@/components/AddLeanerModal";
 import AddFacilitatorModal from "./AddFacilitator";
+import AddTeamLeaderModal from "./AddTeamLeaderModal";
 import { Role } from "@/utils/app.constant";
 import { getFormRead } from "@/services/CreateUserService";
 type UserDetails = {
@@ -362,47 +363,64 @@ const UserTable: React.FC<UserTableProps> = ({
     let initialFormData: any = {};
     formFields.fields.forEach((item: any) => {
       const userData = response?.userData;
-      const customField = userData?.customFields?.find((field: any) => field.fieldId === item.fieldId);
-  
+      const customField = userData?.customFields?.find(
+        (field: any) => field.fieldId === item.fieldId
+      );
+
       const getValue = (data: any, field: any) => {
+      
         if (item?.isMultiSelect) {
-          if (item?.type === 'checkbox') {
-            return String(field.value).split(',');
+          if (data[item.name] && item?.maxSelections > 1) {
+            return [field.value];
+          } else if (item?.type === "checkbox") {
+            return String(field.value).split(",");
+          } else {
+            return field.value;
           }
-          return [field.value];
         } else {
-          if (item?.type === 'numeric') {
+          if (item?.type === "numeric") {
             return Number(field.value);
-          } else if (item?.type === 'text') {
+          } else if (item?.type === "text") {
             return String(field.value);
           } else {
             return field.value;
           }
         }
+        
       };
-  
+
       if (item.coreField) {
-        initialFormData[item.name] = item?.isMultiSelect
-          ? userData[item.name] ? [userData[item.name]] : userData[item.name] || ''
-          : item?.type === 'numeric' ? Number(userData[item.name])
-            : item?.type === 'text' ? String(userData[item.name])
-              : userData[item.name];
+          if (item?.isMultiSelect) {
+          if (userData[item.name] && item?.maxSelections > 1) {
+            initialFormData[item.name] = [userData[item.name]];
+          } else {
+            initialFormData[item.name] = userData[item.name] || "";
+          }
+        } else if (item?.type === "numeric") {
+          initialFormData[item.name] = Number(userData[item.name]);
+        } else if (item?.type === "text") {
+          initialFormData[item.name] = String(userData[item.name]);
+        } else {
+          initialFormData[item.name] = userData[item.name];
+        }
       } else {
         initialFormData[item.name] = getValue(userData, customField);
       }
     });
+
+    console.log("initialFormData", initialFormData);
     return initialFormData;
   };
   const handleEdit = async (rowData: any) => {
     console.log("Edit row:", rowData);
-  
+
     try {
       const userId = rowData.userId;
       setUserId(userId);
       const fieldValue = true;
       const response = await getUserDetails(userId, fieldValue);
       console.log(role);
-  
+
       let formFields;
       if (Role.STUDENT === role) {
         formFields = await getFormRead("USERS", "STUDENT");
@@ -413,7 +431,7 @@ const UserTable: React.FC<UserTableProps> = ({
         setFormData(mapFields(formFields, response));
         handleOpenAddFacilitatorModal();
       }
-  
+
       console.log("response", response);
       console.log("formFields", formFields);
     } catch (error) {
@@ -553,12 +571,10 @@ const UserTable: React.FC<UserTableProps> = ({
       console.log(selectedUserId);
       const userId = selectedUserId;
       const userData = {
-        userData: [
-          {
-            reason: selectedReason,
-            status: "archived",
-          },
-        ],
+        userData: {
+          reason: selectedReason,
+          status: "archived",
+        },
       };
       const response = await deleteUser(userId, userData);
       handleCloseDeleteModal();
@@ -587,10 +603,9 @@ const UserTable: React.FC<UserTableProps> = ({
     handleFilterChange: handleFilterChange,
     handleSearch: handleSearch,
     handleAddUserClick: handleAddUserClick,
-    selectedBlockCode:selectedBlockCode,
-    selectedDistrictCode:selectedDistrictCode,
-    selectedStateCode:selectedStateCode
-
+    selectedBlockCode: selectedBlockCode,
+    selectedDistrictCode: selectedDistrictCode,
+    selectedStateCode: selectedStateCode,
   };
 
   return (

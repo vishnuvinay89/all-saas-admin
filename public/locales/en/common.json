@@ -72,7 +72,9 @@
     "LEARNER_UPDATED_SUCCESSFULLY": "Learner has been Successfully Updated!"
   },
   "TEAM_LEADERS": {
-    "SEARCHBAR_PLACEHOLDER": "Search Team leaders.."
+    "SEARCHBAR_PLACEHOLDER": "Search Team leaders..",
+    "NEW_TEAM_LEADER": "New Team Leader"
+
   },
   "COHORTS": {
     "SEARCHBAR_PLACEHOLDER": "Search Cohorts.."
