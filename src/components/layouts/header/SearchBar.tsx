@@ -2,6 +2,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { IconButton, InputBase, Paper, useMediaQuery } from "@mui/material";
 import { styled } from "@mui/system";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface SearchBarProps {
   onSearch: (keyword: string) => void;
@@ -27,6 +28,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder }) => {
   const [keyword, setKeyword] = useState("");
+  const { t } = useTranslation();
   const isSmallScreen = useMediaQuery((theme: any) =>
     theme.breakpoints.down("sm")
   );
@@ -51,7 +53,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder }) => {
   return (
     <SearchBox>
       <StyledInputBase
-        placeholder={isSmallScreen ? placeholder : placeholder}
+        placeholder={isSmallScreen ? placeholder : t("COURSE_PLANNER.SEARCH")}
         value={keyword}
         onChange={handleInputChange}
         onKeyPress={handleKeyPress}
