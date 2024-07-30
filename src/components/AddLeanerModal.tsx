@@ -4,7 +4,11 @@ import {
   customFields,
 } from "@/components/GeneratedSchemas";
 import SimpleModal from "@/components/SimpleModal";
-import { createUser, getFormRead , updateUser} from "@/services/CreateUserService";
+import {
+  createUser,
+  getFormRead,
+  updateUser,
+} from "@/services/CreateUserService";
 import { generateUsernameAndPassword } from "@/utils/Helper";
 import { FormData } from "@/utils/Interfaces";
 import {
@@ -14,12 +18,7 @@ import {
   RoleId,
 } from "@/utils/app.constant";
 import { useLocationState } from "@/utils/useLocationState";
-import {
-  Box,
-  Button,
-  Typography,
-  useTheme
-} from "@mui/material";
+import { Box, Button, Typography, useTheme } from "@mui/material";
 import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
 import React, { useEffect } from "react";
@@ -31,15 +30,21 @@ import { showToastMessage } from "./Toastify";
 interface AddLearnerModalProps {
   open: boolean;
   onClose: () => void;
-  formData?:object;
-  isEditModal?:boolean;
-  userId?:string
+  formData?: object;
+  isEditModal?: boolean;
+  userId?: string;
 }
 interface FieldProp {
   value: string;
   label: string;
 }
-const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose, formData , isEditModal=false, userId}) => {
+const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
+  open,
+  onClose,
+  formData,
+  isEditModal = false,
+  userId,
+}) => {
   const [schema, setSchema] = React.useState<any>();
   const [uiSchema, setUiSchema] = React.useState<any>();
 
@@ -68,7 +73,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose, formDa
     handleDistrictChangeWrapper,
     handleBlockChangeWrapper,
     handleCenterChangeWrapper,
-    selectedCenterCode
+    selectedCenterCode,
   } = useLocationState(open, onClose);
 
   useEffect(() => {
@@ -83,7 +88,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose, formDa
         if (response) {
           const { schema, uiSchema } = GenerateSchemaAndUiSchema(response, t);
           setSchema(schema);
-          console.log(schema)
+          console.log(schema);
           setUiSchema(uiSchema);
         }
       } catch (error) {
@@ -147,7 +152,6 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose, formDa
       console.log(
         `FieldID: ${fieldId}, FieldValue: ${fieldValue}, type: ${typeof fieldValue}`
       );
-        
 
       if (fieldId === null || fieldId === "null") {
         if (typeof fieldValue !== "object") {
@@ -169,51 +173,41 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose, formDa
           });
         }
       }
+    });
+    if (!isEditModal) {
+      apiBody.customFields.push({
+        fieldId: "a717bb68-5c8a-45cb-b6dd-376caa605736",
+        value: [selectedBlockCode],
+      });
+      apiBody.customFields.push({
+        fieldId: "61b5909a-0b45-4282-8721-e614fd36d7bd",
+        value: [selectedStateCode],
+      });
+      apiBody.customFields.push({
+        fieldId: "aecb84c9-fe4c-4960-817f-3d228c0c7300",
+        value: [selectedDistrictCode],
+      });
+    }
 
-     
-    });
-   if(!isEditModal)
-   {
-    apiBody.customFields.push({
-      fieldId: "a717bb68-5c8a-45cb-b6dd-376caa605736",
-      value: [selectedBlockCode],
-    });
-    apiBody.customFields.push({
-      fieldId: "61b5909a-0b45-4282-8721-e614fd36d7bd",
-      value: [selectedStateCode],
-    });
-    apiBody.customFields.push({
-      fieldId: "aecb84c9-fe4c-4960-817f-3d228c0c7300",
-      value: [selectedDistrictCode],
-    });
-   }
-   
     try {
-      if(isEditModal && userId)
-      {
-        console.log(apiBody)
-        const userData={
-         "name":apiBody.name,
-         "mobile": apiBody.mobile,
-         "father_name":apiBody.father_name
-
+      if (isEditModal && userId) {
+        console.log("apiBody", apiBody);
+        const userData = {
+          name: apiBody.name,
+          mobile: apiBody.mobile,
+          father_name: apiBody.father_name,
         };
-        const customFields=apiBody.customFields;
-        console.log(customFields)
-        const object=
-        {
-          "userData":userData,
-          "customFields":customFields
-        }
-        const response = await updateUser(userId,object)
+        const customFields = apiBody.customFields;
+        console.log(customFields);
+        const object = {
+          userData: userData,
+          customFields: customFields,
+        };
+        const response = await updateUser(userId, object);
         showToastMessage(t("LEARNERS.LEARNER_UPDATED_SUCCESSFULLY"), "success");
-
-
-      }
-      else{  
+      } else {
         const response = await createUser(apiBody);
         showToastMessage(t("LEARNERS.LEARNER_CREATED_SUCCESSFULLY"), "success");
-
       }
       onClose();
     } catch (error) {
@@ -342,36 +336,39 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({ open, onClose, formDa
           </Box>
         </>
 
-
-        {formData ? ( schema && uiSchema && (
-          <DynamicForm
-            schema={schema}
-            uiSchema={uiSchema}
-            onSubmit={handleSubmit}
-            onChange={handleChange}
-            onError={handleError}
-            widgets={{}}
-            showErrorList={true}
-            customFields={customFields}
-            formData={formData}
-          >
-            {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
-          </DynamicForm>
-        )) :( dynamicForm && schema && uiSchema && (
-          <DynamicForm
-            schema={schema}
-            uiSchema={uiSchema}
-            onSubmit={handleSubmit}
-            onChange={handleChange}
-            onError={handleError}
-            widgets={{}}
-            showErrorList={true}
-            customFields={customFields}
-          >
-            {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
-          </DynamicForm>
-        ))}
-        
+        {formData
+          ? schema &&
+            uiSchema && (
+              <DynamicForm
+                schema={schema}
+                uiSchema={uiSchema}
+                onSubmit={handleSubmit}
+                onChange={handleChange}
+                onError={handleError}
+                widgets={{}}
+                showErrorList={true}
+                customFields={customFields}
+                formData={formData}
+              >
+                {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
+              </DynamicForm>
+            )
+          : dynamicForm &&
+            schema &&
+            uiSchema && (
+              <DynamicForm
+                schema={schema}
+                uiSchema={uiSchema}
+                onSubmit={handleSubmit}
+                onChange={handleChange}
+                onError={handleError}
+                widgets={{}}
+                showErrorList={true}
+                customFields={customFields}
+              >
+                {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
+              </DynamicForm>
+            )}
       </SimpleModal>
     </>
   );

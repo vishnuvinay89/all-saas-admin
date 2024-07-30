@@ -39,6 +39,9 @@ const HeaderComponent = ({
   userType,
   searchPlaceHolder,
   selectedState,
+  selectedStateCode,
+  selectedDistrictCode,
+  selectedBlockCode,
   selectedDistrict,
   selectedBlock,
   selectedSort,
@@ -53,6 +56,7 @@ const HeaderComponent = ({
   showStateDropdown = true,
   handleSearch,
   handleAddUserClick,
+  
 }: any) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
@@ -77,7 +81,7 @@ const HeaderComponent = ({
       const object=
       {
         
-         "controllingfieldfk": selectedState,
+         "controllingfieldfk": selectedStateCode,
        
          "fieldName": "districts"
          
@@ -102,7 +106,7 @@ const HeaderComponent = ({
       const object=
       {
         
-         "controllingfieldfk": selectedDistrict,
+         "controllingfieldfk": selectedDistrictCode,
        
          "fieldName": "blocks"
          

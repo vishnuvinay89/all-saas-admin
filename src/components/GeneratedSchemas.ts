@@ -22,6 +22,7 @@ export const GenerateSchemaAndUiSchema = (
   };
 
   const uiSchema: UiSchema = {}; //form ui schema
+  let formValues: any = {};
 
   // console.log('FormData', formData)
   formData?.fields?.forEach((field: Field) => {
@@ -46,12 +47,17 @@ export const GenerateSchemaAndUiSchema = (
 
     const fieldUiSchema: any = {};
 
+    if (field?.default) {
+      formValues[name] = field.default;
+    }
+
     switch (type) {
       case 'text':
         fieldSchema.type = 'string';
         break;
       case 'email':
         fieldSchema.type = 'string';
+        fieldSchema.format = 'email';
         break;
       case 'numeric':
         fieldSchema.type = 'number';
@@ -210,5 +216,5 @@ export const GenerateSchemaAndUiSchema = (
     }
   });
 
-  return { schema, uiSchema, customFields };
+  return { schema, uiSchema, customFields, formValues };
 };
