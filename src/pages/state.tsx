@@ -10,10 +10,9 @@ import { useTranslation } from "next-i18next";
 import { getStateBlockDistrictList } from "@/services/MasterDataService";
 import { SortDirection } from "ka-table/enums";
 import Loader from "@/components/Loader";
-import Image from "next/image";
-import glass from "../../public/images/empty_hourglass.svg";
-import { Box, Typography } from "@mui/material";
-import DeleteUserModal from "@/components/DeleteUserModal"; // Import your DeleteUserModal component
+import { Box } from "@mui/material";
+import CustomModal from "@/components/CustomModal";
+import { transformLabel } from "@/utils/Helper";
 
 type StateDetail = {
   label: string;
@@ -21,24 +20,24 @@ type StateDetail = {
 
 const State: React.FC = () => {
   const { t } = useTranslation();
-
-  // State management
   const [pageOffset, setPageOffset] = useState<number>(0);
   const [pageLimit, setPageLimit] = useState<number>(10);
   const [stateData, setStateData] = useState<StateDetail[]>([]);
   const [selectedSort, setSelectedSort] = useState<string>("Sort");
-  const [sortBy, setSortBy] = useState<["label", "asc" | "desc"]>(["label", "asc"]);
+  const [sortBy, setSortBy] = useState<["label", "asc" | "desc"]>([
+    "label",
+    "asc",
+  ]);
   const [pageCount, setPageCount] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
   const [selectedFilter, setSelectedFilter] = useState<string>("All");
   const [loading, setLoading] = useState<boolean>(true);
-  
-  // Modal state
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedState, setSelectedState] = useState<StateDetail | null>(null);
-  const [confirmButtonDisable, setConfirmButtonDisable] = useState<boolean>(false);
-  const [selectedReason, setSelectedReason] = useState<string>("");
-  const [otherReason, setOtherReason] = useState<string>("");
+  const [confirmationModalOpen, setConfirmationModalOpen] =
+    useState<boolean>(false);
+  const [selectedDistrictForDelete, setSelectedDistrictForDelete] =
+    useState<StateDetail | null>(null);
 
   const columns = useMemo(
     () => [
@@ -77,32 +76,19 @@ const State: React.FC = () => {
   }, []);
 
   const handleFilterChange = useCallback((event: SelectChangeEvent<string>) => {
-    setSelectedFilter(event.target.value as string);
+    setSelectedFilter(event.target.value);
   }, []);
 
-  const handleEdit = useCallback((rowData: any) => {
-    console.log("Edit row:", rowData);
+  const handleEdit = useCallback((rowData: any) => {}, []);
+
+  const handleDelete = useCallback((rowData: StateDetail) => {
+    setSelectedDistrictForDelete(rowData);
+    setConfirmationModalOpen(true);
   }, []);
 
-  const handleDelete = useCallback((rowData: any) => {
-    setSelectedState(rowData); // Set the selected state to be deleted
-    setIsDeleteModalOpen(true); // Open the delete confirmation modal
-  }, []);
-
-  const handleDeleteUser = useCallback(() => {
-    if (selectedState) {
-      // Add your delete logic here
-      console.log("Deleting user:", selectedState);
-
-      // Close the modal after deletion
-      setIsDeleteModalOpen(false);
-    }
-  }, [selectedState]);
-
-  const handleCloseDeleteModal = () => {
-    setIsDeleteModalOpen(false);
-    setSelectedState(null);
-  };
+  const handleConfirmDelete = useCallback(() => {
+    setConfirmationModalOpen(false);
+  }, [selectedDistrictForDelete]);
 
   const handleSearch = (keyword: string) => {};
 
@@ -110,14 +96,11 @@ const State: React.FC = () => {
     const fetchStateData = async () => {
       try {
         setLoading(true);
-        const object=
-        {
-          
-           "controllingfieldfk": selectedState,
-         
-           "fieldName": "districts"
-           
-         }
+        const object = {
+          controllingfieldfk: selectedState,
+
+          fieldName: "districts",
+        };
         const data = await getStateBlockDistrictList(object);
         const sortedData = [...data.result].sort((a, b) => {
           const [field, order] = sortBy;
@@ -166,29 +149,42 @@ const State: React.FC = () => {
     ]
   );
 
+  const showPagination = stateData.length > 10;
+
   return (
     <div>
+      <CustomModal
+        open={confirmationModalOpen}
+        handleClose={() => setConfirmationModalOpen(false)}
+        title={t("COMMON.CONFIRM_DELETE")}
+        primaryBtnText={t("COMMON.DELETE")}
+        secondaryBtnText={t("COMMON.CANCEL")}
+        primaryBtnClick={handleConfirmDelete}
+      >
+        <Box>{t("COMMON.ARE_YOU_SURE_DELETE")}</Box>
+      </CustomModal>
+
       <HeaderComponent {...userProps} handleSearch={handleSearch}>
         {loading ? (
           <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
-        ) : stateData.length !== 0 ? (
+        ) : (
           <KaTableComponent
             columns={columns}
             data={stateData.map((stateDetail) => ({
-              label:
-                stateDetail.label?.toLocaleLowerCase().charAt(0).toUpperCase() +
-                stateDetail.label?.toLocaleLowerCase().slice(1),
+              label: transformLabel(stateDetail.label),
             }))}
             limit={pageLimit}
             offset={pageOffset}
-            PagesSelector={() => (
-              <Pagination
-                color="primary"
-                count={pageCount}
-                page={pageOffset + 1}
-                onChange={handlePaginationChange}
-              />
-            )}
+            PagesSelector={() =>
+              showPagination && (
+                <Pagination
+                  color="primary"
+                  count={pageCount}
+                  page={pageOffset + 1}
+                  onChange={handlePaginationChange}
+                />
+              )
+            }
             PageSizeSelector={() => (
               <PageSizeSelector
                 handleChange={handleChange}
@@ -200,28 +196,8 @@ const State: React.FC = () => {
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
-        ) : (
-          <Box display="flex" alignItems="center" justifyContent="center">
-            <Image src={glass} alt="" />
-            <Typography marginTop="10px">
-              {t("COMMON.NO_DATA_FOUND")}
-            </Typography>
-          </Box>
         )}
       </HeaderComponent>
-
-      {/* DeleteUserModal Component */}
-      <DeleteUserModal
-        open={isDeleteModalOpen}
-        onClose={handleCloseDeleteModal}
-        selectedValue={selectedReason}
-        setSelectedValue={setSelectedReason}
-        handleDeleteAction={handleDeleteUser}
-        otherReason={otherReason}
-        setOtherReason={setOtherReason}
-        confirmButtonDisable={confirmButtonDisable}
-        setConfirmButtonDisable={setConfirmButtonDisable}
-      />
     </div>
   );
 };

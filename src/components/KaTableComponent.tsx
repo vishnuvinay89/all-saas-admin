@@ -1,16 +1,12 @@
-// components/KaTableComponent.tsx
-
 import React, { useState } from "react";
 import { ITableProps, Table } from "ka-table";
 import { SortingMode, PagingPosition } from "ka-table/enums";
 import { Paper, Checkbox } from "@mui/material";
 import "ka-table/style.css";
-import { IPagingProps } from "ka-table/props";
-import { updatePageIndex, updatePageSize } from "ka-table/actionCreators";
-import ActionCell from "./ActionCell";
 import ActionIcon from "./ActionIcon";
 import { format } from "date-fns";
 import { DataKey, DateFormat } from "@/utils/app.constant";
+import { useTranslation } from "react-i18next";
 
 interface KaTableComponentProps {
   columns: ITableProps["columns"];
@@ -30,6 +26,7 @@ interface KaTableComponentProps {
   }[];
   paginationEnable?: boolean;
   showIcons?: boolean;
+  noData?: any;
   pagination?: boolean;
 }
 
@@ -46,9 +43,11 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   onDelete,
   showIcons,
   pageSizes,
+  noData,
   pagination = true,
 }) => {
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
+  const { t } = useTranslation();
 
   const handleCheckboxChange = (rowId: number) => {
     setSelectedRowIds((prevSelected) =>
@@ -79,6 +78,13 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
       <div className="ka-table-wrapper">
         <Table
           {...tableProps}
+          paging={{
+            enabled: paginationEnable,
+            pageIndex: offset,
+            pageSize: limit,
+            pageSizes: pageSizes,
+            position: PagingPosition.Bottom,
+          }}
           childComponents={{
             pagingSizes: {
               content: (props) => <PageSizeSelector {...props} />,
@@ -111,10 +117,8 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                 if (props.column.key === "selection-cell") {
                   return (
                     <Checkbox
-                      checked={selectedRowIds.includes(props.rowData.userId)}
-                      onChange={() =>
-                        handleCheckboxChange(props.rowData.userId)
-                      }
+                      checked={selectedRowIds.includes(props.rowData.id)}
+                      onChange={() => handleCheckboxChange(props.rowData.id)}
                     />
                   );
                 }
@@ -126,6 +130,9 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                 return <div className="table-header">{props.column.title}</div>;
               },
             },
+          }}
+          noData={{
+            text: t("COURSE_PLANNER.DATA_NOT_FOUND"),
           }}
         />
       </div>
