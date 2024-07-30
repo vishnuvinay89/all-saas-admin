@@ -28,7 +28,9 @@
     "NO_DATA_FOUND": "No data found",
     "SUBMIT": "Submit",
     "BACK": "Back",
-    "CANCEL": "Cancel"
+    "CANCEL": "Cancel",
+    "ARE_YOU_SURE_DELETE":"Are you sure you want to delete?",
+    "CONFIRM_DELETE":"Confirm Delete"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
