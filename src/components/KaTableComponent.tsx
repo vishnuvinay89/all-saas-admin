@@ -4,6 +4,8 @@ import { SortingMode, PagingPosition } from "ka-table/enums";
 import { Paper, Checkbox } from "@mui/material";
 import "ka-table/style.css";
 import ActionIcon from "./ActionIcon";
+import { format } from "date-fns";
+import { DataKey, DateFormat } from "@/utils/app.constant";
 import { useTranslation } from "react-i18next";
 
 interface KaTableComponentProps {
@@ -92,13 +94,24 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
             },
             cell: {
               content: (props) => {
-                if (props.column.key === "actions") {
+                if (props.column.key === DataKey.ACTIONS) {
                   return (
                     <ActionIcon
                       rowData={props.rowData}
                       onEdit={onEdit}
                       onDelete={onDelete}
                     />
+                  );
+                }
+                if (props.column.key === DataKey.UPDATEDAT) {
+                  return format(
+                    props.rowData?.updatedAt,
+                    DateFormat.YYYY_MM_DD
+                  );
+                } else if (props.column.key === DataKey.CREATEDAT) {
+                  return format(
+                    props.rowData?.createdAt,
+                    DateFormat.YYYY_MM_DD
                   );
                 }
                 if (props.column.key === "selection-cell") {
