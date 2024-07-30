@@ -3,25 +3,19 @@ import KaTableComponent from "../components/KaTableComponent";
 import { DataType, SortDirection } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import HeaderComponent from "@/components/HeaderComponent";
-import Pagination from "@mui/material/Pagination";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
 import {
   getStateBlockDistrictList,
   deleteState,
+  createState,
 } from "@/services/MasterDataService";
 import Loader from "@/components/Loader";
-import {
-  Box,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Button,
-} from "@mui/material";
+import AddStateModal from "@/components/AddStateModal";
 import { transformLabel } from "@/utils/Helper";
+import ConfirmationModal from "@/components/ConfirmationModal";
+import { showToastMessage } from "@/components/Toastify";
 
 type StateDetail = {
   label: string;
@@ -31,7 +25,7 @@ type StateDetail = {
 const State: React.FC = () => {
   const { t } = useTranslation();
   const [pageOffset, setPageOffset] = useState<number>(0);
-  const [pageLimit, setPageLimit] = useState<number>(10);
+  const [pageLimit, setPageLimit] = useState<number>(15);
   const [stateData, setStateData] = useState<StateDetail[]>([]);
   const [selectedSort, setSelectedSort] = useState<string>("Sort");
   const [sortBy, setSortBy] = useState<["label", "asc" | "desc"]>([
@@ -46,6 +40,7 @@ const State: React.FC = () => {
     useState<boolean>(false);
   const [selectedStateForDelete, setSelectedStateForDelete] =
     useState<StateDetail | null>(null);
+  const [addStateModalOpen, setAddStateModalOpen] = useState<boolean>(false);
 
   const columns = useMemo(
     () => [
@@ -90,7 +85,6 @@ const State: React.FC = () => {
   const handleEdit = useCallback((rowData: any) => {}, []);
 
   const handleDelete = useCallback((rowData: StateDetail) => {
-    console.log("delete", rowData);
     setSelectedStateForDelete(rowData);
     setConfirmationDialogOpen(true);
   }, []);
@@ -99,47 +93,84 @@ const State: React.FC = () => {
     if (selectedStateForDelete) {
       try {
         await deleteState(selectedStateForDelete.value);
-        console.log("deleted from api", selectedStateForDelete.value);
         setStateData((prevStateData) =>
           prevStateData.filter(
             (state) => state.value !== selectedStateForDelete.value
           )
         );
+        showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
       } catch (error) {
         console.error("Error deleting state", error);
+        showToastMessage(t("COMMON.STATE_DELETED_FAILURE"), "error");
       }
     }
     setConfirmationDialogOpen(false);
-  }, [selectedStateForDelete]);
+  }, [selectedStateForDelete, t]);
 
   const handleSearch = (keyword: string) => {};
 
-  useEffect(() => {
-    const fetchStateData = async () => {
-      try {
-        setLoading(true);
-        const data = await getStateBlockDistrictList({ fieldName: "states" });
-        const sortedData = [...data.result].sort((a, b) => {
-          const [field, order] = sortBy;
-          return order === "asc"
-            ? a[field].localeCompare(b[field])
-            : b[field].localeCompare(a[field]);
-        });
+  const fieldId = "61b5909a-0b45-4282-8721-e614fd36d7bd";
 
-        const offset = pageOffset * pageLimit;
-        const paginatedData = sortedData.slice(offset, offset + pageLimit);
+  const handleAddStateClick = () => {
+    setAddStateModalOpen(true);
+  };
 
-        setPageCount(Math.ceil(data.result.length / pageLimit));
-        setStateData(paginatedData);
-      } catch (error) {
-        console.error("Error fetching state data", error);
-      } finally {
-        setLoading(false);
-      }
+  const handleAddStateSubmit = async (
+    name: string,
+    value: string,
+    fieldId: string
+  ) => {
+    const newState = {
+      options: [
+        {
+          name,
+          value,
+        },
+      ],
     };
 
-    fetchStateData();
+    try {
+      const response = await createState(fieldId, newState);
+
+      if (response) {
+        await fetchStateData();
+        showToastMessage(t("COMMON.STATE_ADDED_SUCCESS"), "success");
+      } else {
+        console.error("Failed to create state:", response);
+      }
+    } catch (error) {
+      console.error("Error creating state:", error);
+      showToastMessage(t("COMMON.STATE_ADDED_FAILURE"), "error");
+    }
+    setAddStateModalOpen(false);
+  };
+
+  const fetchStateData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await getStateBlockDistrictList({ fieldName: "states" });
+      const sortedData = [...data.result].sort((a, b) => {
+        const [field, order] = sortBy;
+        return order === "asc"
+          ? a[field].localeCompare(b[field])
+          : b[field].localeCompare(a[field]);
+      });
+
+      const offset = pageOffset * pageLimit;
+      const paginatedData = sortedData.slice(offset, offset + pageLimit);
+
+      setPageCount(Math.ceil(data.result.length / pageLimit));
+      setStateData(paginatedData);
+    } catch (error) {
+      console.error("Error fetching state data", error);
+    } finally {
+      setLoading(false);
+    }
   }, [pageOffset, pageLimit, sortBy]);
+
+  useEffect(() => {
+    fetchStateData();
+  }, [fetchStateData]);
 
   const userProps = useMemo(
     () => ({
@@ -166,34 +197,29 @@ const State: React.FC = () => {
     ]
   );
 
-  const showPagination = stateData.length > 10;
-
   return (
     <div>
-      <Dialog
-        open={confirmationDialogOpen}
-        onClose={() => setConfirmationDialogOpen(false)}
+      <AddStateModal
+        open={addStateModalOpen}
+        onClose={() => setAddStateModalOpen(false)}
+        onSubmit={handleAddStateSubmit}
+        fieldId={fieldId}
+      />
+      <ConfirmationModal
+        modalOpen={confirmationDialogOpen}
+        message={t("COMMON.ARE_YOU_SURE_DELETE")}
+        handleAction={handleConfirmDelete}
+        buttonNames={{
+          primary: t("COMMON.DELETE"),
+          secondary: t("COMMON.CANCEL"),
+        }}
+        handleCloseModal={() => setConfirmationDialogOpen(false)}
+      />
+      <HeaderComponent
+        {...userProps}
+        handleSearch={handleSearch}
+        handleAddUserClick={handleAddStateClick}
       >
-        <DialogTitle>{t("COMMON.CONFIRM_DELETE")}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            {t("COMMON.ARE_YOU_SURE_DELETE")}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => setConfirmationDialogOpen(false)}
-            color="primary"
-          >
-            {t("COMMON.CANCEL")}
-          </Button>
-          <Button onClick={handleConfirmDelete} color="primary" autoFocus>
-            {t("COMMON.DELETE")}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <HeaderComponent {...userProps} handleSearch={handleSearch}>
         {loading ? (
           <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
         ) : (
@@ -205,16 +231,7 @@ const State: React.FC = () => {
             }))}
             limit={pageLimit}
             offset={pageOffset}
-            PagesSelector={() =>
-              showPagination && (
-                <Pagination
-                  color="primary"
-                  count={pageCount}
-                  page={pageOffset + 1}
-                  onChange={handlePaginationChange}
-                />
-              )
-            }
+            PagesSelector={() => null}
             PageSizeSelector={() => (
               <PageSizeSelector
                 handleChange={handleChange}
