@@ -62,7 +62,6 @@
     "SEARCHBAR_PLACEHOLDER": "Search Facilitators..",
     "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher has been Successfully Created",
     "FACILITATOR_UPDATED_SUCCESSFULLY": "Teacher has been Successfully Updated!"
-
   },
   "NAVBAR": {
     "SEARCHBAR_PLACEHOLDER": "Search course, topic, student, pdf etc.."
@@ -73,7 +72,6 @@
     "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
     "LEARNER_CREATED_SUCCESSFULLY": "Leaner has been Successfully Created!",
     "LEARNER_UPDATED_SUCCESSFULLY": "Leaner has been Successfully Updated!"
-
   },
   "TEAM_LEADERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders.."
@@ -130,8 +128,10 @@
     "RENAME": "Rename",
     "CENTER_RENAMED": "Center Renamed Successfully!",
     "SEND_REQUEST": "Send Request",
-    "REQUEST_TO_DELETE_HAS_BEEN_SENT": "Request to Delete has been sent",
-    "SURE_DELETE_COHORT": "Are you sure you want to Delete Center ?"
+    "SURE_DELETE_COHORT": "Are you sure you want to Delete Center ?",
+    "CENTER_UPDATE_SUCCESSFULLY": "Cohort has been Successfully Updated",
+    "CENTER_DELETE_SUCCESSFULLY": "Cohort has been Successfully Deleted",
+    "CENTER_CREATED_SUCCESSFULLY": "Cohort Created Successfully"
   },
   "FORM": {
     "FULL_NAME": "Full Name",
@@ -200,9 +200,9 @@
     "MIN_LENGTH_CHARACTERS_ERROR": "Minimum {{minLength}} characters required",
     "MAX_LENGTH_CHARACTERS_ERROR": "Maximum {{maxLength}} characters allowed",
     "NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED": "Numbers and special characters are not allowed",
-     "NAME_CANNOT_INCLUDE_DIGITS":"Name can not include digits",
-    "INVALID_EMAIL_FORMAT":"Invalid email format"
-},
+    "NAME_CANNOT_INCLUDE_DIGITS": "Name can not include digits",
+    "INVALID_EMAIL_FORMAT": "Invalid email format"
+  },
   "TABLE_TITLE": {
     "NAME": "Name",
     "STATUS": "Status",

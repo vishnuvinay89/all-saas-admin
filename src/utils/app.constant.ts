@@ -7,7 +7,10 @@ export enum Role {
 
 export enum Status {
   ARCHIVED = "archived",
+  ARCHIVED_LABEL = "Archived",
   ACTIVE = "active",
+  ACTIVE_LABEL = "Active",
+  ALL_LABEL = "All",
 }
 export enum SORT {
   ASCENDING = "asc",
@@ -43,4 +46,10 @@ export enum DataKey {
 
 export enum DateFormat {
   YYYY_MM_DD = "yyyy-MM-dd",
+}
+
+export enum Numbers {
+  ZERO = 0,
+  ONE = 1,
+  TEN = 10,
 }

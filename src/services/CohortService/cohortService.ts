@@ -25,7 +25,6 @@ export const getCohortList = async (data: cohortListData): Promise<any> => {
   }
 };
 
-
 export const updateCohortUpdate = async (
   userId: string,
   cohortDetails: {
@@ -82,7 +81,7 @@ export const createCohort = async (userData: any): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/create`;
   try {
     const response = await post(apiUrl, userData);
-    return response?.data?.result;
+    return response?.data;
   } catch (error) {
     console.error("error in getting cohort list", error);
     // throw error;

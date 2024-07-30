@@ -13,7 +13,7 @@ import {
   getCohortList,
   updateCohortUpdate,
 } from "@/services/CohortService/cohortService";
-import { Role, SORT, Status, Storage } from "@/utils/app.constant";
+import { Numbers, Role, SORT, Status, Storage } from "@/utils/app.constant";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationModal from "@/components/ConfirmationModal";
@@ -34,6 +34,7 @@ import DynamicForm from "@/components/DynamicForm";
 import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
 import { CustomField } from "@/utils/Interfaces";
+import { showToastMessage } from "@/components/Toastify";
 
 type cohortFilterDetails = {
   type?: string;
@@ -129,15 +130,17 @@ const Cohorts: React.FC = () => {
   const [openAddNewCohort, setOpenAddNewCohort] =
     React.useState<boolean>(false);
 
-  const [pageCount, setPageCount] = useState(1);
-  const [pageOffset, setPageOffset] = useState(0);
-  const [pageLimit, setPageLimit] = useState(10);
+  const [pageCount, setPageCount] = useState(Numbers.ONE);
+  const [pageOffset, setPageOffset] = useState(Numbers.ZERO);
+  const [pageLimit, setPageLimit] = useState(Numbers.TEN);
   const [pageSizeArray, setPageSizeArray] = React.useState<number[]>([]);
   const [filters, setFilters] = useState<cohortFilterDetails>({
     type: "COHORT",
   });
   const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
-
+  const [selectedStateCode, setSelectedStateCode] = useState("");
+  const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
+  const [selectedBlockCode, setSelectedBlockCode] = useState("");
   // use api calls
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -229,34 +232,122 @@ const Cohorts: React.FC = () => {
   };
 
   const PagesSelector = () => (
-    <Pagination
-      color="primary"
-      count={pageCount}
-      page={pageOffset + 1}
-      onChange={handlePaginationChange}
-    />
+    <Box mt={3}>
+      <Pagination
+        color="primary"
+        count={pageCount}
+        page={pageOffset + 1}
+        onChange={handlePaginationChange}
+      />
+    </Box>
   );
 
   const PageSizeSelectorFunction = ({}) => (
-    <>
+    <Box mt={2}>
       <PageSizeSelector
         handleChange={handleChange}
         pageSize={pageSize}
         options={pageSizeArray}
       />
-    </>
+    </Box>
   );
 
-  const handleStateChange = (selected: string[]) => {
+  const handleStateChange = async (selected: string[], code: string[]) => {
+    setSelectedDistrict([]);
+    setSelectedBlock([]);
     setSelectedState(selected);
-    console.log("Selected categories:", selected);
+
+    if (selected[0] === "") {
+      if (filters.status) setFilters({ status: filters.status });
+      // else setFilters({ role: role });
+    } else {
+      const stateCodes = code?.join(",");
+      console.log("stateCodes", stateCodes);
+      setSelectedStateCode(stateCodes);
+      if (filters.status)
+        setFilters({ status: filters.status, states: stateCodes });
+      else setFilters({ states: stateCodes });
+    }
+
+    console.log("Selected categories:", typeof code[0]);
   };
-  const handleDistrictChange = (selected: string[]) => {
+
+  const handleDistrictChange = (selected: string[], code: string[]) => {
+    setSelectedBlock([]);
     setSelectedDistrict(selected);
+
+    if (selected[0] === "") {
+      if (filters.status) {
+        setFilters({
+          status: filters.status,
+          states: selectedStateCode,
+
+          // role: role,
+        });
+      } else {
+        setFilters({
+          states: selectedStateCode,
+          // role: role,
+        });
+      }
+    } else {
+      const districts = code?.join(",");
+      setSelectedDistrictCode(districts);
+      if (filters.status) {
+        setFilters({
+          status: filters.status,
+          states: selectedStateCode,
+          districts: districts,
+
+          // role: role,
+        });
+      } else {
+        setFilters({
+          states: selectedStateCode,
+          districts: districts,
+          // role: role,
+        });
+      }
+    }
     console.log("Selected categories:", selected);
   };
-  const handleBlockChange = (selected: string[]) => {
+  const handleBlockChange = (selected: string[], code: string[]) => {
     setSelectedBlock(selected);
+    if (selected[0] === "") {
+      if (filters.status) {
+        setFilters({
+          status: filters.status,
+          states: selectedStateCode,
+          districts: selectedDistrictCode,
+          // role: role,
+        });
+      } else {
+        setFilters({
+          states: selectedStateCode,
+          districts: selectedDistrictCode,
+          // role: role,
+        });
+      }
+    } else {
+      const blocks = code?.join(",");
+      setSelectedBlockCode(blocks);
+      if (filters.status) {
+        setFilters({
+          status: filters.status,
+          states: selectedStateCode,
+          districts: selectedDistrictCode,
+          blocks: blocks,
+          // role: role,
+        });
+      } else {
+        setFilters({
+          states: selectedStateCode,
+          districts: selectedDistrictCode,
+          blocks: blocks,
+          // role: role,
+        });
+      }
+    }
     console.log("Selected categories:", selected);
   };
 
@@ -273,6 +364,7 @@ const Cohorts: React.FC = () => {
       console.log(resp);
       if (resp?.responseCode === 200) {
         console.log(resp?.params?.successmessage);
+        showToastMessage(t("CENTERS.CENTER_DELETE_SUCCESSFULLY"), "success");
         fetchUserList();
       } else {
         console.log("Cohort Not Archived");
@@ -304,17 +396,17 @@ const Cohorts: React.FC = () => {
     console.log(event.target.value as string);
     setSelectedFilter(event.target.value as string);
 
-    if (event.target.value === "Active") {
+    if (event.target.value === Status.ACTIVE_LABEL) {
       setFilters((prevFilters) => ({
         ...prevFilters,
-        status: ["active"],
+        status: [Status.ACTIVE],
       }));
-    } else if (event.target.value === "Archived") {
+    } else if (event.target.value === Status.ARCHIVED_LABEL) {
       setFilters((prevFilters) => ({
         ...prevFilters,
-        status: ["archived"],
+        status: [Status.ARCHIVED],
       }));
-    } else if (event.target.value === "All") {
+    } else if (event.target.value === Status.ALL_LABEL) {
       setFilters((prevFilters) => ({
         ...prevFilters,
         status: "",
@@ -381,6 +473,7 @@ const Cohorts: React.FC = () => {
       const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
       setLoading(false);
       console.log("resp:", resp);
+      showToastMessage(t("CENTERS.CENTER_UPDATE_SUCCESSFULLY"), "success");
     } else {
       setLoading(false);
       console.log("No cohort Id Selected");
@@ -431,6 +524,9 @@ const Cohorts: React.FC = () => {
       }
     });
     const cohortData = await createCohort(cohortDetails);
+    if (cohortData) {
+      showToastMessage(t("CENTERS.CENTER_CREATED_SUCCESSFULLY"), "success");
+    }
     setOpenAddNewCohort(false);
     fetchUserList();
   };
@@ -444,6 +540,7 @@ const Cohorts: React.FC = () => {
     userType: t("SIDEBAR.COHORTS"),
     searchPlaceHolder: t("COHORTS.SEARCHBAR_PLACEHOLDER"),
     selectedState: selectedState,
+    selectedStateCode: selectedStateCode,
     selectedDistrict: selectedDistrict,
     selectedBlock: selectedBlock,
     selectedSort: selectedSort,
