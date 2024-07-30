@@ -1,4 +1,4 @@
-import { get, post } from "./RestClient";
+import { deleteApi, get, post } from "./RestClient";
 export interface StateListParam {
   limit?: number;
   //  page: number;
@@ -91,6 +91,20 @@ export const getCenterList = async ({
     return response?.data;
   } catch (error) {
     console.error("error in fetching user details", error);
+    return error;
+  }
+};
+
+export const deleteState = async (option: string): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/options/delete/states?option=${option}`;
+  const requestBody = {};
+  const requestHeaders = {};
+
+  try {
+    const response = await deleteApi(apiUrl, requestBody, requestHeaders);
+    return response?.data;
+  } catch (error) {
+    console.error("Error deleting state", error);
     return error;
   }
 };
