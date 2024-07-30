@@ -7,7 +7,7 @@ import React from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useTranslation } from "next-i18next";
 import { Box, Typography, Tooltip } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from "@mui/icons-material/Delete";
 
 interface ActionCellProps {
@@ -41,12 +41,12 @@ const ActionIcon: React.FC<ActionCellProps> = ({
             flexDirection: "column",
             alignItems: "center",
             cursor: "pointer",
-            opacity: 0.5, // Reduced opacity to make it appear disabled
+        //    opacity: 0.5, // Reduced opacity to make it appear disabled
             pointerEvents: "auto", // Enable pointer events to allow click
           }}
         >
-          <EditIcon sx={{ color: "rgba(0, 0, 0, 0.5)" }} />
-          <Typography variant="body2">Edit</Typography>
+          <EditIcon/>
+          <Typography variant="body2">{t("COMMON.EDIT")}</Typography>
         </Box>
       </Tooltip>
       <Tooltip title={t("COMMON.DELETE")}>
@@ -62,7 +62,7 @@ const ActionIcon: React.FC<ActionCellProps> = ({
           }}
         >
           <DeleteIcon sx={{ color: "rgb(244, 67, 54)" }} />
-          <Typography variant="body2">Delete</Typography>
+          <Typography variant="body2">{t("COMMON.DELETE")}</Typography>
         </Box>
       </Tooltip>
     </Box>

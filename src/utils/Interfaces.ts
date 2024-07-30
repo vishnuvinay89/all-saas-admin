@@ -26,6 +26,7 @@ export interface Field {
   minLength?: number | null;
   fieldId: string;
   required?: boolean;
+  default: string | number;
 }
 export interface TenantCohortRoleMapping {
   tenantId: string;

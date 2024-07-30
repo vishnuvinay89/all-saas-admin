@@ -13,8 +13,6 @@ import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 import {
-  getBlockList,
-  getDistrictList,
   getStateBlockDistrictList,
 } from "../services/MasterDataService";
 import AreaSelection from "./AreaSelection";
@@ -41,6 +39,9 @@ const HeaderComponent = ({
   userType,
   searchPlaceHolder,
   selectedState,
+  selectedStateCode,
+  selectedDistrictCode,
+  selectedBlockCode,
   selectedDistrict,
   selectedBlock,
   selectedSort,
@@ -55,6 +56,7 @@ const HeaderComponent = ({
   showStateDropdown = true,
   handleSearch,
   handleAddUserClick,
+  
 }: any) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
@@ -79,7 +81,7 @@ const HeaderComponent = ({
       const object=
       {
         
-         "controllingfieldfk": selectedState,
+         "controllingfieldfk": selectedStateCode,
        
          "fieldName": "districts"
          
@@ -104,7 +106,7 @@ const HeaderComponent = ({
       const object=
       {
         
-         "controllingfieldfk": selectedDistrict,
+         "controllingfieldfk": selectedDistrictCode,
        
          "fieldName": "blocks"
          
