@@ -198,9 +198,11 @@
     "ASSIGN_CENTERS": "Assign Centers",
     "TYPE_OF_COHORT": "Type Of Cohort List",
     "UNIT_NAME": "Unit Name",
-    "DESIGNATION": "Designation",
-    "SUBJECTS_I_TEACH": "Subject Teach",
-    "MY_MAIN_SUBJECTS": "Main subjects"
+    "SUBJECTS_I_TEACH":"Subject Teach",
+    "MY_MAIN_SUBJECTS":"Main subjects",
+    "NUMBER_OF_CLUSTERS_I_TEACH":"Number of cluster",
+    "DESIGNATION": "Designation"
+   
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",

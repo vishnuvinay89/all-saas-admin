@@ -199,6 +199,7 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
         const userData = {
           name: apiBody.name,
           mobile: apiBody.mobile,
+          email:apiBody.email
         };
         const customFields = apiBody.customFields;
         console.log(customFields);
@@ -206,7 +207,7 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
           userData: userData,
           customFields: customFields,
         };
-     //   const response = await updateUser(userId, object);
+        const response = await updateUser(userId, object);
         showToastMessage(t("LEARNERS.LEARNER_UPDATED_SUCCESSFULLY"), "success");
       } else {
         try{

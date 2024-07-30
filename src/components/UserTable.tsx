@@ -21,7 +21,7 @@ import { userList, getUserDetails } from "../services/UserList";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import AddLearnerModal from "@/components/AddLeanerModal";
 import AddFacilitatorModal from "./AddFacilitator";
-import AddTeamLeaderModal from "./AddTeamLeaderModal";
+// import AddTeamLeaderModal from "./AddTeamLeaderModal";
 import { Role } from "@/utils/app.constant";
 import { getFormRead } from "@/services/CreateUserService";
 type UserDetails = {
@@ -400,7 +400,13 @@ const UserTable: React.FC<UserTableProps> = ({
           initialFormData[item.name] = Number(userData[item.name]);
         } else if (item?.type === "text") {
           initialFormData[item.name] = String(userData[item.name]);
-        } else {
+        } 
+        // else if(item?.type === "email")
+        // {
+        //   initialFormData[item.name] = String(userData[item.name]);
+
+        // }
+        else {
           initialFormData[item.name] = userData[item.name];
         }
       } else {
@@ -457,7 +463,7 @@ const UserTable: React.FC<UserTableProps> = ({
     const fetchUserList = async () => {
       setLoading(true);
       try {
-        const fields = ["age", "districts", "states", "blocks"];
+        const fields = ["age", "districts", "states", "blocks", "gender"];
         const limit = pageLimit;
         const offset = pageOffset * limit;
         // const filters = { role: role , status:"active"};
@@ -487,6 +493,9 @@ const UserTable: React.FC<UserTableProps> = ({
           const ageField = user.customFields.find(
             (field: any) => field.name === "age"
           );
+          const genderField = user.customFields.find(
+            (field: any) => field.name === "gender"
+          );
           const blockField = user.customFields.find(
             (field: any) => field.name === "blocks"
           );
@@ -504,12 +513,13 @@ const UserTable: React.FC<UserTableProps> = ({
               user.name.charAt(0).toUpperCase() +
               user.name.slice(1).toLowerCase(),
             role: user.role,
-            gender: user.gender,
+          //  gender: user.gender,
             mobile: user.mobile === "NaN" ? "" : user.mobile,
             age: ageField ? ageField.value : null,
             district: districtField ? districtField.value : null,
             state: stateField ? stateField.value : null,
             blocks: blockField ? blockField.value : null,
+            gender:genderField?genderField.value: null,
             // centers: null,
             // Programs: null,
           };
