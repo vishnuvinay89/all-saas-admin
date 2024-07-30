@@ -29,8 +29,13 @@
     "SUBMIT": "Submit",
     "BACK": "Back",
     "CANCEL": "Cancel",
-    "ARE_YOU_SURE_DELETE":"Are you sure you want to delete?",
-    "CONFIRM_DELETE":"Confirm Delete"
+    "ARE_YOU_SURE_DELETE": "Are you sure you want to delete?",
+    "CONFIRM_DELETE": "Confirm Delete",
+    "ADD_STATE": "Add State",
+    "STATE_DELETED_SUCCESS": "State Deleted Successfully!",
+    "STATE_DELETED_FAILURE": "State is not Deleted!",
+    "STATE_ADDED_SUCCESS": "State Added Successfully!",
+    "STATE_ADDED_FAILURE": "State is not Added!"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -191,9 +196,9 @@
     "ASSIGN_CENTERS": "Assign Centers",
     "TYPE_OF_COHORT": "Type Of Cohort List",
     "UNIT_NAME": "Unit Name",
-    "DESIGNATION":"Designation",
-    "SUBJECTS_I_TEACH":"Subject Teach",
-    "MY_MAIN_SUBJECTS":"Main subjects"
+    "DESIGNATION": "Designation",
+    "SUBJECTS_I_TEACH": "Subject Teach",
+    "MY_MAIN_SUBJECTS": "Main subjects"
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",
@@ -210,7 +215,6 @@
     "INVALID_EMAIL_FORMAT": "Invalid email format",
     "ENTER_VALID_EMAIL": "Enter a valid email address",
     "ENTER_VALID_MOBILE_NUMBER": "Enter a valid Mobile Number"
-    
   },
   "TABLE_TITLE": {
     "NAME": "Name",

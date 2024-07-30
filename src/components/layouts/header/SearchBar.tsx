@@ -53,7 +53,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder }) => {
   return (
     <SearchBox>
       <StyledInputBase
-        placeholder={isSmallScreen ? t("COURSE_PLANNER.SEARCH") : placeholder}
+        placeholder={placeholder}
         value={keyword}
         onChange={handleInputChange}
         onKeyPress={handleKeyPress}
