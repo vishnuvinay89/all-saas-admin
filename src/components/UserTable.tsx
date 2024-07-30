@@ -21,6 +21,7 @@ import { userList, getUserDetails } from "../services/UserList";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import AddLearnerModal from "@/components/AddLeanerModal";
 import AddFacilitatorModal from "./AddFacilitator";
+import AddTeamLeaderModal from "./AddTeamLeaderModal";
 import { Role } from "@/utils/app.constant";
 import { getFormRead } from "@/services/CreateUserService";
 type UserDetails = {
@@ -367,11 +368,15 @@ const UserTable: React.FC<UserTableProps> = ({
       );
 
       const getValue = (data: any, field: any) => {
+      
         if (item?.isMultiSelect) {
-          if (item?.type === "checkbox") {
+          if (data[item.name] && item?.maxSelections > 1) {
+            return [field.value];
+          } else if (item?.type === "checkbox") {
             return String(field.value).split(",");
+          } else {
+            return field.value;
           }
-          return [field.value];
         } else {
           if (item?.type === "numeric") {
             return Number(field.value);
@@ -381,22 +386,29 @@ const UserTable: React.FC<UserTableProps> = ({
             return field.value;
           }
         }
+        
       };
 
       if (item.coreField) {
-        initialFormData[item.name] = item?.isMultiSelect
-          ? userData[item.name]
-            ? [userData[item.name]]
-            : userData[item.name] || ""
-          : item?.type === "numeric"
-            ? Number(userData[item.name])
-            : item?.type === "text"
-              ? String(userData[item.name])
-              : userData[item.name];
+          if (item?.isMultiSelect) {
+          if (userData[item.name] && item?.maxSelections > 1) {
+            initialFormData[item.name] = [userData[item.name]];
+          } else {
+            initialFormData[item.name] = userData[item.name] || "";
+          }
+        } else if (item?.type === "numeric") {
+          initialFormData[item.name] = Number(userData[item.name]);
+        } else if (item?.type === "text") {
+          initialFormData[item.name] = String(userData[item.name]);
+        } else {
+          initialFormData[item.name] = userData[item.name];
+        }
       } else {
         initialFormData[item.name] = getValue(userData, customField);
       }
     });
+
+    console.log("initialFormData", initialFormData);
     return initialFormData;
   };
   const handleEdit = async (rowData: any) => {

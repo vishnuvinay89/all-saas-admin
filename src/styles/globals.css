@@ -40,3 +40,13 @@ body {
   width: 25px;
   margin-top: 8px;
 }
+/* To Hide the caret icon on input type number */
+input[type='number'] {
+  appearance: textfield;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
