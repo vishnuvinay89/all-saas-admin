@@ -46,7 +46,7 @@ const ActionIcon: React.FC<ActionCellProps> = ({
           }}
         >
           <EditIcon/>
-          <Typography variant="body2">Edit</Typography>
+          <Typography variant="body2">{t("COMMON.EDIT")}</Typography>
         </Box>
       </Tooltip>
       <Tooltip title={t("COMMON.DELETE")}>
@@ -62,7 +62,7 @@ const ActionIcon: React.FC<ActionCellProps> = ({
           }}
         >
           <DeleteIcon sx={{ color: "rgb(244, 67, 54)" }} />
-          <Typography variant="body2">Delete</Typography>
+          <Typography variant="body2">{t("COMMON.DELETE")}</Typography>
         </Box>
       </Tooltip>
     </Box>

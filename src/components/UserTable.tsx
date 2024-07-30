@@ -366,6 +366,7 @@ const UserTable: React.FC<UserTableProps> = ({
       setUserId(userId);
       const fieldValue = true;
       const response = await getUserDetails(userId, fieldValue);
+      console.log(role)
       if(Role.STUDENT === role)
       {
       const formFields = await getFormRead("USERS", "STUDENT");
@@ -412,6 +413,63 @@ const UserTable: React.FC<UserTableProps> = ({
       handleOpenAddLearnerModal();
 
       console.log("initialFormData", initialFormData);
+    }
+    else(Role.TEACHER === role)
+    {
+      const formFields = await getFormRead("USERS", "TEACHER");
+
+      console.log("response", response);
+      console.log("formFields", formFields);
+      // map according to formFields
+
+      let initialFormData: any = {};
+      formFields.fields.map((item: any) => {
+        if (item.coreField) {
+          // initialFormData[item.name] = response?.userData[item.name] || "";
+
+          if (item?.isMultiSelect) {
+            initialFormData[item.name] = response?.userData[item.name] ? [response.userData[item.name]] :  response.userData[item.name] || '';
+          } else {
+            if (item?.type === 'numeric') {
+              initialFormData[item.name] = Number(response.userData[item.name]);
+            } else if (item?.type === 'text') {
+              initialFormData[item.name] = String(response.userData[item.name]);
+            } 
+            
+            else {
+              initialFormData[item.name] = response?.userData[item.name];
+            }
+          }
+
+        } else {
+          const field = response?.userData?.customFields.find( (field: any) => field.fieldId === item.fieldId);
+
+          if (item?.isMultiSelect) {
+             if(item?.type === 'checkbox')
+            {
+              console.log(item.name)
+              initialFormData[item.name]=String(field.value).split(',')
+              console.log(field.value)
+            }
+            else
+            initialFormData[item.name] = [field.value];
+          } else {
+            if (item?.type === 'numeric') {
+              initialFormData[item.name] = Number(field.value);
+            } else if (item?.type === 'text') {
+              initialFormData[item.name] = String(field.value);
+            } 
+           
+            else {
+              initialFormData[item.name] = field.value;
+            }
+          }
+        }
+      });
+
+     
+      setFormData(initialFormData);
+      handleOpenAddFacilitatorModal();
     }
 
     
@@ -588,6 +646,10 @@ const UserTable: React.FC<UserTableProps> = ({
     handleFilterChange: handleFilterChange,
     handleSearch: handleSearch,
     handleAddUserClick: handleAddUserClick,
+    selectedBlockCode:selectedBlockCode,
+    selectedDistrictCode:selectedDistrictCode,
+    selectedStateCode:selectedStateCode
+
   };
 
   return (
