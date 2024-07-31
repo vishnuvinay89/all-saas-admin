@@ -44,7 +44,6 @@ const AddStateModal: React.FC<AddStateModalProps> = ({
   const { t } = useTranslation();
 
   useEffect(() => {
-    // Update form fields if initialValues change
     setName(initialValues.name || "");
     setValue(initialValues.value || "");
     setNameError(null);
@@ -87,7 +86,7 @@ const AddStateModal: React.FC<AddStateModalProps> = ({
         <TextField
           autoFocus
           margin="dense"
-          label={t("COMMON.NAME")}
+          label={t("COMMON.STATE_NAME")}
           type="text"
           fullWidth
           variant="outlined"
@@ -115,14 +114,10 @@ const AddStateModal: React.FC<AddStateModalProps> = ({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary" sx={{ bgcolor: "#E5E5E5" }}>
+        <Button onClick={onClose} color="primary">
           {t("COMMON.CANCEL")}
         </Button>
-        <Button
-          onClick={handleSubmit}
-          color="primary"
-          sx={{ bgcolor: "#E5E5E5" }}
-        >
+        <Button onClick={handleSubmit} color="secondary">
           {t("COMMON.SUBMIT")}
         </Button>
       </DialogActions>
