@@ -88,7 +88,10 @@
   },
   "TEAM_LEADERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders..",
-    "NEW_TEAM_LEADER": "New Team Leader"
+    "NEW_TEAM_LEADER": "New Team Leader",
+    "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
+    "TEAM_LEADER_CREATED_SUCCESSFULLY": "Team Leader has been Successfully Created!",
+    "TEAM_LEADER_UPDATED_SUCCESSFULLY": "Team Leader has been Successfully Updated!"
   },
   "COHORTS": {
     "SEARCHBAR_PLACEHOLDER": "Search Cohorts.."
