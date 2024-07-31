@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { ITableProps, Table } from "ka-table";
 import { SortingMode, PagingPosition } from "ka-table/enums";
-import { Paper, Checkbox } from "@mui/material";
+import { Paper, Checkbox, Chip } from "@mui/material";
 import "ka-table/style.css";
 import ActionIcon from "./ActionIcon";
 import { format } from "date-fns";
-import { DataKey, DateFormat } from "@/utils/app.constant";
+import { DataKey, DateFormat, Status } from "@/utils/app.constant";
 import { useTranslation } from "react-i18next";
 import UserNameCell from "./UserNameCell";
+import { firtstLetterInUpperCase } from "@/utils/Helper";
 // import { getUserName } from "@/utils/helper.ts";
 
 interface KaTableComponentProps {
@@ -119,6 +120,25 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                   return <UserNameCell userId={props.rowData?.createdBy} />;
                 } else if (props.column.key === DataKey.UPDATEDBY) {
                   return <UserNameCell userId={props.rowData?.updatedBy} />;
+                }
+                if (props.column.key === DataKey.STATUS) {
+                  if (props.rowData?.status === Status.ARCHIVED) {
+                    return (
+                      <Chip
+                        label={firtstLetterInUpperCase(props.rowData?.status)}
+                        color="error"
+                        variant="outlined"
+                      />
+                    );
+                  } else {
+                    return (
+                      <Chip
+                        label={firtstLetterInUpperCase(props.rowData?.status)}
+                        color="success"
+                        variant="outlined"
+                      />
+                    );
+                  }
                 }
                 if (props.column.key === "selection-cell") {
                   return (

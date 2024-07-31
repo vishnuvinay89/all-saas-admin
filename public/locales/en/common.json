@@ -57,7 +57,7 @@
     "DASHBOARD": "Dashboard",
     "MANAGE_USERS": "Manage Users",
     "COURSE_PLANNER": "Course Planner",
-    "COHORTS": "Cohorts",
+    "COHORTS": "Center",
     "FACILITATORS": "Facilitators",
     "LEARNERS": "Learners",
     "TEAM_LEADERS": "Team Leaders",
@@ -90,7 +90,7 @@
     "NEW_TEAM_LEADER": "New Team Leader"
   },
   "COHORTS": {
-    "SEARCHBAR_PLACEHOLDER": "Search Cohorts.."
+    "SEARCHBAR_PLACEHOLDER": "Search Center.."
   },
   "COURSE_PLANNER": {
     "GRADE": "Grade",
