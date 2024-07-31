@@ -120,7 +120,9 @@
     "SEARCHBAR_PLACEHOLDER_STATE": "Search States",
     "SEARCHBAR_PLACEHOLDER_DISTRICT": "Search Districts",
     "SEARCHBAR_PLACEHOLDER_BLOCK": "Search Blocks",
-    "BLOCKS": "Blocks"
+    "BLOCKS": "Blocks",
+    "UPDATED_AT": "Updated At",
+    "CREATED_AT": "Created At"
   },
   "CENTERS": {
     "CENTERS": "Centers",

@@ -9,7 +9,7 @@ import { useTranslation } from "next-i18next";
 import {
   getStateBlockDistrictList,
   deleteState,
-  createOrUpdateState, 
+  createOrUpdateState,
 } from "@/services/MasterDataService";
 import Loader from "@/components/Loader";
 import AddStateModal from "@/components/AddStateModal";
@@ -54,6 +54,19 @@ const State: React.FC = () => {
         sortDirection: SortDirection.Ascend,
       },
       {
+        key: "upadated at",
+        title: t("MASTER.UPDATED_AT"),
+        dataType: DataType.String,
+        sortDirection: SortDirection.Ascend,
+      },
+      {
+        key: "created at",
+        title: t("MASTER.CREATED_AT"),
+        dataType: DataType.String,
+        sortDirection: SortDirection.Ascend,
+      },
+
+      {
         key: "actions",
         title: t("MASTER.ACTIONS"),
         dataType: DataType.String,
@@ -86,7 +99,7 @@ const State: React.FC = () => {
   }, []);
 
   const handleEdit = useCallback((rowData: StateDetail) => {
-    setSelectedStateForEdit(rowData); 
+    setSelectedStateForEdit(rowData);
     setAddStateModalOpen(true); // Open the modal
   }, []);
 
@@ -118,7 +131,7 @@ const State: React.FC = () => {
   const fieldId = "61b5909a-0b45-4282-8721-e614fd36d7bd";
 
   const handleAddStateClick = () => {
-    setEditState(null); 
+    setEditState(null);
     setAddStateModalOpen(true);
   };
 
@@ -126,7 +139,7 @@ const State: React.FC = () => {
     name: string,
     value: string,
     fieldId: string,
-    stateId?: string 
+    stateId?: string
   ) => {
     const newState = {
       options: [
@@ -141,7 +154,7 @@ const State: React.FC = () => {
       const response = await createOrUpdateState(fieldId, newState, stateId);
 
       if (response) {
-        await fetchStateData(); 
+        await fetchStateData();
         showToastMessage(t("COMMON.STATE_ADDED_SUCCESS"), "success");
       } else {
         console.error("Failed to create/update state:", response);
@@ -274,7 +287,6 @@ const State: React.FC = () => {
 };
 
 export default State;
-
 
 export async function getStaticProps({ locale }: { locale: string }) {
   return {
