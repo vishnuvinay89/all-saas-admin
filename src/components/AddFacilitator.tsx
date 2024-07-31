@@ -43,6 +43,8 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
   const [schema, setSchema] = useState<any>();
   const [openModal, setOpenModal] = useState(false);
   const [uiSchema, setUiSchema] = useState<any>();
+  const [formvalue, setFormvalue] = useState<any>();
+
 
   const {
     states,
@@ -87,7 +89,8 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
         }
 
         if (response) {
-          const { schema, uiSchema } = GenerateSchemaAndUiSchema(response, t);
+          const { schema, uiSchema, formValues } = GenerateSchemaAndUiSchema(response, t);
+          setFormvalue(formValues)
           setSchema(schema);
           setUiSchema(uiSchema);
         }
@@ -299,6 +302,7 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
                 widgets={{}}
                 showErrorList={true}
                 customFields={customFields}
+                formData={formvalue}
               >
                 {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
               </DynamicForm>
