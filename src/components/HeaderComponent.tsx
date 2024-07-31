@@ -81,11 +81,12 @@ const HeaderComponent = ({
       const object=
       {
         
-         "controllingfieldfk": selectedStateCode,
+         "controllingfieldfk": selectedCodes[0],
        
          "fieldName": "districts"
          
        }
+       console.log(object);
       const response = await getStateBlockDistrictList(object);
       const result = response?.result;
       setDistricts(result);
@@ -106,7 +107,7 @@ const HeaderComponent = ({
       const object=
       {
         
-         "controllingfieldfk": selectedDistrictCode,
+         "controllingfieldfk": selectedCodes[0],
        
          "fieldName": "blocks"
          

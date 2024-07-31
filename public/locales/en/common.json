@@ -35,7 +35,8 @@
     "STATE_DELETED_SUCCESS": "State Deleted Successfully!",
     "STATE_DELETED_FAILURE": "State is not Deleted!",
     "STATE_ADDED_SUCCESS": "State Added Successfully!",
-    "STATE_ADDED_FAILURE": "State is not Added!"
+    "STATE_ADDED_FAILURE": "State is not Added!",
+    "USER_DELETE_SUCCSSFULLY": "User deleted Successfully"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",

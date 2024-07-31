@@ -33,8 +33,10 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
     selectedCodes: string[]
   ) => {
     try {
+      setSelectedStateCode(selectedCodes[0])
+
       const object = {
-        controllingfieldfk: selectedStateCode,
+        controllingfieldfk: selectedCodes[0],
         fieldName: "districts",
       };
       const response = await getStateBlockDistrictList(object);
@@ -54,8 +56,9 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
       handleBlockChange([], []);
     }
     try {
+      setSelectedDistrictCode(selectedCodes[0])
       const object = {
-        controllingfieldfk: selectedDistrictCode,
+        controllingfieldfk: selectedCodes[0],
         fieldName: "blocks",
       };
       const response = await getStateBlockDistrictList(object);
@@ -72,6 +75,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
         handleCenterChange([], []);
       }
       try {
+        console.log(selectedStateCode,selectedDistrictCode,)
         const object = {
             "limit":200,
             "offset": 0,
@@ -82,24 +86,26 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
                 ],
                 "states": selectedStateCode,
                 "districts": selectedDistrictCode,
-                "blocks": selectedBlockCode
+                "blocks": selectedCodes[0]
             }
         };
         const response = await getCenterList(object);
      //   const result = response?.result?.cohortDetails;
-        const dataArray=response.result.results.cohortDetails;
+        const dataArray=response?.result?.results?.cohortDetails;
 
-        const cohortInfo = dataArray.map((item: any) => ({
-            cohortId: item.cohortId,
-            name: item.name
+        const cohortInfo = dataArray?.map((item: any) => ({
+            cohortId: item?.cohortId,
+            name: item?.name
         }));
         console.log(dataArray)
        setAllCenters(cohortInfo);
       } catch (error) {
+        setAllCenters([]);
+
         console.log(error);
       }
     handleBlockChange(selected, selectedCodes);
-  }, []);
+  }, [selectedBlockCode, selectedDistrictCode, selectedStateCode]);
 
   const handleCenterChangeWrapper = useCallback((selected: string[], selectedCodes: string[]) => {
     handleCenterChange(selected, selectedCodes);
@@ -108,6 +114,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
   const handleStateChange = useCallback((selected: string[], code: string[]) => {
     setSelectedDistrict([]);
     setSelectedBlock([]);
+    setSelectedCenter([]);
     setSelectedState(selected);
     const stateCodes = code?.join(",");
     setSelectedStateCode(stateCodes);
@@ -116,17 +123,19 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
 
   const handleDistrictChange = useCallback((selected: string[], code: string[]) => {
     setSelectedBlock([]);
+    setSelectedCenter([]);
     setSelectedDistrict(selected);
     const districts = code?.join(",");
     setSelectedDistrictCode(districts);
-    console.log("Selected categories:", selected);
+    console.log("Selected categories:", districts);
   }, []);
 
   const handleBlockChange = useCallback((selected: string[], code: string[]) => {
+    setSelectedCenter([]);
     setSelectedBlock(selected);
     const blocks = code?.join(",");
     setSelectedBlockCode(blocks);
-    console.log("Selected categories:", selected);
+    console.log("Selected categories:", blocks);
   }, []);
 
   const handleCenterChange = useCallback((selected: string[], code: string[]) => {
