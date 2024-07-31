@@ -87,16 +87,16 @@ const Cohorts: React.FC = () => {
       title: t("TABLE_TITLE.UPDATED_DATE"),
       dataType: DataType.String,
     },
-    // {
-    //   key: "createdBy",
-    //   title: t("TABLE_TITLE.CREATED_BY"),
-    //   dataType: DataType.String,
-    // },
-    // {
-    //   key: "updatedBy",
-    //   title: t("TABLE_TITLE.UPDATED_BY"),
-    //   dataType: DataType.String,
-    // },
+    {
+      key: "createdBy",
+      title: t("TABLE_TITLE.CREATED_BY"),
+      dataType: DataType.String,
+    },
+    {
+      key: "updatedBy",
+      title: t("TABLE_TITLE.UPDATED_BY"),
+      dataType: DataType.String,
+    },
 
     {
       key: "actions",
@@ -523,12 +523,21 @@ const Cohorts: React.FC = () => {
         });
       }
     });
-    const cohortData = await createCohort(cohortDetails);
-    if (cohortData) {
-      showToastMessage(t("CENTERS.CENTER_CREATED_SUCCESSFULLY"), "success");
+    console.log("cohortDetails");
+    if (
+      cohortDetails?.customFields &&
+      cohortDetails?.customFields?.length > 0 &&
+      cohortDetails?.name
+    ) {
+      const cohortData = await createCohort(cohortDetails);
+      if (cohortData) {
+        showToastMessage(t("CENTERS.CENTER_CREATED_SUCCESSFULLY"), "success");
+        setOpenAddNewCohort(false);
+        fetchUserList();
+      }
+    } else {
+      showToastMessage("Please Input Data", "warning");
     }
-    setOpenAddNewCohort(false);
-    fetchUserList();
   };
 
   const handleError = () => {

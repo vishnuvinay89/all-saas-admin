@@ -7,6 +7,8 @@ import ActionIcon from "./ActionIcon";
 import { format } from "date-fns";
 import { DataKey, DateFormat } from "@/utils/app.constant";
 import { useTranslation } from "react-i18next";
+import UserNameCell from "./UserNameCell";
+// import { getUserName } from "@/utils/helper.ts";
 
 interface KaTableComponentProps {
   columns: ITableProps["columns"];
@@ -113,6 +115,10 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                     props.rowData?.createdAt,
                     DateFormat.YYYY_MM_DD
                   );
+                } else if (props.column.key === DataKey.CREATEDBY) {
+                  return <UserNameCell userId={props.rowData?.createdBy} />;
+                } else if (props.column.key === DataKey.UPDATEDBY) {
+                  return <UserNameCell userId={props.rowData?.updatedBy} />;
                 }
                 if (props.column.key === "selection-cell") {
                   return (
