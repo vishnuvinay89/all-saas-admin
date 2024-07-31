@@ -9,7 +9,7 @@ import { useTranslation } from "next-i18next";
 import {
   getStateBlockDistrictList,
   deleteState,
-  createState,
+  createOrUpdateState,
 } from "@/services/MasterDataService";
 import Loader from "@/components/Loader";
 import AddStateModal from "@/components/AddStateModal";
@@ -17,11 +17,11 @@ import { transformLabel } from "@/utils/Helper";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { showToastMessage } from "@/components/Toastify";
 
-type StateDetail = {
-  label: string;
+export interface StateDetail {
+  label: string | undefined;
+  name: string;
   value: string;
-};
-
+}
 const State: React.FC = () => {
   const { t } = useTranslation();
   const [pageOffset, setPageOffset] = useState<number>(0);
@@ -41,6 +41,9 @@ const State: React.FC = () => {
   const [selectedStateForDelete, setSelectedStateForDelete] =
     useState<StateDetail | null>(null);
   const [addStateModalOpen, setAddStateModalOpen] = useState<boolean>(false);
+  const [selectedStateForEdit, setSelectedStateForEdit] =
+    useState<StateDetail | null>(null);
+  const [editState, setEditState] = useState<StateDetail | null>(null);
 
   const columns = useMemo(
     () => [
@@ -50,6 +53,19 @@ const State: React.FC = () => {
         dataType: DataType.String,
         sortDirection: SortDirection.Ascend,
       },
+      {
+        key: "upadated at",
+        title: t("MASTER.UPDATED_AT"),
+        dataType: DataType.String,
+        sortDirection: SortDirection.Ascend,
+      },
+      {
+        key: "created at",
+        title: t("MASTER.CREATED_AT"),
+        dataType: DataType.String,
+        sortDirection: SortDirection.Ascend,
+      },
+
       {
         key: "actions",
         title: t("MASTER.ACTIONS"),
@@ -82,7 +98,10 @@ const State: React.FC = () => {
     setSelectedFilter(event.target.value);
   }, []);
 
-  const handleEdit = useCallback((rowData: any) => {}, []);
+  const handleEdit = useCallback((rowData: StateDetail) => {
+    setSelectedStateForEdit(rowData);
+    setAddStateModalOpen(true); // Open the modal
+  }, []);
 
   const handleDelete = useCallback((rowData: StateDetail) => {
     setSelectedStateForDelete(rowData);
@@ -112,13 +131,15 @@ const State: React.FC = () => {
   const fieldId = "61b5909a-0b45-4282-8721-e614fd36d7bd";
 
   const handleAddStateClick = () => {
+    setEditState(null);
     setAddStateModalOpen(true);
   };
 
   const handleAddStateSubmit = async (
     name: string,
     value: string,
-    fieldId: string
+    fieldId: string,
+    stateId?: string
   ) => {
     const newState = {
       options: [
@@ -130,16 +151,16 @@ const State: React.FC = () => {
     };
 
     try {
-      const response = await createState(fieldId, newState);
+      const response = await createOrUpdateState(fieldId, newState, stateId);
 
       if (response) {
         await fetchStateData();
         showToastMessage(t("COMMON.STATE_ADDED_SUCCESS"), "success");
       } else {
-        console.error("Failed to create state:", response);
+        console.error("Failed to create/update state:", response);
       }
     } catch (error) {
-      console.error("Error creating state:", error);
+      console.error("Error creating/updating state:", error);
       showToastMessage(t("COMMON.STATE_ADDED_FAILURE"), "error");
     }
     setAddStateModalOpen(false);
@@ -202,8 +223,24 @@ const State: React.FC = () => {
       <AddStateModal
         open={addStateModalOpen}
         onClose={() => setAddStateModalOpen(false)}
-        onSubmit={handleAddStateSubmit}
+        onSubmit={(name, value) =>
+          handleAddStateSubmit(
+            name,
+            value,
+            fieldId,
+            selectedStateForEdit?.value
+          )
+        }
         fieldId={fieldId}
+        initialValues={
+          selectedStateForEdit
+            ? {
+                name: selectedStateForEdit.label,
+                value: selectedStateForEdit.value,
+              }
+            : {}
+        }
+        stateId={selectedStateForEdit?.value}
       />
       <ConfirmationModal
         modalOpen={confirmationDialogOpen}
@@ -226,7 +263,7 @@ const State: React.FC = () => {
           <KaTableComponent
             columns={columns}
             data={stateData.map((stateDetail) => ({
-              label: transformLabel(stateDetail.label),
+              label: stateDetail.label ? transformLabel(stateDetail.label) : "",
               value: stateDetail.value,
             }))}
             limit={pageLimit}
@@ -249,6 +286,8 @@ const State: React.FC = () => {
   );
 };
 
+export default State;
+
 export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
@@ -256,5 +295,3 @@ export async function getStaticProps({ locale }: { locale: string }) {
     },
   };
 }
-
-export default State;
