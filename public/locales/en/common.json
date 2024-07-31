@@ -35,7 +35,11 @@
     "STATE_DELETED_SUCCESS": "State Deleted Successfully!",
     "STATE_DELETED_FAILURE": "State is not Deleted!",
     "STATE_ADDED_SUCCESS": "State Added Successfully!",
-    "STATE_ADDED_FAILURE": "State is not Added!"
+    "STATE_ADDED_FAILURE": "State is not Added!",
+    "ADD_STATE_CODE": "Code",
+    "NAME_REQUIRED": "Name is Required",
+    "CODE_REQUIRED": "Code is Required",
+    "CODE_NOTIFICATION": "Code should contain exactly 2 uppercase letters"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -83,7 +87,6 @@
   "TEAM_LEADERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders..",
     "NEW_TEAM_LEADER": "New Team Leader"
-
   },
   "COHORTS": {
     "SEARCHBAR_PLACEHOLDER": "Search Cohorts.."
@@ -198,11 +201,10 @@
     "ASSIGN_CENTERS": "Assign Centers",
     "TYPE_OF_COHORT": "Type Of Cohort List",
     "UNIT_NAME": "Unit Name",
-    "SUBJECTS_I_TEACH":"Subject Teach",
-    "MY_MAIN_SUBJECTS":"Main subjects",
-    "NUMBER_OF_CLUSTERS_I_TEACH":"Number of cluster",
+    "SUBJECTS_I_TEACH": "Subject Teach",
+    "MY_MAIN_SUBJECTS": "Main subjects",
+    "NUMBER_OF_CLUSTERS_I_TEACH": "Number of cluster",
     "DESIGNATION": "Designation"
-   
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",

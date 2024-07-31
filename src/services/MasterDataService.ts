@@ -111,16 +111,28 @@ export const deleteState = async (option: string): Promise<any> => {
   }
 };
 
-export const createState = async (
+export const createOrUpdateState = async (
   fieldId: string,
-  fieldParams: { options: { name: string; value: string }[] }
+  fieldParams: { options: { name: string; value: string }[] },
+  stateId?: string
 ): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/update/${fieldId}`;
-  try {
-    const response = await patch(apiUrl, { fieldParams });
-    return response?.data;
-  } catch (error) {
-    console.error("Error creating state", error);
-    return error;
+
+  if (stateId) {
+    try {
+      const response = await patch(apiUrl, { fieldParams, stateId });
+      return response?.data;
+    } catch (error) {
+      console.error("Error updating state", error);
+      return error;
+    }
+  } else {
+    try {
+      const response = await patch(apiUrl, { fieldParams });
+      return response?.data;
+    } catch (error) {
+      console.error("Error creating state", error);
+      return error;
+    }
   }
 };
