@@ -24,6 +24,8 @@ import AddFacilitatorModal from "./AddFacilitator";
 // import AddTeamLeaderModal from "./AddTeamLeaderModal";
 import { Role } from "@/utils/app.constant";
 import { getFormRead } from "@/services/CreateUserService";
+import { showToastMessage } from "./Toastify";
+
 type UserDetails = {
   userId: any;
   username: any;
@@ -368,8 +370,11 @@ const UserTable: React.FC<UserTableProps> = ({
       );
 
       const getValue = (data: any, field: any) => {
-      
-        if (item?.isMultiSelect) {
+       if(item.default)
+       {
+        return item.default;
+       }
+      if (item?.isMultiSelect) {
           if (data[item.name] && item?.maxSelections > 1) {
             return [field.value];
           } else if (item?.type === "checkbox") {
@@ -378,6 +383,7 @@ const UserTable: React.FC<UserTableProps> = ({
             return field.value;
           }
         } else {
+         
           if (item?.type === "numeric") {
             return Number(field.value);
           } else if (item?.type === "text") {
@@ -470,6 +476,7 @@ const UserTable: React.FC<UserTableProps> = ({
         const sort = sortBy;
         console.log("filters", filters);
         const resp = await userList({ limit, filters, sort, offset, fields });
+    
         const result = resp?.getUserDetails;
         // console.log(resp?.totalCount)
         if (resp?.totalCount >= 15) {
@@ -588,6 +595,8 @@ const UserTable: React.FC<UserTableProps> = ({
       };
       const response = await deleteUser(userId, userData);
       handleCloseDeleteModal();
+      showToastMessage(t("COMMON.USER_DELETE_SUCCSSFULLY"), "success");
+
     } catch (error) {
       console.log("error while deleting entry", error);
     }

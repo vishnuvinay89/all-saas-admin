@@ -39,7 +39,8 @@
     "ADD_STATE_CODE": "Code",
     "NAME_REQUIRED": "Name is Required",
     "CODE_REQUIRED": "Code is Required",
-    "CODE_NOTIFICATION": "Code should contain exactly 2 uppercase letters"
+    "CODE_NOTIFICATION": "Code should contain exactly 2 uppercase letters",
+    "USER_DELETE_SUCCSSFULLY": "User deleted Successfully"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
