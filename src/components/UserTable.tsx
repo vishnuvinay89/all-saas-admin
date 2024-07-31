@@ -368,8 +368,11 @@ const UserTable: React.FC<UserTableProps> = ({
       );
 
       const getValue = (data: any, field: any) => {
-      
-        if (item?.isMultiSelect) {
+       if(item.default)
+       {
+        return item.default;
+       }
+      if (item?.isMultiSelect) {
           if (data[item.name] && item?.maxSelections > 1) {
             return [field.value];
           } else if (item?.type === "checkbox") {
@@ -378,6 +381,7 @@ const UserTable: React.FC<UserTableProps> = ({
             return field.value;
           }
         } else {
+         
           if (item?.type === "numeric") {
             return Number(field.value);
           } else if (item?.type === "text") {
