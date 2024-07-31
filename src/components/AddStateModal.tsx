@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
+import theme from "./theme/theme";
 
 interface AddStateModalProps {
   open: boolean;
@@ -114,10 +115,33 @@ const AddStateModal: React.FC<AddStateModalProps> = ({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button
+          onClick={onClose}
+          sx={{
+            border: "none",
+            color: theme.palette.secondary.main,
+            fontSize: "14px",
+            fontWeight: "500",
+            "&:hover": {
+              border: "none",
+              backgroundColor: "transparent",
+            },
+          }}
+          variant="outlined"
+        >
           {t("COMMON.CANCEL")}
         </Button>
-        <Button onClick={handleSubmit} color="secondary">
+        <Button
+          onClick={handleSubmit}
+          sx={{
+            width: "auto",
+            height: "40px",
+            fontSize: "14px",
+            fontWeight: "500",
+          }}
+          variant="contained"
+          color="primary"
+        >
           {t("COMMON.SUBMIT")}
         </Button>
       </DialogActions>
