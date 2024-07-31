@@ -97,12 +97,18 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
             },
             cell: {
               content: (props) => {
-                if (props.column.key === DataKey.ACTIONS) {
+                if (
+                  props.column.key === DataKey.ACTIONS 
+                  
+                ) {
                   return (
                     <ActionIcon
                       rowData={props.rowData}
                       onEdit={onEdit}
                       onDelete={onDelete}
+                      disable={
+                        props.rowData?.status === Status.ARCHIVED ? true : false
+                      }
                     />
                   );
                 }

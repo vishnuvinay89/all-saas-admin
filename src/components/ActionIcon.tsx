@@ -6,7 +6,7 @@ import React from "react";
 // import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useTranslation } from "next-i18next";
-import { Box, Typography, Tooltip } from "@mui/material";
+import { Box, Typography, Tooltip, useTheme } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -14,14 +14,17 @@ interface ActionCellProps {
   onEdit: (rowData: any) => void;
   onDelete: (rowData: any) => void;
   rowData: any;
+  disable: boolean;
 }
 
 const ActionIcon: React.FC<ActionCellProps> = ({
   rowData,
   onEdit,
   onDelete,
+  disable = false,
 }) => {
   const { t } = useTranslation();
+  const theme = useTheme<any>();
   return (
     <Box
       sx={{
@@ -29,6 +32,7 @@ const ActionIcon: React.FC<ActionCellProps> = ({
         flexDirection: "row",
         gap: "20px",
         alignItems: "center",
+        pointerEvents: disable ? "none" : "auto",
       }}
     >
       <Tooltip title={t("COMMON.EDIT")}>
@@ -41,10 +45,10 @@ const ActionIcon: React.FC<ActionCellProps> = ({
             flexDirection: "column",
             alignItems: "center",
             cursor: "pointer",
-            // pointerEvents: "none",
+            color: disable ? theme?.palette?.secondary.contrastText : "",
           }}
         >
-          <EditIcon/>
+          <EditIcon />
           <Typography variant="body2">{t("COMMON.EDIT")}</Typography>
         </Box>
       </Tooltip>
@@ -58,9 +62,16 @@ const ActionIcon: React.FC<ActionCellProps> = ({
             flexDirection: "column",
             alignItems: "center",
             cursor: "pointer",
+            color: disable ? theme?.palette?.secondary.contrastText : "",
           }}
         >
-          <DeleteIcon sx={{ color: "rgb(244, 67, 54)" }} />
+          <DeleteIcon
+            sx={{
+              color: disable
+                ? theme?.palette?.secondary.contrastText
+                : "rgb(244, 67, 54)",
+            }}
+          />
           <Typography variant="body2">{t("COMMON.DELETE")}</Typography>
         </Box>
       </Tooltip>

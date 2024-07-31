@@ -631,7 +631,7 @@ const Cohorts: React.FC = () => {
         open={openAddNewCohort}
         onClose={onCloseAddNewCohort}
         showFooter={false}
-        modalTitle={"New Cohort"}
+        modalTitle={t("CENTERS.NEW_CENTER")}
       >
         {schema && uiSchema && (
           <DynamicForm
