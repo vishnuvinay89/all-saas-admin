@@ -40,6 +40,9 @@ export const GenerateSchemaAndUiSchema = (
       fieldId: field.fieldId ?? field.fieldId,
     };
     const fieldUiSchema: any = {};
+    if (field.default) {
+      formValues[field.name] = field.default;
+    }
     switch (type) {
       case "text":
         fieldSchema.type = "string";
