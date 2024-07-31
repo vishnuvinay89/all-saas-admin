@@ -119,7 +119,7 @@ const AddStateModal: React.FC<AddStateModalProps> = ({
           onClick={onClose}
           sx={{
             border: "none",
-            color: theme.palette.secondary.main,
+            color: "secondary",
             fontSize: "14px",
             fontWeight: "500",
             "&:hover": {
