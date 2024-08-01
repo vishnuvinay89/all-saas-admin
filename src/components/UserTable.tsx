@@ -124,7 +124,7 @@ const columns = [
 
   {
     key: "blocks",
-    title: "Bocks",
+    title: "Blocks",
     dataType: DataType.String,
     sortDirection: SortDirection.Ascend,
     width: 160,
@@ -365,16 +365,15 @@ const UserTable: React.FC<UserTableProps> = ({
     let initialFormData: any = {};
     formFields.fields.forEach((item: any) => {
       const userData = response?.userData;
-      const customField = userData?.customFields?.find(
+      const customFieldValue = userData?.customFields?.find(
         (field: any) => field.fieldId === item.fieldId
       );
 
       const getValue = (data: any, field: any) => {
-       if(item.default)
-       {
-        return item.default;
-       }
-      if (item?.isMultiSelect) {
+        if (item.default) {
+          return item.default;
+        }
+        if (item?.isMultiSelect) {
           if (data[item.name] && item?.maxSelections > 1) {
             return [field.value];
           } else if (item?.type === "checkbox") {
@@ -383,40 +382,47 @@ const UserTable: React.FC<UserTableProps> = ({
             return field.value;
           }
         } else {
-         
           if (item?.type === "numeric") {
-            return Number(field.value);
+            console.log(typeof field.value);
+
+            return parseInt(String(field.value));
           } else if (item?.type === "text") {
             return String(field.value);
           } else {
             return field.value;
           }
         }
-        
       };
 
       if (item.coreField) {
-          if (item?.isMultiSelect) {
+        if (item?.isMultiSelect) {
           if (userData[item.name] && item?.maxSelections > 1) {
             initialFormData[item.name] = [userData[item.name]];
-          } else {
-            initialFormData[item.name] = userData[item.name] || "";
+          } 
+          else if (item?.type === "checkbox") {
+            initialFormData[item.name]= String(userData[item.name]).split(",");
+          }
+          else {
+            initialFormData[item.name] = userData[item.name];
           }
         } else if (item?.type === "numeric") {
+          console.log(item?.name);
           initialFormData[item.name] = Number(userData[item.name]);
-        } else if (item?.type === "text") {
+        } else if (item?.type === "text" && userData[item.name]) {
           initialFormData[item.name] = String(userData[item.name]);
-        } 
-        // else if(item?.type === "email")
-        // {
-        //   initialFormData[item.name] = String(userData[item.name]);
-
-        // }
+        }
         else {
-          initialFormData[item.name] = userData[item.name];
+          console.log(item.name);
+          if (userData[item.name]) {
+            initialFormData[item.name] = userData[item.name];
+          }
         }
       } else {
-        initialFormData[item.name] = getValue(userData, customField);
+        const fieldValue = getValue(userData, customFieldValue);
+
+        if (fieldValue) {
+          initialFormData[item.name] = fieldValue;
+        }
       }
     });
 
@@ -437,6 +443,7 @@ const UserTable: React.FC<UserTableProps> = ({
       if (Role.STUDENT === role) {
         formFields = await getFormRead("USERS", "STUDENT");
         setFormData(mapFields(formFields, response));
+        console.log("mapped formdata", formdata);
         handleOpenAddLearnerModal();
       } else if (Role.TEACHER === role) {
         formFields = await getFormRead("USERS", "TEACHER");
@@ -476,7 +483,7 @@ const UserTable: React.FC<UserTableProps> = ({
         const sort = sortBy;
         console.log("filters", filters);
         const resp = await userList({ limit, filters, sort, offset, fields });
-    
+
         const result = resp?.getUserDetails;
         // console.log(resp?.totalCount)
         if (resp?.totalCount >= 15) {
@@ -520,13 +527,13 @@ const UserTable: React.FC<UserTableProps> = ({
               user.name.charAt(0).toUpperCase() +
               user.name.slice(1).toLowerCase(),
             role: user.role,
-          //  gender: user.gender,
+            //  gender: user.gender,
             mobile: user.mobile === "NaN" ? "" : user.mobile,
             age: ageField ? ageField.value : null,
             district: districtField ? districtField.value : null,
             state: stateField ? stateField.value : null,
             blocks: blockField ? blockField.value : null,
-            gender:genderField?genderField.value: null,
+            gender: genderField ? genderField.value : null,
             // centers: null,
             // Programs: null,
           };
@@ -596,7 +603,6 @@ const UserTable: React.FC<UserTableProps> = ({
       const response = await deleteUser(userId, userData);
       handleCloseDeleteModal();
       showToastMessage(t("COMMON.USER_DELETE_SUCCSSFULLY"), "success");
-
     } catch (error) {
       console.log("error while deleting entry", error);
     }

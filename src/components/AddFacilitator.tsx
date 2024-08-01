@@ -107,20 +107,20 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
   ) => {
     // setOpenModal(true);
     const target = event.target as HTMLFormElement;
-    const elementsArray = Array.from(target.elements);
+   // const elementsArray = Array.from(target.elements);
 
-    for (const element of elementsArray) {
-      if (
-        (element instanceof HTMLInputElement ||
-          element instanceof HTMLSelectElement ||
-          element instanceof HTMLTextAreaElement) &&
-        (element.value === "" ||
-          (Array.isArray(element.value) && element.value.length === 0))
-      ) {
-        element.focus();
-        return;
-      }
-    }
+    // for (const element of elementsArray) {
+    //   if (
+    //     (element instanceof HTMLInputElement ||
+    //       element instanceof HTMLSelectElement ||
+    //       element instanceof HTMLTextAreaElement) &&
+    //     (element.value === "" ||
+    //       (Array.isArray(element.value) && element.value.length === 0))
+    //   ) {
+    //     element.focus();
+    //     return;
+    //   }
+    // }
 
     const formData = data.formData;
     console.log("Form data submitted:", formData);

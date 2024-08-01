@@ -48,6 +48,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   const { t } = useTranslation();
 
   const handleError = (errors: any) => {
+    console.log('handle error', errors);
     if (errors.length > 0) {
       const property = errors[0].property?.replace(/^root\./, "");
       const errorField = document.querySelector(
