@@ -20,9 +20,9 @@
     "SURE_REASSIGN_CENTER": "Are you sure you want to re-assign Center to this user?",
     "OTHER": "Other",
     "SORT": "Sort",
-    "EDIT_COHORT_NAME": "Edit Cohort",
+    "EDIT_COHORT_NAME": "Edit Center",
     "NAME": "Name",
-    "UPDATE_COHORT": "Update Cohort",
+    "UPDATE_COHORT": "Update Center",
     "EDIT": "Edit",
     "DELETE": "Delete",
     "NO_DATA_FOUND": "No data found",
@@ -41,7 +41,8 @@
     "CODE_REQUIRED": "Code is Required",
     "CODE_NOTIFICATION": "Code Should Be Fill With Captial Letters",
     "USER_DELETE_SUCCSSFULLY": "User deleted Successfully",
-    "STATE_NAME": "State Name"
+    "STATE_NAME": "State Name",
+    "FILTER_BY_STATUS": "Filter By Status :"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -58,7 +59,7 @@
     "DASHBOARD": "Dashboard",
     "MANAGE_USERS": "Manage Users",
     "COURSE_PLANNER": "Course Planner",
-    "COHORTS": "Cohorts",
+    "COHORTS": "Center",
     "FACILITATORS": "Facilitators",
     "LEARNERS": "Learners",
     "TEAM_LEADERS": "Team Leaders",
@@ -91,7 +92,7 @@
     "NEW_TEAM_LEADER": "New Team Leader"
   },
   "COHORTS": {
-    "SEARCHBAR_PLACEHOLDER": "Search Cohorts.."
+    "SEARCHBAR_PLACEHOLDER": "Search Center.."
   },
   "COURSE_PLANNER": {
     "GRADE": "Grade",
@@ -145,9 +146,9 @@
     "CENTER_RENAMED": "Center Renamed Successfully!",
     "SEND_REQUEST": "Send Request",
     "SURE_DELETE_COHORT": "Are you sure you want to Delete Center ?",
-    "CENTER_UPDATE_SUCCESSFULLY": "Cohort has been Successfully Updated",
-    "CENTER_DELETE_SUCCESSFULLY": "Cohort has been Successfully Deleted",
-    "CENTER_CREATED_SUCCESSFULLY": "Cohort Created Successfully"
+    "CENTER_UPDATE_SUCCESSFULLY": "Center has been Successfully Updated",
+    "CENTER_DELETE_SUCCESSFULLY": "Center has been Successfully Deleted",
+    "CENTER_CREATED_SUCCESSFULLY": "Center Created Successfully"
   },
   "FORM": {
     "FULL_NAME": "Full Name",
@@ -203,12 +204,13 @@
     "EMAIL": "Email",
     "YEAR_OF_JOINING_SCP": "Year of joining SCP",
     "ASSIGN_CENTERS": "Assign Centers",
-    "TYPE_OF_COHORT": "Type Of Cohort List",
+    "TYPE_OF_COHORT": "Type Of Center List",
     "UNIT_NAME": "Unit Name",
     "SUBJECTS_I_TEACH": "Subject Teach",
     "MY_MAIN_SUBJECTS": "Main subjects",
     "NUMBER_OF_CLUSTERS_I_TEACH": "Number of cluster",
-    "DESIGNATION": "Designation"
+    "DESIGNATION": "Designation",
+    "NOTE_THIS_WILL_BE_CENTER_NAME": "Note : This Will Be Center Name"
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",

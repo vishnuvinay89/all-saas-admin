@@ -1,4 +1,5 @@
 import FingerprintJS from "fingerprintjs2";
+import { getUserDetails } from "../services/UserList";
 
 export const generateUUID = () => {
   let d = new Date().getTime();
@@ -20,49 +21,71 @@ export const generateUUID = () => {
   });
 };
 
+export const getUserName = async (userId: string) => {
+  try {
+    const id = userId;
+    const fieldValue = true;
+    const userDetails = await getUserDetails(id, fieldValue);
+    console.log("userDetails", userDetails);
+    return userDetails?.userData?.name; // Accessing the name property from userData
+  } catch (error) {
+    console.error("Error in fetching user name:", error);
+    return null;
+  }
+};
 
-  export const getDeviceId = () => {
-    return new Promise((resolve) => {
-      FingerprintJS.get((components: any[]) => {
-        const values = components.map((component) => component.value);
-        const deviceId = FingerprintJS.x64hash128(values.join(''), 31);
-        resolve(deviceId);
-      });
+export const getDeviceId = () => {
+  return new Promise((resolve) => {
+    FingerprintJS.get((components: any[]) => {
+      const values = components.map((component) => component.value);
+      const deviceId = FingerprintJS.x64hash128(values.join(""), 31);
+      resolve(deviceId);
     });
-  };
-  
-  export const generateUsernameAndPassword = (
-    stateCode: string,
-    role: string
-  ) => {
-    const currentYear = new Date().getFullYear().toString().slice(-2);
-    const randomNum = Math.floor(10000 + Math.random() * 90000).toString();
-  
-    const username =
-      role === 'F'
-        ? `FSC${stateCode}${currentYear}${randomNum}`
-        : `SC${stateCode}${currentYear}${randomNum}`;
-    const password = randomNum;
-  
-    return { username, password };
+  });
+};
+
+export const generateUsernameAndPassword = (
+  stateCode: string,
+  role: string
+) => {
+  const currentYear = new Date().getFullYear().toString().slice(-2);
+  const randomNum = Math.floor(10000 + Math.random() * 90000).toString();
+
+  const username =
+    role === "F"
+      ? `FSC${stateCode}${currentYear}${randomNum}`
+      : `SC${stateCode}${currentYear}${randomNum}`;
+  const password = randomNum;
+
+  return { username, password };
+};
+interface State {
+  value: string;
+  label: string;
+}
+
+export const transformLabel = (label: string): string => {
+  return label
+    .toLowerCase() // Convert to lowercase to standardize
+    .replace(/_/g, " ") // Replace underscores with spaces
+    .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize the first letter of each word
+};
+
+export const transformArray = (arr: State[]): State[] => {
+  return arr?.map((item) => ({
+    ...item,
+    label: transformLabel(item.label),
+  }));
+};
+
+export const firtstLetterInUpperCase = (label: string) => {
+  if (label) {
+    const firstLetter = label.charAt(0);
+    const firstLetterCap = firstLetter.toUpperCase();
+    const remainingLetters = label.slice(1);
+    const firstUpperCaseLetter = firstLetterCap + remainingLetters;
+    return firstUpperCaseLetter;
+  } else {
+    return null;
   }
-  interface State {
-    value: string;
-    label: string;
-  }
-  
-  export const transformLabel = (label: string): string => {
-    return label
-      .toLowerCase() // Convert to lowercase to standardize
-      .replace(/_/g, ' ') // Replace underscores with spaces
-      .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize the first letter of each word
-  };
-  
- export  const transformArray = (arr: State[]): State[] => {
-    return arr?.map(item => ({
-      ...item,
-      label: transformLabel(item.label)
-    }));
-  };
-  
-  
+};
