@@ -20,9 +20,9 @@
     "SURE_REASSIGN_CENTER": "Are you sure you want to re-assign Center to this user?",
     "OTHER": "Other",
     "SORT": "Sort",
-    "EDIT_COHORT_NAME": "Edit Cohort",
+    "EDIT_COHORT_NAME": "Edit Center",
     "NAME": "Name",
-    "UPDATE_COHORT": "Update Cohort",
+    "UPDATE_COHORT": "Update Center",
     "EDIT": "Edit",
     "DELETE": "Delete",
     "NO_DATA_FOUND": "No data found",
@@ -43,7 +43,8 @@
     "USER_DELETE_SUCCSSFULLY": "User deleted Successfully",
     "STATE_NAME": "State Name",
     "INVALID_TEXT": "Invalid Text",
-    "INVALID_CODE": "Invalid Code"
+    "INVALID_CODE": "Invalid Code",
+    "FILTER_BY_STATUS": "Filter By Status :"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -60,7 +61,7 @@
     "DASHBOARD": "Dashboard",
     "MANAGE_USERS": "Manage Users",
     "COURSE_PLANNER": "Course Planner",
-    "COHORTS": "Cohorts",
+    "COHORTS": "Center",
     "FACILITATORS": "Facilitators",
     "LEARNERS": "Learners",
     "TEAM_LEADERS": "Team Leaders",
@@ -70,9 +71,9 @@
     "MAIN_COURSE": "Main Course"
   },
   "FACILITATORS": {
-    "ALL_STATES": "All States",
-    "ALL_DISTRICTS": "All Districts",
-    "ALL_BLOCKS": "All Blocks",
+    "ALL_STATES": "States",
+    "ALL_DISTRICTS": "Districts",
+    "ALL_BLOCKS": "Blocks",
     "NEW_FACILITATOR": "New Facilitator",
     "SEARCHBAR_PLACEHOLDER": "Search Facilitators..",
     "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher has been Successfully Created",
@@ -90,10 +91,13 @@
   },
   "TEAM_LEADERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders..",
-    "NEW_TEAM_LEADER": "New Team Leader"
+    "NEW_TEAM_LEADER": "New Team Leader",
+    "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
+    "TEAM_LEADER_CREATED_SUCCESSFULLY": "Team Leader has been Successfully Created!",
+    "TEAM_LEADER_UPDATED_SUCCESSFULLY": "Team Leader has been Successfully Updated!"
   },
   "COHORTS": {
-    "SEARCHBAR_PLACEHOLDER": "Search Cohorts.."
+    "SEARCHBAR_PLACEHOLDER": "Search Center.."
   },
   "COURSE_PLANNER": {
     "GRADE": "Grade",
@@ -147,9 +151,9 @@
     "CENTER_RENAMED": "Center Renamed Successfully!",
     "SEND_REQUEST": "Send Request",
     "SURE_DELETE_COHORT": "Are you sure you want to Delete Center ?",
-    "CENTER_UPDATE_SUCCESSFULLY": "Cohort has been Successfully Updated",
-    "CENTER_DELETE_SUCCESSFULLY": "Cohort has been Successfully Deleted",
-    "CENTER_CREATED_SUCCESSFULLY": "Cohort Created Successfully"
+    "CENTER_UPDATE_SUCCESSFULLY": "Center has been Successfully Updated",
+    "CENTER_DELETE_SUCCESSFULLY": "Center has been Successfully Deleted",
+    "CENTER_CREATED_SUCCESSFULLY": "Center Created Successfully"
   },
   "FORM": {
     "FULL_NAME": "Full Name",
@@ -205,12 +209,13 @@
     "EMAIL": "Email",
     "YEAR_OF_JOINING_SCP": "Year of joining SCP",
     "ASSIGN_CENTERS": "Assign Centers",
-    "TYPE_OF_COHORT": "Type Of Cohort List",
+    "TYPE_OF_COHORT": "Type Of Center List",
     "UNIT_NAME": "Unit Name",
-    "SUBJECTS_I_TEACH": "Subject Teach",
+    "SUBJECTS_I_TEACH": "Subject I Teach",
     "MY_MAIN_SUBJECTS": "Main subjects",
     "NUMBER_OF_CLUSTERS_I_TEACH": "Number of cluster",
-    "DESIGNATION": "Designation"
+    "DESIGNATION": "Designation",
+    "NOTE_THIS_WILL_BE_CENTER_NAME": "Note : This Will Be Center Name"
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",

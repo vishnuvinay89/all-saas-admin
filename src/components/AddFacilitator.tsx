@@ -87,9 +87,14 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
           );
           console.log(centerOptionsList);
         }
-
+      console.log(response)
+    
         if (response) {
-          const { schema, uiSchema, formValues } = GenerateSchemaAndUiSchema(response, t);
+          const newResponse={
+            ...response,
+            fields: response.fields.filter(field => field.name !== 'no_of_clusters')
+          }
+          const { schema, uiSchema, formValues } = GenerateSchemaAndUiSchema(newResponse, t);
           setFormvalue(formValues)
           setSchema(schema);
           setUiSchema(uiSchema);
@@ -107,20 +112,20 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
   ) => {
     // setOpenModal(true);
     const target = event.target as HTMLFormElement;
-    const elementsArray = Array.from(target.elements);
+   // const elementsArray = Array.from(target.elements);
 
-    for (const element of elementsArray) {
-      if (
-        (element instanceof HTMLInputElement ||
-          element instanceof HTMLSelectElement ||
-          element instanceof HTMLTextAreaElement) &&
-        (element.value === "" ||
-          (Array.isArray(element.value) && element.value.length === 0))
-      ) {
-        element.focus();
-        return;
-      }
-    }
+    // for (const element of elementsArray) {
+    //   if (
+    //     (element instanceof HTMLInputElement ||
+    //       element instanceof HTMLSelectElement ||
+    //       element instanceof HTMLTextAreaElement) &&
+    //     (element.value === "" ||
+    //       (Array.isArray(element.value) && element.value.length === 0))
+    //   ) {
+    //     element.focus();
+    //     return;
+    //   }
+    // }
 
     const formData = data.formData;
     console.log("Form data submitted:", formData);
@@ -252,9 +257,9 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
         showFooter={false}
         modalTitle={t("FACILITATORS.NEW_FACILITATOR")}
       >
-        {!dynamicForm && (
+        {/* {!dynamicForm && (
           <Typography>{t("LEARNERS.FIRST_SELECT_REQUIRED_FIELDS")} </Typography>
-        )}
+        )} */}
         <AreaSelection
           states={transformArray(states)}
           districts={transformArray(districts)}

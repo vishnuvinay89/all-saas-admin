@@ -1,4 +1,5 @@
 import FingerprintJS from "fingerprintjs2";
+import { getUserDetails } from "../services/UserList";
 
 export const generateUUID = () => {
   let d = new Date().getTime();
@@ -68,3 +69,18 @@ export const fieldTextValidation = (text: string) => {
   const regex = /^[A-Za-z\s]+$/;
   return regex.test(text);
 };
+export const firtstLetterInUpperCase = (label: string) => {
+  if (label) {
+    const firstLetter = label.charAt(0);
+    const firstLetterCap = firstLetter.toUpperCase();
+    const remainingLetters = label.slice(1);
+    const firstUpperCaseLetter = firstLetterCap + remainingLetters;
+    return firstUpperCaseLetter;
+  } else {
+    return null;
+  }
+};
+export const capitalizeFirstLetterOfEachWordInArray = (arr: string[]): string[] => {
+  console.log(arr)
+  return arr.map(str => str.replace(/\b[a-z]/g, char => char.toUpperCase()));
+}

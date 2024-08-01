@@ -179,9 +179,12 @@ const HeaderComponent = ({
         <Box sx={{ flex: 1 }}>
           <SearchBar onSearch={handleSearch} placeholder={searchPlaceHolder} />
         </Box>
-        <Box display={"flex"} gap={1}>
+        <Box display={"flex"} gap={1} alignItems={"center"}>
           {showFilter && (
             <>
+              <Typography variant="h2" fontWeight={"bold"}>
+                {t("COMMON.FILTER_BY_STATUS")}
+              </Typography>
               <FormControl sx={{ minWidth: "120px" }}>
                 <Select
                   value={selectedFilter}
