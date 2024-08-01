@@ -60,9 +60,9 @@ const HeaderComponent = ({
   showSort = true,
   showAddNew = true,
   showStateDropdown = true,
+  showFilter = true,
   handleSearch,
   handleAddUserClick,
-  
 }: any) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
@@ -84,15 +84,12 @@ const HeaderComponent = ({
       // }
     }
     try {
-      const object=
-      {
-        
-         "controllingfieldfk": selectedCodes[0],
-       
-         "fieldName": "districts"
-         
-       }
-       console.log(object);
+      const object = {
+        controllingfieldfk: selectedCodes[0],
+
+        fieldName: "districts",
+      };
+      console.log(object);
       const response = await getStateBlockDistrictList(object);
       const result = response?.result;
       setDistricts(result);
@@ -110,14 +107,11 @@ const HeaderComponent = ({
       handleBlockChange([], []);
     }
     try {
-      const object=
-      {
-        
-         "controllingfieldfk": selectedCodes[0],
-       
-         "fieldName": "blocks"
-         
-       }
+      const object = {
+        controllingfieldfk: selectedCodes[0],
+
+        fieldName: "blocks",
+      };
       const response = await getStateBlockDistrictList(object);
       const result = response?.result;
       setBlocks(result);
@@ -137,12 +131,11 @@ const HeaderComponent = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const object={
+        const object = {
           // "limit": 20,
           // "offset": 0,
-          "fieldName": "states",
-          
-        }
+          fieldName: "states",
+        };
         const response = await getStateBlockDistrictList(object);
         const result = response?.result;
         setStates(result);
@@ -195,40 +188,34 @@ const HeaderComponent = ({
           <SearchBar onSearch={handleSearch} placeholder={searchPlaceHolder} />
         </Box>
         <Box display={"flex"} gap={1} alignItems={"center"}>
-          {/* <Typography variant="h2" >
-           {t("COMMON.FILTER_BY_STATUS")}
-          </Typography> */}
-           <FormControl  >
-  <InputLabel 
-    shrink 
-    htmlFor="select-multiple-native" 
-    sx={{ marginBottom: '-10px', marginLeft:"2px"}}
-  >
-    {t("COMMON.FILTER_BY_STATUS")}
-  </InputLabel>
-
-  <Select
-    value={selectedFilter}
-    onChange={handleFilterChange}
-    input={<OutlinedInput label={t("COMMON.FILTER_BY_STATUS")} />}
-    displayEmpty
-    sx={{
-      borderRadius: "8px",
-      height: "40px",
-      fontSize: "14px",
-      paddingTop: '0px',
-    }}
-  >
-    <MenuItem value="All">
-      <em>{t("COMMON.ALL")}</em>
-    </MenuItem>
-    {Filter?.map((filter, index) => (
-      <MenuItem value={filter} key={index}>
-        {filter}
-      </MenuItem>
-    ))}
-  </Select>
-</FormControl>
+          {showFilter && (
+            <>
+              <Typography variant="h2" fontWeight={"bold"}>
+                {t("COMMON.FILTER_BY_STATUS")}
+              </Typography>
+              <FormControl sx={{ minWidth: "120px" }}>
+                <Select
+                  value={selectedFilter}
+                  onChange={handleFilterChange}
+                  displayEmpty
+                  style={{
+                    borderRadius: "8px",
+                    height: "40px",
+                    fontSize: "14px",
+                  }}
+                >
+                  <MenuItem value="All">
+                    <em>{t("COMMON.ALL")}</em>
+                  </MenuItem>
+                  {Filter?.map((filter, index) => (
+                    <MenuItem value={filter} key={index}>
+                      {filter}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </>
+          )}
 
           {showSort && (
             <FormControl sx={{ minWidth: "120px" }}>

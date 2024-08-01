@@ -20,7 +20,6 @@ export const generateUUID = () => {
     return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
   });
 };
-
 export const getUserName = async (userId: string) => {
   try {
     const id = userId;
@@ -88,7 +87,15 @@ export const firtstLetterInUpperCase = (label: string): string | null => {
     ?.map((word) => word?.charAt(0).toUpperCase() + word?.slice(1))
     ?.join(" ");
 };
-export const capitalizeFirstLetterOfEachWordInArray = (arr: string[]): string[] => {
-  console.log(arr)
-  return arr.map(str => str.replace(/\b[a-z]/g, char => char.toUpperCase()));
-}
+export const capitalizeFirstLetterOfEachWordInArray = (
+  arr: string[]
+): string[] => {
+  console.log(arr);
+  return arr.map((str) =>
+    str.replace(/\b[a-z]/g, (char) => char.toUpperCase())
+  );
+};
+export const fieldTextValidation = (text: string) => {
+  const regex = /^[A-Za-z\s]+$/;
+  return regex.test(text);
+};

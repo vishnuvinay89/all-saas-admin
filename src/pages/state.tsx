@@ -8,32 +8,38 @@ import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
 import {
   getStateBlockDistrictList,
-  deleteState,
-  createOrUpdateState,
+  deleteOption,
+  createOrUpdateOption,
 } from "@/services/MasterDataService";
 import Loader from "@/components/Loader";
-import AddStateModal from "@/components/AddStateModal";
+import {AddStateModal} from "@/components/AddStateModal";
 import { transformLabel } from "@/utils/Helper";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { showToastMessage } from "@/components/Toastify";
 
 export interface StateDetail {
+  updatedAt: any;
+  createdAt: any;
   label: string | undefined;
   name: string;
   value: string;
 }
+
+type StateBlockDistrictListParams = {
+  controllingfieldfk?: string;
+  fieldName: string;
+  limit?: number;
+  offset?: number;
+};
+
 const State: React.FC = () => {
   const { t } = useTranslation();
-  const [pageOffset, setPageOffset] = useState<number>(0);
-  const [pageLimit, setPageLimit] = useState<number>(15);
   const [stateData, setStateData] = useState<StateDetail[]>([]);
   const [selectedSort, setSelectedSort] = useState<string>("Sort");
   const [sortBy, setSortBy] = useState<["label", "asc" | "desc"]>([
     "label",
     "asc",
   ]);
-  const [pageCount, setPageCount] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
   const [selectedFilter, setSelectedFilter] = useState<string>("All");
   const [loading, setLoading] = useState<boolean>(true);
   const [confirmationDialogOpen, setConfirmationDialogOpen] =
@@ -45,6 +51,10 @@ const State: React.FC = () => {
     useState<StateDetail | null>(null);
   const [editState, setEditState] = useState<StateDetail | null>(null);
 
+  const [pageOffset, setPageOffset] = useState<number>(0);
+  const [pageLimit, setPageLimit] = useState<number>(10);
+  const [pageCount, setPageCount] = useState<number>(0);
+
   const columns = useMemo(
     () => [
       {
@@ -54,18 +64,17 @@ const State: React.FC = () => {
         sortDirection: SortDirection.Ascend,
       },
       {
-        key: "upadated at",
-        title: t("MASTER.UPDATED_AT"),
-        dataType: DataType.String,
-        sortDirection: SortDirection.Ascend,
-      },
-      {
-        key: "created at",
+        key: "createdAt",
         title: t("MASTER.CREATED_AT"),
         dataType: DataType.String,
         sortDirection: SortDirection.Ascend,
       },
-
+      {
+        key: "updatedAt",
+        title: t("MASTER.UPDATED_AT"),
+        dataType: DataType.String,
+        sortDirection: SortDirection.Ascend,
+      },
       {
         key: "actions",
         title: t("MASTER.ACTIONS"),
@@ -77,16 +86,9 @@ const State: React.FC = () => {
 
   const handleChange = useCallback((event: SelectChangeEvent<number>) => {
     const value = Number(event.target.value);
-    setPageSize(value);
     setPageLimit(value);
+    setPageOffset(0); // Reset to first page
   }, []);
-
-  const handlePaginationChange = useCallback(
-    (event: React.ChangeEvent<unknown>, value: number) => {
-      setPageOffset(value - 1);
-    },
-    []
-  );
 
   const handleSortChange = useCallback((event: SelectChangeEvent<string>) => {
     const selectedValue = event.target.value;
@@ -111,7 +113,7 @@ const State: React.FC = () => {
   const handleConfirmDelete = useCallback(async () => {
     if (selectedStateForDelete) {
       try {
-        await deleteState(selectedStateForDelete.value);
+        await deleteOption("states", selectedStateForDelete.value);
         setStateData((prevStateData) =>
           prevStateData.filter(
             (state) => state.value !== selectedStateForDelete.value
@@ -133,6 +135,7 @@ const State: React.FC = () => {
   const handleAddStateClick = () => {
     setEditState(null);
     setAddStateModalOpen(true);
+    console.log("state modal clicked")
   };
 
   const handleAddStateSubmit = async (
@@ -151,7 +154,7 @@ const State: React.FC = () => {
     };
 
     try {
-      const response = await createOrUpdateState(fieldId, newState, stateId);
+      const response = await createOrUpdateOption(fieldId, newState, stateId);
 
       if (response) {
         await fetchStateData();
@@ -169,7 +172,13 @@ const State: React.FC = () => {
   const fetchStateData = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await getStateBlockDistrictList({ fieldName: "states" });
+      const data = await getStateBlockDistrictList({
+        fieldName: "states",
+        limit: pageLimit,
+        offset: pageOffset,
+      } as StateBlockDistrictListParams);
+
+      console.log("state data", data);
       const sortedData = [...data.result].sort((a, b) => {
         const [field, order] = sortBy;
         return order === "asc"
@@ -177,17 +186,14 @@ const State: React.FC = () => {
           : b[field].localeCompare(a[field]);
       });
 
-      const offset = pageOffset * pageLimit;
-      const paginatedData = sortedData.slice(offset, offset + pageLimit);
-
-      setPageCount(Math.ceil(data.result.length / pageLimit));
-      setStateData(paginatedData);
+      setStateData(sortedData);
+      setPageCount(Math.ceil(data.totalCount / pageLimit));
     } catch (error) {
       console.error("Error fetching state data", error);
     } finally {
       setLoading(false);
     }
-  }, [pageOffset, pageLimit, sortBy]);
+  }, [sortBy, pageLimit, pageOffset]);
 
   useEffect(() => {
     fetchStateData();
@@ -206,6 +212,8 @@ const State: React.FC = () => {
       showSort: true,
       selectedFilter,
       handleFilterChange: handleFilterChange,
+      showFilter: false,
+      paginationEnable: true,
     }),
     [
       t,
@@ -260,38 +268,43 @@ const State: React.FC = () => {
         {loading ? (
           <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
         ) : (
-          <KaTableComponent
-            columns={columns}
-            data={stateData.map((stateDetail) => ({
-              label: stateDetail.label ? transformLabel(stateDetail.label) : "",
-              value: stateDetail.value,
-            }))}
-            limit={pageLimit}
-            offset={pageOffset}
-            PagesSelector={() => null}
-            PageSizeSelector={() => (
-              <PageSizeSelector
-                handleChange={handleChange}
-                pageSize={pageSize}
-                options={[5, 10, 15]}
-              />
-            )}
-            extraActions={[]}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+          <div>
+            <KaTableComponent
+              columns={columns}
+              data={stateData.map((stateDetail) => ({
+                label: stateDetail.label
+                  ? transformLabel(stateDetail.label)
+                  : "",
+                value: stateDetail.value,
+                createdAt: stateDetail.createdAt,
+                updatedAt: stateDetail.updatedAt,
+              }))}
+              limit={pageLimit}
+              offset={pageOffset}
+              // paginationEnable={true}
+              PagesSelector={() => (
+                <PageSizeSelector
+                  limit={pageLimit}
+                  onPageSizeChange={handleChange}
+                  pageCount={pageCount}
+                  onPageChange={setPageOffset}
+                />
+              )}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              extraActions={[]}
+            />{" "}
+          </div>
         )}
       </HeaderComponent>
     </div>
   );
 };
 
-export default State;
+export const getServerSideProps = async (context: any) => ({
+  props: {
+    ...(await serverSideTranslations(context.locale, ["common", "master"])),
+  },
+});
 
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["common"])),
-    },
-  };
-}
+export default State;
