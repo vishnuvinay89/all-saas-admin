@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
-import theme from "./theme/theme";
+import { fieldTextValidation } from "@/utils/Helper";
 
 interface AddStateModalProps {
   open: boolean;
@@ -30,7 +30,7 @@ interface AddStateModalProps {
   stateId?: string;
 }
 
-const AddStateModal: React.FC<AddStateModalProps> = ({
+export const AddStateModal: React.FC<AddStateModalProps> = ({
   open,
   onClose,
   onSubmit,
@@ -57,12 +57,18 @@ const AddStateModal: React.FC<AddStateModalProps> = ({
     if (!name) {
       setNameError(t("COMMON.NAME_REQUIRED"));
       hasError = true;
+    } else if (!fieldTextValidation(name)) {
+      setNameError(t("COMMON.INVALID_TEXT"));
+      hasError = true;
     } else {
       setNameError(null);
     }
 
     if (!value) {
       setValueError(t("COMMON.CODE_REQUIRED"));
+      hasError = true;
+    } else if (!fieldTextValidation(value)) {
+      setValueError(t("COMMON.INVALID_TEXT"));
       hasError = true;
     } else {
       setValueError(null);
@@ -72,12 +78,28 @@ const AddStateModal: React.FC<AddStateModalProps> = ({
       onSubmit(name, value, fieldId, stateId);
       setName("");
       setValue("");
+      onClose();
+    }
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputName = e.target.value;
+    if (fieldTextValidation(inputName)) {
+      setName(inputName);
+      setNameError(null);
+    } else {
+      setNameError(t("COMMON.INVALID_TEXT"));
     }
   };
 
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const upperCaseValue = e.target.value.toUpperCase();
-    setValue(upperCaseValue);
+    const inputValue = e.target.value.toUpperCase();
+    if (fieldTextValidation(inputValue)) {
+      setValue(inputValue);
+      setValueError(null);
+    } else {
+      setValueError(t("COMMON.INVALID_TEXT"));
+    }
   };
 
   return (
@@ -92,7 +114,7 @@ const AddStateModal: React.FC<AddStateModalProps> = ({
           fullWidth
           variant="outlined"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={handleNameChange}
           error={!!nameError}
           helperText={nameError}
         />
@@ -148,5 +170,3 @@ const AddStateModal: React.FC<AddStateModalProps> = ({
     </Dialog>
   );
 };
-
-export default AddStateModal;

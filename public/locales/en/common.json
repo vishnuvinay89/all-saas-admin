@@ -41,7 +41,9 @@
     "CODE_REQUIRED": "Code is Required",
     "CODE_NOTIFICATION": "Code should contain 2-3 characters (e.g., MH).",
     "USER_DELETE_SUCCSSFULLY": "User deleted Successfully",
-    "STATE_NAME": "State Name"
+    "STATE_NAME": "State Name",
+    "INVALID_TEXT": "Invalid Text",
+    "INVALID_CODE": "Invalid Code"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",

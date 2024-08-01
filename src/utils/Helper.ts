@@ -20,49 +20,51 @@ export const generateUUID = () => {
   });
 };
 
-
-  export const getDeviceId = () => {
-    return new Promise((resolve) => {
-      FingerprintJS.get((components: any[]) => {
-        const values = components.map((component) => component.value);
-        const deviceId = FingerprintJS.x64hash128(values.join(''), 31);
-        resolve(deviceId);
-      });
+export const getDeviceId = () => {
+  return new Promise((resolve) => {
+    FingerprintJS.get((components: any[]) => {
+      const values = components.map((component) => component.value);
+      const deviceId = FingerprintJS.x64hash128(values.join(""), 31);
+      resolve(deviceId);
     });
-  };
-  
-  export const generateUsernameAndPassword = (
-    stateCode: string,
-    role: string
-  ) => {
-    const currentYear = new Date().getFullYear().toString().slice(-2);
-    const randomNum = Math.floor(10000 + Math.random() * 90000).toString();
-  
-    const username =
-      role === 'F'
-        ? `FSC${stateCode}${currentYear}${randomNum}`
-        : `SC${stateCode}${currentYear}${randomNum}`;
-    const password = randomNum;
-  
-    return { username, password };
-  }
-  interface State {
-    value: string;
-    label: string;
-  }
-  
-  export const transformLabel = (label: string): string => {
-    return label
-      .toLowerCase() // Convert to lowercase to standardize
-      .replace(/_/g, ' ') // Replace underscores with spaces
-      .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize the first letter of each word
-  };
-  
- export  const transformArray = (arr: State[]): State[] => {
-    return arr?.map(item => ({
-      ...item,
-      label: transformLabel(item.label)
-    }));
-  };
-  
-  
+  });
+};
+
+export const generateUsernameAndPassword = (
+  stateCode: string,
+  role: string
+) => {
+  const currentYear = new Date().getFullYear().toString().slice(-2);
+  const randomNum = Math.floor(10000 + Math.random() * 90000).toString();
+
+  const username =
+    role === "F"
+      ? `FSC${stateCode}${currentYear}${randomNum}`
+      : `SC${stateCode}${currentYear}${randomNum}`;
+  const password = randomNum;
+
+  return { username, password };
+};
+interface State {
+  value: string;
+  label: string;
+}
+
+export const transformLabel = (label: string): string => {
+  return label
+    .toLowerCase() // Convert to lowercase to standardize
+    .replace(/_/g, " ") // Replace underscores with spaces
+    .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize the first letter of each word
+};
+
+export const transformArray = (arr: State[]): State[] => {
+  return arr?.map((item) => ({
+    ...item,
+    label: transformLabel(item.label),
+  }));
+};
+
+export const fieldTextValidation = (text: string) => {
+  const regex = /^[A-Za-z\s]+$/;
+  return regex.test(text);
+};
