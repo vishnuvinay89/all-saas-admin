@@ -83,7 +83,8 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
     handleCenterChangeWrapper,
     selectedCenterCode,
     selectedBlockFieldId,
-    dynamicFormForBlock
+    dynamicFormForBlock,
+    BlockFieldId, DistrctFieldId, StateFieldId
 
   } = useLocationState(open, onClose);
 
@@ -185,15 +186,15 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
     });
     if (!isEditModal) {
       apiBody.customFields.push({
-        fieldId: "394ee6c9-3c4b-4065-ab82-19dc6ab52e67",
+        fieldId: BlockFieldId,
         value: [selectedBlockCode],
       });
       apiBody.customFields.push({
-        fieldId: "8d56e5e6-d504-4c51-a848-eb1b0a8d2ed6",
+        fieldId: StateFieldId,
         value: [selectedStateCode],
       });
       apiBody.customFields.push({
-        fieldId: "ea1461c1-2dd3-469d-b58d-52c6acdce30b",
+        fieldId: DistrctFieldId,
         value: [selectedDistrictCode],
       });
     }
@@ -362,7 +363,7 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
                 {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
               </DynamicForm>
             )
-          : dynamicFormForBlock &&
+          : 
             schema &&
             uiSchema && (
               <DynamicForm

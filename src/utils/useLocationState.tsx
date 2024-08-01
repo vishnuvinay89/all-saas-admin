@@ -32,7 +32,9 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
   const [selectedBlockCode, setSelectedBlockCode] = useState("");
  const [selectedCenterCode, setSelectedCenterCode] = useState("");
  const [selectedBlockFieldId, setSelectedBlockFieldId] = useState("");
-
+ const [BlockFieldId, setBlockFieldId] = useState("");
+ const [StateFieldId, setStateFieldId] = useState("");
+ const [DistrctFieldId, setDistrictFieldId] = useState("");
 
   const handleStateChangeWrapper = useCallback(async (
     selectedNames: string[],
@@ -46,6 +48,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
         fieldName: "districts",
       };
       const response = await getStateBlockDistrictList(object);
+      setDistrictFieldId(response?.result?.fieldId)
       const result = response?.result?.values;
       setDistricts(result);
     } catch (error) {
@@ -68,6 +71,8 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
         fieldName: "blocks",
       };
       const response = await getStateBlockDistrictList(object);
+      setBlockFieldId(response?.result?.fieldId)
+
       const result = response?.result?.values;
       setBlocks(result);
     } catch (error) {
@@ -86,15 +91,18 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
             "limit":200,
             "offset": 0,
             "filters": {
-                "type": "COHORT",
+                "type": "BLOCK",
                 "status": [
                     "active"
                 ],
-                "states": selectedStateCode,
-                "districts": selectedDistrictCode,
-                "blocks": selectedCodes[0]
+                // "states": selectedStateCode,
+                // "districts": selectedDistrictCode,
+                // "blocks": selectedCodes[0]
+                name:selected[0]
             }
         };
+        const response2 = await getCenterList(object);
+
         console.log(selected)
         const getBlockIdObject={
           "limit": 200,
@@ -110,7 +118,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
         setSelectedBlockFieldId(response?.result?.results?.cohortDetails[0].cohortId)
         console.log(response?.result?.results?.cohortDetails[0].cohortId)
      //   const result = response?.result?.cohortDetails;
-        const dataArray=response?.result?.results?.cohortDetails;
+        const dataArray=response2?.result?.results?.cohortDetails;
 
         const cohortInfo = dataArray?.map((item: any) => ({
             cohortId: item?.cohortId,
@@ -186,6 +194,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
           fieldName: "states",
         };
         const response = await getStateBlockDistrictList(object);
+        setStateFieldId(response?.result?.fieldId)
         const result = response?.result?.values;
         setStates(result);
         console.log(typeof states);
@@ -200,7 +209,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
   return {
     states, districts, blocks, allCenters, isMobile, isMediumScreen,
     selectedState, selectedStateCode, selectedDistrict, selectedDistrictCode,
-    selectedCenter, dynamicForm, selectedBlock, selectedBlockCode,dynamicFormForBlock,
+    selectedCenter, dynamicForm, selectedBlock, selectedBlockCode,dynamicFormForBlock,BlockFieldId, DistrctFieldId, StateFieldId,
     handleStateChangeWrapper, handleDistrictChangeWrapper, handleBlockChangeWrapper, handleCenterChangeWrapper,selectedCenterCode, selectedBlockFieldId
   };
 };

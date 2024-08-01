@@ -68,7 +68,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   };
 
 
-  
+
   function transformErrors(errors: any) {
     console.log("errors", errors);
     console.log("schema", schema);
@@ -109,8 +109,15 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               if (schema.properties?.[property]?.validation?.includes("mobile")) {
                 error.message = t(
                   "FORM_ERROR_MESSAGES.ENTER_VALID_MOBILE_NUMBER"
-                );  
-              } else {
+                ); 
+                 
+              }
+             else if (schema.properties?.[property]?.validation?.includes(".age")) {
+                error.message = t(
+                  "age must be valid"
+                ); 
+                }
+              else {
                 error.message = t(
                   "FORM_ERROR_MESSAGES.CHARACTERS_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
                 );

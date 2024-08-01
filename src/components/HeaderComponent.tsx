@@ -195,41 +195,30 @@ const HeaderComponent = ({
           <SearchBar onSearch={handleSearch} placeholder={searchPlaceHolder} />
         </Box>
         <Box display={"flex"} gap={1} alignItems={"center"}>
-          {/* <Typography variant="h2" >
+          <Typography variant="h3">
            {t("COMMON.FILTER_BY_STATUS")}
-          </Typography> */}
-           <FormControl  >
-  <InputLabel 
-    shrink 
-    htmlFor="select-multiple-native" 
-    sx={{ marginBottom: '-10px', marginLeft:"2px"}}
-  >
-    {t("COMMON.FILTER_BY_STATUS")}
-  </InputLabel>
-
-  <Select
-    value={selectedFilter}
-    onChange={handleFilterChange}
-    input={<OutlinedInput label={t("COMMON.FILTER_BY_STATUS")} />}
-    displayEmpty
-    sx={{
-      borderRadius: "8px",
-      height: "40px",
-      fontSize: "14px",
-      paddingTop: '0px',
-    }}
-  >
-    <MenuItem value="All">
-      <em>{t("COMMON.ALL")}</em>
-    </MenuItem>
-    {Filter?.map((filter, index) => (
-      <MenuItem value={filter} key={index}>
-        {filter}
-      </MenuItem>
-    ))}
-  </Select>
-</FormControl>
-
+          </Typography>
+          <FormControl sx={{ minWidth: "120px" }}>
+            <Select
+              value={selectedFilter}
+              onChange={handleFilterChange}
+              displayEmpty
+              style={{
+                borderRadius: "8px",
+                height: "40px",
+                fontSize: "14px",
+              }}
+            >
+              <MenuItem value="All">
+                <em>{t("COMMON.ALL")}</em>
+              </MenuItem>
+              {Filter?.map((filter, index) => (
+                <MenuItem value={filter} key={index}>
+                  {filter}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           {showSort && (
             <FormControl sx={{ minWidth: "120px" }}>
               <Select
@@ -252,6 +241,14 @@ const HeaderComponent = ({
             </FormControl>
           )}
         </Box>
+
+
+
+
+
+
+
+
       </Box>
       {showAddNew && (
         <Box
