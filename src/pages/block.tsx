@@ -30,6 +30,8 @@ type DistrictDetail = {
 };
 
 type BlockDetail = {
+  updatedAt: any;
+  createdAt: any;
   value: string;
   label: string;
 };
@@ -57,7 +59,11 @@ const Block: React.FC = () => {
       setLoading(true);
       try {
         const data = await getStateBlockDistrictList({ fieldName: "states" });
-        setStateData(data?.result || []);
+        const states = data?.result || [];
+        setStateData(states);
+        if (states.length > 0) {
+          setSelectedState(states[0].value); // Set the first state as selected by default
+        }
       } catch (error) {
         console.error("Error fetching states", error);
       } finally {
@@ -77,7 +83,11 @@ const Block: React.FC = () => {
             controllingfieldfk: selectedState,
             fieldName: "districts",
           });
-          setDistrictData(data?.result || []);
+          const districts = data?.result || [];
+          setDistrictData(districts);
+          if (districts.length > 0) {
+            setSelectedDistrict(districts[0].value); // Set the first district as selected by default
+          }
         } catch (error) {
           console.error("Error fetching districts", error);
         } finally {
@@ -117,6 +127,17 @@ const Block: React.FC = () => {
         title: t("MASTER.BLOCK_NAMES"),
         dataType: DataType.String,
       },
+      {
+        key: "createdAt",
+        title: t("MASTER.CREATED_AT"),
+        dataType: DataType.String,
+      },
+      {
+        key: "updatedAt",
+        title: t("MASTER.UPDATED_AT"),
+        dataType: DataType.String,
+      },
+
       {
         key: "actions",
         title: t("MASTER.ACTIONS"),
@@ -176,6 +197,7 @@ const Block: React.FC = () => {
     showStateDropdown: false,
     userType: t("MASTER.BLOCKS"),
     searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK"),
+    showFilter: false,
   };
 
   const showPagination = blockData.length > pageLimit;
@@ -266,7 +288,8 @@ const Block: React.FC = () => {
                 columns={columns}
                 data={blockData.map((block) => ({
                   block: transformLabel(block.label),
-                  actions: "Action buttons",
+                  createdAt: block.createdAt,
+                  updatedAt: block.updatedAt,
                 }))}
                 limit={pageLimit}
                 offset={pageOffset}
@@ -277,13 +300,13 @@ const Block: React.FC = () => {
                       count={pageCount}
                       page={pageOffset + 1}
                       onChange={handlePaginationChange}
+                      shape="rounded"
+                      variant="outlined"
+                      size="small"
                     />
                   )
                 }
                 extraActions={[]}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                noData={blockData.length === 0}
               />
             )}
           </Box>
@@ -293,7 +316,7 @@ const Block: React.FC = () => {
   );
 };
 
-export async function getStaticProps({ locale }: any) {
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),

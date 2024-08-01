@@ -20,7 +20,6 @@ export const generateUUID = () => {
     return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
   });
 };
-
 export const getUserName = async (userId: string) => {
   try {
     const id = userId;
@@ -78,18 +77,25 @@ export const transformArray = (arr: State[]): State[] => {
   }));
 };
 
-export const firtstLetterInUpperCase = (label: string) => {
-  if (label) {
-    const firstLetter = label.charAt(0);
-    const firstLetterCap = firstLetter.toUpperCase();
-    const remainingLetters = label.slice(1);
-    const firstUpperCaseLetter = firstLetterCap + remainingLetters;
-    return firstUpperCaseLetter;
-  } else {
+export const firtstLetterInUpperCase = (label: string): string | null => {
+  if (!label) {
     return null;
   }
+
+  return label
+    ?.split(" ")
+    ?.map((word) => word?.charAt(0).toUpperCase() + word?.slice(1))
+    ?.join(" ");
 };
-export const capitalizeFirstLetterOfEachWordInArray = (arr: string[]): string[] => {
-  console.log(arr)
-  return arr.map(str => str.replace(/\b[a-z]/g, char => char.toUpperCase()));
-}
+export const capitalizeFirstLetterOfEachWordInArray = (
+  arr: string[]
+): string[] => {
+  console.log(arr);
+  return arr.map((str) =>
+    str.replace(/\b[a-z]/g, (char) => char.toUpperCase())
+  );
+};
+export const fieldTextValidation = (text: string) => {
+  const regex = /^[A-Za-z\s]+$/;
+  return regex.test(text);
+};

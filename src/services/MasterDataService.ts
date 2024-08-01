@@ -16,9 +16,11 @@ export interface CenterListParam {
 export const getStateBlockDistrictList = async ({
   controllingfieldfk,
   fieldName,
+  limit,
 }: {
   controllingfieldfk?: string;
   fieldName: string;
+  limit?: number;
 }): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/options/read`;
   try {
@@ -97,8 +99,11 @@ export const getCenterList = async ({
   }
 };
 
-export const deleteState = async (option: string): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/options/delete/states?option=${option}`;
+export const deleteOption = async (
+  type: "states" | "districts",
+  option: string
+): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/options/delete/${type}?option=${option}`;
   const requestBody = {};
   const requestHeaders = {};
 
@@ -106,12 +111,12 @@ export const deleteState = async (option: string): Promise<any> => {
     const response = await deleteApi(apiUrl, requestBody, requestHeaders);
     return response?.data;
   } catch (error) {
-    console.error("Error deleting state", error);
+    console.error(`Error deleting ${type}`, error);
     return error;
   }
 };
 
-export const createOrUpdateState = async (
+export const createOrUpdateOption = async (
   fieldId: string,
   fieldParams: { options: { name: string; value: string }[] },
   stateId?: string

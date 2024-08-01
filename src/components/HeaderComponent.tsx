@@ -60,9 +60,9 @@ const HeaderComponent = ({
   showSort = true,
   showAddNew = true,
   showStateDropdown = true,
+  showFilter = true,
   handleSearch,
   handleAddUserClick,
-  
 }: any) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
@@ -84,15 +84,12 @@ const HeaderComponent = ({
       // }
     }
     try {
-      const object=
-      {
-        
-         "controllingfieldfk": selectedCodes[0],
-       
-         "fieldName": "districts"
-         
-       }
-       console.log(object);
+      const object = {
+        controllingfieldfk: selectedCodes[0],
+
+        fieldName: "districts",
+      };
+      console.log(object);
       const response = await getStateBlockDistrictList(object);
       const result = response?.result?.values;
       setDistricts(result);
@@ -110,14 +107,11 @@ const HeaderComponent = ({
       handleBlockChange([], []);
     }
     try {
-      const object=
-      {
-        
-         "controllingfieldfk": selectedCodes[0],
-       
-         "fieldName": "blocks"
-         
-       }
+      const object = {
+        controllingfieldfk: selectedCodes[0],
+
+        fieldName: "blocks",
+      };
       const response = await getStateBlockDistrictList(object);
       const result = response?.result?.values;
       setBlocks(result);
@@ -137,12 +131,11 @@ const HeaderComponent = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const object={
+        const object = {
           // "limit": 20,
           // "offset": 0,
-          "fieldName": "states",
-          
-        }
+          fieldName: "states",
+        };
         const response = await getStateBlockDistrictList(object);
         const result = response?.result?.values;
         setStates(result);

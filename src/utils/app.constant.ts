@@ -45,6 +45,7 @@ export enum DataKey {
   CREATEDBY = "createdBy",
   UPDATEDBY = "updatedBy",
   STATUS = "status",
+  NAME = "name",
 }
 
 export enum DateFormat {
