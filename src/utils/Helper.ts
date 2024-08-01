@@ -89,3 +89,7 @@ export const firtstLetterInUpperCase = (label: string) => {
     return null;
   }
 };
+export const capitalizeFirstLetterOfEachWordInArray = (arr: string[]): string[] => {
+  console.log(arr)
+  return arr.map(str => str.replace(/\b[a-z]/g, char => char.toUpperCase()));
+}

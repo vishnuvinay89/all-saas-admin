@@ -25,6 +25,7 @@ import AddFacilitatorModal from "./AddFacilitator";
 import { Role } from "@/utils/app.constant";
 import { getFormRead } from "@/services/CreateUserService";
 import { showToastMessage } from "./Toastify";
+import { capitalizeFirstLetterOfEachWordInArray } from "../utils/Helper";
 
 type UserDetails = {
   userId: any;
@@ -66,10 +67,10 @@ const columns = [
   //   title: "ID",
   //   dataType: DataType.String,
   // },
-  {
-    key: "selection-cell",
-    width: 50,
-  },
+  // {
+  //   key: "selection-cell",
+  //   width: 50,
+  // },
   {
     key: "name",
     title: "Name",
@@ -77,13 +78,7 @@ const columns = [
     sortDirection: SortDirection.Ascend,
     width: 160,
   },
-  {
-    key: "centers",
-    title: "Centers",
-    dataType: DataType.String,
-    sortDirection: SortDirection.Ascend,
-    width: 160,
-  },
+ 
   // {
   //   key: "programs",
   //   title: "Programs",
@@ -125,6 +120,13 @@ const columns = [
   {
     key: "blocks",
     title: "Blocks",
+    dataType: DataType.String,
+    sortDirection: SortDirection.Ascend,
+    width: 160,
+  },
+  {
+    key: "centers",
+    title: "Centers",
     dataType: DataType.String,
     sortDirection: SortDirection.Ascend,
     width: 160,
@@ -351,15 +353,15 @@ const UserTable: React.FC<UserTableProps> = ({
   };
   const handleSortChange = async (event: SelectChangeEvent) => {
     // let sort;
-    if (event.target.value === "Z-A") {
+    if (event.target?.value === "Z-A") {
       setSortBy(["name", SORT.DESCENDING]);
-    } else if (event.target.value === "A-Z") {
+    } else if (event.target?.value === "A-Z") {
       setSortBy(["name", SORT.ASCENDING]);
     } else {
       setSortBy(["createdAt", SORT.ASCENDING]);
     }
 
-    setSelectedSort(event.target.value as string);
+    setSelectedSort(event.target?.value as string);
   };
   const mapFields = (formFields: any, response: any) => {
     let initialFormData: any = {};
@@ -375,21 +377,21 @@ const UserTable: React.FC<UserTableProps> = ({
         }
         if (item?.isMultiSelect) {
           if (data[item.name] && item?.maxSelections > 1) {
-            return [field.value];
+            return [field?.value];
           } else if (item?.type === "checkbox") {
-            return String(field.value).split(",");
+            return String(field?.value).split(",");
           } else {
-            return field.value;
+            return field?.value;
           }
         } else {
           if (item?.type === "numeric") {
-            console.log(typeof field.value);
+            console.log(typeof field?.value);
 
-            return parseInt(String(field.value));
+            return parseInt(String(field?.value));
           } else if (item?.type === "text") {
-            return String(field.value);
+            return String(field?.value);
           } else {
-            return field.value;
+            return field?.value;
           }
         }
       };
@@ -508,7 +510,7 @@ const UserTable: React.FC<UserTableProps> = ({
             (field: any) => field.name === "age"
           );
           const genderField = user.customFields.find(
-            (field: any) => field.name === "gender"
+            (field: any) => field.name=== "gender"
           );
           const blockField = user.customFields.find(
             (field: any) => field.name === "blocks"
@@ -533,7 +535,7 @@ const UserTable: React.FC<UserTableProps> = ({
             district: districtField ? districtField.value : null,
             state: stateField ? stateField.value : null,
             blocks: blockField ? blockField.value : null,
-            gender: genderField ? genderField.value : null,
+            gender: genderField ? genderField.value?.charAt(0)?.toUpperCase() + genderField.value.slice(1).toLowerCase() : null,
             // centers: null,
             // Programs: null,
           };
@@ -553,7 +555,7 @@ const UserTable: React.FC<UserTableProps> = ({
       }
     };
     fetchUserList();
-  }, [pageOffset, pageLimit, sortBy, filters]);
+  }, [pageOffset, pageLimit, sortBy, filters, openAddFacilitatorModal, openAddLearnerModal]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -567,14 +569,19 @@ const UserTable: React.FC<UserTableProps> = ({
             const cohortNames = response?.result?.cohortData?.map(
               (cohort: Cohort) => cohort.name
             );
-
+            let finalArray;
+            if(cohortNames?.length>=1)
+            {
+              finalArray=capitalizeFirstLetterOfEachWordInArray(cohortNames)
+            }
+          //   const finalArray=capitalizeFirstLetterOfEachWordInArray(cohortNames)
+            // console.log(finalArray)
             return {
               ...user,
-              centers: cohortNames?.join(" , "),
+              centers: finalArray?.join(" , "),
             };
           })
         );
-
         setData(newData);
         setCohortsFetched(true);
       } catch (error: any) {
