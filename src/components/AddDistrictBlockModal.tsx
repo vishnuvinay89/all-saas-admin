@@ -39,23 +39,37 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
   initialValues = {},
   districtId,
 }) => {
-  const [name, setName] = useState<string>(initialValues.name || "");
-  const [value, setValue] = useState<string>(initialValues.value || ""); 
-  const [controllingField, setControllingField] = useState<string>(
-    initialValues.controllingField || ""
-  );
+  const [formData, setFormData] = useState({
+    name: initialValues.name || "",
+    value: initialValues.value || "",
+    controllingField: initialValues.controllingField || "",
+  });
+
   const { t } = useTranslation();
 
   useEffect(() => {
-    setName(initialValues.name || "");
-    setValue(initialValues.value || "");
-    setControllingField(initialValues.controllingField || "");
+    setFormData({
+      name: initialValues.name || "",
+      value: initialValues.value || "",
+      controllingField: initialValues.controllingField || "",
+    });
   }, [initialValues]);
 
+  const handleChange =
+    (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({ ...prev, [field]: event.target.value }));
+    };
+
   const handleSubmit = () => {
+    const { name, value, controllingField } = formData;
     onSubmit(name, value, controllingField, fieldId, districtId);
     console.log(name, value, controllingField, fieldId, districtId);
     onClose();
+  };
+
+  const buttonStyles = {
+    fontSize: "14px",
+    fontWeight: "500",
   };
 
   return (
@@ -68,17 +82,17 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
           type="text"
           fullWidth
           variant="outlined"
-          value={controllingField}
-          onChange={(e) => setControllingField(e.target.value)} 
+          value={formData.controllingField}
+          onChange={handleChange("controllingField")}
         />
         <TextField
           margin="dense"
-          label="Name" 
+          label="Name"
           type="text"
           fullWidth
           variant="outlined"
-          value={name}
-          onChange={(e) => setName(e.target.value)} 
+          value={formData.name}
+          onChange={handleChange("name")}
         />
         <TextField
           margin="dense"
@@ -86,8 +100,8 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
           type="text"
           fullWidth
           variant="outlined"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
+          value={formData.value}
+          onChange={handleChange("value")}
         />
         <Box display="flex" alignItems="center" mt={2}>
           <InfoOutlinedIcon color="primary" sx={{ mr: 1 }} />
@@ -100,12 +114,9 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
         <Button
           onClick={onClose}
           sx={{
-            border: "none",
+            ...buttonStyles,
             color: "secondary",
-            fontSize: "14px",
-            fontWeight: "500",
             "&:hover": {
-              border: "none",
               backgroundColor: "transparent",
             },
           }}
@@ -115,12 +126,7 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
         </Button>
         <Button
           onClick={handleSubmit}
-          sx={{
-            width: "auto",
-            height: "40px",
-            fontSize: "14px",
-            fontWeight: "500",
-          }}
+          sx={{ ...buttonStyles, width: "auto", height: "40px" }}
           variant="contained"
           color="primary"
         >
