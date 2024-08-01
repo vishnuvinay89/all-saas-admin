@@ -60,7 +60,7 @@ interface CohortDetails {
   customFields?: CustomField[];
 }
 
-const Cohorts: React.FC = () => {
+const Center: React.FC = () => {
   // use hooks
   const { t } = useTranslation();
 
@@ -111,7 +111,7 @@ const Cohorts: React.FC = () => {
   const [selectedBlock, setSelectedBlock] = React.useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [selectedFilter, setSelectedFilter] = useState("All");
-  const [cohortData, setCohortData] = useState<UserDetails[]>([]);
+  const [cohortData, setCohortData] = useState<cohortFilterDetails[]>([]);
   const [pageSize, setPageSize] = React.useState<string | number>("10");
   const [open, setOpen] = React.useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] =
@@ -363,14 +363,24 @@ const Cohorts: React.FC = () => {
       const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
       console.log(resp);
       if (resp?.responseCode === 200) {
-        console.log(resp?.params?.successmessage);
         showToastMessage(t("CENTERS.CENTER_DELETE_SUCCESSFULLY"), "success");
-        fetchUserList();
+        const cohort = cohortData?.find(
+          (item: any) => item.cohortId == selectedCohortId
+        );
+        if (cohort) {
+          cohort.status = Status.ARCHIVED;
+        }
+        // setCohortData(updatedCohorts);
+        console.log(resp?.params?.successmessage);
+
+        // fetchUserList();
       } else {
         console.log("Cohort Not Archived");
       }
+      setSelectedCohortId("");
     } else {
       console.log("No Cohort Selected");
+      setSelectedCohortId("");
     }
   };
 
@@ -546,8 +556,8 @@ const Cohorts: React.FC = () => {
 
   // props to send in header
   const userProps = {
-    userType: t("SIDEBAR.COHORTS"),
-    searchPlaceHolder: t("COHORTS.SEARCHBAR_PLACEHOLDER"),
+    userType: t("SIDEBAR.CENTER"),
+    searchPlaceHolder: t("CENTERS.SEARCHBAR_PLACEHOLDER"),
     selectedState: selectedState,
     selectedStateCode: selectedStateCode,
     selectedDistrict: selectedDistrict,
@@ -568,9 +578,9 @@ const Cohorts: React.FC = () => {
       <CustomModal
         open={editModelOpen}
         handleClose={onCloseEditMOdel}
-        title={t("COMMON.EDIT_COHORT_NAME")}
+        title={t("COMMON.EDIT_CENTER_NAME")}
         // subtitle={t("COMMON.NAME")}
-        primaryBtnText={t("COMMON.UPDATE_COHORT")}
+        primaryBtnText={t("COMMON.UPDATE_CENTER")}
         secondaryBtnText="Cancel"
         primaryBtnClick={handleUpdateAction}
         primaryBtnDisabled={confirmButtonDisable}
@@ -587,7 +597,7 @@ const Cohorts: React.FC = () => {
         </Box>
       </CustomModal>
       <ConfirmationModal
-        message={t("CENTERS.SURE_DELETE_COHORT")}
+        message={t("CENTERS.SURE_DELETE_CENTER")}
         handleAction={handleActionForDelete}
         buttonNames={{
           primary: t("COMMON.YES"),
@@ -658,4 +668,4 @@ export async function getStaticProps({ locale }: any) {
   };
 }
 
-export default Cohorts;
+export default Center;
