@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormLabel,
   MenuItem,
   Typography,
   useMediaQuery,
@@ -12,11 +13,16 @@ import Select from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
+import InputLabel from "@mui/material/InputLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
+
 import {
   getStateBlockDistrictList,
 } from "../services/MasterDataService";
 import AreaSelection from "./AreaSelection";
 import { transformArray } from "../utils/Helper";
+import MultipleSelectCheckmarks from "./FormControl";
+
 interface State {
   value: string;
   label: string;
@@ -175,7 +181,7 @@ const HeaderComponent = ({
           isMediumScreen={isMediumScreen}
         />
       )}
-      <Typography variant="h2" sx={{ mt: isMobile ? "12px" : "20px" }}>
+      <Typography variant="h1" sx={{ mt: isMobile ? "12px" : "20px" }}>
         {userType}
       </Typography>
       <Box
@@ -189,30 +195,41 @@ const HeaderComponent = ({
           <SearchBar onSearch={handleSearch} placeholder={searchPlaceHolder} />
         </Box>
         <Box display={"flex"} gap={1} alignItems={"center"}>
-          <Typography variant="h2" fontWeight={"bold"}>
+          {/* <Typography variant="h2" >
            {t("COMMON.FILTER_BY_STATUS")}
-          </Typography>
-          <FormControl sx={{ minWidth: "120px" }}>
-            <Select
-              value={selectedFilter}
-              onChange={handleFilterChange}
-              displayEmpty
-              style={{
-                borderRadius: "8px",
-                height: "40px",
-                fontSize: "14px",
-              }}
-            >
-              <MenuItem value="All">
-                <em>{t("COMMON.ALL")}</em>
-              </MenuItem>
-              {Filter?.map((filter, index) => (
-                <MenuItem value={filter} key={index}>
-                  {filter}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          </Typography> */}
+           <FormControl  >
+  <InputLabel 
+    shrink 
+    htmlFor="select-multiple-native" 
+    sx={{ marginBottom: '-10px', marginLeft:"2px"}}
+  >
+    {t("COMMON.FILTER_BY_STATUS")}
+  </InputLabel>
+
+  <Select
+    value={selectedFilter}
+    onChange={handleFilterChange}
+    input={<OutlinedInput label={t("COMMON.FILTER_BY_STATUS")} />}
+    displayEmpty
+    sx={{
+      borderRadius: "8px",
+      height: "40px",
+      fontSize: "14px",
+      paddingTop: '0px',
+    }}
+  >
+    <MenuItem value="All">
+      <em>{t("COMMON.ALL")}</em>
+    </MenuItem>
+    {Filter?.map((filter, index) => (
+      <MenuItem value={filter} key={index}>
+        {filter}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
+
           {showSort && (
             <FormControl sx={{ minWidth: "120px" }}>
               <Select

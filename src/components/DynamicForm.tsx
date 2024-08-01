@@ -67,6 +67,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     onError(errors);
   };
 
+
+  
   function transformErrors(errors: any) {
     console.log("errors", errors);
     console.log("schema", schema);

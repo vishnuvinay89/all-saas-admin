@@ -23,6 +23,7 @@ import AreaSelection from "./AreaSelection";
 import { showToastMessage } from "./Toastify";
 import { transformArray } from "../utils/Helper";
 import { useLocationState } from "@/utils/useLocationState";
+import { tenantId } from "../../app.config";
 
 interface AddFacilitatorModalprops {
   open: boolean;
@@ -141,7 +142,7 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
       password: password,
       tenantCohortRoleMapping: [
         {
-          tenantId: "ef99949b-7f3a-4a5f-806a-e67e683e38f3",
+          tenantId: tenantId,
           roleId: RoleId.TEACHER,
           cohortId: [selectedCenterCode],
         },
@@ -216,7 +217,7 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
           customFields: customFields,
         };
         const response = await updateUser(userId, object);
-        showToastMessage(t("LEARNERS.LEARNER_UPDATED_SUCCESSFULLY"), "success");
+        showToastMessage(t("FACILITATORS.FACILITATOR_UPDATED_SUCCESSFULLY"), "success");
       } else {
         try{
           const response = await createUser(apiBody);
