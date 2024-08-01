@@ -154,6 +154,14 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                     />
                   );
                 }
+                // if (props.column.key === "selection-cell") {
+                //   return (
+                //     <Checkbox
+                //       checked={selectedRowIds.includes(props.rowData.id)}
+                //       onChange={() => handleCheckboxChange(props.rowData.id)}
+                //     />
+                //   );
+                // }
                 return <div className="table-cell">{props.value}</div>;
               },
             },

@@ -69,9 +69,9 @@
     "MAIN_COURSE": "Main Course"
   },
   "FACILITATORS": {
-    "ALL_STATES": "All States",
-    "ALL_DISTRICTS": "All Districts",
-    "ALL_BLOCKS": "All Blocks",
+    "ALL_STATES": "States",
+    "ALL_DISTRICTS": "Districts",
+    "ALL_BLOCKS": "Blocks",
     "NEW_FACILITATOR": "New Facilitator",
     "SEARCHBAR_PLACEHOLDER": "Search Facilitators..",
     "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher has been Successfully Created",
@@ -89,7 +89,10 @@
   },
   "TEAM_LEADERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders..",
-    "NEW_TEAM_LEADER": "New Team Leader"
+    "NEW_TEAM_LEADER": "New Team Leader",
+    "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
+    "TEAM_LEADER_CREATED_SUCCESSFULLY": "Team Leader has been Successfully Created!",
+    "TEAM_LEADER_UPDATED_SUCCESSFULLY": "Team Leader has been Successfully Updated!"
   },
   "COHORTS": {
     "SEARCHBAR_PLACEHOLDER": "Search Center.."
@@ -207,7 +210,7 @@
     "ASSIGN_CENTERS": "Assign Centers",
     "TYPE_OF_COHORT": "Type Of Center",
     "UNIT_NAME": "Unit Name",
-    "SUBJECTS_I_TEACH": "Subject Teach",
+    "SUBJECTS_I_TEACH": "Subject I Teach",
     "MY_MAIN_SUBJECTS": "Main subjects",
     "NUMBER_OF_CLUSTERS_I_TEACH": "Number of cluster",
     "DESIGNATION": "Designation",

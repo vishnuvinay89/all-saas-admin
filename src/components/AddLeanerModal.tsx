@@ -106,18 +106,20 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
     const target = event.target as HTMLFormElement;
     const elementsArray = Array.from(target.elements);
 
-    for (const element of elementsArray) {
-      if (
-        (element instanceof HTMLInputElement ||
-          element instanceof HTMLSelectElement ||
-          element instanceof HTMLTextAreaElement) &&
-        (element.value === "" ||
-          (Array.isArray(element.value) && element.value.length === 0))
-      ) {
-        element.focus();
-        return;
-      }
-    }
+
+console.log("onsubmit", data);
+    // for (const element of elementsArray) {
+    //   if (
+    //     (element instanceof HTMLInputElement ||
+    //       element instanceof HTMLSelectElement ||
+    //       element instanceof HTMLTextAreaElement) &&
+    //     (element.value === "" ||
+    //       (Array.isArray(element.value) && element.value.length === 0))
+    //   ) {
+    //     element.focus();
+    //     return;
+    //   }
+    // }
     console.log("Form data submitted:", data.formData);
 
     const formData = data.formData;
@@ -311,11 +313,11 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
               marginTop: "10px",
             }}
           >
-            {!dynamicForm && (
+            {/* {!dynamicForm && (
               <Typography>
                 {t("LEARNERS.FIRST_SELECT_REQUIRED_FIELDS")}{" "}
               </Typography>
-            )}
+            )} */}
             <AreaSelection
               states={transformArray(states)}
               districts={transformArray(districts)}
