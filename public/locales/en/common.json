@@ -42,7 +42,7 @@
     "CODE_NOTIFICATION": "Code Should Be Fill With Captial Letters",
     "USER_DELETE_SUCCSSFULLY": "User deleted Successfully",
     "STATE_NAME": "State Name",
-    "FILTER_BY_STATUS": "Filter By Status :"
+    "FILTER_BY_STATUS": "Filter By Status"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
