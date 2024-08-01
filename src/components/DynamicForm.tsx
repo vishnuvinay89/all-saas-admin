@@ -78,6 +78,25 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           error.message = t("FORM_ERROR_MESSAGES.THIS_IS_REQUIRED_FIELD");
           break;
         }
+        case "maximum":
+          {
+            const property = error.property.substring(1);
+
+            if (schema.properties?.[property]?.validation?.includes("numeric")) {
+              error.message = t("FORM_ERROR_MESSAGES.MAX_LENGTH_DIGITS_ERROR", {
+                maxLength: schema.properties?.[property]?.maxLength,
+              });
+            }
+          }
+          case "minimum":
+            {
+              const property = error.property.substring(1);
+          if (schema.properties?.[property]?.validation?.includes("numeric")) {
+            error.message = t("FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR", {
+              minLength: schema.properties?.[property]?.minLength,
+            });
+          }
+            }
         case "pattern": {
           // if (schema.properties?.[property]?.validation?.includes("numeric")) {
             //   error.message = t("FORM_ERROR_MESSAGES.ENTER_ONLY_DIGITS");
@@ -96,6 +115,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               // }
               
               const pattern = error?.params?.pattern;
+              console.log(pattern)
               const property = error.property.substring(1);
 
           switch (pattern) {
@@ -160,6 +180,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             }
           }
         }
+      
       }
 
       return error;
