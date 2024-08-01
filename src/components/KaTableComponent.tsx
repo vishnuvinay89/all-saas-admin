@@ -97,10 +97,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
             },
             cell: {
               content: (props) => {
-                if (
-                  props.column.key === DataKey.ACTIONS 
-                  
-                ) {
+                if (props.column.key === DataKey.ACTIONS) {
                   return (
                     <ActionIcon
                       rowData={props.rowData}
@@ -145,6 +142,9 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                       />
                     );
                   }
+                }
+                if (props.column.key === DataKey.NAME) {
+                  return firtstLetterInUpperCase(props.rowData?.name)
                 }
                 if (props.column.key === "selection-cell") {
                   return (

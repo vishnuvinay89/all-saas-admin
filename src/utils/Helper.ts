@@ -78,14 +78,13 @@ export const transformArray = (arr: State[]): State[] => {
   }));
 };
 
-export const firtstLetterInUpperCase = (label: string) => {
-  if (label) {
-    const firstLetter = label.charAt(0);
-    const firstLetterCap = firstLetter.toUpperCase();
-    const remainingLetters = label.slice(1);
-    const firstUpperCaseLetter = firstLetterCap + remainingLetters;
-    return firstUpperCaseLetter;
-  } else {
+export const firtstLetterInUpperCase = (label: string): string | null => {
+  if (!label) {
     return null;
   }
+
+  return label
+    ?.split(" ")
+    ?.map((word) => word?.charAt(0).toUpperCase() + word?.slice(1))
+    ?.join(" ");
 };
