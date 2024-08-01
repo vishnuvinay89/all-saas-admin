@@ -94,7 +94,7 @@ const HeaderComponent = ({
        }
        console.log(object);
       const response = await getStateBlockDistrictList(object);
-      const result = response?.result;
+      const result = response?.result?.values;
       setDistricts(result);
     } catch (error) {
       console.log(error);
@@ -119,7 +119,7 @@ const HeaderComponent = ({
          
        }
       const response = await getStateBlockDistrictList(object);
-      const result = response?.result;
+      const result = response?.result?.values;
       setBlocks(result);
     } catch (error) {
       console.log(error);
@@ -144,7 +144,7 @@ const HeaderComponent = ({
           
         }
         const response = await getStateBlockDistrictList(object);
-        const result = response?.result;
+        const result = response?.result?.values;
         setStates(result);
         console.log(typeof states);
       } catch (error) {

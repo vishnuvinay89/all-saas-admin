@@ -46,7 +46,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
         fieldName: "districts",
       };
       const response = await getStateBlockDistrictList(object);
-      const result = response?.result;
+      const result = response?.result?.values;
       setDistricts(result);
     } catch (error) {
       console.log(error);
@@ -68,7 +68,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
         fieldName: "blocks",
       };
       const response = await getStateBlockDistrictList(object);
-      const result = response?.result;
+      const result = response?.result?.values;
       setBlocks(result);
     } catch (error) {
       console.log(error);
@@ -186,7 +186,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
           fieldName: "states",
         };
         const response = await getStateBlockDistrictList(object);
-        const result = response?.result;
+        const result = response?.result?.values;
         setStates(result);
         console.log(typeof states);
       } catch (error) {
