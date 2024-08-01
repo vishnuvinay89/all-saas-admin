@@ -20,6 +20,18 @@ export const generateUUID = () => {
     return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
   });
 };
+export const getUserName = async (userId: string) => {
+  try {
+    const id = userId;
+    const fieldValue = true;
+    const userDetails = await getUserDetails(id, fieldValue);
+    console.log("userDetails", userDetails);
+    return userDetails?.userData?.name; // Accessing the name property from userData
+  } catch (error) {
+    console.error("Error in fetching user name:", error);
+    return null;
+  }
+};
 
 export const getDeviceId = () => {
   return new Promise((resolve) => {
@@ -80,7 +92,11 @@ export const firtstLetterInUpperCase = (label: string) => {
     return null;
   }
 };
-export const capitalizeFirstLetterOfEachWordInArray = (arr: string[]): string[] => {
-  console.log(arr)
-  return arr.map(str => str.replace(/\b[a-z]/g, char => char.toUpperCase()));
-}
+export const capitalizeFirstLetterOfEachWordInArray = (
+  arr: string[]
+): string[] => {
+  console.log(arr);
+  return arr.map((str) =>
+    str.replace(/\b[a-z]/g, (char) => char.toUpperCase())
+  );
+};
