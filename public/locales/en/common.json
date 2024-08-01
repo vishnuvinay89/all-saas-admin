@@ -214,7 +214,9 @@
     "MY_MAIN_SUBJECTS": "Main subjects",
     "NUMBER_OF_CLUSTERS_I_TEACH": "Number of cluster",
     "DESIGNATION": "Designation",
-    "NOTE_THIS_WILL_BE_CENTER_NAME": "Note : This Will Be Center Name"
+    "NOTE_THIS_WILL_BE_CENTER_NAME": "Note : This will be center name",
+    "REGULAR": "Regular",
+    "REMOTE": "Remote"
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",
