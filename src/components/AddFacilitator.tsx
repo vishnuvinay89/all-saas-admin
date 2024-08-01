@@ -87,9 +87,14 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
           );
           console.log(centerOptionsList);
         }
-
+      console.log(response)
+    
         if (response) {
-          const { schema, uiSchema, formValues } = GenerateSchemaAndUiSchema(response, t);
+          const newResponse={
+            ...response,
+            fields: response.fields.filter(field => field.name !== 'no_of_clusters')
+          }
+          const { schema, uiSchema, formValues } = GenerateSchemaAndUiSchema(newResponse, t);
           setFormvalue(formValues)
           setSchema(schema);
           setUiSchema(uiSchema);
@@ -252,9 +257,9 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
         showFooter={false}
         modalTitle={t("FACILITATORS.NEW_FACILITATOR")}
       >
-        {!dynamicForm && (
+        {/* {!dynamicForm && (
           <Typography>{t("LEARNERS.FIRST_SELECT_REQUIRED_FIELDS")} </Typography>
-        )}
+        )} */}
         <AreaSelection
           states={transformArray(states)}
           districts={transformArray(districts)}
