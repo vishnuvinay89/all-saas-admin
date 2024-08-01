@@ -10,13 +10,13 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
+import CustomModal from "@/components/CustomModal";
 import { SortDirection, DataType } from "ka-table/enums";
 import {
   getStateBlockDistrictList,
   getDistrictsForState,
 } from "@/services/MasterDataService";
 import { transformLabel } from "@/utils/Helper";
-import ConfirmationModal from "@/components/ConfirmationModal";
 
 type StateDetail = {
   value: string;
@@ -24,6 +24,8 @@ type StateDetail = {
 };
 
 type DistrictDetail = {
+  updatedAt: any;
+  createdAt: any;
   value: string;
   label: string;
 };
@@ -41,7 +43,7 @@ const District: React.FC = () => {
   const [pageCount, setPageCount] = useState<number>(1);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [selectedFilter, setSelectedFilter] = useState("All");
-  const [confirmationDialogOpen, setConfirmationDialogOpen] =
+  const [confirmationModalOpen, setConfirmationModalOpen] =
     useState<boolean>(false);
   const [selectedDistrictForDelete, setSelectedDistrictForDelete] =
     useState<DistrictDetail | null>(null);
@@ -54,12 +56,14 @@ const District: React.FC = () => {
         key: "label",
         title: t("MASTER.DISTRICT_NAMES"),
         dataType: DataType.String,
-        sortDirection: SortDirection.Ascend,
       },
       {
-        key: "actions",
-        title: t("MASTER.ACTIONS"),
-        dataType: DataType.String,
+        key: "createdAt",
+        title: t("MASTER.CREATED_AT"),
+      },
+      {
+        key: "updatedAt",
+        title: t("MASTER.UPDATED_AT"),
       },
     ],
     [t]
@@ -120,19 +124,12 @@ const District: React.FC = () => {
 
   const handleDelete = useCallback((rowData: DistrictDetail) => {
     setSelectedDistrictForDelete(rowData);
-    setConfirmationDialogOpen(true);
+    setConfirmationModalOpen(true);
   }, []);
 
   const handleConfirmDelete = useCallback(() => {
-    if (selectedDistrictForDelete) {
-      setDistrictData((prevData) =>
-        prevData.filter(
-          (district) => district.value !== selectedDistrictForDelete.value
-        )
-      );
-      setSelectedDistrictForDelete(null);
-      setConfirmationDialogOpen(false);
-    }
+    console.log("Delete row:", selectedDistrictForDelete);
+    setConfirmationModalOpen(false);
   }, [selectedDistrictForDelete]);
 
   const handleFilterChange = useCallback((event: SelectChangeEvent<string>) => {
@@ -211,22 +208,23 @@ const District: React.FC = () => {
     selectedFilter,
     handleFilterChange,
     handleSearch: () => {},
+    showFilter: false,
   };
 
   const showPagination = sortedDistricts.length > 10;
 
   return (
     <React.Fragment>
-      <ConfirmationModal
-        modalOpen={confirmationDialogOpen}
-        message={t("COMMON.ARE_YOU_SURE_DELETE")}
-        handleAction={handleConfirmDelete}
-        buttonNames={{
-          primary: t("COMMON.DELETE"),
-          secondary: t("COMMON.CANCEL"),
-        }}
-        handleCloseModal={() => setConfirmationDialogOpen(false)}
-      />
+      <CustomModal
+        open={confirmationModalOpen}
+        handleClose={() => setConfirmationModalOpen(false)}
+        title={t("COMMON.CONFIRM_DELETE")}
+        primaryBtnText={t("COMMON.DELETE")}
+        secondaryBtnText={t("COMMON.CANCEL")}
+        primaryBtnClick={handleConfirmDelete}
+      >
+        <Box>{t("COMMON.ARE_YOU_SURE_DELETE")}</Box>
+      </CustomModal>
       <HeaderComponent {...userProps}>
         <Box display="flex" gap={2}>
           <FormControl variant="outlined" sx={{ minWidth: 220, marginTop: 2 }}>
@@ -250,51 +248,33 @@ const District: React.FC = () => {
           columns={columns}
           data={sortedDistricts.map((districtDetail) => ({
             label: transformLabel(districtDetail.label),
-            actions: (
-              <div>
-                <button onClick={() => handleEdit(districtDetail)}>Edit</button>
-                <button onClick={() => handleDelete(districtDetail)}>
-                  Delete
-                </button>
-              </div>
-            ),
+            createdAt: districtDetail.createdAt,
+            updatedAt: districtDetail.updatedAt,
           }))}
           limit={pageLimit}
           offset={pageOffset}
-          PagesSelector={() => null}
-          PageSizeSelector={() => (
-            <PageSizeSelector
-              handleChange={handleChange}
-              pageSize={pageSize}
-              options={[5, 10, 15]}
-            />
-          )}
+          PagesSelector={() =>
+            showPagination && (
+              <Pagination
+                color="primary"
+                count={pageCount}
+                page={pageOffset + 1}
+                onChange={handlePaginationChange}
+              />
+            )
+          }
+          PageSizeSelector={PageSizeSelectorFunction}
           extraActions={[]}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          noData={districtData.length === 0}
         />
       </HeaderComponent>
-      {showPagination && (
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          mt={2}
-        >
-          <Pagination
-            count={pageCount}
-            page={pageOffset + 1}
-            onChange={handlePaginationChange}
-            color="primary"
-          />
-          <PageSizeSelectorFunction />
-        </Box>
-      )}
     </React.Fragment>
   );
 };
 
-export async function getServerSideProps({ locale }: { locale: string }) {
+export async function getStaticProps({ locale }: any) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),

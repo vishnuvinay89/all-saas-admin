@@ -39,10 +39,12 @@
     "ADD_STATE_CODE": "Code",
     "NAME_REQUIRED": "Name is Required",
     "CODE_REQUIRED": "Code is Required",
-    "CODE_NOTIFICATION": "Code Should Be Fill With Captial Letters",
+    "CODE_NOTIFICATION": "Code should contain 2-3 characters (e.g.MH).",
     "USER_DELETE_SUCCSSFULLY": "User deleted Successfully",
     "STATE_NAME": "State Name",
-    "FILTER_BY_STATUS": "Filter By Status"
+    "INVALID_TEXT": "Invalid Text",
+    "INVALID_CODE": "Invalid Code",
+    "FILTER_BY_STATUS": "Filter By Status :"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
