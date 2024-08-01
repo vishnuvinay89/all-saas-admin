@@ -44,7 +44,11 @@
     "STATE_NAME": "State Name",
     "INVALID_TEXT": "Invalid Text",
     "INVALID_CODE": "Invalid Code",
-    "FILTER_BY_STATUS": "Filter By Status :"
+    "FILTER_BY_STATUS": "Filter By Status :",
+    "DISTRICT_NAME": "District Name",
+    "DISTRICT_CODE": "District Code",
+    "CONTROLLING_FIELD": "Controlling Field",
+    "ADD_DISTRICT": "Add District"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",

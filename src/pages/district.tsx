@@ -65,6 +65,11 @@ const District: React.FC = () => {
         key: "updatedAt",
         title: t("MASTER.UPDATED_AT"),
       },
+      {
+        key: "actions",
+        title: t("MASTER.ACTIONS"),
+        dataType: DataType.String,
+      },
     ],
     [t]
   );
@@ -103,7 +108,7 @@ const District: React.FC = () => {
           controllingfieldfk: selectedState,
           fieldName: "districts",
         });
-        setDistrictData(data.result || []);
+        setDistrictData(data.result.values || []);
         setSelectedDistrict("-");
       } catch (error) {
         console.error("Error fetching district data", error);
@@ -141,9 +146,9 @@ const District: React.FC = () => {
     const fetchStateData = async () => {
       try {
         const data = await getStateBlockDistrictList({ fieldName: "states" });
-        if (data?.result) {
-          setStateData(data.result);
-          const initialSelectedState = data.result[0]?.value || "";
+        if (data?.result?.values) {
+          setStateData(data.result.values);
+          const initialSelectedState = data.result.values[0]?.value || "";
           setSelectedState(initialSelectedState);
 
           const initialDistrictData = await getDistrictsForState({
@@ -151,7 +156,7 @@ const District: React.FC = () => {
             fieldName: "districts",
           });
           if (initialDistrictData?.result) {
-            setDistrictData(initialDistrictData.result);
+            setDistrictData(initialDistrictData.result.values || []);
           } else {
             console.error(
               "No initial district data returned:",
@@ -264,22 +269,25 @@ const District: React.FC = () => {
             )
           }
           PageSizeSelector={PageSizeSelectorFunction}
-          extraActions={[]}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          noData={districtData.length === 0}
+          extraActions={[]}
         />
       </HeaderComponent>
     </React.Fragment>
   );
 };
 
-export async function getStaticProps({ locale }: any) {
+export default District;
+
+export const getServerSideProps = async (context: any) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["common"])),
+      ...(await serverSideTranslations(context.locale, [
+        "common",
+        "header",
+        "master",
+      ])),
     },
   };
-}
-
-export default District;
+};

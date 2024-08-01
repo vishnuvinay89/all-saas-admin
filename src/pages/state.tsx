@@ -12,7 +12,7 @@ import {
   createOrUpdateOption,
 } from "@/services/MasterDataService";
 import Loader from "@/components/Loader";
-import {AddStateModal} from "@/components/AddStateModal";
+import { AddStateModal } from "@/components/AddStateModal";
 import { transformLabel } from "@/utils/Helper";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { showToastMessage } from "@/components/Toastify";
@@ -135,7 +135,6 @@ const State: React.FC = () => {
   const handleAddStateClick = () => {
     setEditState(null);
     setAddStateModalOpen(true);
-    console.log("state modal clicked")
   };
 
   const handleAddStateSubmit = async (
@@ -177,9 +176,8 @@ const State: React.FC = () => {
         limit: pageLimit,
         offset: pageOffset,
       } as StateBlockDistrictListParams);
-
-      console.log("state data", data);
-      const sortedData = [...data.result].sort((a, b) => {
+      console.log("staeData", data);
+      const sortedData = [...data.result.values].sort((a, b) => {
         const [field, order] = sortBy;
         return order === "asc"
           ? a[field].localeCompare(b[field])
@@ -231,7 +229,7 @@ const State: React.FC = () => {
       <AddStateModal
         open={addStateModalOpen}
         onClose={() => setAddStateModalOpen(false)}
-        onSubmit={(name, value) =>
+        onSubmit={(name: string, value: string) =>
           handleAddStateSubmit(
             name,
             value,
