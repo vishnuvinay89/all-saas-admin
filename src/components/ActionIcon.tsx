@@ -49,7 +49,9 @@ const ActionIcon: React.FC<ActionCellProps> = ({
           }}
         >
           <EditIcon />
-          <Typography variant="body2">{t("COMMON.EDIT")}</Typography>
+          <Typography variant="body2" fontFamily={"Poppins"}>
+            {t("COMMON.EDIT")}
+          </Typography>
         </Box>
       </Tooltip>
       <Tooltip title={t("COMMON.DELETE")}>
@@ -72,7 +74,7 @@ const ActionIcon: React.FC<ActionCellProps> = ({
                 : "rgb(244, 67, 54)",
             }}
           />
-          <Typography variant="body2">{t("COMMON.DELETE")}</Typography>
+          <Typography variant="body2" fontFamily={"Poppins"}>{t("COMMON.DELETE")}</Typography>
         </Box>
       </Tooltip>
     </Box>
