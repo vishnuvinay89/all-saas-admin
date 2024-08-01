@@ -95,3 +95,7 @@ export const capitalizeFirstLetterOfEachWordInArray = (
     str.replace(/\b[a-z]/g, (char) => char.toUpperCase())
   );
 };
+export const fieldTextValidation = (text: string) => {
+  const regex = /^[A-Za-z\s]+$/;
+  return regex.test(text);
+};
