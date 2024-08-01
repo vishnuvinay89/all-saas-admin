@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useMediaQuery } from '@mui/material';
 import { getStateBlockDistrictList, getCenterList } from '../services/MasterDataService'; // Update the import path as needed
-
+import {
+  getCohortList,
+} from "@/services/CohortService/cohortService";
 interface FieldProp {
   value: string;
   label: string;
@@ -24,9 +26,13 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
   const [selectedCenter, setSelectedCenter] = useState<string[]>([]);
   const [dynamicForm, setDynamicForm] = useState<any>(false);
+  const [dynamicFormForBlock, setdynamicFormForBlock] = useState<any>(false);
+
   const [selectedBlock, setSelectedBlock] = useState<string[]>([]);
   const [selectedBlockCode, setSelectedBlockCode] = useState("");
  const [selectedCenterCode, setSelectedCenterCode] = useState("");
+ const [selectedBlockFieldId, setSelectedBlockFieldId] = useState("");
+
 
   const handleStateChangeWrapper = useCallback(async (
     selectedNames: string[],
@@ -89,7 +95,20 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
                 "blocks": selectedCodes[0]
             }
         };
-        const response = await getCenterList(object);
+        console.log(selected)
+        const getBlockIdObject={
+          "limit": 200,
+          "offset": 0,          "filters": {
+            "type":"BLOCK",
+            "status": [
+                "active"
+            ],
+            "name": selected[0]
+        },
+        }
+        const response = await getCenterList(getBlockIdObject);
+        setSelectedBlockFieldId(response?.result?.results?.cohortDetails[0].cohortId)
+        console.log(response?.result?.results?.cohortDetails[0].cohortId)
      //   const result = response?.result?.cohortDetails;
         const dataArray=response?.result?.results?.cohortDetails;
 
@@ -135,6 +154,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
     setSelectedBlock(selected);
     const blocks = code?.join(",");
     setSelectedBlockCode(blocks);
+    setdynamicFormForBlock(true)
     console.log("Selected categories:", blocks);
   }, []);
 
@@ -155,6 +175,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
       setSelectedState([]);
       setSelectedCenter([]);
       setDynamicForm(false);
+      setdynamicFormForBlock(false)
     }
   }, [onClose, open]);
 
@@ -179,7 +200,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
   return {
     states, districts, blocks, allCenters, isMobile, isMediumScreen,
     selectedState, selectedStateCode, selectedDistrict, selectedDistrictCode,
-    selectedCenter, dynamicForm, selectedBlock, selectedBlockCode,
-    handleStateChangeWrapper, handleDistrictChangeWrapper, handleBlockChangeWrapper, handleCenterChangeWrapper,selectedCenterCode
+    selectedCenter, dynamicForm, selectedBlock, selectedBlockCode,dynamicFormForBlock,
+    handleStateChangeWrapper, handleDistrictChangeWrapper, handleBlockChangeWrapper, handleCenterChangeWrapper,selectedCenterCode, selectedBlockFieldId
   };
 };

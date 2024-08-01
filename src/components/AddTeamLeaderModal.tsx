@@ -9,6 +9,11 @@ import {
   getFormRead,
   updateUser,
 } from "@/services/CreateUserService";
+import {
+  
+  getCohortList
+  
+} from "@/services/CohortService/cohortService";
 import { generateUsernameAndPassword } from "@/utils/Helper";
 import { FormData } from "@/utils/Interfaces";
 import {
@@ -76,6 +81,9 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
     handleBlockChangeWrapper,
     handleCenterChangeWrapper,
     selectedCenterCode,
+    selectedBlockFieldId,
+    dynamicFormForBlock
+
   } = useLocationState(open, onClose);
 
   useEffect(() => {
@@ -144,7 +152,7 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
         {
           tenantId: "ef99949b-7f3a-4a5f-806a-e67e683e38f3",
           roleId: RoleId.TEAM_LEADER,
-          cohortId: [selectedCenterCode],
+          cohortId: [selectedBlockFieldId],
         },
       ],
       customFields: [],
@@ -332,10 +340,10 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
               handleBlockChangeWrapper={handleBlockChangeWrapper}
               isMobile={isMobile}
               isMediumScreen={isMediumScreen}
-              isCenterSelection={true}
-              allCenters={allCenters}
-              selectedCenter={selectedCenter}
-              handleCenterChangeWrapper={handleCenterChangeWrapper}
+            //  isCenterSelection={true}
+            //  allCenters={allCenters}
+            //  selectedCenter={selectedCenter}
+            //  handleCenterChangeWrapper={handleCenterChangeWrapper}
             />
           </Box>
         </>
@@ -357,7 +365,7 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
                 {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
               </DynamicForm>
             )
-          : dynamicForm &&
+          : dynamicFormForBlock &&
             schema &&
             uiSchema && (
               <DynamicForm
