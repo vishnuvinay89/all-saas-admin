@@ -9,6 +9,7 @@ import {
   getFormRead,
   updateUser,
 } from "@/services/CreateUserService";
+import { tenantId } from "../../app.config";
 import {
   
   getCohortList
@@ -135,11 +136,7 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
     const formData = data.formData;
     console.log("Form data submitted:", formData);
     const schemaProperties = schema.properties;
-    let cohortId;
-    if (typeof window !== "undefined" && window.localStorage) {
-      var teacherData = JSON.parse(localStorage.getItem("teacherApp") || "");
-      cohortId = "3f6825ab-9c94-4ee4-93e8-ef21e27dcc67";
-    }
+    
     const { username, password } = generateUsernameAndPassword(
       selectedStateCode,
       Role.TEAM_LEADER
@@ -150,7 +147,7 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
       password: password,
       tenantCohortRoleMapping: [
         {
-          tenantId: "ef99949b-7f3a-4a5f-806a-e67e683e38f3",
+          tenantId: tenantId,
           roleId: RoleId.TEAM_LEADER,
           cohortId: [selectedBlockFieldId],
         },

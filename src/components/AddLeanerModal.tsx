@@ -26,6 +26,7 @@ import { useTranslation } from "react-i18next";
 import { transformArray } from "../utils/Helper";
 import AreaSelection from "./AreaSelection";
 import { showToastMessage } from "./Toastify";
+import { tenantId } from "../../app.config";
 
 interface AddLearnerModalProps {
   open: boolean;
@@ -106,8 +107,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
     const target = event.target as HTMLFormElement;
     const elementsArray = Array.from(target.elements);
 
-
-console.log("onsubmit", data);
+    console.log("onsubmit", data);
     // for (const element of elementsArray) {
     //   if (
     //     (element instanceof HTMLInputElement ||
@@ -140,7 +140,7 @@ console.log("onsubmit", data);
       password: password,
       tenantCohortRoleMapping: [
         {
-          tenantId: "ef99949b-7f3a-4a5f-806a-e67e683e38f3",
+          tenantId: tenantId,
           roleId: RoleId.STUDENT,
           cohortId: [selectedCenterCode],
         },
