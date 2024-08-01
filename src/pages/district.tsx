@@ -56,25 +56,14 @@ const District: React.FC = () => {
         key: "label",
         title: t("MASTER.DISTRICT_NAMES"),
         dataType: DataType.String,
-        sortDirection: SortDirection.Ascend,
       },
       {
         key: "createdAt",
         title: t("MASTER.CREATED_AT"),
-        dataType: DataType.String,
-        sortDirection: SortDirection.Ascend,
       },
       {
         key: "updatedAt",
         title: t("MASTER.UPDATED_AT"),
-        dataType: DataType.String,
-        sortDirection: SortDirection.Ascend,
-      },
-
-      {
-        key: "actions",
-        title: t("MASTER.ACTIONS"),
-        dataType: DataType.String,
       },
     ],
     [t]
@@ -260,7 +249,7 @@ const District: React.FC = () => {
           data={sortedDistricts.map((districtDetail) => ({
             label: transformLabel(districtDetail.label),
             createdAt: districtDetail.createdAt,
-            updatedAt:districtDetail.updatedAt
+            updatedAt: districtDetail.updatedAt,
           }))}
           limit={pageLimit}
           offset={pageOffset}
