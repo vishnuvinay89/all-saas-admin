@@ -87,7 +87,7 @@ const State: React.FC = () => {
   const handleChange = useCallback((event: SelectChangeEvent<number>) => {
     const value = Number(event.target.value);
     setPageLimit(value);
-    setPageOffset(0); // Reset to first page
+    setPageOffset(0); 
   }, []);
 
   const handleSortChange = useCallback((event: SelectChangeEvent<string>) => {
@@ -101,8 +101,9 @@ const State: React.FC = () => {
   }, []);
 
   const handleEdit = useCallback((rowData: StateDetail) => {
+    console.log("Edit", rowData);
     setSelectedStateForEdit(rowData);
-    setAddStateModalOpen(true); // Open the modal
+    setAddStateModalOpen(true); 
   }, []);
 
   const handleDelete = useCallback((rowData: StateDetail) => {
@@ -152,9 +153,11 @@ const State: React.FC = () => {
       ],
     };
 
+    console.log("newState", newState);
+
     try {
       const response = await createOrUpdateOption(fieldId, newState, stateId);
-
+      console.log("stateResponse", response);
       if (response) {
         await fetchStateData();
         showToastMessage(t("COMMON.STATE_ADDED_SUCCESS"), "success");
@@ -279,7 +282,6 @@ const State: React.FC = () => {
               }))}
               limit={pageLimit}
               offset={pageOffset}
-              // paginationEnable={true}
               PagesSelector={() => (
                 <PageSizeSelector
                   limit={pageLimit}
