@@ -9,6 +9,12 @@ import {
   getFormRead,
   updateUser,
 } from "@/services/CreateUserService";
+import { tenantId } from "../../app.config";
+import {
+  
+  getCohortList
+  
+} from "@/services/CohortService/cohortService";
 import { generateUsernameAndPassword } from "@/utils/Helper";
 import { FormData } from "@/utils/Interfaces";
 import {
@@ -26,7 +32,6 @@ import { useTranslation } from "react-i18next";
 import { transformArray } from "../utils/Helper";
 import AreaSelection from "./AreaSelection";
 import { showToastMessage } from "./Toastify";
-import { tenantId } from "../../app.config";
 
 interface AddLearnerModalProps {
   open: boolean;
@@ -39,7 +44,7 @@ interface FieldProp {
   value: string;
   label: string;
 }
-const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
+const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
   open,
   onClose,
   formData,
@@ -48,6 +53,8 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
 }) => {
   const [schema, setSchema] = React.useState<any>();
   const [uiSchema, setUiSchema] = React.useState<any>();
+  const [formValue, setFormValue] = React.useState<any>();
+
 
   const [credentials, setCredentials] = React.useState({
     username: "",
@@ -75,19 +82,24 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
     handleBlockChangeWrapper,
     handleCenterChangeWrapper,
     selectedCenterCode,
+    selectedBlockFieldId,
+    dynamicFormForBlock
+
   } = useLocationState(open, onClose);
 
   useEffect(() => {
     const getAddLearnerFormData = async () => {
       try {
+        let userType="TEAM LEADER"
         const response: FormData = await getFormRead(
           FormContext.USERS,
-          FormContextType.STUDENT
+           userType
         );
         console.log("sortedFields", response);
 
         if (response) {
-          const { schema, uiSchema } = GenerateSchemaAndUiSchema(response, t);
+          const { schema, uiSchema, formValues } = GenerateSchemaAndUiSchema(response, t);
+          setFormValue(formValues)
           setSchema(schema);
           console.log(schema);
           setUiSchema(uiSchema);
@@ -105,9 +117,8 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
   ) => {
     // setOpenModal(true);
     const target = event.target as HTMLFormElement;
-    const elementsArray = Array.from(target.elements);
+    // const elementsArray = Array.from(target.elements);
 
-    console.log("onsubmit", data);
     // for (const element of elementsArray) {
     //   if (
     //     (element instanceof HTMLInputElement ||
@@ -125,14 +136,10 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
     const formData = data.formData;
     console.log("Form data submitted:", formData);
     const schemaProperties = schema.properties;
-    let cohortId;
-    if (typeof window !== "undefined" && window.localStorage) {
-      var teacherData = JSON.parse(localStorage.getItem("teacherApp") || "");
-      cohortId = "3f6825ab-9c94-4ee4-93e8-ef21e27dcc67";
-    }
+    
     const { username, password } = generateUsernameAndPassword(
       selectedStateCode,
-      Role.STUDENT
+      Role.TEAM_LEADER
     );
 
     let apiBody: any = {
@@ -141,8 +148,8 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
       tenantCohortRoleMapping: [
         {
           tenantId: tenantId,
-          roleId: RoleId.STUDENT,
-          cohortId: [selectedCenterCode],
+          roleId: RoleId.TEAM_LEADER,
+          cohortId: [selectedBlockFieldId],
         },
       ],
       customFields: [],
@@ -178,15 +185,15 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
     });
     if (!isEditModal) {
       apiBody.customFields.push({
-        fieldId: "a717bb68-5c8a-45cb-b6dd-376caa605736",
+        fieldId: "394ee6c9-3c4b-4065-ab82-19dc6ab52e67",
         value: [selectedBlockCode],
       });
       apiBody.customFields.push({
-        fieldId: "61b5909a-0b45-4282-8721-e614fd36d7bd",
+        fieldId: "8d56e5e6-d504-4c51-a848-eb1b0a8d2ed6",
         value: [selectedStateCode],
       });
       apiBody.customFields.push({
-        fieldId: "aecb84c9-fe4c-4960-817f-3d228c0c7300",
+        fieldId: "ea1461c1-2dd3-469d-b58d-52c6acdce30b",
         value: [selectedDistrictCode],
       });
     }
@@ -206,10 +213,10 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
           customFields: customFields,
         };
         const response = await updateUser(userId, object);
-        showToastMessage(t("LEARNERS.LEARNER_UPDATED_SUCCESSFULLY"), "success");
+        showToastMessage(t("TEAM_LEADERS.TEAM_LEADER_UPDATED_SUCCESSFULLY"), "success");
       } else {
         const response = await createUser(apiBody);
-        showToastMessage(t("LEARNERS.LEARNER_CREATED_SUCCESSFULLY"), "success");
+        showToastMessage(t("TEAM_LEADERS.TEAM_LEADER_CREATED_SUCCESSFULLY"), "success");
       }
       onClose();
     } catch (error) {
@@ -302,7 +309,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
         open={open}
         onClose={onClose}
         showFooter={false}
-        modalTitle={t("LEARNERS.NEW_LEARNER")}
+        modalTitle={t("TEAM_LEADERS.NEW_TEAM_LEADER")}
       >
         <>
           <Box
@@ -313,11 +320,11 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
               marginTop: "10px",
             }}
           >
-            {/* {!dynamicForm && (
+            {!dynamicForm && (
               <Typography>
                 {t("LEARNERS.FIRST_SELECT_REQUIRED_FIELDS")}{" "}
               </Typography>
-            )} */}
+            )}
             <AreaSelection
               states={transformArray(states)}
               districts={transformArray(districts)}
@@ -330,10 +337,10 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
               handleBlockChangeWrapper={handleBlockChangeWrapper}
               isMobile={isMobile}
               isMediumScreen={isMediumScreen}
-              isCenterSelection={true}
-              allCenters={allCenters}
-              selectedCenter={selectedCenter}
-              handleCenterChangeWrapper={handleCenterChangeWrapper}
+            //  isCenterSelection={true}
+            //  allCenters={allCenters}
+            //  selectedCenter={selectedCenter}
+            //  handleCenterChangeWrapper={handleCenterChangeWrapper}
             />
           </Box>
         </>
@@ -355,7 +362,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
                 {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
               </DynamicForm>
             )
-          : dynamicForm &&
+          : dynamicFormForBlock &&
             schema &&
             uiSchema && (
               <DynamicForm
@@ -367,6 +374,8 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
                 widgets={{}}
                 showErrorList={true}
                 customFields={customFields}
+                formData={formValue}
+
               >
                 {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
               </DynamicForm>
@@ -376,4 +385,4 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
   );
 };
 
-export default AddLearnerModal;
+export default AddTeamLeaderModal;

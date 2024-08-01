@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormLabel,
   MenuItem,
   Typography,
   useMediaQuery,
@@ -12,9 +13,16 @@ import Select from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
-import { getStateBlockDistrictList } from "../services/MasterDataService";
+import InputLabel from "@mui/material/InputLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
+
+import {
+  getStateBlockDistrictList,
+} from "../services/MasterDataService";
 import AreaSelection from "./AreaSelection";
 import { transformArray } from "../utils/Helper";
+import MultipleSelectCheckmarks from "./FormControl";
+
 interface State {
   value: string;
   label: string;
@@ -166,7 +174,7 @@ const HeaderComponent = ({
           isMediumScreen={isMediumScreen}
         />
       )}
-      <Typography variant="h2" sx={{ mt: isMobile ? "12px" : "20px" }}>
+      <Typography variant="h1" sx={{ mt: isMobile ? "12px" : "20px" }}>
         {userType}
       </Typography>
       <Box

@@ -9,8 +9,9 @@ export interface cohortListFilter {
 }
 
 export interface cohortListData {
-  limit: Number;
-  offset: Number;
+  limit?: Number;
+  offset?: Number;
+  filter?:any
 }
 
 export const getCohortList = async (data: cohortListData): Promise<any> => {

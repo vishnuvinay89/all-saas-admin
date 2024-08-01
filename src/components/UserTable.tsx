@@ -21,7 +21,7 @@ import { userList, getUserDetails } from "../services/UserList";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import AddLearnerModal from "@/components/AddLeanerModal";
 import AddFacilitatorModal from "./AddFacilitator";
-// import AddTeamLeaderModal from "./AddTeamLeaderModal";
+import AddTeamLeaderModal from "./AddTeamLeaderModal";
 import { Role } from "@/utils/app.constant";
 import { getFormRead } from "@/services/CreateUserService";
 import { showToastMessage } from "./Toastify";
@@ -61,6 +61,7 @@ interface UserTableProps {
   searchPlaceholder: string;
   handleAddUserClick: any;
 }
+
 const columns = [
   // {
   //   key: "userId",
@@ -76,7 +77,14 @@ const columns = [
     title: "Name",
     dataType: DataType.String,
     sortDirection: SortDirection.Ascend,
-    width: 160,
+ //  width: isMobile?160:10
+  },
+  {
+    key: "status",
+    title: "Status",
+    dataType: DataType.String,
+    sortDirection: SortDirection.Ascend,
+   //width: isMobile?160:null,
   },
  
   // {
@@ -88,33 +96,33 @@ const columns = [
     key: "age",
     title: "Age",
     dataType: DataType.String,
-    width: 160,
+  //  width: 160,
   },
   {
     key: "gender",
     title: "Gender",
     dataType: DataType.String,
-    width: 160,
+  //  width: 160,
   },
   {
     key: "mobile",
     title: "Mobile Number",
     dataType: DataType.String,
-    width: 160,
+   // width: 160,
   },
   {
     key: "state",
     title: "State",
     dataType: DataType.String,
     sortDirection: SortDirection.Ascend,
-    width: 160,
+   // width: 160,
   },
   {
     key: "district",
     title: "District",
     dataType: DataType.String,
     sortDirection: SortDirection.Ascend,
-    width: 160,
+  //  width: 160,
   },
 
   {
@@ -122,20 +130,20 @@ const columns = [
     title: "Blocks",
     dataType: DataType.String,
     sortDirection: SortDirection.Ascend,
-    width: 160,
+  //  width: 160,
   },
   {
     key: "centers",
     title: "Centers",
     dataType: DataType.String,
     sortDirection: SortDirection.Ascend,
-    width: 160,
+   // width: 160,
   },
   {
     key: "actions",
     title: "Actions",
     dataType: DataType.String,
-    width: 160,
+   // width: 160,
   },
 ];
 
@@ -195,9 +203,19 @@ const UserTable: React.FC<UserTableProps> = ({
     setOpenAddFacilitatorModal(false);
   };
 
-  const handleAddFaciliatorClick = () => {
-    handleOpenAddFacilitatorModal();
-  };
+ 
+
+ const [openAddTeamLeaderModal, setOpenAddTeamLeaderModal] =
+  React.useState(false);
+const handleOpenAddTeamLeaderModal = () => {
+  setOpenAddTeamLeaderModal(true);
+};
+
+const handleCloseAddTeamLeaderModal = () => {
+  setOpenAddTeamLeaderModal(false);
+};
+
+
 
   const [filters, setFilters] = useState<FilterDetails>({
     role: role,
@@ -238,13 +256,13 @@ const UserTable: React.FC<UserTableProps> = ({
     setSelectedState(selected);
 
     if (selected[0] === "") {
-      if (filters.status) setFilters({ status: filters.status, role: role });
+      if (filters.status) setFilters({ status: [filters.status], role: role });
       else setFilters({ role: role });
     } else {
       const stateCodes = code?.join(",");
       setSelectedStateCode(stateCodes);
       if (filters.status)
-        setFilters({ status: filters.status, states: stateCodes, role: role });
+        setFilters({ status: [filters.status], states: stateCodes, role: role });
       else setFilters({ states: stateCodes, role: role });
     }
 
@@ -257,12 +275,12 @@ const UserTable: React.FC<UserTableProps> = ({
       console.log(true);
       setFilters((prevFilters) => ({
         ...prevFilters,
-        status: Status.ACTIVE,
+        status: [Status.ACTIVE],
       }));
     } else if (event.target.value === "Archived") {
       setFilters((prevFilters) => ({
         ...prevFilters,
-        status: Status.ARCHIVED,
+        status: [Status.ARCHIVED],
       }));
     } else {
       setFilters((prevFilters) => {
@@ -282,7 +300,7 @@ const UserTable: React.FC<UserTableProps> = ({
     if (selected[0] === "") {
       if (filters.status) {
         setFilters({
-          status: filters.status,
+          status: [filters.status],
           states: selectedStateCode,
           role: role,
         });
@@ -297,7 +315,7 @@ const UserTable: React.FC<UserTableProps> = ({
       setSelectedDistrictCode(districts);
       if (filters.status) {
         setFilters({
-          status: filters.status,
+          status: [filters.status],
           states: selectedStateCode,
           districts: districts,
           role: role,
@@ -317,7 +335,7 @@ const UserTable: React.FC<UserTableProps> = ({
     if (selected[0] === "") {
       if (filters.status) {
         setFilters({
-          status: filters.status,
+          status: [filters.status],
           states: selectedStateCode,
           districts: selectedDistrictCode,
           role: role,
@@ -334,7 +352,7 @@ const UserTable: React.FC<UserTableProps> = ({
       setSelectedBlockCode(blocks);
       if (filters.status) {
         setFilters({
-          status: filters.status,
+          status: [filters.status],
           states: selectedStateCode,
           districts: selectedDistrictCode,
           blocks: blocks,
@@ -385,7 +403,6 @@ const UserTable: React.FC<UserTableProps> = ({
           }
         } else {
           if (item?.type === "numeric") {
-            console.log(typeof field?.value);
 
             return parseInt(String(field?.value));
           } else if (item?.type === "text") {
@@ -451,6 +468,11 @@ const UserTable: React.FC<UserTableProps> = ({
         formFields = await getFormRead("USERS", "TEACHER");
         setFormData(mapFields(formFields, response));
         handleOpenAddFacilitatorModal();
+      }
+      else if (Role.TEAM_LEADER === role) {
+        formFields = await getFormRead("USERS", "TEAM LEADER");
+        setFormData(mapFields(formFields, response));
+        handleOpenAddTeamLeaderModal();
       }
 
       console.log("response", response);
@@ -525,6 +547,7 @@ const UserTable: React.FC<UserTableProps> = ({
           return {
             userId: user.userId,
             username: user.username,
+            status:user.status,
             name:
               user.name.charAt(0).toUpperCase() +
               user.name.slice(1).toLowerCase(),
@@ -555,7 +578,7 @@ const UserTable: React.FC<UserTableProps> = ({
       }
     };
     fetchUserList();
-  }, [pageOffset, pageLimit, sortBy, filters, openAddFacilitatorModal, openAddLearnerModal]);
+  }, [pageOffset, pageLimit, sortBy, filters, openAddFacilitatorModal, openAddLearnerModal, openAddTeamLeaderModal]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -707,6 +730,13 @@ const UserTable: React.FC<UserTableProps> = ({
       <AddFacilitatorModal
         open={openAddFacilitatorModal}
         onClose={handleCloseAddFacilitatorModal}
+        formData={formdata}
+        isEditModal={true}
+        userId={userId}
+      />
+      <AddTeamLeaderModal
+        open={openAddTeamLeaderModal}
+        onClose={handleCloseAddTeamLeaderModal}
         formData={formdata}
         isEditModal={true}
         userId={userId}
