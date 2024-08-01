@@ -77,20 +77,15 @@ export const transformArray = (arr: State[]): State[] => {
   }));
 };
 
-export const fieldTextValidation = (text: string) => {
-  const regex = /^[A-Za-z\s]+$/;
-  return regex.test(text);
-};
-export const firtstLetterInUpperCase = (label: string) => {
-  if (label) {
-    const firstLetter = label.charAt(0);
-    const firstLetterCap = firstLetter.toUpperCase();
-    const remainingLetters = label.slice(1);
-    const firstUpperCaseLetter = firstLetterCap + remainingLetters;
-    return firstUpperCaseLetter;
-  } else {
+export const firtstLetterInUpperCase = (label: string): string | null => {
+  if (!label) {
     return null;
   }
+
+  return label
+    ?.split(" ")
+    ?.map((word) => word?.charAt(0).toUpperCase() + word?.slice(1))
+    ?.join(" ");
 };
 export const capitalizeFirstLetterOfEachWordInArray = (
   arr: string[]

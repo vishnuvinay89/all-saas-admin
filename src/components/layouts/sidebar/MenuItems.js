@@ -25,9 +25,9 @@ const Menuitems = [
   },
 
   {
-    title: "SIDEBAR.COHORTS",
+    title: "SIDEBAR.CENTER",
     icon: "users",
-    href: "/cohorts",
+    href: "/centers",
   },
 
   {
