@@ -74,7 +74,8 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
     handleDistrictChangeWrapper,
     handleBlockChangeWrapper,
     handleCenterChangeWrapper,
-    selectedCenterCode,
+    selectedCenterCode,     BlockFieldId, DistrctFieldId, StateFieldId
+
   } = useLocationState(open, onClose);
 
   useEffect(() => {
@@ -178,15 +179,15 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
     });
     if (!isEditModal) {
       apiBody.customFields.push({
-        fieldId: "a717bb68-5c8a-45cb-b6dd-376caa605736",
+        fieldId: BlockFieldId,
         value: [selectedBlockCode],
       });
       apiBody.customFields.push({
-        fieldId: "61b5909a-0b45-4282-8721-e614fd36d7bd",
+        fieldId: StateFieldId,
         value: [selectedStateCode],
       });
       apiBody.customFields.push({
-        fieldId: "aecb84c9-fe4c-4960-817f-3d228c0c7300",
+        fieldId: DistrctFieldId,
         value: [selectedDistrictCode],
       });
     }
