@@ -97,10 +97,10 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
                 "status": [
                     "active"
                 ],
-                "states": selectedStateCode,
-                "districts": selectedDistrictCode,
-                "blocks": selectedCodes[0]
-              //  name:selected[0]
+                // "states": selectedStateCode,
+                // "districts": selectedDistrictCode,
+                // "blocks": selectedCodes[0]
+                name:selected[0]
             }
         };
         const response2 = await getCenterList(object);
@@ -116,7 +116,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
             "states": selectedStateCode,
                 "districts": selectedDistrictCode,
                 "blocks": selectedCodes[0]
-          //  "name": selected[0]
+           // "name": selected[0]
         },
         }
         const response = await getCenterList(getBlockIdObject);
@@ -125,7 +125,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
         );
         console.log(response?.result?.results?.cohortDetails[0].cohortId);
         //   const result = response?.result?.cohortDetails;
-        const dataArray = response2?.result?.results?.cohortDetails;
+        const dataArray = response?.result?.results?.cohortDetails;
 
         const cohortInfo = dataArray?.map((item: any) => ({
           cohortId: item?.cohortId,
