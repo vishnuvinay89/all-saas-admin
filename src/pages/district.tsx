@@ -250,6 +250,7 @@ const District: React.FC = () => {
 
   const handleAddStateClick = () => {
     setEditState(null);
+    setSelectedStateForEdit(null);
     setModalOpen(true);
     console.log("insdie add state clicked");
   };
@@ -264,7 +265,7 @@ const District: React.FC = () => {
     const newDistrict = {
       options: [
         {
-          controllingField, 
+          controllingField,
           name,
           value,
         },
@@ -292,6 +293,7 @@ const District: React.FC = () => {
     }
 
     setAddStateModalOpen(false);
+    setSelectedStateForEdit(null);
   };
 
   const fieldId = "466fb58a-1f22-4138-a9b1-db3eed06c876";
