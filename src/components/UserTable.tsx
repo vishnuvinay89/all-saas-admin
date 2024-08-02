@@ -27,6 +27,9 @@ import { getFormRead } from "@/services/CreateUserService";
 import { showToastMessage } from "./Toastify";
 import { capitalizeFirstLetterOfEachWordInArray } from "../utils/Helper";
 import { getUserTableColumns,getTLTableColumns } from "@/data/tableColumns";
+import { useMediaQuery } from '@mui/material';
+import { Theme } from '@mui/system';
+
 type UserDetails = {
   userId: any;
   username: any;
@@ -92,6 +95,9 @@ const UserTable: React.FC<UserTableProps> = ({
   const [selectedUserId, setSelectedUserId] = useState("");
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
+  // const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
+
 
   const [confirmButtonDisable, setConfirmButtonDisable] = useState(false);
   const [pagination, setPagination] = useState(true);
@@ -589,7 +595,7 @@ const handleCloseAddTeamLeaderModal = () => {
         <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
       ) : data.length !== 0 && loading === false ? (
         <KaTableComponent
-          columns= {role==="Team Leader" ? getTLTableColumns(t): getUserTableColumns(t)}
+          columns= {role==="Team Leader" ? getTLTableColumns(t): getUserTableColumns(t, isMobile)}
           data={data}
           limit={pageLimit}
           offset={pageOffset}
