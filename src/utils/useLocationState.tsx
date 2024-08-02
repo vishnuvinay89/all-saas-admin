@@ -91,14 +91,14 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
             "limit":200,
             "offset": 0,
             "filters": {
-                "type": "BLOCK",
+                // "type": "COHORT",
                 "status": [
                     "active"
                 ],
-                // "states": selectedStateCode,
-                // "districts": selectedDistrictCode,
-                // "blocks": selectedCodes[0]
-                name:selected[0]
+                "states": selectedStateCode,
+                "districts": selectedDistrictCode,
+                "blocks": selectedCodes[0]
+              //  name:selected[0]
             }
         };
         const response2 = await getCenterList(object);
@@ -107,11 +107,14 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
         const getBlockIdObject={
           "limit": 200,
           "offset": 0,          "filters": {
-            "type":"BLOCK",
+            // "type":"COHORT",
             "status": [
                 "active"
             ],
-            "name": selected[0]
+            "states": selectedStateCode,
+                "districts": selectedDistrictCode,
+                "blocks": selectedCodes[0]
+          //  "name": selected[0]
         },
         }
         const response = await getCenterList(getBlockIdObject);
