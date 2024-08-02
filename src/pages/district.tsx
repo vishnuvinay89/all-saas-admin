@@ -66,6 +66,13 @@ const District: React.FC = () => {
         dataType: DataType.String,
       },
       {
+        key: "value",
+        title: t("MASTER.DISTRICT_CODE"),
+        dataType: DataType.String,
+        sortDirection: SortDirection.Ascend,
+      },
+
+      {
         key: "createdAt",
         title: t("MASTER.CREATED_AT"),
       },

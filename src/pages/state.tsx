@@ -64,6 +64,13 @@ const State: React.FC = () => {
         sortDirection: SortDirection.Ascend,
       },
       {
+        key: "value",
+        title: t("MASTER.STATE_CODE"),
+        dataType: DataType.String,
+        sortDirection: SortDirection.Ascend,
+      },
+
+      {
         key: "createdAt",
         title: t("MASTER.CREATED_AT"),
         dataType: DataType.String,
@@ -72,13 +79,10 @@ const State: React.FC = () => {
       {
         key: "updatedAt",
         title: t("MASTER.UPDATED_AT"),
-        dataType: DataType.String,
-        sortDirection: SortDirection.Ascend,
       },
       {
         key: "actions",
         title: t("MASTER.ACTIONS"),
-        dataType: DataType.String,
       },
     ],
     [t]

@@ -133,7 +133,10 @@
     "SEARCHBAR_PLACEHOLDER_BLOCK": "Search Blocks",
     "BLOCKS": "Blocks",
     "UPDATED_AT": "Updated At",
-    "CREATED_AT": "Created At"
+    "CREATED_AT": "Created At",
+    "STATE_CODE": "State Code",
+    "DISTRICT_CODE": "District Code",
+    "BLOCK_CODE": "Block Code"
   },
   "CENTERS": {
     "CENTERS": "Centers",

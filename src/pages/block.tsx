@@ -128,6 +128,11 @@ const Block: React.FC = () => {
         dataType: DataType.String,
       },
       {
+        key: "value",
+        title: t("MASTER.BLOCK_CODE"),
+        dataType: DataType.String,
+      },
+      {
         key: "createdAt",
         title: t("MASTER.CREATED_AT"),
         dataType: DataType.String,
@@ -290,6 +295,7 @@ const Block: React.FC = () => {
                   block: transformLabel(block.label),
                   createdAt: block.createdAt,
                   updatedAt: block.updatedAt,
+                  value: block.value,
                 }))}
                 limit={pageLimit}
                 offset={pageOffset}
