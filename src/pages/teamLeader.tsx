@@ -21,7 +21,7 @@ const handleCloseAddLearnerModal = () => {
  
   return (
     <>
-      <UserTable role={Role.TEAM_LEADER} searchPlaceholder={ t("TEAM_LEADERS.SEARCHBAR_PLACEHOLDER")} userType={t("SIDEBAR.TEAM_LEADERS")} handleAddUserClick={handleAddTeamLeaderClick}/>
+      <UserTable role={Role.TEAM_LEADER} searchPlaceholder={ t("TEAM_LEADERS.SEARCHBAR_PLACEHOLDER")} userType={t("SIDEBAR.TEAM_LEADERS")} handleAddUserClick={handleAddTeamLeaderClick} parentState={openAddLearnerModal}/>
       <AddTeamLeaderModal
               open={openAddLearnerModal}
               onClose={handleCloseAddLearnerModal}
