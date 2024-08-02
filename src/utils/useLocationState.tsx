@@ -90,29 +90,35 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
       try {
         console.log(selectedStateCode, selectedDistrictCode);
         const object = {
-          limit: 200,
-          offset: 0,
-          filters: {
-            type: "BLOCK",
-            status: ["active"],
-            // "states": selectedStateCode,
-            // "districts": selectedDistrictCode,
-            // "blocks": selectedCodes[0]
-            name: selected[0],
-          },
+            "limit":200,
+            "offset": 0,
+            "filters": {
+                // "type": "COHORT",
+                "status": [
+                    "active"
+                ],
+                "states": selectedStateCode,
+                "districts": selectedDistrictCode,
+                "blocks": selectedCodes[0]
+              //  name:selected[0]
+            }
         };
         const response2 = await getCenterList(object);
 
-        console.log(selected);
-        const getBlockIdObject = {
-          limit: 200,
-          offset: 0,
-          filters: {
-            type: "BLOCK",
-            status: ["active"],
-            name: selected[0],
-          },
-        };
+        console.log(selected)
+        const getBlockIdObject={
+          "limit": 200,
+          "offset": 0,          "filters": {
+            // "type":"COHORT",
+            "status": [
+                "active"
+            ],
+            "states": selectedStateCode,
+                "districts": selectedDistrictCode,
+                "blocks": selectedCodes[0]
+          //  "name": selected[0]
+        },
+        }
         const response = await getCenterList(getBlockIdObject);
         setSelectedBlockFieldId(
           response?.result?.results?.cohortDetails[0].cohortId
