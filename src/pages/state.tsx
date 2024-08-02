@@ -91,7 +91,7 @@ const State: React.FC = () => {
   const handleChange = useCallback((event: SelectChangeEvent<number>) => {
     const value = Number(event.target.value);
     setPageLimit(value);
-    setPageOffset(0); 
+    setPageOffset(0);
   }, []);
 
   const handleSortChange = useCallback((event: SelectChangeEvent<string>) => {
@@ -107,7 +107,7 @@ const State: React.FC = () => {
   const handleEdit = useCallback((rowData: StateDetail) => {
     console.log("Edit", rowData);
     setSelectedStateForEdit(rowData);
-    setAddStateModalOpen(true); 
+    setAddStateModalOpen(true);
   }, []);
 
   const handleDelete = useCallback((rowData: StateDetail) => {
@@ -139,6 +139,7 @@ const State: React.FC = () => {
 
   const handleAddStateClick = () => {
     setEditState(null);
+    setSelectedStateForEdit(null);
     setAddStateModalOpen(true);
   };
 
@@ -183,12 +184,17 @@ const State: React.FC = () => {
         limit: pageLimit,
         offset: pageOffset,
       } as StateBlockDistrictListParams);
-      console.log("staeData", data);
+      console.log("stateData", data);
+
+      // Sort data based on the sortBy state
       const sortedData = [...data.result.values].sort((a, b) => {
         const [field, order] = sortBy;
-        return order === "asc"
-          ? a[field].localeCompare(b[field])
-          : b[field].localeCompare(a[field]);
+        if (field in a && field in b) {
+          return order === "asc"
+            ? a[field].localeCompare(b[field])
+            : b[field].localeCompare(a[field]);
+        }
+        return 0;
       });
 
       setStateData(sortedData);
@@ -197,6 +203,7 @@ const State: React.FC = () => {
       console.error("Error fetching state data", error);
     } finally {
       setLoading(false);
+      setSelectedStateForEdit(null);
     }
   }, [sortBy, pageLimit, pageOffset]);
 
@@ -297,7 +304,10 @@ const State: React.FC = () => {
               onEdit={handleEdit}
               onDelete={handleDelete}
               extraActions={[]}
-            />{" "}
+              {...(typeof sortBy[1] === "string" && {
+                sortDirection: sortBy[1],
+              })}
+            />
           </div>
         )}
       </HeaderComponent>

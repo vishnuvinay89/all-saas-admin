@@ -100,7 +100,7 @@ export const getCenterList = async ({
 };
 
 export const deleteOption = async (
-  type: "states" | "districts",
+  type: "states" | "districts" | "blocks",
   option: string
 ): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/options/delete/${type}?option=${option}`;

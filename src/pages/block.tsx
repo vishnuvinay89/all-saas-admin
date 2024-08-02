@@ -15,9 +15,13 @@ import {
   getStateBlockDistrictList,
   getDistrictsForState,
   getBlocksForDistricts,
+  deleteOption,
+  createOrUpdateOption,
 } from "@/services/MasterDataService";
-import CustomModal from "@/components/CustomModal";
 import { transformLabel } from "@/utils/Helper";
+import { showToastMessage } from "@/components/Toastify";
+import ConfirmationModal from "@/components/ConfirmationModal";
+import { AddDistrictBlockModal } from "@/components/AddDistrictBlockModal";
 
 type StateDetail = {
   value: string;
@@ -49,10 +53,14 @@ const Block: React.FC = () => {
   const [pageOffset, setPageOffset] = useState<number>(0);
   const [pageLimit, setPageLimit] = useState<number>(10);
   const [pageCount, setPageCount] = useState<number>(1);
-  const [confirmationModalOpen, setConfirmationModalOpen] =
+  const [selectedStateForDelete, setSelectedStateForDelete] =
+    useState<StateDetail | null>(null);
+  const [confirmationDialogOpen, setConfirmationDialogOpen] =
     useState<boolean>(false);
-  const [selectedDistrictForDelete, setSelectedDistrictForDelete] =
-    useState<DistrictDetail | null>(null);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [editState, setEditState] = useState<StateDetail | null>(null);
+  const [selectedStateForEdit, setSelectedStateForEdit] =
+    useState<StateDetail | null>(null);
 
   useEffect(() => {
     const fetchStates = async () => {
@@ -62,7 +70,7 @@ const Block: React.FC = () => {
         const states = data?.result?.values || [];
         setStateData(states);
         if (states.length > 0) {
-          setSelectedState(states[0].value); // Set the first state as selected by default
+          setSelectedState(states[0].value); 
         }
       } catch (error) {
         console.error("Error fetching states", error);
@@ -86,7 +94,7 @@ const Block: React.FC = () => {
           const districts = data?.result?.values || [];
           setDistrictData(districts);
           if (districts.length > 0) {
-            setSelectedDistrict(districts[0].value); // Set the first district as selected by default
+            setSelectedDistrict(districts[0].value); 
           }
         } catch (error) {
           console.error("Error fetching districts", error);
@@ -152,10 +160,24 @@ const Block: React.FC = () => {
     [t]
   );
 
-  const handleStateChange = useCallback((event: SelectChangeEvent<string>) => {
-    setSelectedState(event.target.value);
-    setSelectedDistrict("");
-  }, []);
+  const handleStateChange = useCallback(
+    async (event: SelectChangeEvent<string>) => {
+      const selectedState = event.target.value;
+      setSelectedState(selectedState);
+
+      try {
+        const data = await getDistrictsForState({
+          controllingfieldfk: selectedState,
+          fieldName: "blocks",
+        });
+        setDistrictData(data.result.values || []);
+        setSelectedDistrict("-");
+      } catch (error) {
+        console.error("Error fetching district data", error);
+      }
+    },
+    []
+  );
 
   const handleDistrictChange = useCallback(
     (event: SelectChangeEvent<string>) => {
@@ -164,13 +186,36 @@ const Block: React.FC = () => {
     []
   );
 
-  const handleEdit = useCallback((rowData: any) => {}, []);
+  const handleEdit = useCallback((rowData: any) => {
+    console.log(rowData);
+    setModalOpen(true);
+    setSelectedStateForEdit(rowData);
+  }, []);
 
-  const handleDelete = useCallback((rowData: any) => {}, []);
+  const handleDelete = useCallback((rowData: BlockDetail) => {
+    console.log("BlockDetails",rowData);
+    setSelectedStateForDelete(rowData);
+    setConfirmationDialogOpen(true);
+  }, []);
 
-  const handleConfirmDelete = useCallback(() => {
-    setConfirmationModalOpen(false);
-  }, [selectedDistrictForDelete]);
+  const handleConfirmDelete = useCallback(async () => {
+    console.log("selected state for delte", selectedStateForDelete);
+    if (selectedStateForDelete) {
+      try {
+        await deleteOption("blocks", selectedStateForDelete.value);
+        setStateData((prevStateData) =>
+          prevStateData.filter(
+            (state) => state.value !== selectedStateForDelete.value
+          )
+        );
+        showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
+      } catch (error) {
+        console.error("Error deleting state", error);
+        showToastMessage(t("COMMON.STATE_DELETED_FAILURE"), "error");
+      }
+    }
+    setConfirmationDialogOpen(false);
+  }, [selectedStateForDelete, t]);
 
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
@@ -206,21 +251,87 @@ const Block: React.FC = () => {
   };
 
   const showPagination = blockData.length > pageLimit;
+  const handleAddNewBlock = () => {
+    setEditState(null);
+    setModalOpen(true);
+    console.log("insdie add state clicked");
+  };
+
+  const handleAddDistrictSubmit = async (
+    name: string,
+    value: string,
+    controllingField: string,
+    fieldId: string,
+    DistrictId?: string
+  ) => {
+    const newDistrict = {
+      options: [
+        {
+          controllingField,
+          name,
+          value,
+        },
+      ],
+    };
+    console.log("Submitting newDistrict:", newDistrict);
+
+    try {
+      const response = await createOrUpdateOption(
+        fieldId,
+        newDistrict,
+        DistrictId
+      );
+
+      console.log("submit response:", response);
+
+      if (response) {
+        showToastMessage("District added successfully", "success");
+      } else {
+        showToastMessage("Failed to create/update district", "error");
+      }
+    } catch (error) {
+      console.error("Error creating/updating district:", error);
+      showToastMessage("Error adding district", "error");
+    }
+
+    setModalOpen(false);
+  };
+
+  const fieldId = "4aab68ae-8382-43aa-a45a-e9b239319857";
 
   return (
     <React.Fragment>
-      <CustomModal
-        open={confirmationModalOpen}
-        handleClose={() => setConfirmationModalOpen(false)}
-        title={t("COMMON.CONFIRM_DELETE")}
-        primaryBtnText={t("COMMON.DELETE")}
-        secondaryBtnText={t("COMMON.CANCEL")}
-        primaryBtnClick={handleConfirmDelete}
-      >
-        <Box>{t("COMMON.ARE_YOU_SURE_DELETE")}</Box>
-      </CustomModal>
+      <AddDistrictBlockModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={(name: string, value: string, controllingField: string) =>
+          handleAddDistrictSubmit(name, value, controllingField, fieldId)
+        }
+        fieldId={fieldId}
+        initialValues={
+          selectedStateForEdit
+            ? {
+                controllingField: selectedStateForEdit.value,
+                name: selectedStateForEdit.label,
+                value: selectedStateForEdit.value,
+              }
+            : {}
+        }
+        districtId={selectedStateForEdit?.value}
+      />
 
-      <HeaderComponent {...userProps}>
+      <ConfirmationModal
+        modalOpen={confirmationDialogOpen}
+        message={t("COMMON.ARE_YOU_SURE_DELETE")}
+        handleAction={handleConfirmDelete}
+        buttonNames={{
+          primary: t("COMMON.DELETE"),
+          secondary: t("COMMON.CANCEL"),
+        }}
+        handleCloseModal={() => setConfirmationDialogOpen(false)}
+      />
+
+      <HeaderComponent {...userProps} handleAddUserClick={handleAddNewBlock}>
         <>
           <Box
             sx={{
@@ -312,6 +423,8 @@ const Block: React.FC = () => {
                     />
                   )
                 }
+                onEdit={handleEdit}
+                onDelete={handleDelete}
                 extraActions={[]}
               />
             )}

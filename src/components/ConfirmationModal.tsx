@@ -57,15 +57,15 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         <Box
           sx={{
             display: "flex",
-            justifyContent: "center",
-            gap: "18px",
+            justifyContent: "end",
+            gap: "8px",
             p: 2,
           }}
         >
           <Button
             sx={{
               border: "none",
-              color: theme.palette.secondary.main,
+              color: "secondary",
               fontSize: "14px",
               fontWeight: "500",
               "&:hover": {
