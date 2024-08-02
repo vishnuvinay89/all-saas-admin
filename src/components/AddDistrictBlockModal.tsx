@@ -63,9 +63,14 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
   const handleSubmit = () => {
     const { name, value, controllingField } = formData;
     onSubmit(name, value, controllingField, fieldId, districtId);
-    console.log(name, value, controllingField, fieldId, districtId);
     onClose();
   };
+
+  const isEditing = !!initialValues.name; // Check if we're in edit mode
+  const buttonText = isEditing ? t("COMMON.UPDATE") : t("COMMON.SUBMIT");
+  const dialogTitle = isEditing
+    ? t("COMMON.UPDATE_DISTRICT")
+    : t("COMMON.ADD_DISTRICT");
 
   const buttonStyles = {
     fontSize: "14px",
@@ -74,9 +79,7 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle sx={{ fontSize: "14px" }}>
-        {t("COMMON.ADD_DISTRICT")}
-      </DialogTitle>
+      <DialogTitle sx={{ fontSize: "14px" }}>{dialogTitle}</DialogTitle>
       <DialogContent>
         <TextField
           margin="dense"
@@ -135,7 +138,7 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
           variant="contained"
           color="primary"
         >
-          {t("COMMON.SUBMIT")}
+          {buttonText}
         </Button>
       </DialogActions>
     </Dialog>
