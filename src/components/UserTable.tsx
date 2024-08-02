@@ -326,7 +326,7 @@ const handleCloseAddTeamLeaderModal = () => {
           } else if (item?.type === "checkbox") {
             return String(field?.value).split(",");
           } else {
-            return field?.value;
+            return field?.value?.toLowerCase();
           }
         } else {
           if (item?.type === "numeric") {
@@ -344,7 +344,7 @@ const handleCloseAddTeamLeaderModal = () => {
               return field?.value?.toLowerCase();
             }
           //  console.log()
-            return field?.value;
+            return field?.value?.toLowerCase();
           }
         }
       };
