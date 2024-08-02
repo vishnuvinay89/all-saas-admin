@@ -527,7 +527,7 @@ const handleCloseAddTeamLeaderModal = () => {
 
         setPageCount(Math.ceil(resp?.totalCount / pageLimit));
         console.log(result);
-        const finalResult = result.map((user: any) => {
+        const finalResult = result?.map((user: any) => {
           const ageField = user.customFields.find(
             (field: any) => field.name === "age"
           );
@@ -587,7 +587,7 @@ const handleCloseAddTeamLeaderModal = () => {
           return;
         }
         const newData = await Promise.all(
-          data.map(async (user) => {
+          data?.map(async (user) => {
             const response = await getCohortList(user.userId);
             const cohortNames = response?.result?.cohortData?.map(
               (cohort: Cohort) => cohort.name

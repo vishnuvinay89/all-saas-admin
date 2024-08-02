@@ -67,6 +67,8 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
     handleDistrictChangeWrapper,
     handleBlockChangeWrapper,
     handleCenterChangeWrapper,
+    BlockFieldId, DistrctFieldId, StateFieldId
+    
   } = useLocationState(open, onClose);
 
   useEffect(() => {
@@ -190,16 +192,16 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
 
     if (!isEditModal) {
       apiBody.customFields.push({
-        fieldId: "549d3575-bf01-48a9-9fff-59220fede174",
+        fieldId: BlockFieldId,
         value: [selectedBlockCode],
       });
       apiBody.customFields.push({
-        fieldId: "b61edfc6-3787-4079-86d3-37262bf23a9e",
-        value: [selectedStateCode],
+        fieldId: StateFieldId,
+        value: [selectedStateCode]
       });
       apiBody.customFields.push({
-        fieldId: "f2d731dd-2298-40d3-80bb-9ae6c5b38fb8",
-        value: [selectedDistrictCode],
+        fieldId: DistrctFieldId,
+        value: [selectedDistrictCode]
       });
     }
     try {

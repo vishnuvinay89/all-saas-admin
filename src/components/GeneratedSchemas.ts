@@ -81,7 +81,7 @@ export const GenerateSchemaAndUiSchema = (
         fieldSchema.checkbox = true;
         fieldSchema.items = {
           type: "string",
-          oneOf: options.map((opt: FieldOption) => ({
+          oneOf: options?.map((opt: FieldOption) => ({
             const: opt.value,
             title:
               t(`FORM.${opt.label}`) === `FORM.${opt.label}`
@@ -94,7 +94,7 @@ export const GenerateSchemaAndUiSchema = (
         break;
       case "radio":
         fieldSchema.type = "string";
-        fieldSchema.oneOf = options.map((opt: FieldOption) => ({
+        fieldSchema.oneOf = options?.map((opt: FieldOption) => ({
           const: opt.value,
           title:
             t(`FORM.${opt.label}`) === `FORM.${opt.label}`
@@ -131,10 +131,10 @@ export const GenerateSchemaAndUiSchema = (
       fieldSchema.type = "array";
       fieldSchema.items = {
         type: "string",
-        enum: options.map((opt: FieldOption) => opt.value),
+        enum: options?.map((opt: FieldOption) => opt.value),
       };
       fieldSchema.uniqueItems = true;
-      fieldSchema.enumNames = options.map((opt: FieldOption) =>
+      fieldSchema.enumNames = options?.map((opt: FieldOption) =>
         t(`FORM.${opt.label}`) === `FORM.${opt.label}`
           ? opt.label
           : t(`FORM.${opt.label}`)
@@ -151,7 +151,7 @@ export const GenerateSchemaAndUiSchema = (
     if (isMultiSelect && maxSelections === 1 && type === "drop_down") {
       fieldSchema.type = "string";
       fieldSchema.isDropdown = true;
-      fieldSchema.oneOf = options.map((opt: FieldOption) => ({
+      fieldSchema.oneOf = options?.map((opt: FieldOption) => ({
         const: opt.value,
         title:
           t(`FORM.${opt.label}`) === `FORM.${opt.label}`
@@ -163,7 +163,7 @@ export const GenerateSchemaAndUiSchema = (
     if (!isMultiSelect && type === "drop_down") {
       fieldSchema.type = "string";
       fieldSchema.isDropdown = true;
-      fieldSchema.oneOf = options.map((opt: FieldOption) => ({
+      fieldSchema.oneOf = options?.map((opt: FieldOption) => ({
         const: opt.value,
         title:
           t(`FORM.${opt.label}`) === `FORM.${opt.label}`
@@ -176,7 +176,7 @@ export const GenerateSchemaAndUiSchema = (
       fieldSchema.type = "array";
       fieldSchema.items = {
         type: "string",
-        oneOf: options.map((opt: FieldOption) => ({
+        oneOf: options?.map((opt: FieldOption) => ({
           const: opt.value,
           title:
             t(`FORM.${opt.label}`) === `FORM.${opt.label}`

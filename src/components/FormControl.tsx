@@ -45,7 +45,7 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
       target: { value },
     } = event;
     const selectedNames = typeof value === "string" ? value.split(",") : value;
-    const selectedCodes = selectedNames.map(
+    const selectedCodes = selectedNames?.map(
       (name) => codes[names.indexOf(name)],
     );
     onCategoryChange(selectedNames, selectedCodes);
