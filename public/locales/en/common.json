@@ -223,19 +223,17 @@
     "MY_MAIN_SUBJECTS": "Main subjects",
     "NUMBER_OF_CLUSTERS_I_TEACH": "Number of cluster",
     "DESIGNATION": "Designation",
+    "REGULAR": "Regular",
+    "REMOTE": "Remote",
     "NOTE_THIS_WILL_BE_CENTER_NAME": "Note : This Will Be Center Name",
-    "STATE":"State",
-    "DISTRICT":"District",
-    "BLOCK":"Block",
-    "ACTION":"Actions",
-    "STATUS":"Status",
-    "NAME":"Name",
-    "MOBILE_NUMBER":"Mobile Number",
-    "CENTER":"Center"
-
-  
-  
- 
+    "STATE": "State",
+    "DISTRICT": "District",
+    "BLOCK": "Block",
+    "ACTION": "Actions",
+    "STATUS": "Status",
+    "NAME": "Name",
+    "MOBILE_NUMBER": "Mobile Number",
+    "CENTER": "Center"
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",
