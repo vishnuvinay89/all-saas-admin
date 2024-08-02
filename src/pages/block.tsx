@@ -59,7 +59,7 @@ const Block: React.FC = () => {
       setLoading(true);
       try {
         const data = await getStateBlockDistrictList({ fieldName: "states" });
-        const states = data?.result || [];
+        const states = data?.result?.values || [];
         setStateData(states);
         if (states.length > 0) {
           setSelectedState(states[0].value); // Set the first state as selected by default
@@ -83,7 +83,7 @@ const Block: React.FC = () => {
             controllingfieldfk: selectedState,
             fieldName: "districts",
           });
-          const districts = data?.result || [];
+          const districts = data?.result?.values || [];
           setDistrictData(districts);
           if (districts.length > 0) {
             setSelectedDistrict(districts[0].value); // Set the first district as selected by default
@@ -108,7 +108,7 @@ const Block: React.FC = () => {
             controllingfieldfk: selectedDistrict,
             fieldName: "blocks",
           });
-          setBlockData(data?.result || []);
+          setBlockData(data?.result?.values || []);
         } catch (error) {
           console.error("Error fetching blocks", error);
         } finally {
@@ -125,6 +125,11 @@ const Block: React.FC = () => {
       {
         key: "block",
         title: t("MASTER.BLOCK_NAMES"),
+        dataType: DataType.String,
+      },
+      {
+        key: "value",
+        title: t("MASTER.BLOCK_CODE"),
         dataType: DataType.String,
       },
       {
@@ -290,6 +295,7 @@ const Block: React.FC = () => {
                   block: transformLabel(block.label),
                   createdAt: block.createdAt,
                   updatedAt: block.updatedAt,
+                  value: block.value,
                 }))}
                 limit={pageLimit}
                 offset={pageOffset}

@@ -12,7 +12,7 @@ import {
   createOrUpdateOption,
 } from "@/services/MasterDataService";
 import Loader from "@/components/Loader";
-import {AddStateModal} from "@/components/AddStateModal";
+import { AddStateModal } from "@/components/AddStateModal";
 import { transformLabel } from "@/utils/Helper";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { showToastMessage } from "@/components/Toastify";
@@ -64,6 +64,13 @@ const State: React.FC = () => {
         sortDirection: SortDirection.Ascend,
       },
       {
+        key: "value",
+        title: t("MASTER.STATE_CODE"),
+        dataType: DataType.String,
+        sortDirection: SortDirection.Ascend,
+      },
+
+      {
         key: "createdAt",
         title: t("MASTER.CREATED_AT"),
         dataType: DataType.String,
@@ -72,13 +79,10 @@ const State: React.FC = () => {
       {
         key: "updatedAt",
         title: t("MASTER.UPDATED_AT"),
-        dataType: DataType.String,
-        sortDirection: SortDirection.Ascend,
       },
       {
         key: "actions",
         title: t("MASTER.ACTIONS"),
-        dataType: DataType.String,
       },
     ],
     [t]
@@ -87,7 +91,7 @@ const State: React.FC = () => {
   const handleChange = useCallback((event: SelectChangeEvent<number>) => {
     const value = Number(event.target.value);
     setPageLimit(value);
-    setPageOffset(0); // Reset to first page
+    setPageOffset(0); 
   }, []);
 
   const handleSortChange = useCallback((event: SelectChangeEvent<string>) => {
@@ -101,8 +105,9 @@ const State: React.FC = () => {
   }, []);
 
   const handleEdit = useCallback((rowData: StateDetail) => {
+    console.log("Edit", rowData);
     setSelectedStateForEdit(rowData);
-    setAddStateModalOpen(true); // Open the modal
+    setAddStateModalOpen(true); 
   }, []);
 
   const handleDelete = useCallback((rowData: StateDetail) => {
@@ -135,7 +140,6 @@ const State: React.FC = () => {
   const handleAddStateClick = () => {
     setEditState(null);
     setAddStateModalOpen(true);
-    console.log("state modal clicked")
   };
 
   const handleAddStateSubmit = async (
@@ -153,9 +157,11 @@ const State: React.FC = () => {
       ],
     };
 
+    console.log("newState", newState);
+
     try {
       const response = await createOrUpdateOption(fieldId, newState, stateId);
-
+      console.log("stateResponse", response);
       if (response) {
         await fetchStateData();
         showToastMessage(t("COMMON.STATE_ADDED_SUCCESS"), "success");
@@ -177,9 +183,8 @@ const State: React.FC = () => {
         limit: pageLimit,
         offset: pageOffset,
       } as StateBlockDistrictListParams);
-
-      console.log("state data", data);
-      const sortedData = [...data.result].sort((a, b) => {
+      console.log("staeData", data);
+      const sortedData = [...data.result.values].sort((a, b) => {
         const [field, order] = sortBy;
         return order === "asc"
           ? a[field].localeCompare(b[field])
@@ -231,7 +236,7 @@ const State: React.FC = () => {
       <AddStateModal
         open={addStateModalOpen}
         onClose={() => setAddStateModalOpen(false)}
-        onSubmit={(name, value) =>
+        onSubmit={(name: string, value: string) =>
           handleAddStateSubmit(
             name,
             value,
@@ -281,7 +286,6 @@ const State: React.FC = () => {
               }))}
               limit={pageLimit}
               offset={pageOffset}
-              // paginationEnable={true}
               PagesSelector={() => (
                 <PageSizeSelector
                   limit={pageLimit}
