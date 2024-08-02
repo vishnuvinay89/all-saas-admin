@@ -81,13 +81,13 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
       <div className="ka-table-wrapper">
         <Table
           {...tableProps}
-          paging={{
-            enabled: paginationEnable,
-            pageIndex: offset,
-            pageSize: limit,
-            pageSizes: pageSizes,
-            position: PagingPosition.Bottom,
-          }}
+          // paging={{
+          //   enabled: paginationEnable,
+          //   pageIndex: offset,
+          //   pageSize: limit,
+          //   pageSizes: pageSizes,
+          //   position: PagingPosition.Bottom,
+          // }}
           childComponents={{
             pagingSizes: {
               content: (props) => <PageSizeSelector {...props} />,

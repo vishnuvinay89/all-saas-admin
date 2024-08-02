@@ -68,16 +68,35 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   };
 
 
-  
+
   function transformErrors(errors: any) {
     console.log("errors", errors);
     console.log("schema", schema);
-    return errors.map((error: any) => {
+    return errors?.map((error: any) => {
       switch (error.name) {
         case "required": {
           error.message = t("FORM_ERROR_MESSAGES.THIS_IS_REQUIRED_FIELD");
           break;
         }
+        case "maximum":
+          {
+            const property = error.property.substring(1);
+
+            if (schema.properties?.[property]?.validation?.includes("numeric")) {
+              error.message = t("FORM_ERROR_MESSAGES.MAX_LENGTH_DIGITS_ERROR", {
+                maxLength: schema.properties?.[property]?.maxLength,
+              });
+            }
+          }
+          case "minimum":
+            {
+              const property = error.property.substring(1);
+          if (schema.properties?.[property]?.validation?.includes("numeric")) {
+            error.message = t("FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR", {
+              minLength: schema.properties?.[property]?.minLength,
+            });
+          }
+            }
         case "pattern": {
           // if (schema.properties?.[property]?.validation?.includes("numeric")) {
             //   error.message = t("FORM_ERROR_MESSAGES.ENTER_ONLY_DIGITS");
@@ -96,6 +115,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               // }
               
               const pattern = error?.params?.pattern;
+              console.log(pattern)
               const property = error.property.substring(1);
 
           switch (pattern) {
@@ -109,8 +129,15 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               if (schema.properties?.[property]?.validation?.includes("mobile")) {
                 error.message = t(
                   "FORM_ERROR_MESSAGES.ENTER_VALID_MOBILE_NUMBER"
-                );  
-              } else {
+                ); 
+                 
+              }
+             else if (schema.properties?.[property]?.validation?.includes(".age")) {
+                error.message = t(
+                  "age must be valid"
+                ); 
+                }
+              else {
                 error.message = t(
                   "FORM_ERROR_MESSAGES.CHARACTERS_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
                 );
@@ -153,6 +180,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             }
           }
         }
+      
       }
 
       return error;

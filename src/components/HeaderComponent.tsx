@@ -91,7 +91,7 @@ const HeaderComponent = ({
       };
       console.log(object);
       const response = await getStateBlockDistrictList(object);
-      const result = response?.result;
+      const result = response?.result?.values;
       setDistricts(result);
     } catch (error) {
       console.log(error);
@@ -113,7 +113,7 @@ const HeaderComponent = ({
         fieldName: "blocks",
       };
       const response = await getStateBlockDistrictList(object);
-      const result = response?.result;
+      const result = response?.result?.values;
       setBlocks(result);
     } catch (error) {
       console.log(error);
@@ -137,7 +137,7 @@ const HeaderComponent = ({
           fieldName: "states",
         };
         const response = await getStateBlockDistrictList(object);
-        const result = response?.result;
+        const result = response?.result?.values;
         setStates(result);
         console.log(typeof states);
       } catch (error) {
@@ -188,35 +188,30 @@ const HeaderComponent = ({
           <SearchBar onSearch={handleSearch} placeholder={searchPlaceHolder} />
         </Box>
         <Box display={"flex"} gap={1} alignItems={"center"}>
-          {showFilter && (
-            <>
-              <Typography variant="h2" fontWeight={"bold"}>
-                {t("COMMON.FILTER_BY_STATUS")}
-              </Typography>
-              <FormControl sx={{ minWidth: "120px" }}>
-                <Select
-                  value={selectedFilter}
-                  onChange={handleFilterChange}
-                  displayEmpty
-                  style={{
-                    borderRadius: "8px",
-                    height: "40px",
-                    fontSize: "14px",
-                  }}
-                >
-                  <MenuItem value="All">
-                    <em>{t("COMMON.ALL")}</em>
-                  </MenuItem>
-                  {Filter?.map((filter, index) => (
-                    <MenuItem value={filter} key={index}>
-                      {filter}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </>
-          )}
-
+          <Typography variant="h3">
+           {t("COMMON.FILTER_BY_STATUS")}
+          </Typography>
+          <FormControl sx={{ minWidth: "120px" }}>
+            <Select
+              value={selectedFilter}
+              onChange={handleFilterChange}
+              displayEmpty
+              style={{
+                borderRadius: "8px",
+                height: "40px",
+                fontSize: "14px",
+              }}
+            >
+              <MenuItem value="All">
+                <em>{t("COMMON.ALL")}</em>
+              </MenuItem>
+              {Filter?.map((filter, index) => (
+                <MenuItem value={filter} key={index}>
+                  {filter}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           {showSort && (
             <FormControl sx={{ minWidth: "120px" }}>
               <Select
@@ -230,7 +225,7 @@ const HeaderComponent = ({
                 }}
               >
                 <MenuItem value="Sort">{t("COMMON.SORT")}</MenuItem>
-                {Sort.map((state, index) => (
+                {Sort?.map((state, index) => (
                   <MenuItem value={state} key={index}>
                     {state}
                   </MenuItem>
@@ -239,6 +234,14 @@ const HeaderComponent = ({
             </FormControl>
           )}
         </Box>
+
+
+
+
+
+
+
+
       </Box>
       {showAddNew && (
         <Box

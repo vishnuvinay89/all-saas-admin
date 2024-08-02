@@ -8,7 +8,7 @@ const CustomStepper = ({ completedSteps = 0 }) => {
 
   return (
     <Box sx={{ display: "flex", gap: "4px", alignItems: "center" }}>
-      {[...Array(totalSteps)].map((_, index) => (
+      {[...Array(totalSteps)]?.map((_, index) => (
         <Box
           key={index}
           sx={{
