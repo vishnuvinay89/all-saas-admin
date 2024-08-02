@@ -113,7 +113,7 @@ const Foundation = () => {
               <Typography>{t("COURSE_PLANNER.COPY_LINK")}</Typography>
             </Box>
             {!selectedCardId ? (
-              cardData.map((card) => (
+              cardData?.map((card) => (
                 <Card
                   key={card.id}   
                   sx={{

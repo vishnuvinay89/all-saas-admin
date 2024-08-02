@@ -72,7 +72,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   function transformErrors(errors: any) {
     console.log("errors", errors);
     console.log("schema", schema);
-    return errors.map((error: any) => {
+    return errors?.map((error: any) => {
       switch (error.name) {
         case "required": {
           error.message = t("FORM_ERROR_MESSAGES.THIS_IS_REQUIRED_FIELD");
