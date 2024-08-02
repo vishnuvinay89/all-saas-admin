@@ -321,11 +321,11 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
               marginTop: "10px",
             }}
           >
-            {!dynamicForm && (
+            {/* {!dynamicForm && (
               <Typography>
                 {t("LEARNERS.FIRST_SELECT_REQUIRED_FIELDS")}{" "}
               </Typography>
-            )}
+            )} */}
             <AreaSelection
               states={transformArray(states)}
               districts={transformArray(districts)}
@@ -363,7 +363,7 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
                 {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
               </DynamicForm>
             )
-          : 
+          : dynamicFormForBlock &&
             schema &&
             uiSchema && (
               <DynamicForm
