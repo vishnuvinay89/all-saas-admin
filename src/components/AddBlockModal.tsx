@@ -12,7 +12,7 @@ import {
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
 
-interface AddDistrictBlockModalProps {
+interface AddBlockModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (
@@ -31,7 +31,7 @@ interface AddDistrictBlockModalProps {
   districtId?: string;
 }
 
-export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
+export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   open,
   onClose,
   onSubmit,
@@ -66,11 +66,10 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
     onClose();
   };
 
-  const isEditing = !!initialValues.name; 
+  // Determine if the modal is in editing mode
+  const isEditing = !!(initialValues.name || initialValues.value || initialValues.controllingField);
   const buttonText = isEditing ? t("COMMON.UPDATE") : t("COMMON.SUBMIT");
-  const dialogTitle = isEditing
-    ? t("COMMON.UPDATE_DISTRICT")
-    : t("COMMON.ADD_DISTRICT");
+  const dialogTitle = isEditing ? t("COMMON.UPDATE_BLOCK") : t("COMMON.ADD_BLOCK");
 
   const buttonStyles = {
     fontSize: "14px",
@@ -79,13 +78,11 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle sx={{ fontSize: "14px" }}>
-        {dialogTitle}
-      </DialogTitle>
+      <DialogTitle sx={{ fontSize: "14px" }}>{dialogTitle}</DialogTitle>
       <DialogContent>
         <TextField
           margin="dense"
-          label={t("COMMON.STATE_NAME")}
+          label={t("COMMON.DISTRICT_NAME")}
           type="text"
           fullWidth
           variant="outlined"
@@ -94,7 +91,7 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
         />
         <TextField
           margin="dense"
-          label={t("COMMON.DISTRICT_NAME")}
+          label={t("COMMON.BLOCK_NAME")}
           type="text"
           fullWidth
           variant="outlined"
@@ -103,7 +100,7 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
         />
         <TextField
           margin="dense"
-          label={t("COMMON.DISTRICT_CODE")}
+          label={t("COMMON.BLOCK_CODE")}
           type="text"
           fullWidth
           variant="outlined"

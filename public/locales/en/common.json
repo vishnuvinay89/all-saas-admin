@@ -51,7 +51,11 @@
     "ADD_DISTRICT": "Add District",
     "UPDATE": "Update",
     "UPDATE_STATE": "Update State",
-    "UPDATE_DISTRICT": "Update District"
+    "UPDATE_DISTRICT": "Update District",
+    "UPDATE_BLOCK": "Update Block",
+    "ADD_BLOCK": "Add Block",
+    "BLOCK_NAME": "Block Name",
+    "BLOCK_CODE": "Block Code"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -135,8 +139,8 @@
     "SEARCHBAR_PLACEHOLDER_DISTRICT": "Search Districts",
     "SEARCHBAR_PLACEHOLDER_BLOCK": "Search Blocks",
     "BLOCKS": "Blocks",
-    "UPDATED_AT": "Updated At",
-    "CREATED_AT": "Created At",
+    "UPDATED_AT": "Updated ",
+    "CREATED_AT": "Created Date",
     "STATE_CODE": "State Code",
     "DISTRICT_CODE": "District Code",
     "BLOCK_CODE": "Block Code"

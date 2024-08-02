@@ -21,7 +21,7 @@ import {
 import { transformLabel } from "@/utils/Helper";
 import { showToastMessage } from "@/components/Toastify";
 import ConfirmationModal from "@/components/ConfirmationModal";
-import { AddDistrictBlockModal } from "@/components/AddDistrictBlockModal";
+import { AddBlockModal } from "@/components/AddBlockModal";
 
 type StateDetail = {
   value: string;
@@ -70,7 +70,7 @@ const Block: React.FC = () => {
         const states = data?.result?.values || [];
         setStateData(states);
         if (states.length > 0) {
-          setSelectedState(states[0].value); 
+          setSelectedState(states[0].value);
         }
       } catch (error) {
         console.error("Error fetching states", error);
@@ -94,7 +94,7 @@ const Block: React.FC = () => {
           const districts = data?.result?.values || [];
           setDistrictData(districts);
           if (districts.length > 0) {
-            setSelectedDistrict(districts[0].value); 
+            setSelectedDistrict(districts[0].value);
           }
         } catch (error) {
           console.error("Error fetching districts", error);
@@ -193,7 +193,7 @@ const Block: React.FC = () => {
   }, []);
 
   const handleDelete = useCallback((rowData: BlockDetail) => {
-    console.log("BlockDetails",rowData);
+    console.log("BlockDetails", rowData);
     setSelectedStateForDelete(rowData);
     setConfirmationDialogOpen(true);
   }, []);
@@ -253,6 +253,7 @@ const Block: React.FC = () => {
   const showPagination = blockData.length > pageLimit;
   const handleAddNewBlock = () => {
     setEditState(null);
+    setSelectedStateForEdit(null);
     setModalOpen(true);
     console.log("insdie add state clicked");
   };
@@ -295,13 +296,14 @@ const Block: React.FC = () => {
     }
 
     setModalOpen(false);
+    setSelectedStateForEdit(null);
   };
 
   const fieldId = "4aab68ae-8382-43aa-a45a-e9b239319857";
 
   return (
     <React.Fragment>
-      <AddDistrictBlockModal
+      <AddBlockModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onSubmit={(name: string, value: string, controllingField: string) =>
