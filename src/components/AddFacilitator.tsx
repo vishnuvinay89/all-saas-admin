@@ -196,12 +196,12 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
         value: [selectedBlockCode],
       });
       apiBody.customFields.push({
-        fieldId: "b61edfc6-3787-4079-86d3-37262bf23a9e",
-        value: StateFieldId,
+        fieldId: StateFieldId,
+        value: [selectedStateCode]
       });
       apiBody.customFields.push({
-        fieldId: "f2d731dd-2298-40d3-80bb-9ae6c5b38fb8",
-        value: DistrctFieldId,
+        fieldId: DistrctFieldId,
+        value: [selectedDistrictCode]
       });
     }
     try {
