@@ -29,7 +29,7 @@
     "SUBMIT": "Submit",
     "BACK": "Back",
     "CANCEL": "Cancel",
-    "ARE_YOU_SURE_DELETE": "Are you sure you want to delete?",
+    "ARE_YOU_SURE_DELETE": "Do you want to delete?",
     "CONFIRM_DELETE": "Confirm Delete",
     "ADD_STATE": "Add State",
     "STATE_DELETED_SUCCESS": "State Deleted Successfully!",
@@ -48,7 +48,10 @@
     "DISTRICT_NAME": "District Name",
     "DISTRICT_CODE": "District Code",
     "CONTROLLING_FIELD": "Controlling Field",
-    "ADD_DISTRICT": "Add District"
+    "ADD_DISTRICT": "Add District",
+    "UPDATE": "Update",
+    "UPDATE_STATE": "Update State",
+    "UPDATE_DISTRICT": "Update District"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -223,19 +226,17 @@
     "MY_MAIN_SUBJECTS": "Main subjects",
     "NUMBER_OF_CLUSTERS_I_TEACH": "Number of cluster",
     "DESIGNATION": "Designation",
+    "REGULAR": "Regular",
+    "REMOTE": "Remote",
     "NOTE_THIS_WILL_BE_CENTER_NAME": "Note : This Will Be Center Name",
-    "STATE":"State",
-    "DISTRICT":"District",
-    "BLOCK":"Block",
-    "ACTION":"Actions",
-    "STATUS":"Status",
-    "NAME":"Name",
-    "MOBILE_NUMBER":"Mobile Number",
-    "CENTER":"Center"
-
-  
-  
- 
+    "STATE": "State",
+    "DISTRICT": "District",
+    "BLOCK": "Block",
+    "ACTION": "Actions",
+    "STATUS": "Status",
+    "NAME": "Name",
+    "MOBILE_NUMBER": "Mobile Number",
+    "CENTER": "Center"
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",

@@ -63,9 +63,14 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
   const handleSubmit = () => {
     const { name, value, controllingField } = formData;
     onSubmit(name, value, controllingField, fieldId, districtId);
-    console.log(name, value, controllingField, fieldId, districtId);
     onClose();
   };
+
+  const isEditing = !!initialValues.name; // Check if we're in edit mode
+  const buttonText = isEditing ? t("COMMON.UPDATE") : t("COMMON.SUBMIT");
+  const dialogTitle = isEditing
+    ? t("COMMON.UPDATE_DISTRICT")
+    : t("COMMON.ADD_DISTRICT");
 
   const buttonStyles = {
     fontSize: "14px",
@@ -74,11 +79,11 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{t("COMMON.ADD_DISTRICT")}</DialogTitle>
+      <DialogTitle sx={{ fontSize: "14px" }}>{dialogTitle}</DialogTitle>
       <DialogContent>
         <TextField
           margin="dense"
-          label="Controlling Field"
+          label={t("COMMON.STATE_NAME")}
           type="text"
           fullWidth
           variant="outlined"
@@ -87,7 +92,7 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
         />
         <TextField
           margin="dense"
-          label="Name"
+          label={t("COMMON.DISTRICT_NAME")}
           type="text"
           fullWidth
           variant="outlined"
@@ -96,7 +101,7 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
         />
         <TextField
           margin="dense"
-          label="Value"
+          label={t("COMMON.DISTRICT_CODE")}
           type="text"
           fullWidth
           variant="outlined"
@@ -114,9 +119,12 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
         <Button
           onClick={onClose}
           sx={{
-            ...buttonStyles,
+            border: "none",
             color: "secondary",
+            fontSize: "14px",
+            fontWeight: "500",
             "&:hover": {
+              border: "none",
               backgroundColor: "transparent",
             },
           }}
@@ -130,7 +138,7 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
           variant="contained"
           color="primary"
         >
-          {t("COMMON.SUBMIT")}
+          {buttonText}
         </Button>
       </DialogActions>
     </Dialog>
