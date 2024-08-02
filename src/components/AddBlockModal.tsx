@@ -45,6 +45,12 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     controllingField: initialValues.controllingField || "",
   });
 
+  const [errors, setErrors] = useState({
+    name: "",
+    value: "",
+    controllingField: "",
+  });
+
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -58,18 +64,47 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   const handleChange =
     (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
       setFormData((prev) => ({ ...prev, [field]: event.target.value }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     };
 
-  const handleSubmit = () => {
-    const { name, value, controllingField } = formData;
-    onSubmit(name, value, controllingField, fieldId, districtId);
-    onClose();
+  const validate = () => {
+    let valid = true;
+    let errors = { name: "", value: "", controllingField: "" };
+
+    if (!formData.name.trim()) {
+      errors.name = t("COMMON.REQUIRED_FIELD");
+      valid = false;
+    }
+    if (!formData.value.trim()) {
+      errors.value = t("COMMON.REQUIRED_FIELD");
+      valid = false;
+    }
+    if (!formData.controllingField.trim()) {
+      errors.controllingField = t("COMMON.REQUIRED_FIELD");
+      valid = false;
+    }
+
+    setErrors(errors);
+    return valid;
   };
 
-  // Determine if the modal is in editing mode
-  const isEditing = !!(initialValues.name || initialValues.value || initialValues.controllingField);
+  const handleSubmit = () => {
+    if (validate()) {
+      const { name, value, controllingField } = formData;
+      onSubmit(name, value, controllingField, fieldId, districtId);
+      onClose();
+    }
+  };
+
+  const isEditing = !!(
+    initialValues.name ||
+    initialValues.value ||
+    initialValues.controllingField
+  );
   const buttonText = isEditing ? t("COMMON.UPDATE") : t("COMMON.SUBMIT");
-  const dialogTitle = isEditing ? t("COMMON.UPDATE_BLOCK") : t("COMMON.ADD_BLOCK");
+  const dialogTitle = isEditing
+    ? t("COMMON.UPDATE_BLOCK")
+    : t("COMMON.ADD_BLOCK");
 
   const buttonStyles = {
     fontSize: "14px",
@@ -88,6 +123,8 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           variant="outlined"
           value={formData.controllingField}
           onChange={handleChange("controllingField")}
+          error={!!errors.controllingField}
+          helperText={errors.controllingField}
         />
         <TextField
           margin="dense"
@@ -97,6 +134,8 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           variant="outlined"
           value={formData.name}
           onChange={handleChange("name")}
+          error={!!errors.name}
+          helperText={errors.name}
         />
         <TextField
           margin="dense"
@@ -106,6 +145,8 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           variant="outlined"
           value={formData.value}
           onChange={handleChange("value")}
+          error={!!errors.value}
+          helperText={errors.value}
         />
         <Box display="flex" alignItems="center" mt={2}>
           <InfoOutlinedIcon color="primary" sx={{ mr: 1 }} />
