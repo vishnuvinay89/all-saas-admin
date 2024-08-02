@@ -20,7 +20,7 @@ const handleCloseAddLearnerModal = () => {
   };
   return (
     <>
-      <UserTable role={Role.STUDENT} userType={t("SIDEBAR.LEARNERS")} searchPlaceholder={t("LEARNERS.SEARCHBAR_PLACEHOLDER")} handleAddUserClick={handleAddLearnerClick} ParentState={openAddLearnerModal}/>
+      <UserTable role={Role.STUDENT} userType={t("SIDEBAR.LEARNERS")} searchPlaceholder={t("LEARNERS.SEARCHBAR_PLACEHOLDER")} handleAddUserClick={handleAddLearnerClick} parentState={openAddLearnerModal}/>
       <AddLearnerModal
               open={openAddLearnerModal}
               onClose={handleCloseAddLearnerModal}

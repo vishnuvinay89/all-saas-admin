@@ -26,7 +26,7 @@ import { Role } from "@/utils/app.constant";
 import { getFormRead } from "@/services/CreateUserService";
 import { showToastMessage } from "./Toastify";
 import { capitalizeFirstLetterOfEachWordInArray } from "../utils/Helper";
-
+import { getUserTableColumns,getTLTableColumns } from "@/data/tableColumns";
 type UserDetails = {
   userId: any;
   username: any;
@@ -60,187 +60,17 @@ interface UserTableProps {
   userType: string;
   searchPlaceholder: string;
   handleAddUserClick: any;
-  ParentState?:boolean
+  parentState?:boolean
 }
 
-const columns = [
-  // {
-  //   key: "userId",
-  //   title: "ID",
-  //   dataType: DataType.String,
-  // },
-  // {
-  //   key: "selection-cell",
-  //   width: 50,
-  // },
-  {
-    key: "name",
-    title: "Name",
-    dataType: DataType.String,
-    sortDirection: SortDirection.Ascend,
- //  width: isMobile?160:10
-  },
-  {
-    key: "status",
-    title: "Status",
-    dataType: DataType.String,
-    sortDirection: SortDirection.Ascend,
-   //width: isMobile?160:null,
-  },
- 
-  // {
-  //   key: "programs",
-  //   title: "Programs",
-  //   dataType: DataType.String,
-  // },
-  {
-    key: "age",
-    title: "Age",
-    dataType: DataType.String,
-  //  width: 160,
-  },
-  {
-    key: "gender",
-    title: "Gender",
-    dataType: DataType.String,
-  //  width: 160,
-  },
-  {
-    key: "mobile",
-    title: "Mobile Number",
-    dataType: DataType.String,
-   // width: 160,
-  },
-  {
-    key: "state",
-    title: "State",
-    dataType: DataType.String,
-    sortDirection: SortDirection.Ascend,
-   // width: 160,
-  },
-  {
-    key: "district",
-    title: "District",
-    dataType: DataType.String,
-    sortDirection: SortDirection.Ascend,
-  //  width: 160,
-  },
 
-  {
-    key: "blocks",
-    title: "Blocks",
-    dataType: DataType.String,
-    sortDirection: SortDirection.Ascend,
-  //  width: 160,
-  },
-  {
-    key: "centers",
-    title: "Centers",
-    dataType: DataType.String,
-    sortDirection: SortDirection.Ascend,
-   // width: 160,
-  },
-  {
-    key: "actions",
-    title: "Actions",
-    dataType: DataType.String,
-   // width: 160,
-  },
-];
-
-
-
-const TLColumnsData = [
-  // {
-  //   key: "userId",
-  //   title: "ID",
-  //   dataType: DataType.String,
-  // },
-  // {
-  //   key: "selection-cell",
-  //   width: 50,
-  // },
-  {
-    key: "name",
-    title: "Name",
-    dataType: DataType.String,
-    sortDirection: SortDirection.Ascend,
- //  width: isMobile?160:10
-  },
-  {
-    key: "status",
-    title: "Status",
-    dataType: DataType.String,
-    sortDirection: SortDirection.Ascend,
-   //width: isMobile?160:null,
-  },
- 
-  // {
-  //   key: "programs",
-  //   title: "Programs",
-  //   dataType: DataType.String,
-  // },
-  {
-    key: "age",
-    title: "Age",
-    dataType: DataType.String,
-  //  width: 160,
-  },
-  {
-    key: "gender",
-    title: "Gender",
-    dataType: DataType.String,
-  //  width: 160,
-  },
-  // {
-  //   key: "mobile",
-  //   title: "Mobile Number",
-  //   dataType: DataType.String,
-  //  // width: 160,
-  // },
-  {
-    key: "state",
-    title: "State",
-    dataType: DataType.String,
-    sortDirection: SortDirection.Ascend,
-   // width: 160,
-  },
-  {
-    key: "district",
-    title: "District",
-    dataType: DataType.String,
-    sortDirection: SortDirection.Ascend,
-  //  width: 160,
-  },
-
-  {
-    key: "blocks",
-    title: "Blocks",
-    dataType: DataType.String,
-    sortDirection: SortDirection.Ascend,
-  //  width: 160,
-  },
-  // {
-  //   key: "centers",
-  //   title: "Centers",
-  //   dataType: DataType.String,
-  //   sortDirection: SortDirection.Ascend,
-  //  // width: 160,
-  // },
-  {
-    key: "actions",
-    title: "Actions",
-    dataType: DataType.String,
-   // width: 160,
-  },
-];
 
 const UserTable: React.FC<UserTableProps> = ({
   role,
   userType,
   searchPlaceholder,
   handleAddUserClick,
-  ParentState
+  parentState
 }) => {
   const [selectedState, setSelectedState] = React.useState<string[]>([]);
   const [selectedStateCode, setSelectedStateCode] = useState("");
@@ -262,6 +92,7 @@ const UserTable: React.FC<UserTableProps> = ({
   const [selectedUserId, setSelectedUserId] = useState("");
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
+
   const [confirmButtonDisable, setConfirmButtonDisable] = useState(false);
   const [pagination, setPagination] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState("All");
@@ -667,7 +498,7 @@ const handleCloseAddTeamLeaderModal = () => {
       }
     };
     fetchUserList();
-  }, [pageOffset, pageLimit, sortBy, filters, openAddFacilitatorModal, openAddLearnerModal, openAddTeamLeaderModal, ParentState]);
+  }, [pageOffset, pageLimit, sortBy, filters, openAddFacilitatorModal, openAddLearnerModal, openAddTeamLeaderModal, parentState]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -758,7 +589,7 @@ const handleCloseAddTeamLeaderModal = () => {
         <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
       ) : data.length !== 0 && loading === false ? (
         <KaTableComponent
-          columns= {role==="Team Leader" ? TLColumnsData: columns}
+          columns= {role==="Team Leader" ? getTLTableColumns(t): getUserTableColumns(t)}
           data={data}
           limit={pageLimit}
           offset={pageOffset}

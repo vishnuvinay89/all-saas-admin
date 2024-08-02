@@ -20,7 +20,7 @@ const handleCloseAddFacilitatorModal = () => {
   };
   return (
     <>
-      <UserTable role={Role.TEACHER} userType= {t("SIDEBAR.FACILITATORS")} searchPlaceholder={ t("FACILITATORS.SEARCHBAR_PLACEHOLDER")}handleAddUserClick={handleAddFaciliatorClick} ParentState={openAddFacilitatorModal}/>
+      <UserTable role={Role.TEACHER} userType= {t("SIDEBAR.FACILITATORS")} searchPlaceholder={ t("FACILITATORS.SEARCHBAR_PLACEHOLDER")}handleAddUserClick={handleAddFaciliatorClick} parentState={openAddFacilitatorModal}/>
       <AddFacilitatorModal
               open={openAddFacilitatorModal}
               onClose={handleCloseAddFacilitatorModal}
