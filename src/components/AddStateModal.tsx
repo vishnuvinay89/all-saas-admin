@@ -104,7 +104,9 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{t("COMMON.ADD_STATE")}</DialogTitle>
+      <DialogTitle sx={{ fontSize: "14px" }}>
+        {stateId ? t("COMMON.UPDATE_STATE") : t("COMMON.ADD_STATE")}
+      </DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
@@ -164,7 +166,7 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
           variant="contained"
           color="primary"
         >
-          {t("COMMON.SUBMIT")}
+          {stateId ? t("COMMON.UPDATE") : t("COMMON.SUBMIT")}
         </Button>
       </DialogActions>
     </Dialog>

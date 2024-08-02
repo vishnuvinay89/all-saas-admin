@@ -74,11 +74,13 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{t("COMMON.ADD_DISTRICT")}</DialogTitle>
+      <DialogTitle sx={{ fontSize: "14px" }}>
+        {t("COMMON.ADD_DISTRICT")}
+      </DialogTitle>
       <DialogContent>
         <TextField
           margin="dense"
-          label="Controlling Field"
+          label={t("COMMON.STATE_NAME")}
           type="text"
           fullWidth
           variant="outlined"
@@ -87,7 +89,7 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
         />
         <TextField
           margin="dense"
-          label="Name"
+          label={t("COMMON.DISTRICT_NAME")}
           type="text"
           fullWidth
           variant="outlined"
@@ -96,7 +98,7 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
         />
         <TextField
           margin="dense"
-          label="Value"
+          label={t("COMMON.DISTRICT_CODE")}
           type="text"
           fullWidth
           variant="outlined"
@@ -114,9 +116,12 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
         <Button
           onClick={onClose}
           sx={{
-            ...buttonStyles,
+            border: "none",
             color: "secondary",
+            fontSize: "14px",
+            fontWeight: "500",
             "&:hover": {
+              border: "none",
               backgroundColor: "transparent",
             },
           }}
