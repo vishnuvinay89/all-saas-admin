@@ -95,8 +95,8 @@ const UserTable: React.FC<UserTableProps> = ({
   const [selectedUserId, setSelectedUserId] = useState("");
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
-  // const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
-  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+ // const isMobile = useMediaQuery("(max-width:600px)");
 
 
   const [confirmButtonDisable, setConfirmButtonDisable] = useState(false);
@@ -316,6 +316,7 @@ const handleCloseAddTeamLeaderModal = () => {
       );
 
       const getValue = (data: any, field: any) => {
+        console.log(data, field)
         if (item.default) {
           return item.default;
         }
@@ -333,7 +334,16 @@ const handleCloseAddTeamLeaderModal = () => {
             return parseInt(String(field?.value));
           } else if (item?.type === "text") {
             return String(field?.value);
-          } else {
+          }
+          
+           else {
+             console.log("asakas",field?.value)
+            if(field.value ==='FEMALE' || field.value ==='MALE')
+            {
+              console.log(true)
+              return field?.value?.toLowerCase();
+            }
+          //  console.log()
             return field?.value;
           }
         }
@@ -595,7 +605,7 @@ const handleCloseAddTeamLeaderModal = () => {
         <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
       ) : data.length !== 0 && loading === false ? (
         <KaTableComponent
-          columns= {role==="Team Leader" ? getTLTableColumns(t): getUserTableColumns(t, isMobile)}
+          columns= {role==="Team Leader" ? getTLTableColumns(t, isMobile): getUserTableColumns(t, isMobile)}
           data={data}
           limit={pageLimit}
           offset={pageOffset}

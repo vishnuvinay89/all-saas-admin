@@ -35,6 +35,9 @@ import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
 import { CustomField } from "@/utils/Interfaces";
 import { showToastMessage } from "@/components/Toastify";
+import AreaSelection from "@/components/AreaSelection";
+import { transformArray } from "@/utils/Helper";
+import AddNewCenters from "@/components/AddNewCenters";
 
 type cohortFilterDetails = {
   type?: string;
@@ -124,7 +127,7 @@ const Center: React.FC = () => {
   const [cohortName, setCohortName] = React.useState<string>("");
   const [loading, setLoading] = useState<boolean | undefined>(undefined);
   const [userId, setUserId] = useState("");
-  const [formData, setFormData] = React.useState<string[]>([]);
+  // const [formData, setFormData] = React.useState<string[]>([]);
   const [schema, setSchema] = React.useState<any>();
   const [uiSchema, setUiSchema] = React.useState<any>();
   const [openAddNewCohort, setOpenAddNewCohort] =
@@ -141,6 +144,12 @@ const Center: React.FC = () => {
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
   const [selectedBlockCode, setSelectedBlockCode] = useState("");
+  const [formdata, setFormData] = useState<any>();
+  const [openAddLearnerModal, setOpenAddLearnerModal] = React.useState(false);
+  const handleCloseAddLearnerModal = () => {
+    setOpenAddNewCohort(false);
+    // setOpenAddLearnerModal(false);
+  };
   // use api calls
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -460,8 +469,8 @@ const Center: React.FC = () => {
 
   // add  extra buttons
   const extraActions: any = [
-    { name: "Edit", onClick: handleEdit, icon: EditIcon },
-    { name: "Delete", onClick: handleDelete, icon: DeleteIcon },
+    { name: t("COMMON.EDIT"), onClick: handleEdit, icon: EditIcon },
+    { name: t("COMMON.DELETE"), onClick: handleDelete, icon: DeleteIcon },
   ];
 
   const onCloseEditMOdel = () => {
@@ -474,23 +483,34 @@ const Center: React.FC = () => {
   };
 
   const handleUpdateAction = async () => {
-    setLoading(true);
-    setConfirmButtonDisable(true);
-    if (selectedCohortId) {
+    try {
+      setLoading(true);
+      setConfirmButtonDisable(true);
+
+      if (!selectedCohortId) {
+        setLoading(false);
+        console.log("No cohort Id Selected");
+        showToastMessage(t("CENTERS.NO_COHORT_ID_SELECTED"), "error");
+        return;
+      }
+
       let cohortDetails = {
         name: inputName,
       };
+
       const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
-      setLoading(false);
       console.log("resp:", resp);
+
       showToastMessage(t("CENTERS.CENTER_UPDATE_SUCCESSFULLY"), "success");
-    } else {
+    } catch (error) {
+      console.error("Error updating cohort:", error);
+      showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
+    } finally {
       setLoading(false);
-      console.log("No cohort Id Selected");
+      setConfirmButtonDisable(false);
+      onCloseEditMOdel();
+      fetchUserList();
     }
-    onCloseEditMOdel();
-    fetchUserList();
-    setLoading(false);
   };
 
   const onCloseAddNewCohort = () => {
@@ -636,26 +656,15 @@ const Center: React.FC = () => {
             </Typography>
           </Box>
         )}
+
+        <AddNewCenters
+          open={openAddNewCohort}
+          onClose={handleCloseAddLearnerModal}
+          formData={formdata}
+          isEditModal={true}
+          userId={userId}
+        />
       </HeaderComponent>
-      <SimpleModal
-        open={openAddNewCohort}
-        onClose={onCloseAddNewCohort}
-        showFooter={false}
-        modalTitle={t("CENTERS.NEW_CENTER")}
-      >
-        {schema && uiSchema && (
-          <DynamicForm
-            schema={schema}
-            uiSchema={uiSchema}
-            onSubmit={handleSubmit}
-            onChange={handleChangeForm}
-            onError={handleError}
-            widgets={{}}
-            showErrorList={true}
-            customFields={customFields}
-          ></DynamicForm>
-        )}
-      </SimpleModal>
     </>
   );
 };
