@@ -8,16 +8,10 @@
   border-bottom: 2px solid #ececec;
 }
 
-.table-header {
-  font-family: "Poppins", sans-serif !important;
-  font-size: small;
-}
-
 .table-cell {
-  font-family: "Poppins", sans-serif !important;
-  font-size: small;
+  font-size: medium;
 }
 
 .ka-table {
-  font-family: "Poppins" !important;
+  font-size: medium;
 }
