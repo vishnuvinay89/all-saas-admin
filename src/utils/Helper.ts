@@ -36,7 +36,7 @@ export const getUserName = async (userId: string) => {
 export const getDeviceId = () => {
   return new Promise((resolve) => {
     FingerprintJS.get((components: any[]) => {
-      const values = components.map((component) => component.value);
+      const values = components?.map((component) => component.value);
       const deviceId = FingerprintJS.x64hash128(values.join(""), 31);
       resolve(deviceId);
     });

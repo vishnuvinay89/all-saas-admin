@@ -128,7 +128,7 @@ const SubjectDetails = () => {
         </Typography>
       </Box>
       <Box sx={{ marginTop: "16px" }}>
-        {card.subjects.map((subject, index) => (
+        {card.subjects?.map((subject, index) => (
           <MuiCard
             key={index}
             sx={{

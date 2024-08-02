@@ -128,7 +128,7 @@ const StateDetails = () => {
         </Box>
       </Box>
       <Box sx={{ marginTop: "16px" }}>
-        {card.boards.map((board: string, index: number) => (
+        {card.boards?.map((board: string, index: number) => (
           <Card
             key={index}
             sx={{

@@ -225,7 +225,7 @@ const HeaderComponent = ({
                 }}
               >
                 <MenuItem value="Sort">{t("COMMON.SORT")}</MenuItem>
-                {Sort.map((state, index) => (
+                {Sort?.map((state, index) => (
                   <MenuItem value={state} key={index}>
                     {state}
                   </MenuItem>
