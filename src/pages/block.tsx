@@ -18,7 +18,6 @@ import {
   deleteOption,
   createOrUpdateOption,
 } from "@/services/MasterDataService";
-import CustomModal from "@/components/CustomModal";
 import { transformLabel } from "@/utils/Helper";
 import { showToastMessage } from "@/components/Toastify";
 import ConfirmationModal from "@/components/ConfirmationModal";
@@ -71,7 +70,7 @@ const Block: React.FC = () => {
         const states = data?.result?.values || [];
         setStateData(states);
         if (states.length > 0) {
-          setSelectedState(states[0].value); // Set the first state as selected by default
+          setSelectedState(states[0].value); 
         }
       } catch (error) {
         console.error("Error fetching states", error);
@@ -95,7 +94,7 @@ const Block: React.FC = () => {
           const districts = data?.result?.values || [];
           setDistrictData(districts);
           if (districts.length > 0) {
-            setSelectedDistrict(districts[0].value); // Set the first district as selected by default
+            setSelectedDistrict(districts[0].value); 
           }
         } catch (error) {
           console.error("Error fetching districts", error);
