@@ -16,9 +16,7 @@ import { useEffect, useState } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 
-import {
-  getStateBlockDistrictList,
-} from "../services/MasterDataService";
+import { getStateBlockDistrictList } from "../services/MasterDataService";
 import AreaSelection from "./AreaSelection";
 import { transformArray } from "../utils/Helper";
 import MultipleSelectCheckmarks from "./FormControl";
@@ -188,8 +186,8 @@ const HeaderComponent = ({
           <SearchBar onSearch={handleSearch} placeholder={searchPlaceHolder} />
         </Box>
         <Box display={"flex"} gap={1} alignItems={"center"}>
-          <Typography variant="h3">
-           {t("COMMON.FILTER_BY_STATUS")}
+          <Typography variant="h3" mt={1}>
+            {t("COMMON.FILTER_BY_STATUS")}
           </Typography>
           <FormControl sx={{ minWidth: "120px" }}>
             <Select
@@ -202,9 +200,7 @@ const HeaderComponent = ({
                 fontSize: "14px",
               }}
             >
-              <MenuItem value="All">
-                <em>{t("COMMON.ALL")}</em>
-              </MenuItem>
+              <MenuItem value="All">{t("COMMON.ALL")}</MenuItem>
               {Filter?.map((filter, index) => (
                 <MenuItem value={filter} key={index}>
                   {filter}
@@ -234,14 +230,6 @@ const HeaderComponent = ({
             </FormControl>
           )}
         </Box>
-
-
-
-
-
-
-
-
       </Box>
       {showAddNew && (
         <Box

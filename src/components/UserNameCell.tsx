@@ -32,7 +32,7 @@ const UserNameCell = ({ userId }: { userId: string }) => {
     );
   }
 
-  return <div>{firtstLetterInUpperCase(userName)}</div>;
+  return <div>{userName ? firtstLetterInUpperCase(userName):"-"}</div>;
 };
 
 export default UserNameCell;

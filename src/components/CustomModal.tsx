@@ -86,7 +86,13 @@ const CustomModal: React.FC<CustomModalProps> = ({
         </Box>
         <Divider sx={{ my: 2 }} />
         <Box id="modal-description">{children}</Box>
-        <Box mt={2} display="flex" justifyContent="space-around" gap={2}>
+        <Box mt={2} display="flex" justifyContent="right" gap={2}>
+          
+          {secondaryBtnText && (
+            <Button onClick={secondaryBtnClick} variant="outlined">
+              {secondaryBtnText}
+            </Button>
+          )}
           <Button
             // fullWidth
             onClick={primaryBtnClick}
@@ -95,11 +101,6 @@ const CustomModal: React.FC<CustomModalProps> = ({
           >
             {primaryBtnText}
           </Button>
-          {secondaryBtnText && (
-            <Button onClick={secondaryBtnClick} variant="outlined">
-              {secondaryBtnText}
-            </Button>
-          )}
         </Box>
       </Box>
     </Modal>

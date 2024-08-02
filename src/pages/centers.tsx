@@ -1,8 +1,7 @@
-import React, { ChangeEvent, FormEvent } from "react";
+import React, { ChangeEvent , useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
-import { DataType } from "ka-table/enums";
+import { DataType ,SortDirection} from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useState, useEffect } from "react";
 import HeaderComponent from "@/components/HeaderComponent";
 import { useTranslation } from "next-i18next";
 import Pagination from "@mui/material/Pagination";
@@ -13,30 +12,19 @@ import {
   getCohortList,
   updateCohortUpdate,
 } from "@/services/CohortService/cohortService";
-import { Numbers, Role, SORT, Status, Storage } from "@/utils/app.constant";
+import { Numbers, SORT, Status, Storage } from "@/utils/app.constant";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import CustomModal from "@/components/CustomModal";
 import { Box, TextField, Typography } from "@mui/material";
-import { SortDirection } from "ka-table/enums";
 import Loader from "@/components/Loader";
-import Image from "next/image";
-import glass from "../../public/images/empty_hourglass.svg";
-import { useCohortList } from "@/services/CohortService/cohortListHook";
 import { getFormRead } from "@/services/CreateUserService";
-import {
-  GenerateSchemaAndUiSchema,
-  customFields,
-} from "@/components/GeneratedSchemas";
-import SimpleModal from "@/components/SimpleModal";
-import DynamicForm from "@/components/DynamicForm";
+import { GenerateSchemaAndUiSchema } from "@/components/GeneratedSchemas";
 import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
 import { CustomField } from "@/utils/Interfaces";
 import { showToastMessage } from "@/components/Toastify";
-import AreaSelection from "@/components/AreaSelection";
-import { transformArray } from "@/utils/Helper";
 import AddNewCenters from "@/components/AddNewCenters";
 
 type cohortFilterDetails = {
@@ -45,15 +33,6 @@ type cohortFilterDetails = {
   states?: string;
   districts?: string;
   blocks?: string;
-};
-type UserDetails = {
-  userId: any;
-  username: any;
-  name: any;
-  role: any;
-  mobile: any;
-  centers?: any;
-  Programs?: any;
 };
 
 interface CohortDetails {
@@ -81,13 +60,8 @@ const Center: React.FC = () => {
       dataType: DataType.String,
     },
     {
-      key: "createdAt",
-      title: t("TABLE_TITLE.CREATED_DATE"),
-      dataType: DataType.String,
-    },
-    {
-      key: "updatedAt",
-      title: t("TABLE_TITLE.UPDATED_DATE"),
+      key: "updatedBy",
+      title: t("TABLE_TITLE.UPDATED_BY"),
       dataType: DataType.String,
     },
     {
@@ -96,11 +70,18 @@ const Center: React.FC = () => {
       dataType: DataType.String,
     },
     {
-      key: "updatedBy",
-      title: t("TABLE_TITLE.UPDATED_BY"),
+      key: "createdAt",
+      title: t("TABLE_TITLE.CREATED_DATE"),
       dataType: DataType.String,
     },
 
+    {
+      key: "updatedAt",
+      title: t("TABLE_TITLE.UPDATED_DATE"),
+      dataType: DataType.String,
+    },
+   
+   
     {
       key: "actions",
       title: t("TABLE_TITLE.ACTIONS"),
@@ -116,7 +97,6 @@ const Center: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState("All");
   const [cohortData, setCohortData] = useState<cohortFilterDetails[]>([]);
   const [pageSize, setPageSize] = React.useState<string | number>("10");
-  const [open, setOpen] = React.useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] =
     React.useState<boolean>(false);
   const [selectedCohortId, setSelectedCohortId] = React.useState<string>("");
@@ -124,7 +104,6 @@ const Center: React.FC = () => {
   const [confirmButtonDisable, setConfirmButtonDisable] =
     React.useState<boolean>(false);
   const [inputName, setInputName] = React.useState<string>("");
-  const [cohortName, setCohortName] = React.useState<string>("");
   const [loading, setLoading] = useState<boolean | undefined>(undefined);
   const [userId, setUserId] = useState("");
   // const [formData, setFormData] = React.useState<string[]>([]);
@@ -145,10 +124,8 @@ const Center: React.FC = () => {
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
   const [selectedBlockCode, setSelectedBlockCode] = useState("");
   const [formdata, setFormData] = useState<any>();
-  const [openAddLearnerModal, setOpenAddLearnerModal] = React.useState(false);
   const handleCloseAddLearnerModal = () => {
     setOpenAddNewCohort(false);
-    // setOpenAddLearnerModal(false);
   };
   // use api calls
   useEffect(() => {
@@ -156,6 +133,9 @@ const Center: React.FC = () => {
       const userId = localStorage.getItem(Storage.USER_ID) || "";
       setUserId(userId);
     }
+
+    // get form data for center create
+    getAddCenterFormData();
   }, []);
 
   const fetchUserList = async () => {
@@ -182,10 +162,8 @@ const Center: React.FC = () => {
         } else if (totalCount >= 5 || totalCount < 5) {
           setPageSizeArray([5]);
         }
-
         const pageCount = Math.ceil(totalCount / pageLimit);
         setPageCount(pageCount);
-
         setLoading(false);
       }
     } catch (error) {
@@ -195,32 +173,36 @@ const Center: React.FC = () => {
   };
 
   const getFormData = async () => {
-    const res = await getFormRead("cohorts", "cohort");
-
-    const formDatas = res?.fields;
-    console.log("formDatas", formDatas);
-    setFormData(formDatas);
+    try {
+      const res = await getFormRead("cohorts", "cohort");
+      if (res && res?.fields) {
+        const formDatas = res?.fields;
+        setFormData(formDatas);
+      } else {
+        console.log("No response Data");
+      }
+    } catch (error) {
+      showToastMessage(t("COMMON.ERROR_MESSAGE_SOMETHING_WRONG"), "error");
+      console.log("Error fetching form data:", error);
+    }
   };
 
-  useEffect(() => {
-    const getAddLearnerFormData = async () => {
-      try {
-        const response = await getFormRead("cohorts", "cohort");
-        console.log("sortedFields", response);
+  const getAddCenterFormData = async () => {
+    try {
+      const response = await getFormRead("cohorts", "cohort");
+      if (response) {
+        const { schema, uiSchema } = GenerateSchemaAndUiSchema(response, t);
 
-        if (response) {
-          const { schema, uiSchema } = GenerateSchemaAndUiSchema(response, t);
-          console.log("schema", schema);
-          console.log("uiSchema", uiSchema);
-          setSchema(schema);
-          setUiSchema(uiSchema);
-        }
-      } catch (error) {
-        console.error("Error fetching form data:", error);
+        setSchema(schema);
+        setUiSchema(uiSchema);
+      } else {
+        console.log("Unexpected response format");
       }
-    };
-    getAddLearnerFormData();
-  }, []);
+    } catch (error) {
+      showToastMessage(t("COMMON.ERROR_MESSAGE_SOMETHING_WRONG"), "error");
+      console.log("Error fetching form data:", error);
+    }
+  };
 
   useEffect(() => {
     fetchUserList();
@@ -412,8 +394,7 @@ const Center: React.FC = () => {
   };
 
   const handleFilterChange = async (event: SelectChangeEvent) => {
-    console.log(event.target.value as string);
-    setSelectedFilter(event.target.value as string);
+    setSelectedFilter(event.target.value);
 
     if (event.target.value === Status.ACTIVE_LABEL) {
       setFilters((prevFilters) => ({
@@ -438,7 +419,6 @@ const Center: React.FC = () => {
         };
       });
     }
-    // console.log(filters);
   };
 
   const handleEdit = (rowData: any) => {
@@ -513,66 +493,12 @@ const Center: React.FC = () => {
     }
   };
 
-  const onCloseAddNewCohort = () => {
-    setOpenAddNewCohort(false);
-  };
+ 
 
   const handleAddUserClick = () => {
     setOpenAddNewCohort(true);
   };
 
-  const handleChangeForm = (event: IChangeEvent<any>) => {
-    console.log("Form data changed:", event.formData);
-    // setFormData({
-    //   ...formData,
-    //   [event.target.name]: event.target.value
-    // });
-  };
-
-  const handleSubmit = async (
-    data: IChangeEvent<any, RJSFSchema, any>,
-    event: React.FormEvent<any>
-  ) => {
-    const formData = data.formData;
-
-    const parentId = localStorage.getItem("blockParentId") || "";
-    const cohortDetails: CohortDetails = {
-      name: formData.name,
-      type: "COHORT",
-      parentId: parentId,
-      customFields: [],
-    };
-
-    Object.entries(formData).forEach(([fieldKey, fieldValue]) => {
-      const fieldSchema = schema.properties[fieldKey];
-      const fieldId = fieldSchema?.fieldId;
-      if (fieldId !== null) {
-        cohortDetails?.customFields?.push({
-          fieldId: fieldId,
-          value: formData.cohort_type,
-        });
-      }
-    });
-    console.log("cohortDetails");
-    if (
-      cohortDetails?.customFields &&
-      cohortDetails?.customFields?.length > 0 &&
-      cohortDetails?.name
-    ) {
-      const cohortData = await createCohort(cohortDetails);
-      if (cohortData) {
-        showToastMessage(t("CENTERS.CENTER_CREATED_SUCCESSFULLY"), "success");
-        setOpenAddNewCohort(false);
-        fetchUserList();
-      }
-    } else {
-      showToastMessage("Please Input Data", "warning");
-    }
-  };
-
-  const handleError = () => {
-    console.log("error");
-  };
 
   // props to send in header
   const userProps = {

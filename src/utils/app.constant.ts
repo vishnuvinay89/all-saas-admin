@@ -57,3 +57,8 @@ export enum Numbers {
   ONE = 1,
   TEN = 10,
 }
+
+export enum Types {
+  COHORT = "COHORT",
+  BLOCK = "BLOCK",
+}
