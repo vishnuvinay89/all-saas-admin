@@ -60,6 +60,7 @@ interface UserTableProps {
   userType: string;
   searchPlaceholder: string;
   handleAddUserClick: any;
+  ParentState?:boolean
 }
 
 const columns = [
@@ -147,11 +148,99 @@ const columns = [
   },
 ];
 
+
+
+const TLColumnsData = [
+  // {
+  //   key: "userId",
+  //   title: "ID",
+  //   dataType: DataType.String,
+  // },
+  // {
+  //   key: "selection-cell",
+  //   width: 50,
+  // },
+  {
+    key: "name",
+    title: "Name",
+    dataType: DataType.String,
+    sortDirection: SortDirection.Ascend,
+ //  width: isMobile?160:10
+  },
+  {
+    key: "status",
+    title: "Status",
+    dataType: DataType.String,
+    sortDirection: SortDirection.Ascend,
+   //width: isMobile?160:null,
+  },
+ 
+  // {
+  //   key: "programs",
+  //   title: "Programs",
+  //   dataType: DataType.String,
+  // },
+  {
+    key: "age",
+    title: "Age",
+    dataType: DataType.String,
+  //  width: 160,
+  },
+  {
+    key: "gender",
+    title: "Gender",
+    dataType: DataType.String,
+  //  width: 160,
+  },
+  // {
+  //   key: "mobile",
+  //   title: "Mobile Number",
+  //   dataType: DataType.String,
+  //  // width: 160,
+  // },
+  {
+    key: "state",
+    title: "State",
+    dataType: DataType.String,
+    sortDirection: SortDirection.Ascend,
+   // width: 160,
+  },
+  {
+    key: "district",
+    title: "District",
+    dataType: DataType.String,
+    sortDirection: SortDirection.Ascend,
+  //  width: 160,
+  },
+
+  {
+    key: "blocks",
+    title: "Blocks",
+    dataType: DataType.String,
+    sortDirection: SortDirection.Ascend,
+  //  width: 160,
+  },
+  // {
+  //   key: "centers",
+  //   title: "Centers",
+  //   dataType: DataType.String,
+  //   sortDirection: SortDirection.Ascend,
+  //  // width: 160,
+  // },
+  {
+    key: "actions",
+    title: "Actions",
+    dataType: DataType.String,
+   // width: 160,
+  },
+];
+
 const UserTable: React.FC<UserTableProps> = ({
   role,
   userType,
   searchPlaceholder,
   handleAddUserClick,
+  ParentState
 }) => {
   const [selectedState, setSelectedState] = React.useState<string[]>([]);
   const [selectedStateCode, setSelectedStateCode] = useState("");
@@ -578,7 +667,7 @@ const handleCloseAddTeamLeaderModal = () => {
       }
     };
     fetchUserList();
-  }, [pageOffset, pageLimit, sortBy, filters, openAddFacilitatorModal, openAddLearnerModal, openAddTeamLeaderModal]);
+  }, [pageOffset, pageLimit, sortBy, filters, openAddFacilitatorModal, openAddLearnerModal, openAddTeamLeaderModal, ParentState]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -669,7 +758,7 @@ const handleCloseAddTeamLeaderModal = () => {
         <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
       ) : data.length !== 0 && loading === false ? (
         <KaTableComponent
-          columns={columns}
+          columns= {role==="Team Leader" ? TLColumnsData: columns}
           data={data}
           limit={pageLimit}
           offset={pageOffset}
