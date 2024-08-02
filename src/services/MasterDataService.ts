@@ -18,11 +18,13 @@ export const getStateBlockDistrictList = async ({
   fieldName,
   limit,
   optionName,
+  sortBy,
 }: {
   controllingfieldfk?: string;
   fieldName: string;
   limit?: number;
   optionName?: string;
+  sortBy?: any;
 }): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/options/read`;
   try {
@@ -30,6 +32,7 @@ export const getStateBlockDistrictList = async ({
       fieldName: string;
       controllingfieldfk?: string;
       optionName?: string;
+      sort?: any;
     } = {
       fieldName,
     };
@@ -41,6 +44,10 @@ export const getStateBlockDistrictList = async ({
     if (optionName) {
       requestBody.optionName = optionName; // Use optionName for search
     }
+    if (sortBy) {
+      requestBody.sort = sortBy; // Use optionName for search
+    }
+
     console.log("requestBody", requestBody);
     const response = await post(apiUrl, requestBody);
     return response?.data;

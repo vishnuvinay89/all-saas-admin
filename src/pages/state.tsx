@@ -16,7 +16,6 @@ import { AddStateModal } from "@/components/AddStateModal";
 import { transformLabel } from "@/utils/Helper";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { showToastMessage } from "@/components/Toastify";
-import { SORT } from "@/utils/app.constant";
 
 export interface StateDetail {
   updatedAt: any;
@@ -96,16 +95,11 @@ const State: React.FC = () => {
     setPageOffset(0);
   }, []);
 
-  const handleSortChange = async (event: SelectChangeEvent) => {
-    if (event.target.value === "Z-A") {
-      setSortBy(["name", SORT.DESCENDING]);
-    } else if (event.target.value === "A-Z") {
-      setSortBy(["name", SORT.ASCENDING]);
-    } else {
-      setSortBy(["createdAt", SORT.ASCENDING]);
-    }
-    setSelectedSort(event.target.value as string);
-  };
+  const handleSortChange = useCallback((event: SelectChangeEvent<string>) => {
+    const selectedValue = event.target.value;
+    setSelectedSort(selectedValue);
+    setSortBy(["label", selectedValue === "Z-A" ? "desc" : "asc"]);
+  }, []);
 
   const handleFilterChange = useCallback((event: SelectChangeEvent<string>) => {
     setSelectedFilter(event.target.value);
