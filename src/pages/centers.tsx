@@ -8,7 +8,6 @@ import Pagination from "@mui/material/Pagination";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import {
-  createCohort,
   getCohortList,
   updateCohortUpdate,
 } from "@/services/CohortService/cohortService";
@@ -17,15 +16,15 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import CustomModal from "@/components/CustomModal";
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, TextField, Typography, useMediaQuery } from "@mui/material";
 import Loader from "@/components/Loader";
 import { getFormRead } from "@/services/CreateUserService";
 import { GenerateSchemaAndUiSchema } from "@/components/GeneratedSchemas";
-import { IChangeEvent } from "@rjsf/core";
-import { RJSFSchema } from "@rjsf/utils";
 import { CustomField } from "@/utils/Interfaces";
 import { showToastMessage } from "@/components/Toastify";
 import AddNewCenters from "@/components/AddNewCenters";
+import { getCenterTableData } from "@/data/tableColumns";
+import { Theme } from '@mui/system';
 
 type cohortFilterDetails = {
   type?: string;
@@ -46,49 +45,6 @@ const Center: React.FC = () => {
   // use hooks
   const { t } = useTranslation();
 
-  // colums in table
-  const columns = [
-    {
-      key: "name",
-      title: t("TABLE_TITLE.NAME"),
-      dataType: DataType.String,
-      sortDirection: SortDirection.Ascend,
-    },
-    {
-      key: "status",
-      title: t("TABLE_TITLE.STATUS"),
-      dataType: DataType.String,
-    },
-    {
-      key: "updatedBy",
-      title: t("TABLE_TITLE.UPDATED_BY"),
-      dataType: DataType.String,
-    },
-    {
-      key: "createdBy",
-      title: t("TABLE_TITLE.CREATED_BY"),
-      dataType: DataType.String,
-    },
-    {
-      key: "createdAt",
-      title: t("TABLE_TITLE.CREATED_DATE"),
-      dataType: DataType.String,
-    },
-
-    {
-      key: "updatedAt",
-      title: t("TABLE_TITLE.UPDATED_DATE"),
-      dataType: DataType.String,
-    },
-   
-   
-    {
-      key: "actions",
-      title: t("TABLE_TITLE.ACTIONS"),
-      dataType: DataType.String,
-    },
-  ];
-
   // handle states
   const [selectedState, setSelectedState] = React.useState<string[]>([]);
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
@@ -106,7 +62,6 @@ const Center: React.FC = () => {
   const [inputName, setInputName] = React.useState<string>("");
   const [loading, setLoading] = useState<boolean | undefined>(undefined);
   const [userId, setUserId] = useState("");
-  // const [formData, setFormData] = React.useState<string[]>([]);
   const [schema, setSchema] = React.useState<any>();
   const [uiSchema, setUiSchema] = React.useState<any>();
   const [openAddNewCohort, setOpenAddNewCohort] =
@@ -127,6 +82,7 @@ const Center: React.FC = () => {
   const handleCloseAddLearnerModal = () => {
     setOpenAddNewCohort(false);
   };
+  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
   // use api calls
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -233,7 +189,7 @@ const Center: React.FC = () => {
     </Box>
   );
 
-  const PageSizeSelectorFunction = ({}) => (
+  const PageSizeSelectorFunction = () => (
     <Box mt={2}>
       <PageSizeSelector
         handleChange={handleChange}
@@ -273,12 +229,10 @@ const Center: React.FC = () => {
           status: filters.status,
           states: selectedStateCode,
 
-          // role: role,
         });
       } else {
         setFilters({
           states: selectedStateCode,
-          // role: role,
         });
       }
     } else {
@@ -290,13 +244,11 @@ const Center: React.FC = () => {
           states: selectedStateCode,
           districts: districts,
 
-          // role: role,
         });
       } else {
         setFilters({
           states: selectedStateCode,
           districts: districts,
-          // role: role,
         });
       }
     }
@@ -310,13 +262,12 @@ const Center: React.FC = () => {
           status: filters.status,
           states: selectedStateCode,
           districts: selectedDistrictCode,
-          // role: role,
+        
         });
       } else {
         setFilters({
           states: selectedStateCode,
           districts: selectedDistrictCode,
-          // role: role,
         });
       }
     } else {
@@ -328,14 +279,12 @@ const Center: React.FC = () => {
           states: selectedStateCode,
           districts: selectedDistrictCode,
           blocks: blocks,
-          // role: role,
         });
       } else {
         setFilters({
           states: selectedStateCode,
           districts: selectedDistrictCode,
           blocks: blocks,
-          // role: role,
         });
       }
     }
@@ -361,10 +310,7 @@ const Center: React.FC = () => {
         if (cohort) {
           cohort.status = Status.ARCHIVED;
         }
-        // setCohortData(updatedCohorts);
         console.log(resp?.params?.successmessage);
-
-        // fetchUserList();
       } else {
         console.log("Cohort Not Archived");
       }
@@ -383,7 +329,7 @@ const Center: React.FC = () => {
     } else {
       setSortBy(["createdAt", SORT.ASCENDING]);
     }
-    setSelectedSort(event.target.value as string);
+    setSelectedSort(event.target.value);
   };
 
   const handleSearch = (keyword: string) => {
@@ -519,6 +465,7 @@ const Center: React.FC = () => {
     showAddNew: true,
     handleAddUserClick: handleAddUserClick,
   };
+
   return (
     <>
       <CustomModal
@@ -553,11 +500,12 @@ const Center: React.FC = () => {
         modalOpen={confirmationModalOpen}
       />
       <HeaderComponent {...userProps}>
+        
         {loading ? (
           <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
-        ) : cohortData?.length > 0 ? (
+        ) : cohortData?.length > 0    ? (
           <KaTableComponent
-            columns={columns}
+            columns= {getCenterTableData(t, isMobile)}
             data={cohortData}
             limit={pageLimit}
             offset={pageOffset}

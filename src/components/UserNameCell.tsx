@@ -1,7 +1,6 @@
 import { firtstLetterInUpperCase, getUserName } from "./../utils/Helper";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-// import { getUserName } from "../path/to/helper";
 
 const UserNameCell = ({ userId }: { userId: string }) => {
   const [userName, setUserName] = useState<string | null>(null);
