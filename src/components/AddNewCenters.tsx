@@ -66,7 +66,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
     handleDistrictChangeWrapper,
     handleBlockChangeWrapper,
     handleCenterChangeWrapper,
-    selectedBlockFieldId,
+    selectedBlockCohortId,
     dynamicFormForBlock,
   } = useLocationState(open, onClose);
 
@@ -96,8 +96,8 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
   ) => {
     const formData = data?.formData;
 
-    if (selectedBlockFieldId) {
-      const parentId = selectedBlockFieldId;
+    if (selectedBlockCohortId) {
+      const parentId = selectedBlockCohortId;
       const cohortDetails: CohortDetails = {
         name: formData.name,
         type: CohortTypes.COHORT,

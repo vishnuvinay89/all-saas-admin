@@ -1,68 +1,61 @@
-import DynamicForm from "@/components/DynamicForm";
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "next-i18next";
+import { IChangeEvent } from "@rjsf/core";
+import { RJSFSchema } from "@rjsf/utils";
+import { Typography, useMediaQuery , Box, Button,  useTheme} from "@mui/material";
 import {
   GenerateSchemaAndUiSchema,
   customFields,
 } from "@/components/GeneratedSchemas";
+import { FormContext, FormContextType } from "@/utils/app.constant";
+import DynamicForm from "@/components/DynamicForm";
+import SendCredentialModal from "@/components/SendCredentialModal";
 import SimpleModal from "@/components/SimpleModal";
 import {
   createUser,
   getFormRead,
   updateUser,
 } from "@/services/CreateUserService";
-import { tenantId } from "../../app.config";
-import {
-  
-  getCohortList
-  
-} from "@/services/CohortService/cohortService";
 import { generateUsernameAndPassword } from "@/utils/Helper";
 import { FormData } from "@/utils/Interfaces";
-import {
-  FormContext,
-  FormContextType,
-  Role,
-  RoleId,
-} from "@/utils/app.constant";
-import { useLocationState } from "@/utils/useLocationState";
-import { Box, Button, Typography, useTheme } from "@mui/material";
-import { IChangeEvent } from "@rjsf/core";
-import { RJSFSchema } from "@rjsf/utils";
-import React, { useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { transformArray } from "../utils/Helper";
+import { RoleId ,Role} from "@/utils/app.constant";
 import AreaSelection from "./AreaSelection";
 import { showToastMessage } from "./Toastify";
+import { transformArray } from "../utils/Helper";
+import { useLocationState } from "@/utils/useLocationState";
+import { tenantId } from "../../app.config";
 
-interface AddLearnerModalProps {
+
+
+
+
+interface UserModalProps {
   open: boolean;
   onClose: () => void;
   formData?: object;
   isEditModal?: boolean;
   userId?: string;
+  onSubmit: (submitValue: boolean) => void;
+  userType:string
 }
-interface FieldProp {
-  value: string;
-  label: string;
-}
-const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
+
+const CommonUserModal: React.FC<UserModalProps> = ({
   open,
   onClose,
   formData,
   isEditModal = false,
   userId,
+  onSubmit,
+  userType
 }) => {
+  console.log(userType)
   const [schema, setSchema] = React.useState<any>();
   const [uiSchema, setUiSchema] = React.useState<any>();
-  const [formValue, setFormValue] = React.useState<any>();
-
-
-  const [credentials, setCredentials] = React.useState({
-    username: "",
-    password: "",
-  });
   const { t } = useTranslation();
+  const [formValue, setFormValue] = useState<any>();
+  const modalTitle=!isEditModal? userType === FormContextType.STUDENT?t("LEARNERS.NEW_LEARNER"):userType === FormContextType.TEACHER?t("FACILITATORS.NEW_FACILITATOR"):t("TEAM_LEADERS.NEW_TEAM_LEADER"): userType === FormContextType.STUDENT?t("LEARNERS.EDIT_LEARNER"):userType === FormContextType.TEACHER?t("FACILITATORS.EDIT_FACILITATOR"):t("TEAM_LEADERS.EDIT_TEAM_LEADER")
   const theme = useTheme<any>();
-  const {
+   const {
     states,
     districts,
     blocks,
@@ -81,35 +74,54 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
     handleDistrictChangeWrapper,
     handleBlockChangeWrapper,
     handleCenterChangeWrapper,
-    selectedCenterCode,
-    selectedBlockFieldId,
-    dynamicFormForBlock,
-    BlockFieldId, DistrctFieldId, StateFieldId
+    selectedCenterCode,  selectedBlockCohortId,   blockFieldId, distrctFieldId, stateFieldId, dynamicFormForBlock
 
   } = useLocationState(open, onClose);
 
   useEffect(() => {
-    const getAddLearnerFormData = async () => {
+    const getAddUserFormData = async () => {
       try {
-        let userType="TEAM LEADER"
+       
         const response: FormData = await getFormRead(
           FormContext.USERS,
-           userType
-        );
+          userType );
+         
         console.log("sortedFields", response);
 
         if (response) {
-          const { schema, uiSchema, formValues } = GenerateSchemaAndUiSchema(response, t);
+          if(userType=== FormContextType.TEACHER )
+          {
+            const newResponse={
+              ...response,
+              fields: response.fields.filter(field => field.name !== 'no_of_clusters')
+            }
+            const { schema, uiSchema, formValues } = GenerateSchemaAndUiSchema(newResponse, t);
           setFormValue(formValues)
+          setSchema(schema);
+          setUiSchema(uiSchema);
+          }
+          else if(userType=== FormContextType.TEAM_LEADER)
+          {
+            const { schema, uiSchema, formValues } = GenerateSchemaAndUiSchema(response, t);
+            setFormValue(formValues)
+            setSchema(schema);
+            console.log(schema);
+            setUiSchema(uiSchema);
+          }
+          else {
+            console.log("true")
+          const { schema, uiSchema } = GenerateSchemaAndUiSchema(response, t);
           setSchema(schema);
           console.log(schema);
           setUiSchema(uiSchema);
+          }
         }
+      
       } catch (error) {
         console.error("Error fetching form data:", error);
       }
     };
-    getAddLearnerFormData();
+    getAddUserFormData();
   }, []);
 
   const handleSubmit = async (
@@ -118,8 +130,9 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
   ) => {
     // setOpenModal(true);
     const target = event.target as HTMLFormElement;
-    // const elementsArray = Array.from(target.elements);
+   // const elementsArray = Array.from(target.elements);
 
+    console.log("onsubmit", data);
     // for (const element of elementsArray) {
     //   if (
     //     (element instanceof HTMLInputElement ||
@@ -140,7 +153,7 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
     
     const { username, password } = generateUsernameAndPassword(
       selectedStateCode,
-      Role.TEAM_LEADER
+      userType
     );
 
     let apiBody: any = {
@@ -149,8 +162,8 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
       tenantCohortRoleMapping: [
         {
           tenantId: tenantId,
-          roleId: RoleId.TEAM_LEADER,
-          cohortId: [selectedBlockFieldId],
+          roleId:userType===FormContextType.STUDENT? RoleId.STUDENT: userType===FormContextType.TEACHER?RoleId.TEACHER:RoleId.TEAM_LEADER,
+          cohortId:userType===FormContextType.TEAM_LEADER ?[selectedBlockCohortId] :[selectedCenterCode],
         },
       ],
       customFields: [],
@@ -160,7 +173,7 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
       const fieldSchema = schemaProperties[fieldKey];
       const fieldId = fieldSchema?.fieldId;
       console.log(
-        `FieldID: ${fieldId}, FieldValue: ${fieldValue}, type: ${typeof fieldValue}`
+        `FieldID: ${fieldId}, FieldValue: ${fieldSchema}, type: ${typeof fieldValue}`
       );
 
       if (fieldId === null || fieldId === "null") {
@@ -168,33 +181,45 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
           apiBody[fieldKey] = fieldValue;
         }
       } else {
+      
         if (
           fieldSchema?.hasOwnProperty("isDropdown") ||
-          fieldSchema.hasOwnProperty("isCheckbox")
+          fieldSchema?.hasOwnProperty("isCheckbox")
         ) {
           apiBody.customFields.push({
             fieldId: fieldId,
             value: [String(fieldValue)],
           });
         } else {
-          apiBody.customFields.push({
+          if(fieldSchema.checkbox &&fieldSchema.type==="array")
+           {
+            apiBody.customFields.push({
+              fieldId: fieldId,
+              value: String(fieldValue).split(',')
+            });
+           }
+
+                else{ apiBody.customFields.push({
             fieldId: fieldId,
             value: String(fieldValue),
           });
+        }
+
+
         }
       }
     });
     if (!isEditModal) {
       apiBody.customFields.push({
-        fieldId: BlockFieldId,
+        fieldId: blockFieldId,
         value: [selectedBlockCode],
       });
       apiBody.customFields.push({
-        fieldId: StateFieldId,
+        fieldId: stateFieldId,
         value: [selectedStateCode],
       });
       apiBody.customFields.push({
-        fieldId: DistrctFieldId,
+        fieldId: distrctFieldId,
         value: [selectedDistrictCode],
       });
     }
@@ -203,22 +228,35 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
       if (isEditModal && userId) {
         console.log("apiBody", apiBody);
         const userData = {
-          name: apiBody.name,
-          mobile: apiBody.mobile,
-          father_name: apiBody.father_name,
+          name: apiBody?.name,
+          mobile: apiBody?.mobile,
+          father_name: apiBody?.father_name,
         };
-        const customFields = apiBody.customFields;
+        const customFields = apiBody?.customFields;
         console.log(customFields);
         const object = {
           userData: userData,
           customFields: customFields,
         };
         const response = await updateUser(userId, object);
-        showToastMessage(t("TEAM_LEADERS.TEAM_LEADER_UPDATED_SUCCESSFULLY"), "success");
+        const messageKey = userType === FormContextType.STUDENT
+        ? "LEARNERS.LEARNER_UPDATED_SUCCESSFULLY"
+        : userType === FormContextType.TEACHER
+        ? "FACILITATORS.FACILITATOR_UPDATED_SUCCESSFULLY"
+        : "TEAM_LEADERS.TEAM_LEADER_UPDATED_SUCCESSFULLY";
+      
+      showToastMessage(t(messageKey), "success");
       } else {
         const response = await createUser(apiBody);
-        showToastMessage(t("TEAM_LEADERS.TEAM_LEADER_CREATED_SUCCESSFULLY"), "success");
+        const messageKey = userType === FormContextType.STUDENT
+  ? "LEARNERS.LEARNER_CREATED_SUCCESSFULLY"
+  : userType === FormContextType.TEACHER
+  ? "FACILITATORS.FACILITATOR_CREATED_SUCCESSFULLY"
+  : "TEAM_LEADERS.TEAM_LEADER_CREATED_SUCCESSFULLY";
+
+showToastMessage(t(messageKey), "success");
       }
+      onSubmit(true);
       onClose();
     } catch (error) {
       onClose();
@@ -310,7 +348,7 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
         open={open}
         onClose={onClose}
         showFooter={false}
-        modalTitle={!isEditModal? t("TEAM_LEADERS.NEW_TEAM_LEADER"): t("TEAM_LEADERS.EDIT_TEAM_LEADER")}
+        modalTitle={modalTitle}
       >
         <>
           <Box
@@ -338,10 +376,10 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
               handleBlockChangeWrapper={handleBlockChangeWrapper}
               isMobile={isMobile}
               isMediumScreen={isMediumScreen}
-            //  isCenterSelection={true}
-            //  allCenters={allCenters}
-            //  selectedCenter={selectedCenter}
-            //  handleCenterChangeWrapper={handleCenterChangeWrapper}
+              isCenterSelection={userType!=="TEAM LEADER"?true: false}
+              allCenters={allCenters}
+              selectedCenter={selectedCenter}
+              handleCenterChangeWrapper={handleCenterChangeWrapper}
             />
           </Box>
         </>
@@ -363,7 +401,27 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
                 {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
               </DynamicForm>
             )
-          : dynamicFormForBlock &&
+          :userType==="TEAM LEADER"?
+          dynamicFormForBlock &&
+            schema &&
+            uiSchema && (
+              <DynamicForm
+                schema={schema}
+                uiSchema={uiSchema}
+                onSubmit={handleSubmit}
+                onChange={handleChange}
+                onError={handleError}
+                widgets={{}}
+                showErrorList={true}
+                customFields={customFields}
+                formData={formValue}
+
+              >
+                {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
+              </DynamicForm>)
+          
+          
+          : (dynamicForm &&
             schema &&
             uiSchema && (
               <DynamicForm
@@ -380,10 +438,12 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
               >
                 {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
               </DynamicForm>
-            )}
+            ))}
       </SimpleModal>
     </>
   );
 };
-
-export default AddTeamLeaderModal;
+CommonUserModal.defaultProps = {
+  onSubmit: () => {}, // Default to a no-op function
+};
+export default CommonUserModal;
