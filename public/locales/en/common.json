@@ -59,7 +59,8 @@
     "BLOCK_CODE": "Block Code",
     "BLOCKS_NOT_FOUND": "Blocks not found",
     "STATE_NOT_FOUND": "States not found",
-    "DISTRICT_NOT_FOUND": "Districts not found"
+    "DISTRICT_NOT_FOUND": "Districts not found",
+    "USERS_EMAIL": "Users Email"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",

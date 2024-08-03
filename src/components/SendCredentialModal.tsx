@@ -1,8 +1,8 @@
+import CloseIcon from "@mui/icons-material/Close";
 import { Box, Button, Divider, Modal, Typography } from "@mui/material";
-import React, { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
-import CloseIcon from "@mui/icons-material/Close";
+import React from "react";
 import { showToastMessage } from "./Toastify";
 
 interface SendCredentialModalProps {
@@ -79,7 +79,7 @@ const SendCredentialModal: React.FC<SendCredentialModalProps> = ({
           >
             {t("COMMON.CREDENTIALS_EMAILED")}
           </Typography>
-          <Box padding={"0 1rem"}>user's email</Box>
+          <Box padding={"0 1rem"}>{t('COMMON.USERS_EMAIL')}</Box>
         </Box>
         <>
           <Box mt={1.5}>

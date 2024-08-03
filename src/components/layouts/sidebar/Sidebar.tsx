@@ -100,8 +100,8 @@ const Sidebar = ({
               {item.subOptions && (
                 <Collapse in={open === index} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
-                    {item.subOptions?.map((subItem) => (
-                      <Tooltip title={t(subItem.title)} placement="right-start">
+                    {item?.subOptions?.map((subItem) => (
+                      <Tooltip title={t(subItem.title)} placement="right-start" key={subItem.title}>
                         <ListItem
                           button
                           key={subItem.title}
