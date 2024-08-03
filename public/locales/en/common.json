@@ -83,8 +83,8 @@
     "ALL_BLOCKS": "Blocks",
     "NEW_FACILITATOR": "New Facilitator",
     "SEARCHBAR_PLACEHOLDER": "Search Facilitators..",
-    "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher has been Successfully Created",
-    "FACILITATOR_UPDATED_SUCCESSFULLY": "Teacher has been Successfully Updated!",
+    "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher has been successfully sreated",
+    "FACILITATOR_UPDATED_SUCCESSFULLY": "Teacher has been successfully updated!",
     "EDIT_FACILITATOR":"Edit Facilitator"
   },
   "NAVBAR": {
@@ -94,8 +94,8 @@
     "SEARCHBAR_PLACEHOLDER": "Search Learners..",
     "NEW_LEARNER": "New Learner",
     "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
-    "LEARNER_CREATED_SUCCESSFULLY": "Learner has been Successfully Created!",
-    "LEARNER_UPDATED_SUCCESSFULLY": "Learner has been Successfully Updated!",
+    "LEARNER_CREATED_SUCCESSFULLY": "Learner has been successfully created!",
+    "LEARNER_UPDATED_SUCCESSFULLY": "Learner has been successfully updated!",
     "EDIT_LEARNER":"Edit Learner"
 
   },
@@ -103,9 +103,9 @@
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders..",
     "NEW_TEAM_LEADER": "New Team Leader",
     "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
-    "TEAM_LEADER_CREATED_SUCCESSFULLY": "Team Leader has been Successfully Created!",
-    "TEAM_LEADER_UPDATED_SUCCESSFULLY": "Team Leader has been Successfully Updated!",
-    "EDIT_TEAM_LEADERS":"Edit Team Leader"
+    "TEAM_LEADER_CREATED_SUCCESSFULLY": "Team Leader has been successfully created!",
+    "TEAM_LEADER_UPDATED_SUCCESSFULLY": "Team Leader has been successfully updated!",
+    "EDIT_TEAM_LEADER":"Edit Team Leader"
   },
   "COHORTS": {
     "SEARCHBAR_PLACEHOLDER": "Search Center.."
