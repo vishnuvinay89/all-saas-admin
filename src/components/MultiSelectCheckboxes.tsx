@@ -1,18 +1,15 @@
 import React from "react";
 import {
   FormControl,
-  FormControlLabel,
   FormGroup,
   FormLabel,
   Checkbox,
   Grid,
 } from "@mui/material";
-import { WidgetProps } from "@rjsf/utils";
 
 interface CustomMultiselectCheckboxesProps {
   label: string;
   value: any;
-  id: string;
   required: boolean;
   disabled: boolean;
   readonly: boolean;
@@ -20,7 +17,7 @@ interface CustomMultiselectCheckboxesProps {
   onChange: any;
   schema: any;
 }
-const MultiSelectCheckboxes: React.FC<WidgetProps> = ({
+const MultiSelectCheckboxes: React.FC<CustomMultiselectCheckboxesProps> = ({
   schema,
   options,
   value,

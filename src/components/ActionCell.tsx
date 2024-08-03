@@ -12,8 +12,8 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 interface ActionCellProps {
   rowData: any;
-  onEdit: (rowData: any) => void;
-  onDelete: (rowData: any) => void;
+  onEdit: (rowData: any) => void; //NOSONAR
+  onDelete: (rowData: any) => void; //NOSONAR
   extraActions: {
     name: string;
     onClick: (rowData: any) => void;

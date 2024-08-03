@@ -1,27 +1,24 @@
-import React, { useState } from "react";
-import NextLink from "next/link";
-import PropTypes from "prop-types";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Box,
+  Collapse,
   Drawer,
-  useMediaQuery,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Collapse,
-  Typography,
   Tooltip,
+  Typography,
+  useMediaQuery,
 } from "@mui/material";
 import FeatherIcon from "feather-icons-react";
-import LogoIcon from "../logo/LogoIcon";
-import Menuitems from "./MenuItems";
-import Buynow from "./Buynow";
-import { useRouter } from "next/router";
-import theme from "@/components/theme/theme";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
-import { useTheme } from "@mui/material/styles";
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import { useState } from "react";
+import LogoIcon from "../logo/LogoIcon";
+import Buynow from "./Buynow";
+import Menuitems from "./MenuItems";
 
 const Sidebar = ({
   isMobileSidebarOpen,
@@ -38,7 +35,6 @@ const Sidebar = ({
   const handleClick = (index: number) => {
     setOpen((prevOpen) => (prevOpen === index ? null : index));
   };
-  const theme = useTheme<any>();
 
   const SidebarContent = (
     <Box
@@ -47,8 +43,6 @@ const Sidebar = ({
       bgcolor="#F8EFDA
 "
       sx={{
-        // width: '100%',
-        // height: '100vh',
         background: "linear-gradient(to bottom, white, #F8EFDA)",
       }}
     >

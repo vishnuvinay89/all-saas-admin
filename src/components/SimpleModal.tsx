@@ -1,9 +1,8 @@
-import { Box, Button, Divider, Modal, Typography } from "@mui/material";
+import { useMediaQuery, useTheme, Box, Button, Divider, Modal, Typography } from "@mui/material";
 import React, { ReactNode } from "react";
 
 import manageUserStore from "@/store/manageUserStore";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
-import { useTheme, useMediaQuery } from "@mui/material";
 import { useTranslation } from "next-i18next";
 
 interface SimpleModalProps {
@@ -28,8 +27,6 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
   children,
   modalTitle,
 }) => {
-  const { t } = useTranslation();
-  const store = manageUserStore();
   const theme = useTheme<any>();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
@@ -110,11 +107,8 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
                   "&.Mui-disabled": {
                     backgroundColor: theme?.palette?.primary?.main,
                   },
-                  //  minWidth: '84px',
-                  //  height: '2.5rem',
                   padding: theme.spacing(1),
                   fontWeight: "500",
-                  // width: '100%',
                 }}
                 onClick={primaryActionHandler}
               ></Button>
