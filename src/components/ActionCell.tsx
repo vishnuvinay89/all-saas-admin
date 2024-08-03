@@ -1,6 +1,4 @@
-// components/ActionCell.tsx
-
-import React from "react";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {
   Box,
   Divider,
@@ -10,10 +8,8 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useTranslation } from "next-i18next";
+import React from "react";
 interface ActionCellProps {
   rowData: any;
   onEdit: (rowData: any) => void;
@@ -46,9 +42,9 @@ const ActionCell: React.FC<ActionCellProps> = ({
 
   return (
     <React.Fragment>
-      {extraActions.length > 0 ? (
+      {extraActions?.length > 0 ? (
         <Box>
-          <IconButton size="small" onClick={handleClick}>
+          <IconButton size="small" onClick={handleClick} role="button"  >
             <MoreVertIcon fontSize="small" />
           </IconButton>
           <Menu
@@ -57,7 +53,7 @@ const ActionCell: React.FC<ActionCellProps> = ({
             onClose={handleClose}
           >
             {extraActions?.map((action, index) => (
-              <>
+              <Box key={action?.name}>
                 <Divider />
                 <MenuItem
                   sx={{ fontSize: "small" }}
@@ -73,9 +69,9 @@ const ActionCell: React.FC<ActionCellProps> = ({
                   ) : (
                     ""
                   )}
-                  <ListItemText primary={t(action.name)} />
+                  <ListItemText primary={t(action?.name)} />
                 </MenuItem>
-              </>
+              </Box>
             ))}
           </Menu>
         </Box>

@@ -8,7 +8,7 @@ import { format } from "date-fns";
 import { DataKey, DateFormat, Status } from "@/utils/app.constant";
 import { useTranslation } from "react-i18next";
 import UserNameCell from "./UserNameCell";
-import { firtstLetterInUpperCase } from "@/utils/Helper";
+import { firstLetterInUpperCase } from "@/utils/Helper";
 
 interface KaTableComponentProps {
   columns: ITableProps["columns"];
@@ -127,7 +127,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                   if (props.rowData?.status === Status.ARCHIVED) {
                     return (
                       <Chip
-                        label={firtstLetterInUpperCase(props.rowData?.status)}
+                        label={firstLetterInUpperCase(props.rowData?.status)}
                         color="error"
                         variant="outlined"
                         size={isMobile ?"small":"medium"}
@@ -137,7 +137,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                   } else {
                     return (
                       <Chip
-                        label={firtstLetterInUpperCase(props.rowData?.status)}
+                        label={firstLetterInUpperCase(props.rowData?.status)}
                         color="success"
                         variant="outlined"
                         size={isMobile ?"small":"medium"}
@@ -147,7 +147,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                   }
                 }
                 if (props.column.key === DataKey.NAME) {
-                  return firtstLetterInUpperCase(props.rowData?.name);
+                  return firstLetterInUpperCase(props.rowData?.name);
                 }
                 if (props.column.key === "selection-cell") {
                   return (

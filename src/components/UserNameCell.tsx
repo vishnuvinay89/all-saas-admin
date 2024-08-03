@@ -1,6 +1,6 @@
-import { firtstLetterInUpperCase, getUserName } from "./../utils/Helper";
 import { Box, CircularProgress, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { firstLetterInUpperCase, getUserName } from "./../utils/Helper";
 
 const UserNameCell = ({ userId }: { userId: string }) => {
   const [userName, setUserName] = useState<string | null>(null);
@@ -8,7 +8,6 @@ const UserNameCell = ({ userId }: { userId: string }) => {
   useEffect(() => {
     const fetchUserName = async () => {
       const id = userId;
-      const fieldValue = true;
       const name = await getUserName(id);
       setUserName(name);
     };
@@ -31,7 +30,11 @@ const UserNameCell = ({ userId }: { userId: string }) => {
     );
   }
 
-  return <div>{userName ? firtstLetterInUpperCase(userName):<Typography >-</Typography>}</div>;
+  return (
+    <div>
+      {userName ? firstLetterInUpperCase(userName) : <Typography>-</Typography>}
+    </div>
+  );
 };
 
 export default UserNameCell;

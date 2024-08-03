@@ -1,8 +1,7 @@
-import { capitalizeFirstLetterOfEachWordInArray, fieldTextValidation, firtstLetterInUpperCase, generateUsernameAndPassword, transformArray, transformLabel } from '@/utils/Helper';
+import { capitalizeFirstLetterOfEachWordInArray, fieldTextValidation, firstLetterInUpperCase, generateUsernameAndPassword, transformArray, transformLabel } from '@/utils/Helper';
 import { State } from '@/utils/Interfaces';
 import { Role } from '@/utils/app.constant';
 import '@testing-library/jest-dom';
-
 
 describe('generateUsernameAndPassword', () => {
   // Mock Date to control current year
@@ -191,65 +190,65 @@ describe('fieldTextValidation', () => {
     });
   });
 
-  describe('firtstLetterInUpperCase', () => {
+  describe('firstLetterInUpperCase', () => {
     it('should capitalize the first letter of each word in a single-word string', () => {
-      expect(firtstLetterInUpperCase('hello')).toBe('Hello');
-      expect(firtstLetterInUpperCase('world')).toBe('World');
+      expect(firstLetterInUpperCase('hello')).toBe('Hello');
+      expect(firstLetterInUpperCase('world')).toBe('World');
     });
   
     it('should capitalize the first letter of each word in a multi-word string', () => {
-      expect(firtstLetterInUpperCase('hello world')).toBe('Hello World');
-      expect(firtstLetterInUpperCase('this is a test')).toBe('This Is A Test');
-      expect(firtstLetterInUpperCase('openai chatgpt')).toBe('Openai Chatgpt');
+      expect(firstLetterInUpperCase('hello world')).toBe('Hello World');
+      expect(firstLetterInUpperCase('this is a test')).toBe('This Is A Test');
+      expect(firstLetterInUpperCase('openai chatgpt')).toBe('Openai Chatgpt');
     });
   
     it('should return null for an empty string', () => {
-      expect(firtstLetterInUpperCase('')).toBeNull();
+      expect(firstLetterInUpperCase('')).toBeNull();
     });
   
     it('should handle strings with leading and trailing spaces', () => {
-      expect(firtstLetterInUpperCase('   leading')).toBe('   Leading');
-      expect(firtstLetterInUpperCase('trailing   ')).toBe('Trailing   ');
-      expect(firtstLetterInUpperCase('   both   ')).toBe('   Both   ');
+      expect(firstLetterInUpperCase('   leading')).toBe('   Leading');
+      expect(firstLetterInUpperCase('trailing   ')).toBe('Trailing   ');
+      expect(firstLetterInUpperCase('   both   ')).toBe('   Both   ');
     });
   
     it('should handle strings with multiple spaces between words', () => {
-      expect(firtstLetterInUpperCase('hello    world')).toBe('Hello    World');
-      expect(firtstLetterInUpperCase('this  is    a   test')).toBe('This  Is    A   Test');
+      expect(firstLetterInUpperCase('hello    world')).toBe('Hello    World');
+      expect(firstLetterInUpperCase('this  is    a   test')).toBe('This  Is    A   Test');
     });
   
     it('should not affect already capitalized words', () => {
-      expect(firtstLetterInUpperCase('Hello World')).toBe('Hello World');
-      expect(firtstLetterInUpperCase('Already Capitalized')).toBe('Already Capitalized');
+      expect(firstLetterInUpperCase('Hello World')).toBe('Hello World');
+      expect(firstLetterInUpperCase('Already Capitalized')).toBe('Already Capitalized');
     });
   
     it('should handle mixed case words', () => {
-      expect(firtstLetterInUpperCase('hElLo WoRlD')).toBe('HElLo WoRlD');
-      expect(firtstLetterInUpperCase('OpEnAi ChAtGpT')).toBe('OpEnAi ChAtGpT');
+      expect(firstLetterInUpperCase('hElLo WoRlD')).toBe('HElLo WoRlD');
+      expect(firstLetterInUpperCase('OpEnAi ChAtGpT')).toBe('OpEnAi ChAtGpT');
     });
   
     it('should handle single-character words', () => {
-      expect(firtstLetterInUpperCase('a b c')).toBe('A B C');
-      expect(firtstLetterInUpperCase('x y z')).toBe('X Y Z');
+      expect(firstLetterInUpperCase('a b c')).toBe('A B C');
+      expect(firstLetterInUpperCase('x y z')).toBe('X Y Z');
     });
   
     it('should return null for a null input', () => {
-      expect(firtstLetterInUpperCase(null as unknown as string)).toBeNull();
+      expect(firstLetterInUpperCase(null as unknown as string)).toBeNull();
     });
   
     it('should handle strings with numbers', () => {
-      expect(firtstLetterInUpperCase('hello 123 world')).toBe('Hello 123 World');
-      expect(firtstLetterInUpperCase('2024 is a year')).toBe('2024 Is A Year');
+      expect(firstLetterInUpperCase('hello 123 world')).toBe('Hello 123 World');
+      expect(firstLetterInUpperCase('2024 is a year')).toBe('2024 Is A Year');
     });
   
     it('should handle an empty word array', () => {
-      expect(firtstLetterInUpperCase('   ')).toBe('   ');
+      expect(firstLetterInUpperCase('   ')).toBe('   ');
     });
   
     it('should handle strings with non-alphabetic characters', () => {
-      expect(firtstLetterInUpperCase('123 abc')).toBe('123 Abc');
-      expect(firtstLetterInUpperCase('$%^ abc')).toBe('$%^ Abc');
-      expect(firtstLetterInUpperCase('123')).toBe('123');
+      expect(firstLetterInUpperCase('123 abc')).toBe('123 Abc');
+      expect(firstLetterInUpperCase('$%^ abc')).toBe('$%^ Abc');
+      expect(firstLetterInUpperCase('123')).toBe('123');
     });
   });
 

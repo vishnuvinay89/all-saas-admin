@@ -139,10 +139,7 @@ const LoginPage = () => {
         router.push("/dashboard");
       } catch (error: any) {
         setLoading(false);
-        const errorMessage =
-          error.response && error.response.status === 404
-            ? t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT")
-            : t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT");
+        const errorMessage = t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT")
         showToastMessage(errorMessage, "error");
       }
     }

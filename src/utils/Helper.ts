@@ -89,7 +89,7 @@ export const transformArray = (arr: State[]): State[] => {
   }));
 };
 
-export const firtstLetterInUpperCase = (label: string): string | null => {
+export const firstLetterInUpperCase = (label: string): string | null => {
   if (!label) {
     return null;
   }

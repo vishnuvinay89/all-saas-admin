@@ -17,7 +17,6 @@
 body {
   margin: 0;
   padding: 0;
-  /* color: rgb(var(--foreground-rgb)); */
   background: linear-gradient(
       to bottom,
       transparent,
@@ -25,7 +24,7 @@ body {
     )
     rgb(var(--background-start-rgb));
 
-  font-family: "Poppins" !important;
+  font-family: "Poppins", sans-serif !important;
 }
 
 @layer utilities {
