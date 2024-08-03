@@ -17,14 +17,13 @@
 body {
   margin: 0;
   padding: 0;
+  font-family: Poppins, sans-serif !important;
   background: linear-gradient(
       to bottom,
       transparent,
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
-
-  font-family: "Poppins", sans-serif !important;
 }
 
 @layer utilities {
@@ -34,8 +33,8 @@ body {
 }
 
 .sidebar-link {
-  text-decoration: "none";
   color: "inherit";
+  text-decoration: "none";
   cursor: "pointer";
 }
 
@@ -43,6 +42,7 @@ body {
   width: 25px;
   margin-top: 8px;
 }
+
 /* To Hide the caret icon on input type number */
 input[type="number"] {
   appearance: textfield;

@@ -63,6 +63,9 @@
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8",
     "prettier": "^3.3.2",
+    "stylelint": "^16.8.1",
+    "stylelint-config-rational-order": "^0.1.2",
+    "stylelint-config-standard": "^36.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.0"
   }
