@@ -92,7 +92,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
                 state.label?.toLowerCase().slice(1)
             )}
             codes={states?.map((state) => state.value)}
-            tagName={t("FACILITATORS.ALL_STATES")}
+            tagName={t("FACILITATORS.STATE")}
             selectedCategories={selectedState}
             onCategoryChange={handleStateChangeWrapper}
             overall={isCenterSelection ? false : true}
@@ -102,7 +102,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
           <MultipleSelectCheckmarks
             names={districts?.map((districts) => districts.label)}
             codes={districts?.map((districts) => districts.value)}
-            tagName={t("FACILITATORS.ALL_DISTRICTS")}
+            tagName={t("FACILITATORS.DISTRICT")}
             selectedCategories={selectedDistrict}
             onCategoryChange={handleDistrictChangeWrapper}
             disabled={selectedState.length === 0 || selectedState[0] === ""}
@@ -113,7 +113,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
           <MultipleSelectCheckmarks
             names={blocks?.map((blocks) => blocks.label)}
             codes={blocks?.map((blocks) => blocks.value)}
-            tagName={t("FACILITATORS.ALL_BLOCKS")}
+            tagName={t("FACILITATORS.BLOCK")}
             selectedCategories={selectedBlock}
             onCategoryChange={handleBlockChangeWrapper}
             disabled={

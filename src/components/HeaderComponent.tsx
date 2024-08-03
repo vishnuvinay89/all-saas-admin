@@ -4,7 +4,7 @@ import {
   Box,
   Button,
   FormControl,
-  FormLabel,
+
   MenuItem,
   Typography,
   useMediaQuery,
@@ -13,13 +13,11 @@ import Select from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
-import InputLabel from "@mui/material/InputLabel";
-import OutlinedInput from "@mui/material/OutlinedInput";
+
 
 import { getStateBlockDistrictList } from "../services/MasterDataService";
 import AreaSelection from "./AreaSelection";
 import { transformArray } from "../utils/Helper";
-import MultipleSelectCheckmarks from "./FormControl";
 
 interface State {
   value: string;
@@ -203,7 +201,7 @@ const HeaderComponent = ({
                   }}
                 >
                   <MenuItem value="All">
-                    <em>{t("COMMON.ALL")}</em>
+                    {t("COMMON.ALL")}
                   </MenuItem>
                   {Filter?.map((filter, index) => (
                     <MenuItem value={filter} key={index}>

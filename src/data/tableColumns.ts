@@ -142,3 +142,59 @@ export const getTLTableColumns = (t: any, isMobile:any) => {
       ];
 }
 
+
+export const getCenterTableData = (t: any, isMobile:any)=>{
+ return[
+    {
+      key: "name",
+      title: t("TABLE_TITLE.NAME"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+      width: isMobile ? 95:"",
+    },
+    {
+      key: "status",
+      title: t("TABLE_TITLE.STATUS"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+      width: isMobile?95:"",
+    },
+    {
+      key: "updatedBy",
+      title: t("TABLE_TITLE.UPDATED_BY"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+      width: isMobile?95:"",
+    },
+    {
+      key: "createdBy",
+      title: t("TABLE_TITLE.CREATED_BY"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+      width: isMobile?95:"",
+    },
+    {
+      key: "createdAt",
+      title: t("TABLE_TITLE.CREATED_DATE"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+      width: isMobile?95:"",
+    },
+
+    {
+      key: "updatedAt",
+      title: t("TABLE_TITLE.UPDATED_DATE"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+      width: isMobile?95:"",
+    },
+   
+   
+    {
+      key: "actions",
+      title: t("TABLE_TITLE.ACTIONS"),
+      dataType: DataType.String,
+      width: isMobile?125:"",
+    },
+  ];
+}

@@ -49,6 +49,7 @@
     "DISTRICT_CODE": "District Code",
     "CONTROLLING_FIELD": "Controlling Field",
     "ADD_DISTRICT": "Add District",
+    "ERROR_MESSAGE_SOMETHING_WRONG": "Something Went Wrong",
     "UPDATE": "Update",
     "UPDATE_STATE": "Update State",
     "UPDATE_DISTRICT": "Update District",
@@ -82,9 +83,9 @@
     "MAIN_COURSE": "Main Course"
   },
   "FACILITATORS": {
-    "ALL_STATES": "States",
-    "ALL_DISTRICTS": "Districts",
-    "ALL_BLOCKS": "Blocks",
+    "STATE": "State",
+    "DISTRICT": "District",
+    "BLOCK": "Block",
     "NEW_FACILITATOR": "New Facilitator",
     "SEARCHBAR_PLACEHOLDER": "Search Facilitators..",
     "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher has been successfully created",
@@ -172,7 +173,8 @@
     "CENTER_UPDATE_SUCCESSFULLY": "Center has been Successfully Updated",
     "CENTER_DELETE_SUCCESSFULLY": "Center has been Successfully Deleted",
     "CENTER_CREATED_SUCCESSFULLY": "Center Created Successfully",
-    "SEARCHBAR_PLACEHOLDER": "Search Center.."
+    "SEARCHBAR_PLACEHOLDER": "Search Center..",
+    "NOT_ABLE_CREATE_CENTER": "Not able to create center for current selected data"
   },
   "FORM": {
     "FULL_NAME": "Full Name",

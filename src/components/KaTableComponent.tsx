@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ITableProps, Table } from "ka-table";
 import { SortingMode, PagingPosition } from "ka-table/enums";
-import { Paper, Checkbox, Chip } from "@mui/material";
+import { Paper, Checkbox, Chip, useMediaQuery, Theme } from "@mui/material";
 import "ka-table/style.css";
 import ActionIcon from "./ActionIcon";
 import { format } from "date-fns";
@@ -9,7 +9,6 @@ import { DataKey, DateFormat, Status } from "@/utils/app.constant";
 import { useTranslation } from "react-i18next";
 import UserNameCell from "./UserNameCell";
 import { firtstLetterInUpperCase } from "@/utils/Helper";
-// import { getUserName } from "@/utils/helper.ts";
 
 interface KaTableComponentProps {
   columns: ITableProps["columns"];
@@ -51,7 +50,8 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
 }) => {
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
   const { t } = useTranslation();
-
+  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+ 
   const handleCheckboxChange = (rowId: number) => {
     setSelectedRowIds((prevSelected) =>
       prevSelected.includes(rowId)
@@ -103,7 +103,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                       onEdit={onEdit}
                       onDelete={onDelete}
                       disable={
-                        props.rowData?.status === Status.ARCHIVED ? true : false
+                        props.rowData?.status === Status.ARCHIVED
                       }
                     />
                   );
@@ -130,6 +130,8 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                         label={firtstLetterInUpperCase(props.rowData?.status)}
                         color="error"
                         variant="outlined"
+                        size={isMobile ?"small":"medium"}
+                        sx={{fontSize:isMobile ?"xx-small":""}}
                       />
                     );
                   } else {
@@ -138,6 +140,8 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                         label={firtstLetterInUpperCase(props.rowData?.status)}
                         color="success"
                         variant="outlined"
+                        size={isMobile ?"small":"medium"}
+                        sx={{fontSize:isMobile ?"xx-small":""}}
                       />
                     );
                   }
@@ -153,14 +157,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                     />
                   );
                 }
-                // if (props.column.key === "selection-cell") {
-                //   return (
-                //     <Checkbox
-                //       checked={selectedRowIds.includes(props.rowData.id)}
-                //       onChange={() => handleCheckboxChange(props.rowData.id)}
-                //     />
-                //   );
-                // }
+               
                 return <div className="table-cell">{props.value}</div>;
               },
             },
