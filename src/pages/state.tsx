@@ -179,7 +179,7 @@ const State: React.FC = () => {
             <KaTableComponent
               columns={columns}
               data={stateData.map((stateDetail) => ({
-                label: stateDetail.label || "",
+                label: stateDetail.label ?? "",
                 value: stateDetail.value,
                 createdAt: stateDetail.createdAt,
                 updatedAt: stateDetail.updatedAt,
@@ -226,7 +226,7 @@ const State: React.FC = () => {
 
 export const getServerSideProps = async (context: any) => ({
   props: {
-    ...(await serverSideTranslations(context.locale, ["common", "master"])),
+    ...(await serverSideTranslations(context.locale, ["common"])),
   },
 });
 
