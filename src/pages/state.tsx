@@ -54,6 +54,7 @@ const State: React.FC = () => {
   const [pageOffset, setPageOffset] = useState<number>(0);
   const [pageLimit, setPageLimit] = useState<number>(10);
   const [pageCount, setPageCount] = useState<number>(0);
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   const columns = useMemo(
     () => [
@@ -133,7 +134,10 @@ const State: React.FC = () => {
     setConfirmationDialogOpen(false);
   }, [selectedStateForDelete, t]);
 
-  const handleSearch = (keyword: string) => {};
+  const handleSearch = (keyword: string) => {
+    setSearchKeyword(keyword);
+    fetchStateData(keyword);
+  };
 
   const fieldId = "61b5909a-0b45-4282-8721-e614fd36d7bd";
 
@@ -164,7 +168,7 @@ const State: React.FC = () => {
       const response = await createOrUpdateOption(fieldId, newState, stateId);
       console.log("stateResponse", response);
       if (response) {
-        await fetchStateData();
+        await fetchStateData(searchKeyword);
         showToastMessage(t("COMMON.STATE_ADDED_SUCCESS"), "success");
       } else {
         console.error("Failed to create/update state:", response);
@@ -176,40 +180,45 @@ const State: React.FC = () => {
     setAddStateModalOpen(false);
   };
 
-  const fetchStateData = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await getStateBlockDistrictList({
-        fieldName: "states",
-        limit: pageLimit,
-        offset: pageOffset,
-      } as StateBlockDistrictListParams);
-      console.log("stateData", data);
+  const fetchStateData = useCallback(
+    async (keyword?: string) => {
+      console.log("searchKeyword", searchKeyword);
+      try {
+        setLoading(true);
+        const data = await getStateBlockDistrictList({
+          fieldName: "states",
+          limit: pageLimit,
+          offset: pageOffset,
+          optionName: keyword ? keyword : "",
+        } as StateBlockDistrictListParams);
+        console.log("stateData", data);
 
-      // Sort data based on the sortBy state
-      const sortedData = [...data.result.values].sort((a, b) => {
-        const [field, order] = sortBy;
-        if (field in a && field in b) {
-          return order === "asc"
-            ? a[field].localeCompare(b[field])
-            : b[field].localeCompare(a[field]);
-        }
-        return 0;
-      });
+        // Sort data based on the sortBy state
+        const sortedData = [...data.result.values].sort((a, b) => {
+          const [field, order] = sortBy;
+          if (field in a && field in b) {
+            return order === "asc"
+              ? a[field].localeCompare(b[field])
+              : b[field].localeCompare(a[field]);
+          }
+          return 0;
+        });
 
-      setStateData(sortedData);
-      setPageCount(Math.ceil(data.totalCount / pageLimit));
-    } catch (error) {
-      console.error("Error fetching state data", error);
-    } finally {
-      setLoading(false);
-      setSelectedStateForEdit(null);
-    }
-  }, [sortBy, pageLimit, pageOffset]);
+        setStateData(sortedData);
+        setPageCount(Math.ceil(data.totalCount / pageLimit));
+      } catch (error) {
+        console.error("Error fetching state data", error);
+      } finally {
+        setLoading(false);
+        setSelectedStateForEdit(null);
+      }
+    },
+    [sortBy, pageLimit, pageOffset]
+  );
 
   useEffect(() => {
-    fetchStateData();
-  }, [fetchStateData]);
+    fetchStateData(searchKeyword);
+  }, []);
 
   const userProps = useMemo(
     () => ({

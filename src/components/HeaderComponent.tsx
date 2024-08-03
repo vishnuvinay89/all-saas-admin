@@ -186,28 +186,34 @@ const HeaderComponent = ({
           <SearchBar onSearch={handleSearch} placeholder={searchPlaceHolder} />
         </Box>
         <Box display={"flex"} gap={1} alignItems={"center"}>
-          <Typography variant="h3" mt={1}>
-            {t("COMMON.FILTER_BY_STATUS")}
-          </Typography>
-          <FormControl sx={{ minWidth: "120px" }}>
-            <Select
-              value={selectedFilter}
-              onChange={handleFilterChange}
-              displayEmpty
-              style={{
-                borderRadius: "8px",
-                height: "40px",
-                fontSize: "14px",
-              }}
-            >
-              <MenuItem value="All">{t("COMMON.ALL")}</MenuItem>
-              {Filter?.map((filter, index) => (
-                <MenuItem value={filter} key={index}>
-                  {filter}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          {showFilter && (
+            <>
+              <Typography variant="h3">
+                {t("COMMON.FILTER_BY_STATUS")}
+              </Typography>
+              <FormControl sx={{ minWidth: "120px" }}>
+                <Select
+                  value={selectedFilter}
+                  onChange={handleFilterChange}
+                  displayEmpty
+                  style={{
+                    borderRadius: "8px",
+                    height: "40px",
+                    fontSize: "14px",
+                  }}
+                >
+                  <MenuItem value="All">
+                    <em>{t("COMMON.ALL")}</em>
+                  </MenuItem>
+                  {Filter?.map((filter, index) => (
+                    <MenuItem value={filter} key={index}>
+                      {filter}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </>
+          )}
           {showSort && (
             <FormControl sx={{ minWidth: "120px" }}>
               <Select
