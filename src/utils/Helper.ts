@@ -50,7 +50,7 @@ export const generateUsernameAndPassword = (
   role: string
 ) => {
   const currentYear = new Date().getFullYear().toString().slice(-2); // Last two digits of the current year
-  const randomNum = Math.floor(10000 + Math.random() * 90000).toString(); // 5 digit random number
+  const randomNum = Math.floor(10000 + Math.random() * 90000).toString();
 
   const rolePrefixes: Record<string, string> = {
     [FormContextType.TEACHER]: 'FSC',
