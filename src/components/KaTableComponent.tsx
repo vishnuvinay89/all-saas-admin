@@ -59,7 +59,6 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
         : [...prevSelected, rowId]
     );
   };
-
   const tableProps: ITableProps = {
     columns,
     data,
