@@ -1,4 +1,7 @@
-
+export interface State {
+  value: string;
+  label: string;
+}
 
 export interface FieldOption {
   label: string;

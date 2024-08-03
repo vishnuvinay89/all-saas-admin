@@ -428,6 +428,9 @@ const Block: React.FC = () => {
                 onEdit={handleEdit}
                 onDelete={handleDelete}
                 extraActions={[]}
+                noDataMessage={
+                  blockData.length === 0 ? t("COMMON.BLOCKS_NOT_FOUND") : ""
+                }
               />
             )}
           </Box>

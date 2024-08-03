@@ -1,5 +1,7 @@
 import FingerprintJS from "fingerprintjs2";
 import { getUserDetails } from "../services/UserList";
+import { Role, FormContextType } from "./app.constant";
+import { State } from "./Interfaces";
 
 export const generateUUID = () => {
   let d = new Date().getTime();
@@ -47,23 +49,30 @@ export const generateUsernameAndPassword = (
   stateCode: string,
   role: string
 ) => {
-  const currentYear = new Date().getFullYear().toString().slice(-2);
-  const randomNum = Math.floor(10000 + Math.random() * 90000).toString();
+  const currentYear = new Date().getFullYear().toString().slice(-2); // Last two digits of the current year
+  const randomNum = Math.floor(10000 + Math.random() * 90000).toString(); // 5 digit random number
 
-  const username =
-    role === 'TEACHER'
-      ? `FSC${stateCode}${currentYear}${randomNum}`
-      :  role === 'STUDENT'?`SC${stateCode}${currentYear}${randomNum}`:`TL${stateCode}${currentYear}${randomNum}`;
-  const password = randomNum;
+  const rolePrefixes: Record<string, string> = {
+    [FormContextType.TEACHER]: 'FSC',
+    [FormContextType.STUDENT]: 'SC',
+    [FormContextType.TEAM_LEADER]: 'TL'
+  };
 
-  return { username, password };
-}
-interface State {
-  value: string;
-  label: string;
-}
+  if (!(role in rolePrefixes)) {
+    console.warn(`Unknown role: ${role}`); // Log a warning for unknown roles
+    return null; // Return null or handle as needed
+  }
+
+  const prefix = rolePrefixes[role];
+  const username = `${prefix}${stateCode}${currentYear}${randomNum}`;
+
+  return { username, password: randomNum };
+};
 
 export const transformLabel = (label: string): string => {
+  if (!label) {
+    return label;
+  }
   return label
     .toLowerCase() // Convert to lowercase to standardize
     .replace(/_/g, " ") // Replace underscores with spaces
@@ -71,6 +80,9 @@ export const transformLabel = (label: string): string => {
 };
 
 export const transformArray = (arr: State[]): State[] => {
+  if (!arr) {
+    return arr;
+  }
   return arr?.map((item) => ({
     ...item,
     label: transformLabel(item.label),
@@ -90,12 +102,18 @@ export const firtstLetterInUpperCase = (label: string): string | null => {
 export const capitalizeFirstLetterOfEachWordInArray = (
   arr: string[]
 ): string[] => {
+  if (!arr) {
+    return arr;
+  }
   console.log(arr);
   return arr.map((str) =>
     str.replace(/\b[a-z]/g, (char) => char.toUpperCase())
   );
 };
 export const fieldTextValidation = (text: string) => {
+  if (!text) {
+    return false;
+  }
   const regex = /^[A-Za-z\s]+$/;
   return regex.test(text);
 };
