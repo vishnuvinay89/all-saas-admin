@@ -31,6 +31,7 @@ type StateBlockDistrictListParams = {
 
 const State: React.FC = () => {
   const { t } = useTranslation();
+  const [selectedSort, setSelectedSort] = useState<string>("Sort");
   const [stateData, setStateData] = useState<StateDetail[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [confirmationDialogOpen, setConfirmationDialogOpen] =
@@ -160,7 +161,7 @@ const State: React.FC = () => {
     searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_STATE"),
     showStateDropdown: false,
     showAddNew: true,
-    showSort: false,
+    showSort: true,
     showFilter: false,
     paginationEnable: true,
   };
@@ -188,6 +189,9 @@ const State: React.FC = () => {
               onEdit={handleEdit}
               onDelete={handleDelete}
               extraActions={[]}
+              noDataMessage={
+                stateData.length === 0 ? t("COMMON.STATE_NOT_FOUND") : ""
+              }
             />
           </div>
         )}

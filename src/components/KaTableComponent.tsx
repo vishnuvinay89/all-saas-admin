@@ -29,7 +29,7 @@ interface KaTableComponentProps {
   }[];
   paginationEnable?: boolean;
   showIcons?: boolean;
-  noData?: any;
+  noDataMessage?: any;
   pagination?: boolean;
 }
 
@@ -46,7 +46,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   onDelete,
   showIcons,
   pageSizes,
-  noData,
+  noDataMessage,
   pagination = true,
 }) => {
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
@@ -143,7 +143,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                   }
                 }
                 if (props.column.key === DataKey.NAME) {
-                  return firtstLetterInUpperCase(props.rowData?.name)
+                  return firtstLetterInUpperCase(props.rowData?.name);
                 }
                 if (props.column.key === "selection-cell") {
                   return (
@@ -171,7 +171,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
             },
           }}
           noData={{
-            text: t("COURSE_PLANNER.DATA_NOT_FOUND"),
+            text: data && data.length === 0 ? noDataMessage || "" : undefined,
           }}
         />
       </div>
