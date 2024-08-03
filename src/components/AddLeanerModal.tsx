@@ -34,6 +34,7 @@ interface AddLearnerModalProps {
   formData?: object;
   isEditModal?: boolean;
   userId?: string;
+  onSubmit: (submitValue: boolean) => void;
 }
 interface FieldProp {
   value: string;
@@ -45,9 +46,11 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
   formData,
   isEditModal = false,
   userId,
+  onSubmit
 }) => {
   const [schema, setSchema] = React.useState<any>();
   const [uiSchema, setUiSchema] = React.useState<any>();
+
 
   const [credentials, setCredentials] = React.useState({
     username: "",
@@ -212,6 +215,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
         const response = await createUser(apiBody);
         showToastMessage(t("LEARNERS.LEARNER_CREATED_SUCCESSFULLY"), "success");
       }
+      onSubmit(true);
       onClose();
     } catch (error) {
       onClose();
@@ -303,7 +307,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
         open={open}
         onClose={onClose}
         showFooter={false}
-        modalTitle={t("LEARNERS.NEW_LEARNER")}
+        modalTitle={isEditModal?t("LEARNERS.NEW_LEARNER"): t("LEARNERS.EDIT_LEARNER")}
       >
         <>
           <Box
@@ -376,5 +380,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
     </>
   );
 };
-
+AddLearnerModal.defaultProps = {
+  onSubmit: () => {}, // Default to a no-op function
+};
 export default AddLearnerModal;

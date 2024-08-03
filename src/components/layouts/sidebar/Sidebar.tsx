@@ -112,6 +112,7 @@ const Sidebar = ({
                           selected={location === subItem.href}
                           sx={{
                             pl: 8,
+                            ml:2,
                             mb: 1,
                             ...(location === subItem.href && {
                               color: "black",

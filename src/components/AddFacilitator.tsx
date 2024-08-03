@@ -258,7 +258,7 @@ const AddFacilitatorModal: React.FC<AddFacilitatorModalprops> = ({
         open={open}
         onClose={onClose}
         showFooter={false}
-        modalTitle={t("FACILITATORS.NEW_FACILITATOR")}
+        modalTitle={ isEditModal?t("FACILITATORS.NEW_FACILITATOR"): t("FACILITATORS.EDIT_FACILITATOR")}
       >
         {/* {!dynamicForm && (
           <Typography>{t("LEARNERS.FIRST_SELECT_REQUIRED_FIELDS")} </Typography>
