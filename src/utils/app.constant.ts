@@ -58,7 +58,7 @@ export enum Numbers {
   TEN = 10,
 }
 
-export enum Types {
+export enum CohortTypes {
   COHORT = "COHORT",
   BLOCK = "BLOCK",
 }

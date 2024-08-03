@@ -8,7 +8,7 @@ import {
   getFormRead,
 } from "@/services/CreateUserService";
 import { CustomField } from "@/utils/Interfaces";
-import { Types } from "@/utils/app.constant";
+import { CohortTypes } from "@/utils/app.constant";
 import { useLocationState } from "@/utils/useLocationState";
 import { Box } from "@mui/material";
 import { IChangeEvent } from "@rjsf/core";
@@ -100,7 +100,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
       const parentId = selectedBlockFieldId;
       const cohortDetails: CohortDetails = {
         name: formData.name,
-        type: Types.COHORT,
+        type: CohortTypes.COHORT,
         parentId: parentId,
         customFields: [],
       };

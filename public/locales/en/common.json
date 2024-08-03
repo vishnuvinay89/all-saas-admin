@@ -83,9 +83,9 @@
     "MAIN_COURSE": "Main Course"
   },
   "FACILITATORS": {
-    "ALL_STATES": "State",
-    "ALL_DISTRICTS": "District",
-    "ALL_BLOCKS": "Block",
+    "STATE": "State",
+    "DISTRICT": "District",
+    "BLOCK": "Block",
     "NEW_FACILITATOR": "New Facilitator",
     "SEARCHBAR_PLACEHOLDER": "Search Facilitators..",
     "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher has been Successfully Created",
@@ -170,7 +170,7 @@
     "CENTER_DELETE_SUCCESSFULLY": "Center has been Successfully Deleted",
     "CENTER_CREATED_SUCCESSFULLY": "Center Created Successfully",
     "SEARCHBAR_PLACEHOLDER": "Search Center..",
-    "NOT_ABLE_CREATE_CENTER": "Not Able To Create Center For Current Selected Data"
+    "NOT_ABLE_CREATE_CENTER": "Not able to create center for current selected data"
   },
   "FORM": {
     "FULL_NAME": "Full Name",
