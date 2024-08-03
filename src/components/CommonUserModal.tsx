@@ -28,6 +28,7 @@ import { tenantId } from "../../app.config";
 
 
 
+
 interface UserModalProps {
   open: boolean;
   onClose: () => void;
@@ -52,7 +53,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   const [uiSchema, setUiSchema] = React.useState<any>();
   const { t } = useTranslation();
   const [formValue, setFormValue] = useState<any>();
-
+  const modalTitle=!isEditModal? userType === FormContextType.STUDENT?t("LEARNERS.NEW_LEARNER"):userType === FormContextType.TEACHER?t("FACILITATORS.NEW_FACILITATOR"):t("TEAM_LEADERS.NEW_TEAM_LEADER"): userType === FormContextType.STUDENT?t("LEARNERS.EDIT_LEARNER"):userType === FormContextType.TEACHER?t("FACILITATORS.EDIT_FACILITATOR"):t("TEAM_LEADERS.EDIT_TEAM_LEADER")
   const theme = useTheme<any>();
    const {
     states,
@@ -161,8 +162,8 @@ const CommonUserModal: React.FC<UserModalProps> = ({
       tenantCohortRoleMapping: [
         {
           tenantId: tenantId,
-          roleId:userType==="STUDENT"? RoleId.STUDENT: userType==="TEACHER"?RoleId.TEACHER:RoleId.TEAM_LEADER,
-          cohortId:userType==="TEAM LEADER" ?[selectedBlockCohortId] :[selectedCenterCode],
+          roleId:userType===FormContextType.STUDENT? RoleId.STUDENT: userType===FormContextType.TEACHER?RoleId.TEACHER:RoleId.TEAM_LEADER,
+          cohortId:userType===FormContextType.TEAM_LEADER ?[selectedBlockCohortId] :[selectedCenterCode],
         },
       ],
       customFields: [],
@@ -238,18 +239,18 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           customFields: customFields,
         };
         const response = await updateUser(userId, object);
-        const messageKey = userType === "STUDENT"
+        const messageKey = userType === FormContextType.STUDENT
         ? "LEARNERS.LEARNER_UPDATED_SUCCESSFULLY"
-        : userType === "TEACHER"
+        : userType === FormContextType.TEACHER
         ? "FACILITATORS.FACILITATOR_UPDATED_SUCCESSFULLY"
         : "TEAM_LEADERS.TEAM_LEADER_UPDATED_SUCCESSFULLY";
       
       showToastMessage(t(messageKey), "success");
       } else {
         const response = await createUser(apiBody);
-        const messageKey = userType === "STUDENT"
+        const messageKey = userType === FormContextType.STUDENT
   ? "LEARNERS.LEARNER_CREATED_SUCCESSFULLY"
-  : userType === "TEACHER"
+  : userType === FormContextType.TEACHER
   ? "FACILITATORS.FACILITATOR_CREATED_SUCCESSFULLY"
   : "TEAM_LEADERS.TEAM_LEADER_CREATED_SUCCESSFULLY";
 
@@ -347,7 +348,7 @@ showToastMessage(t(messageKey), "success");
         open={open}
         onClose={onClose}
         showFooter={false}
-        modalTitle={!isEditModal? userType === "STUDENT"?t("LEARNERS.NEW_LEARNER"):userType === "TEACHER"?t("FACILITATORS.NEW_FACILITATOR"):t("TEAM_LEADERS.NEW_TEAM_LEADER"): userType === "STUDENT"?t("LEARNERS.EDIT_LEARNER"):userType === "TEACHER"?t("FACILITATORS.EDIT_FACILITATOR"):t("TEAM_LEADERS.EDIT_TEAM_LEADER")}
+        modalTitle={modalTitle}
       >
         <>
           <Box
