@@ -21,6 +21,7 @@ function Logout() {
     };
     userLogout();
     localStorage.removeItem("token");
+
     router.replace("/login");
   }, []);
 

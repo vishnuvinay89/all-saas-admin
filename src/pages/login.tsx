@@ -218,14 +218,14 @@ const LoginPage = () => {
               )}
               <Image src={appLogo} alt="App Logo" height={100} />
             </Box>
-            <Typography
+            {/* <Typography
               variant="h4"
               gutterBottom
               textAlign="center"
               sx={{ mt: 2 }}
             >
               {t("LOGIN_PAGE.LOGIN")}
-            </Typography>
+            </Typography> */}
             <FormControl fullWidth margin="normal">
               <Select
                 className="SelectLanguages"
@@ -293,7 +293,7 @@ const LoginPage = () => {
               marginTop="1.2rem"
               className="remember-me-checkbox"
             >
-              <Checkbox
+              {/* <Checkbox
                 onChange={(e) => setRememberMe(e.target.checked)}
                 checked={rememberMe}
               />
@@ -316,7 +316,7 @@ const LoginPage = () => {
                 }}
               >
                 {t("LOGIN_PAGE.REMEMBER_ME")}
-              </Typography>
+              </Typography> */}
             </Box>
             <Box marginTop="2rem" textAlign="center">
               <Button

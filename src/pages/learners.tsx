@@ -8,10 +8,15 @@ import AddLearnerModal from '@/components/AddLeanerModal';
 const Learners: React.FC = () => {
   const { t } = useTranslation();
  const [openAddLearnerModal, setOpenAddLearnerModal] = React.useState(false);
+ const [submitValue, setSubmitValue] = React.useState<boolean>(false);
+
  const handleOpenAddLearnerModal = () => {
   setOpenAddLearnerModal(true);
 };
+const handleModalSubmit = (value: boolean) => {
+  setSubmitValue(true);
 
+};
 const handleCloseAddLearnerModal = () => {
   setOpenAddLearnerModal(false);
 };
@@ -24,6 +29,8 @@ const handleCloseAddLearnerModal = () => {
       <AddLearnerModal
               open={openAddLearnerModal}
               onClose={handleCloseAddLearnerModal}
+             onSubmit={handleModalSubmit}
+
             />
      
     </>

@@ -107,12 +107,15 @@ const UserTable: React.FC<UserTableProps> = ({
   const [loading, setLoading] = useState<boolean | undefined>(undefined);
   const [openAddLearnerModal, setOpenAddLearnerModal] = React.useState(false);
   const [userId, setUserId] = useState();
+  const [submitValue, setSubmitValue] = useState<boolean>(false);
 
   const handleOpenAddLearnerModal = () => {
-    console.log("hello");
     setOpenAddLearnerModal(true);
   };
+  const handleModalSubmit = (value: boolean) => {
+    setSubmitValue(true);
 
+  };
   const handleCloseAddLearnerModal = () => {
     setOpenAddLearnerModal(false);
   };
@@ -514,7 +517,7 @@ const handleCloseAddTeamLeaderModal = () => {
       }
     };
     fetchUserList();
-  }, [pageOffset, pageLimit, sortBy, filters, openAddFacilitatorModal, openAddLearnerModal, openAddTeamLeaderModal, parentState]);
+  }, [pageOffset,submitValue, pageLimit, sortBy, filters, openAddFacilitatorModal,  openAddTeamLeaderModal]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -662,6 +665,7 @@ const handleCloseAddTeamLeaderModal = () => {
         formData={formdata}
         isEditModal={true}
         userId={userId}
+        onSubmit={handleModalSubmit}
       />
       <AddFacilitatorModal
         open={openAddFacilitatorModal}
