@@ -24,11 +24,14 @@ export interface StateDetail {
 type StateBlockDistrictListParams = {
   controllingfieldfk?: string;
   fieldName: string;
+  limit?: number;
+  offset?: number;
   optionName?: string;
 };
 
 const State: React.FC = () => {
   const { t } = useTranslation();
+  const [selectedSort, setSelectedSort] = useState<string>("Sort");
   const [stateData, setStateData] = useState<StateDetail[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [confirmationDialogOpen, setConfirmationDialogOpen] =
@@ -39,7 +42,7 @@ const State: React.FC = () => {
   const [selectedStateForEdit, setSelectedStateForEdit] =
     useState<StateDetail | null>(null);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [fieldId, setFieldId] = useState<string | null>(null);
+  const [fieldId, setFieldId] = useState<string>("");
 
   const columns = [
     {
@@ -77,15 +80,13 @@ const State: React.FC = () => {
   const handleConfirmDelete = async () => {
     if (selectedStateForDelete) {
       try {
-        if (fieldId) {
-          await deleteOption("states", selectedStateForDelete.value);
-          setStateData((prevStateData) =>
-            prevStateData.filter(
-              (state) => state.value !== selectedStateForDelete.value
-            )
-          );
-          showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
-        }
+        await deleteOption("states", selectedStateForDelete.value);
+        setStateData((prevStateData) =>
+          prevStateData.filter(
+            (state) => state.value !== selectedStateForDelete.value
+          )
+        );
+        showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
       } catch (error) {
         console.error("Error deleting state", error);
         showToastMessage(t("COMMON.STATE_DELETED_FAILURE"), "error");
@@ -129,7 +130,6 @@ const State: React.FC = () => {
     }
     setAddStateModalOpen(false);
   };
-
   const fetchStateData = async (keyword?: string) => {
     try {
       setLoading(true);
@@ -140,7 +140,7 @@ const State: React.FC = () => {
 
       setFieldId(data.result.fieldId);
 
-      if (data.result.fieldId === fieldId) {
+      if (data.result.fieldId) {
         setStateData(data.result.values);
       } else {
         console.error("Unexpected fieldId:", data.result.fieldId);
@@ -152,7 +152,6 @@ const State: React.FC = () => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchStateData(searchKeyword);
   }, [searchKeyword]);
@@ -162,9 +161,9 @@ const State: React.FC = () => {
     searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_STATE"),
     showStateDropdown: false,
     showAddNew: true,
-    showSort: false,
+    showSort: true,
     showFilter: false,
-    paginationEnable: false,
+    paginationEnable: true,
   };
 
   return (
@@ -177,19 +176,24 @@ const State: React.FC = () => {
         {loading ? (
           <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
         ) : (
-          <KaTableComponent
-            columns={columns}
-            data={stateData.map((stateDetail) => ({
-              label: stateDetail.label ?? "",
-              value: stateDetail.value,
-              createdAt: stateDetail.createdAt,
-              updatedAt: stateDetail.updatedAt,
-            }))}
-            PagesSelector={() => null}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            extraActions={[]}
-          />
+          <div>
+            <KaTableComponent
+              columns={columns}
+              data={stateData.map((stateDetail) => ({
+                label: stateDetail.label ?? "",
+                value: stateDetail.value,
+                createdAt: stateDetail.createdAt,
+                updatedAt: stateDetail.updatedAt,
+              }))}
+              PagesSelector={() => null}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              extraActions={[]}
+              noDataMessage={
+                stateData.length === 0 ? t("COMMON.STATE_NOT_FOUND") : ""
+              }
+            />
+          </div>
         )}
       </HeaderComponent>
 
@@ -199,7 +203,7 @@ const State: React.FC = () => {
         onSubmit={(name: string, value: string) =>
           handleAddStateSubmit(name, value, selectedStateForEdit?.value)
         }
-        fieldId={fieldId ?? ""}
+        fieldId={fieldId}
         initialValues={
           selectedStateForEdit
             ? {
@@ -226,7 +230,7 @@ const State: React.FC = () => {
 
 export const getServerSideProps = async (context: any) => ({
   props: {
-    ...(await serverSideTranslations(context.locale, ["common", "master"])),
+    ...(await serverSideTranslations(context.locale, ["common"])),
   },
 });
 
