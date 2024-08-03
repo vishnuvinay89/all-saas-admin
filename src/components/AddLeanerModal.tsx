@@ -307,7 +307,7 @@ const AddLearnerModal: React.FC<AddLearnerModalProps> = ({
         open={open}
         onClose={onClose}
         showFooter={false}
-        modalTitle={isEditModal?t("LEARNERS.NEW_LEARNER"): t("LEARNERS.EDIT_LEARNER")}
+        modalTitle={!isEditModal?t("LEARNERS.NEW_LEARNER"): t("LEARNERS.EDIT_LEARNER")}
       >
         <>
           <Box

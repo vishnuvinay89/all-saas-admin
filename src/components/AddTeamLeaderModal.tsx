@@ -310,7 +310,7 @@ const AddTeamLeaderModal: React.FC<AddLearnerModalProps> = ({
         open={open}
         onClose={onClose}
         showFooter={false}
-        modalTitle={isEditModal? t("TEAM_LEADERS.NEW_TEAM_LEADER"): t("TEAM_LEADERS.EDIT_TEAM_LEADER")}
+        modalTitle={!isEditModal? t("TEAM_LEADERS.NEW_TEAM_LEADER"): t("TEAM_LEADERS.EDIT_TEAM_LEADER")}
       >
         <>
           <Box
