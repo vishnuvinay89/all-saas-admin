@@ -1,10 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
-import { DataType, SortDirection } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import HeaderComponent from "@/components/HeaderComponent";
-import { SelectChangeEvent } from "@mui/material/Select";
-import PageSizeSelector from "@/components/PageSelector";
 import { useTranslation } from "next-i18next";
 import {
   getStateBlockDistrictList,
@@ -13,7 +10,6 @@ import {
 } from "@/services/MasterDataService";
 import Loader from "@/components/Loader";
 import { AddStateModal } from "@/components/AddStateModal";
-import { transformLabel } from "@/utils/Helper";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { showToastMessage } from "@/components/Toastify";
 
@@ -28,19 +24,12 @@ export interface StateDetail {
 type StateBlockDistrictListParams = {
   controllingfieldfk?: string;
   fieldName: string;
-  limit?: number;
-  offset?: number;
+  optionName?: string;
 };
 
 const State: React.FC = () => {
   const { t } = useTranslation();
   const [stateData, setStateData] = useState<StateDetail[]>([]);
-  const [selectedSort, setSelectedSort] = useState<string>("Sort");
-  const [sortBy, setSortBy] = useState<["label", "asc" | "desc"]>([
-    "label",
-    "asc",
-  ]);
-  const [selectedFilter, setSelectedFilter] = useState<string>("All");
   const [loading, setLoading] = useState<boolean>(true);
   const [confirmationDialogOpen, setConfirmationDialogOpen] =
     useState<boolean>(false);
@@ -49,100 +38,68 @@ const State: React.FC = () => {
   const [addStateModalOpen, setAddStateModalOpen] = useState<boolean>(false);
   const [selectedStateForEdit, setSelectedStateForEdit] =
     useState<StateDetail | null>(null);
-  const [editState, setEditState] = useState<StateDetail | null>(null);
-
-  const [pageOffset, setPageOffset] = useState<number>(0);
-  const [pageLimit, setPageLimit] = useState<number>(10);
-  const [pageCount, setPageCount] = useState<number>(0);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [fieldId, setFieldId] = useState<string | null>(null);
 
-  const columns = useMemo(
-    () => [
-      {
-        key: "label",
-        title: t("MASTER.STATE_NAMES"),
-        dataType: DataType.String,
-        sortDirection: SortDirection.Ascend,
-      },
-      {
-        key: "value",
-        title: t("MASTER.STATE_CODE"),
-        dataType: DataType.String,
-        sortDirection: SortDirection.Ascend,
-      },
+  const columns = [
+    {
+      key: "label",
+      title: t("MASTER.STATE_NAMES"),
+    },
+    {
+      key: "value",
+      title: t("MASTER.STATE_CODE"),
+    },
+    {
+      key: "createdAt",
+      title: t("MASTER.CREATED_AT"),
+    },
+    {
+      key: "updatedAt",
+      title: t("MASTER.UPDATED_AT"),
+    },
+    {
+      key: "actions",
+      title: t("MASTER.ACTIONS"),
+    },
+  ];
 
-      {
-        key: "createdAt",
-        title: t("MASTER.CREATED_AT"),
-        dataType: DataType.String,
-        sortDirection: SortDirection.Ascend,
-      },
-      {
-        key: "updatedAt",
-        title: t("MASTER.UPDATED_AT"),
-      },
-      {
-        key: "actions",
-        title: t("MASTER.ACTIONS"),
-      },
-    ],
-    [t]
-  );
-
-  const handleChange = useCallback((event: SelectChangeEvent<number>) => {
-    const value = Number(event.target.value);
-    setPageLimit(value);
-    setPageOffset(0);
-  }, []);
-
-  const handleSortChange = useCallback((event: SelectChangeEvent<string>) => {
-    const selectedValue = event.target.value;
-    setSelectedSort(selectedValue);
-    setSortBy(["label", selectedValue === "Z-A" ? "desc" : "asc"]);
-  }, []);
-
-  const handleFilterChange = useCallback((event: SelectChangeEvent<string>) => {
-    setSelectedFilter(event.target.value);
-  }, []);
-
-  const handleEdit = useCallback((rowData: StateDetail) => {
-    console.log("Edit", rowData);
+  const handleEdit = (rowData: StateDetail) => {
     setSelectedStateForEdit(rowData);
     setAddStateModalOpen(true);
-  }, []);
+  };
 
-  const handleDelete = useCallback((rowData: StateDetail) => {
+  const handleDelete = (rowData: StateDetail) => {
     setSelectedStateForDelete(rowData);
     setConfirmationDialogOpen(true);
-  }, []);
+  };
 
-  const handleConfirmDelete = useCallback(async () => {
+  const handleConfirmDelete = async () => {
     if (selectedStateForDelete) {
       try {
-        await deleteOption("states", selectedStateForDelete.value);
-        setStateData((prevStateData) =>
-          prevStateData.filter(
-            (state) => state.value !== selectedStateForDelete.value
-          )
-        );
-        showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
+        if (fieldId) {
+          await deleteOption("states", selectedStateForDelete.value);
+          setStateData((prevStateData) =>
+            prevStateData.filter(
+              (state) => state.value !== selectedStateForDelete.value
+            )
+          );
+          showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
+        }
       } catch (error) {
         console.error("Error deleting state", error);
         showToastMessage(t("COMMON.STATE_DELETED_FAILURE"), "error");
       }
     }
     setConfirmationDialogOpen(false);
-  }, [selectedStateForDelete, t]);
+  };
 
   const handleSearch = (keyword: string) => {
     setSearchKeyword(keyword);
     fetchStateData(keyword);
   };
 
-  const fieldId = "61b5909a-0b45-4282-8721-e614fd36d7bd";
-
   const handleAddStateClick = () => {
-    setEditState(null);
     setSelectedStateForEdit(null);
     setAddStateModalOpen(true);
   };
@@ -150,28 +107,21 @@ const State: React.FC = () => {
   const handleAddStateSubmit = async (
     name: string,
     value: string,
-    fieldId: string,
     stateId?: string
   ) => {
     const newState = {
-      options: [
-        {
-          name,
-          value,
-        },
-      ],
+      options: [{ name, value }],
     };
 
-    console.log("newState", newState);
-
     try {
-      const response = await createOrUpdateOption(fieldId, newState, stateId);
-      console.log("stateResponse", response);
-      if (response) {
-        await fetchStateData(searchKeyword);
-        showToastMessage(t("COMMON.STATE_ADDED_SUCCESS"), "success");
-      } else {
-        console.error("Failed to create/update state:", response);
+      if (fieldId) {
+        const response = await createOrUpdateOption(fieldId, newState, stateId);
+        if (response) {
+          await fetchStateData(searchKeyword);
+          showToastMessage(t("COMMON.STATE_ADDED_SUCCESS"), "success");
+        } else {
+          console.error("Failed to create/update state:", response);
+        }
       }
     } catch (error) {
       console.error("Error creating/updating state:", error);
@@ -180,87 +130,76 @@ const State: React.FC = () => {
     setAddStateModalOpen(false);
   };
 
-  const fetchStateData = useCallback(
-    async (keyword?: string) => {
-      console.log("searchKeyword", searchKeyword);
-      try {
-        setLoading(true);
-        const data = await getStateBlockDistrictList({
-          fieldName: "states",
-          limit: pageLimit,
-          offset: pageOffset,
-          optionName: keyword ? keyword : "",
-        } as StateBlockDistrictListParams);
-        console.log("stateData", data);
+  const fetchStateData = async (keyword?: string) => {
+    try {
+      setLoading(true);
+      const data = await getStateBlockDistrictList({
+        fieldName: "states",
+        optionName: keyword,
+      } as StateBlockDistrictListParams);
 
-        // Sort data based on the sortBy state
-        const sortedData = [...data.result.values].sort((a, b) => {
-          const [field, order] = sortBy;
-          if (field in a && field in b) {
-            return order === "asc"
-              ? a[field].localeCompare(b[field])
-              : b[field].localeCompare(a[field]);
-          }
-          return 0;
-        });
+      setFieldId(data.result.fieldId);
 
-        setStateData(sortedData);
-        setPageCount(Math.ceil(data.totalCount / pageLimit));
-      } catch (error) {
-        console.error("Error fetching state data", error);
-      } finally {
-        setLoading(false);
-        setSelectedStateForEdit(null);
+      if (data.result.fieldId === fieldId) {
+        setStateData(data.result.values);
+      } else {
+        console.error("Unexpected fieldId:", data.result.fieldId);
+        setStateData([]);
       }
-    },
-    [sortBy, pageLimit, pageOffset]
-  );
+    } catch (error) {
+      console.error("Error fetching state data", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchStateData(searchKeyword);
-  }, []);
+  }, [searchKeyword]);
 
-  const userProps = useMemo(
-    () => ({
-      userType: t("MASTER.STATE"),
-      searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_STATE"),
-      selectedSort,
-      handleStateChange: handleChange,
-      handleSortChange: handleSortChange,
-      states: stateData.map((stateDetail) => stateDetail.label),
-      showStateDropdown: false,
-      showAddNew: true,
-      showSort: true,
-      selectedFilter,
-      handleFilterChange: handleFilterChange,
-      showFilter: false,
-      paginationEnable: true,
-    }),
-    [
-      t,
-      selectedSort,
-      handleChange,
-      handleSortChange,
-      stateData,
-      selectedFilter,
-      handleFilterChange,
-    ]
-  );
+  const userProps = {
+    userType: t("MASTER.STATE"),
+    searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_STATE"),
+    showStateDropdown: false,
+    showAddNew: true,
+    showSort: false,
+    showFilter: false,
+    paginationEnable: false,
+  };
 
   return (
-    <div>
+    <>
+      <HeaderComponent
+        {...userProps}
+        handleSearch={handleSearch}
+        handleAddUserClick={handleAddStateClick}
+      >
+        {loading ? (
+          <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
+        ) : (
+          <KaTableComponent
+            columns={columns}
+            data={stateData.map((stateDetail) => ({
+              label: stateDetail.label ?? "",
+              value: stateDetail.value,
+              createdAt: stateDetail.createdAt,
+              updatedAt: stateDetail.updatedAt,
+            }))}
+            PagesSelector={() => null}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            extraActions={[]}
+          />
+        )}
+      </HeaderComponent>
+
       <AddStateModal
         open={addStateModalOpen}
         onClose={() => setAddStateModalOpen(false)}
         onSubmit={(name: string, value: string) =>
-          handleAddStateSubmit(
-            name,
-            value,
-            fieldId,
-            selectedStateForEdit?.value
-          )
+          handleAddStateSubmit(name, value, selectedStateForEdit?.value)
         }
-        fieldId={fieldId}
+        fieldId={fieldId ?? ""}
         initialValues={
           selectedStateForEdit
             ? {
@@ -281,46 +220,7 @@ const State: React.FC = () => {
         }}
         handleCloseModal={() => setConfirmationDialogOpen(false)}
       />
-      <HeaderComponent
-        {...userProps}
-        handleSearch={handleSearch}
-        handleAddUserClick={handleAddStateClick}
-      >
-        {loading ? (
-          <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
-        ) : (
-          <div>
-            <KaTableComponent
-              columns={columns}
-              data={stateData.map((stateDetail) => ({
-                label: stateDetail.label
-                  ? transformLabel(stateDetail.label)
-                  : "",
-                value: stateDetail.value,
-                createdAt: stateDetail.createdAt,
-                updatedAt: stateDetail.updatedAt,
-              }))}
-              limit={pageLimit}
-              offset={pageOffset}
-              PagesSelector={() => (
-                <PageSizeSelector
-                  limit={pageLimit}
-                  onPageSizeChange={handleChange}
-                  pageCount={pageCount}
-                  onPageChange={setPageOffset}
-                />
-              )}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              extraActions={[]}
-              {...(typeof sortBy[1] === "string" && {
-                sortDirection: sortBy[1],
-              })}
-            />
-          </div>
-        )}
-      </HeaderComponent>
-    </div>
+    </>
   );
 };
 
