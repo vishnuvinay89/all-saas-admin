@@ -30,7 +30,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder }) => {
   const [keyword, setKeyword] = useState("");
   const { t } = useTranslation();
   const isSmallScreen = useMediaQuery((theme: any) =>
-    theme.breakpoints.down("sm")
+    theme.breakpoints.down("sm"),
   );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {

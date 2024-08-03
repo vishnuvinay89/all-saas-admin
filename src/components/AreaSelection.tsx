@@ -32,19 +32,19 @@ interface DropdownBoxProps {
   selectedCenter?: any;
   handleStateChangeWrapper: (
     selectedNames: string[],
-    selectedCodes: string[]
+    selectedCodes: string[],
   ) => Promise<void>;
   handleDistrictChangeWrapper: (
     selected: string[],
-    selectedCodes: string[]
+    selectedCodes: string[],
   ) => Promise<void>;
   handleBlockChangeWrapper: (
     selected: string[],
-    selectedCodes: string[]
+    selectedCodes: string[],
   ) => void;
   handleCenterChangeWrapper?: (
     selected: string[],
-    selectedCodes: string[]
+    selectedCodes: string[],
   ) => void;
 
   isMobile: boolean;
@@ -89,7 +89,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
             names={states?.map(
               (state) =>
                 state.label?.toLowerCase().charAt(0).toUpperCase() +
-                state.label?.toLowerCase().slice(1)
+                state.label?.toLowerCase().slice(1),
             )}
             codes={states?.map((state) => state.value)}
             tagName={t("FACILITATORS.STATE")}

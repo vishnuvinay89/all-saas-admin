@@ -118,7 +118,7 @@ export const getCenterList = async ({
 
 export const deleteOption = async (
   type: "states" | "districts" | "blocks",
-  option: string
+  option: string,
 ): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/options/delete/${type}?option=${option}`;
   const requestBody = {};
@@ -136,7 +136,7 @@ export const deleteOption = async (
 export const createOrUpdateOption = async (
   fieldId: string,
   fieldParams: { options: { name: string; value: string }[] },
-  stateId?: string
+  stateId?: string,
 ): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/update/${fieldId}`;
 

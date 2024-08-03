@@ -39,21 +39,16 @@ export const userList = async ({
   }
 };
 
-
 export const getUserDetails = async (
   userId?: string | string[],
-  fieldValue?: boolean
+  fieldValue?: boolean,
 ): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/read/${userId}?fieldvalue=${fieldValue}`;
   try {
     const response = await get(apiUrl);
     return response?.data?.result;
   } catch (error) {
-    console.error('error in fetching user details', error);
+    console.error("error in fetching user details", error);
     return error;
   }
 };
-
-
-
-

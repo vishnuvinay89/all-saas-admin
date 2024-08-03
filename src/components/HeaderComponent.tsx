@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   FormControl,
-
   MenuItem,
   Typography,
   useMediaQuery,
@@ -13,7 +12,6 @@ import Select from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
-
 
 import { getStateBlockDistrictList } from "../services/MasterDataService";
 import AreaSelection from "./AreaSelection";
@@ -70,7 +68,7 @@ const HeaderComponent = ({
 
   const handleStateChangeWrapper = async (
     selectedNames: string[],
-    selectedCodes: string[]
+    selectedCodes: string[],
   ) => {
     if (selectedNames[0] === "") {
       // if(districts.length!==0)
@@ -97,7 +95,7 @@ const HeaderComponent = ({
 
   const handleDistrictChangeWrapper = async (
     selected: string[],
-    selectedCodes: string[]
+    selectedCodes: string[],
   ) => {
     if (selected[0] === "") {
       handleBlockChange([], []);
@@ -119,7 +117,7 @@ const HeaderComponent = ({
 
   const handleBlockChangeWrapper = (
     selected: string[],
-    selectedCodes: string[]
+    selectedCodes: string[],
   ) => {
     handleBlockChange(selected, selectedCodes);
   };
@@ -200,9 +198,7 @@ const HeaderComponent = ({
                     fontSize: "14px",
                   }}
                 >
-                  <MenuItem value="All">
-                    {t("COMMON.ALL")}
-                  </MenuItem>
+                  <MenuItem value="All">{t("COMMON.ALL")}</MenuItem>
                   {Filter?.map((filter, index) => (
                     <MenuItem value={filter} key={index}>
                       {filter}

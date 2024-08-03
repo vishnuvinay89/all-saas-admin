@@ -90,7 +90,7 @@ const LoginPage = () => {
   };
 
   const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
+    event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     event.preventDefault();
   };
@@ -139,7 +139,7 @@ const LoginPage = () => {
         router.push("/dashboard");
       } catch (error: any) {
         setLoading(false);
-        const errorMessage = t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT")
+        const errorMessage = t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT");
         showToastMessage(errorMessage, "error");
       }
     }

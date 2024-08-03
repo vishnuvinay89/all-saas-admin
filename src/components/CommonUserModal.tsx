@@ -2,7 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "next-i18next";
 import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
-import { Typography, useMediaQuery , Box, Button,  useTheme} from "@mui/material";
+import {
+  Typography,
+  useMediaQuery,
+  Box,
+  Button,
+  useTheme,
+} from "@mui/material";
 import {
   GenerateSchemaAndUiSchema,
   customFields,
@@ -18,16 +24,12 @@ import {
 } from "@/services/CreateUserService";
 import { generateUsernameAndPassword } from "@/utils/Helper";
 import { FormData } from "@/utils/Interfaces";
-import { RoleId ,Role} from "@/utils/app.constant";
+import { RoleId, Role } from "@/utils/app.constant";
 import AreaSelection from "./AreaSelection";
 import { showToastMessage } from "./Toastify";
 import { transformArray } from "../utils/Helper";
 import { useLocationState } from "@/utils/useLocationState";
 import { tenantId } from "../../app.config";
-
-
-
-
 
 interface UserModalProps {
   open: boolean;
@@ -36,7 +38,7 @@ interface UserModalProps {
   isEditModal?: boolean;
   userId?: string;
   onSubmit: (submitValue: boolean) => void;
-  userType:string
+  userType: string;
 }
 
 const CommonUserModal: React.FC<UserModalProps> = ({
@@ -46,16 +48,26 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   isEditModal = false,
   userId,
   onSubmit,
-  userType
+  userType,
 }) => {
-  console.log(userType)
+  console.log(userType);
   const [schema, setSchema] = React.useState<any>();
   const [uiSchema, setUiSchema] = React.useState<any>();
   const { t } = useTranslation();
   const [formValue, setFormValue] = useState<any>();
-  const modalTitle=!isEditModal? userType === FormContextType.STUDENT?t("LEARNERS.NEW_LEARNER"):userType === FormContextType.TEACHER?t("FACILITATORS.NEW_FACILITATOR"):t("TEAM_LEADERS.NEW_TEAM_LEADER"): userType === FormContextType.STUDENT?t("LEARNERS.EDIT_LEARNER"):userType === FormContextType.TEACHER?t("FACILITATORS.EDIT_FACILITATOR"):t("TEAM_LEADERS.EDIT_TEAM_LEADER")
+  const modalTitle = !isEditModal
+    ? userType === FormContextType.STUDENT
+      ? t("LEARNERS.NEW_LEARNER")
+      : userType === FormContextType.TEACHER
+        ? t("FACILITATORS.NEW_FACILITATOR")
+        : t("TEAM_LEADERS.NEW_TEAM_LEADER")
+    : userType === FormContextType.STUDENT
+      ? t("LEARNERS.EDIT_LEARNER")
+      : userType === FormContextType.TEACHER
+        ? t("FACILITATORS.EDIT_FACILITATOR")
+        : t("TEAM_LEADERS.EDIT_TEAM_LEADER");
   const theme = useTheme<any>();
-   const {
+  const {
     states,
     districts,
     blocks,
@@ -74,49 +86,56 @@ const CommonUserModal: React.FC<UserModalProps> = ({
     handleDistrictChangeWrapper,
     handleBlockChangeWrapper,
     handleCenterChangeWrapper,
-    selectedCenterCode,  selectedBlockCohortId,   blockFieldId, distrctFieldId, stateFieldId, dynamicFormForBlock
-
+    selectedCenterCode,
+    selectedBlockCohortId,
+    blockFieldId,
+    distrctFieldId,
+    stateFieldId,
+    dynamicFormForBlock,
   } = useLocationState(open, onClose);
 
   useEffect(() => {
     const getAddUserFormData = async () => {
       try {
-       
         const response: FormData = await getFormRead(
           FormContext.USERS,
-          userType );
-         
+          userType,
+        );
+
         console.log("sortedFields", response);
 
         if (response) {
-          if(userType=== FormContextType.TEACHER )
-          {
-            const newResponse={
+          if (userType === FormContextType.TEACHER) {
+            const newResponse = {
               ...response,
-              fields: response.fields.filter(field => field.name !== 'no_of_clusters')
-            }
-            const { schema, uiSchema, formValues } = GenerateSchemaAndUiSchema(newResponse, t);
-          setFormValue(formValues)
-          setSchema(schema);
-          setUiSchema(uiSchema);
-          }
-          else if(userType=== FormContextType.TEAM_LEADER)
-          {
-            const { schema, uiSchema, formValues } = GenerateSchemaAndUiSchema(response, t);
-            setFormValue(formValues)
+              fields: response.fields.filter(
+                (field) => field.name !== "no_of_clusters",
+              ),
+            };
+            const { schema, uiSchema, formValues } = GenerateSchemaAndUiSchema(
+              newResponse,
+              t,
+            );
+            setFormValue(formValues);
+            setSchema(schema);
+            setUiSchema(uiSchema);
+          } else if (userType === FormContextType.TEAM_LEADER) {
+            const { schema, uiSchema, formValues } = GenerateSchemaAndUiSchema(
+              response,
+              t,
+            );
+            setFormValue(formValues);
+            setSchema(schema);
+            console.log(schema);
+            setUiSchema(uiSchema);
+          } else {
+            console.log("true");
+            const { schema, uiSchema } = GenerateSchemaAndUiSchema(response, t);
             setSchema(schema);
             console.log(schema);
             setUiSchema(uiSchema);
           }
-          else {
-            console.log("true")
-          const { schema, uiSchema } = GenerateSchemaAndUiSchema(response, t);
-          setSchema(schema);
-          console.log(schema);
-          setUiSchema(uiSchema);
-          }
         }
-      
       } catch (error) {
         console.error("Error fetching form data:", error);
       }
@@ -126,11 +145,11 @@ const CommonUserModal: React.FC<UserModalProps> = ({
 
   const handleSubmit = async (
     data: IChangeEvent<any, RJSFSchema, any>,
-    event: React.FormEvent<any>
+    event: React.FormEvent<any>,
   ) => {
     // setOpenModal(true);
     const target = event.target as HTMLFormElement;
-   // const elementsArray = Array.from(target.elements);
+    // const elementsArray = Array.from(target.elements);
 
     console.log("onsubmit", data);
     // for (const element of elementsArray) {
@@ -150,10 +169,10 @@ const CommonUserModal: React.FC<UserModalProps> = ({
     const formData = data.formData;
     console.log("Form data submitted:", formData);
     const schemaProperties = schema.properties;
-    
+
     const { username, password } = generateUsernameAndPassword(
       selectedStateCode,
-      userType
+      userType,
     );
 
     let apiBody: any = {
@@ -162,8 +181,16 @@ const CommonUserModal: React.FC<UserModalProps> = ({
       tenantCohortRoleMapping: [
         {
           tenantId: tenantId,
-          roleId:userType===FormContextType.STUDENT? RoleId.STUDENT: userType===FormContextType.TEACHER?RoleId.TEACHER:RoleId.TEAM_LEADER,
-          cohortId:userType===FormContextType.TEAM_LEADER ?[selectedBlockCohortId] :[selectedCenterCode],
+          roleId:
+            userType === FormContextType.STUDENT
+              ? RoleId.STUDENT
+              : userType === FormContextType.TEACHER
+                ? RoleId.TEACHER
+                : RoleId.TEAM_LEADER,
+          cohortId:
+            userType === FormContextType.TEAM_LEADER
+              ? [selectedBlockCohortId]
+              : [selectedCenterCode],
         },
       ],
       customFields: [],
@@ -173,7 +200,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
       const fieldSchema = schemaProperties[fieldKey];
       const fieldId = fieldSchema?.fieldId;
       console.log(
-        `FieldID: ${fieldId}, FieldValue: ${fieldSchema}, type: ${typeof fieldValue}`
+        `FieldID: ${fieldId}, FieldValue: ${fieldSchema}, type: ${typeof fieldValue}`,
       );
 
       if (fieldId === null || fieldId === "null") {
@@ -181,7 +208,6 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           apiBody[fieldKey] = fieldValue;
         }
       } else {
-      
         if (
           fieldSchema?.hasOwnProperty("isDropdown") ||
           fieldSchema?.hasOwnProperty("isCheckbox")
@@ -191,21 +217,17 @@ const CommonUserModal: React.FC<UserModalProps> = ({
             value: [String(fieldValue)],
           });
         } else {
-          if(fieldSchema.checkbox &&fieldSchema.type==="array")
-           {
+          if (fieldSchema.checkbox && fieldSchema.type === "array") {
             apiBody.customFields.push({
               fieldId: fieldId,
-              value: String(fieldValue).split(',')
+              value: String(fieldValue).split(","),
             });
-           }
-
-                else{ apiBody.customFields.push({
-            fieldId: fieldId,
-            value: String(fieldValue),
-          });
-        }
-
-
+          } else {
+            apiBody.customFields.push({
+              fieldId: fieldId,
+              value: String(fieldValue),
+            });
+          }
         }
       }
     });
@@ -239,22 +261,24 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           customFields: customFields,
         };
         const response = await updateUser(userId, object);
-        const messageKey = userType === FormContextType.STUDENT
-        ? "LEARNERS.LEARNER_UPDATED_SUCCESSFULLY"
-        : userType === FormContextType.TEACHER
-        ? "FACILITATORS.FACILITATOR_UPDATED_SUCCESSFULLY"
-        : "TEAM_LEADERS.TEAM_LEADER_UPDATED_SUCCESSFULLY";
-      
-      showToastMessage(t(messageKey), "success");
+        const messageKey =
+          userType === FormContextType.STUDENT
+            ? "LEARNERS.LEARNER_UPDATED_SUCCESSFULLY"
+            : userType === FormContextType.TEACHER
+              ? "FACILITATORS.FACILITATOR_UPDATED_SUCCESSFULLY"
+              : "TEAM_LEADERS.TEAM_LEADER_UPDATED_SUCCESSFULLY";
+
+        showToastMessage(t(messageKey), "success");
       } else {
         const response = await createUser(apiBody);
-        const messageKey = userType === FormContextType.STUDENT
-  ? "LEARNERS.LEARNER_CREATED_SUCCESSFULLY"
-  : userType === FormContextType.TEACHER
-  ? "FACILITATORS.FACILITATOR_CREATED_SUCCESSFULLY"
-  : "TEAM_LEADERS.TEAM_LEADER_CREATED_SUCCESSFULLY";
+        const messageKey =
+          userType === FormContextType.STUDENT
+            ? "LEARNERS.LEARNER_CREATED_SUCCESSFULLY"
+            : userType === FormContextType.TEACHER
+              ? "FACILITATORS.FACILITATOR_CREATED_SUCCESSFULLY"
+              : "TEAM_LEADERS.TEAM_LEADER_CREATED_SUCCESSFULLY";
 
-showToastMessage(t(messageKey), "success");
+        showToastMessage(t(messageKey), "success");
       }
       onSubmit(true);
       onClose();
@@ -376,7 +400,7 @@ showToastMessage(t(messageKey), "success");
               handleBlockChangeWrapper={handleBlockChangeWrapper}
               isMobile={isMobile}
               isMediumScreen={isMediumScreen}
-              isCenterSelection={userType!=="TEAM LEADER"?true: false}
+              isCenterSelection={userType !== "TEAM LEADER" ? true : false}
               allCenters={allCenters}
               selectedCenter={selectedCenter}
               handleCenterChangeWrapper={handleCenterChangeWrapper}
@@ -401,44 +425,41 @@ showToastMessage(t(messageKey), "success");
                 {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
               </DynamicForm>
             )
-          :userType==="TEAM LEADER"?
-          dynamicFormForBlock &&
-            schema &&
-            uiSchema && (
-              <DynamicForm
-                schema={schema}
-                uiSchema={uiSchema}
-                onSubmit={handleSubmit}
-                onChange={handleChange}
-                onError={handleError}
-                widgets={{}}
-                showErrorList={true}
-                customFields={customFields}
-                formData={formValue}
-
-              >
-                {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
-              </DynamicForm>)
-          
-          
-          : (dynamicForm &&
-            schema &&
-            uiSchema && (
-              <DynamicForm
-                schema={schema}
-                uiSchema={uiSchema}
-                onSubmit={handleSubmit}
-                onChange={handleChange}
-                onError={handleError}
-                widgets={{}}
-                showErrorList={true}
-                customFields={customFields}
-                formData={formValue}
-
-              >
-                {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
-              </DynamicForm>
-            ))}
+          : userType === "TEAM LEADER"
+            ? dynamicFormForBlock &&
+              schema &&
+              uiSchema && (
+                <DynamicForm
+                  schema={schema}
+                  uiSchema={uiSchema}
+                  onSubmit={handleSubmit}
+                  onChange={handleChange}
+                  onError={handleError}
+                  widgets={{}}
+                  showErrorList={true}
+                  customFields={customFields}
+                  formData={formValue}
+                >
+                  {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
+                </DynamicForm>
+              )
+            : dynamicForm &&
+              schema &&
+              uiSchema && (
+                <DynamicForm
+                  schema={schema}
+                  uiSchema={uiSchema}
+                  onSubmit={handleSubmit}
+                  onChange={handleChange}
+                  onError={handleError}
+                  widgets={{}}
+                  showErrorList={true}
+                  customFields={customFields}
+                  formData={formValue}
+                >
+                  {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
+                </DynamicForm>
+              )}
       </SimpleModal>
     </>
   );

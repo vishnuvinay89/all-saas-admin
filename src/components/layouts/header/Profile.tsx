@@ -82,7 +82,10 @@ const Profile = () => {
                 whiteSpace: "nowrap",
               }}
             >
-              {userName ?  userName.charAt(0).toUpperCase() +userName.slice(1).toLowerCase() : ""}
+              {userName
+                ? userName.charAt(0).toUpperCase() +
+                  userName.slice(1).toLowerCase()
+                : ""}
             </Typography>
             <FeatherIcon icon="chevron-down" size="20" />
           </Box>

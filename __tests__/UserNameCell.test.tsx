@@ -48,7 +48,7 @@ describe("UserNameCell Component", () => {
       name
         .split(" ")
         .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ")
+        .join(" "),
     );
 
     render(<UserNameCell userId="456" />);
@@ -62,7 +62,7 @@ describe("UserNameCell Component", () => {
   });
 
   it("should display a dash if username is not available", async () => {
-    mockGetUserName.mockResolvedValueOnce('');
+    mockGetUserName.mockResolvedValueOnce("");
 
     render(<UserNameCell userId="789" />);
 

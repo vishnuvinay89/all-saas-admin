@@ -32,7 +32,7 @@ const Foundation = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
   const [selectFilter, setSelectFilter] = useState("");
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchData = async () => {
       setTimeout(() => {
@@ -75,7 +75,7 @@ const Foundation = () => {
       },
       (err) => {
         console.error("Failed to copy link: ", err);
-      }
+      },
     );
   };
 
@@ -101,7 +101,7 @@ const Foundation = () => {
         ) : (
           <Box>
             <Box
-              sx={{ 
+              sx={{
                 display: "grid",
                 gridTemplateColumns: "1fr 2fr 1fr",
                 gap: isSmallScreen ? "8px" : "16px",
@@ -115,7 +115,7 @@ const Foundation = () => {
             {!selectedCardId ? (
               cardData?.map((card) => (
                 <Card
-                  key={card.id}   
+                  key={card.id}
                   sx={{
                     display: "grid",
                     gridTemplateColumns: "1fr 2fr 1fr",
@@ -138,7 +138,11 @@ const Foundation = () => {
                     <Typography>{card.state}</Typography>
                   </Box>
                   <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: "8px" }}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "8px",
+                    }}
                   >
                     <CustomStepper completedSteps={card.boardsUploaded} />
                     <Typography

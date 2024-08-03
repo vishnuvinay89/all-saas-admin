@@ -7,7 +7,7 @@ export const customFields = {
 };
 export const GenerateSchemaAndUiSchema = (
   formData: FormData,
-  t: (key: string) => string
+  t: (key: string) => string,
 ) => {
   const schema: JSONSchema7 = {
     //Form schema
@@ -137,7 +137,7 @@ export const GenerateSchemaAndUiSchema = (
       fieldSchema.enumNames = options?.map((opt: FieldOption) =>
         t(`FORM.${opt.label}`) === `FORM.${opt.label}`
           ? opt.label
-          : t(`FORM.${opt.label}`)
+          : t(`FORM.${opt.label}`),
       );
       if (maxSelections) {
         fieldSchema.maxItems = maxSelections;

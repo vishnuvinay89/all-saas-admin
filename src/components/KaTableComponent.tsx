@@ -50,13 +50,15 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
 }) => {
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
   const { t } = useTranslation();
-  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
- 
+  const isMobile = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm"),
+  );
+
   const handleCheckboxChange = (rowId: number) => {
     setSelectedRowIds((prevSelected) =>
       prevSelected.includes(rowId)
         ? prevSelected.filter((id) => id !== rowId)
-        : [...prevSelected, rowId]
+        : [...prevSelected, rowId],
     );
   };
   const tableProps: ITableProps = {
@@ -102,21 +104,19 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                       rowData={props.rowData}
                       onEdit={onEdit}
                       onDelete={onDelete}
-                      disable={
-                        props.rowData?.status === Status.ARCHIVED
-                      }
+                      disable={props.rowData?.status === Status.ARCHIVED}
                     />
                   );
                 }
                 if (props.column.key === DataKey.UPDATEDAT) {
                   return format(
                     props.rowData?.updatedAt,
-                    DateFormat.YYYY_MM_DD
+                    DateFormat.YYYY_MM_DD,
                   );
                 } else if (props.column.key === DataKey.CREATEDAT) {
                   return format(
                     props.rowData?.createdAt,
-                    DateFormat.YYYY_MM_DD
+                    DateFormat.YYYY_MM_DD,
                   );
                 } else if (props.column.key === DataKey.CREATEDBY) {
                   return <UserNameCell userId={props.rowData?.createdBy} />;
@@ -130,8 +130,8 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                         label={firstLetterInUpperCase(props.rowData?.status)}
                         color="error"
                         variant="outlined"
-                        size={isMobile ?"small":"medium"}
-                        sx={{fontSize:isMobile ?"xx-small":""}}
+                        size={isMobile ? "small" : "medium"}
+                        sx={{ fontSize: isMobile ? "xx-small" : "" }}
                       />
                     );
                   } else {
@@ -140,8 +140,8 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                         label={firstLetterInUpperCase(props.rowData?.status)}
                         color="success"
                         variant="outlined"
-                        size={isMobile ?"small":"medium"}
-                        sx={{fontSize:isMobile ?"xx-small":""}}
+                        size={isMobile ? "small" : "medium"}
+                        sx={{ fontSize: isMobile ? "xx-small" : "" }}
                       />
                     );
                   }
@@ -157,7 +157,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                     />
                   );
                 }
-               
+
                 return <div className="table-cell">{props.value}</div>;
               },
             },

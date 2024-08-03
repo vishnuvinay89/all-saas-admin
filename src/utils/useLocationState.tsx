@@ -55,7 +55,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
       }
       handleStateChange(selectedNames, selectedCodes);
     },
-    [selectedStateCode]
+    [selectedStateCode],
   );
 
   const handleDistrictChangeWrapper = useCallback(
@@ -79,7 +79,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
       }
       handleDistrictChange(selected, selectedCodes);
     },
-    [selectedDistrictCode]
+    [selectedDistrictCode],
   );
 
   const handleBlockChangeWrapper = useCallback(
@@ -90,38 +90,35 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
       try {
         console.log(selectedStateCode, selectedDistrictCode);
         const object = {
-            "limit":200,
-            "offset": 0,
-            "filters": {
-                // "type": "COHORT",
-                "status": [
-                    "active"
-                ],
-                // "states": selectedStateCode,
-                // "districts": selectedDistrictCode,
-                // "blocks": selectedCodes[0]
-                name:selected[0]
-            }
+          limit: 200,
+          offset: 0,
+          filters: {
+            // "type": "COHORT",
+            status: ["active"],
+            // "states": selectedStateCode,
+            // "districts": selectedDistrictCode,
+            // "blocks": selectedCodes[0]
+            name: selected[0],
+          },
         };
         const response2 = await getCenterList(object);
 
-        console.log(selected)
-        const getBlockIdObject={
-          "limit": 200,
-          "offset": 0,          "filters": {
+        console.log(selected);
+        const getBlockIdObject = {
+          limit: 200,
+          offset: 0,
+          filters: {
             // "type":"COHORT",
-            "status": [
-                "active"
-            ],
-            "states": selectedStateCode,
-                "districts": selectedDistrictCode,
-                "blocks": selectedCodes[0]
-           // "name": selected[0]
-        },
-        }
+            status: ["active"],
+            states: selectedStateCode,
+            districts: selectedDistrictCode,
+            blocks: selectedCodes[0],
+            // "name": selected[0]
+          },
+        };
         const response = await getCenterList(getBlockIdObject);
         setSelectedBlockCohortId(
-          response?.result?.results?.cohortDetails[0].cohortId
+          response?.result?.results?.cohortDetails[0].cohortId,
         );
         console.log(response?.result?.results?.cohortDetails[0].cohortId);
         //   const result = response?.result?.cohortDetails;
@@ -140,14 +137,14 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
       }
       handleBlockChange(selected, selectedCodes);
     },
-    [selectedBlockCode, selectedDistrictCode, selectedStateCode]
+    [selectedBlockCode, selectedDistrictCode, selectedStateCode],
   );
 
   const handleCenterChangeWrapper = useCallback(
     (selected: string[], selectedCodes: string[]) => {
       handleCenterChange(selected, selectedCodes);
     },
-    []
+    [],
   );
 
   const handleStateChange = useCallback(
@@ -160,7 +157,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
       setSelectedStateCode(stateCodes);
       console.log("Selected categories:", typeof code[0]);
     },
-    []
+    [],
   );
 
   const handleDistrictChange = useCallback(
@@ -172,7 +169,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
       setSelectedDistrictCode(districts);
       console.log("Selected categories:", districts);
     },
-    []
+    [],
   );
 
   const handleBlockChange = useCallback(
@@ -184,7 +181,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
       setdynamicFormForBlock(true);
       console.log("Selected categories:", blocks);
     },
-    []
+    [],
   );
 
   const handleCenterChange = useCallback(
@@ -197,7 +194,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
 
       console.log("Selected categories:", selected);
     },
-    []
+    [],
   );
 
   useEffect(() => {

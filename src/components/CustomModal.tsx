@@ -41,7 +41,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
   children,
 }) => {
   const isSmallScreen = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm")
+    theme.breakpoints.down("sm"),
   );
 
   return (
@@ -87,7 +87,6 @@ const CustomModal: React.FC<CustomModalProps> = ({
         <Divider sx={{ my: 2 }} />
         <Box id="modal-description">{children}</Box>
         <Box mt={2} display="flex" justifyContent="right" gap={2}>
-          
           {secondaryBtnText && (
             <Button onClick={secondaryBtnClick} variant="outlined">
               {secondaryBtnText}

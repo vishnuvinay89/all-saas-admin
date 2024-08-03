@@ -11,7 +11,7 @@ export interface cohortListFilter {
 export interface cohortListData {
   limit?: Number;
   offset?: Number;
-  filter?:any
+  filter?: any;
 }
 
 export const getCohortList = async (data: cohortListData): Promise<any> => {
@@ -31,7 +31,7 @@ export const updateCohortUpdate = async (
   cohortDetails: {
     name?: string;
     status?: string;
-  }
+  },
 ): Promise<any> => {
   const { name, status } = cohortDetails;
   let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/update/${userId}`;
@@ -47,14 +47,14 @@ export const updateCohortUpdate = async (
 
 export const getFormRead = async (
   context: string,
-  contextType: string
+  contextType: string,
 ): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/form/read?context=${context}&contextType=${contextType}`;
   try {
     let response = await get(apiUrl);
     const sortedFields = response?.data?.result.fields?.sort(
       (a: { order: string }, b: { order: string }) =>
-        parseInt(a.order) - parseInt(b.order)
+        parseInt(a.order) - parseInt(b.order),
     );
     const formData = {
       formid: response?.data?.result?.formid,

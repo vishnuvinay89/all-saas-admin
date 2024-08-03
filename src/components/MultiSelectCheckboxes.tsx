@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   FormControl,
   FormControlLabel,
@@ -6,8 +6,8 @@ import {
   FormLabel,
   Checkbox,
   Grid,
-} from '@mui/material';
-import { WidgetProps } from '@rjsf/utils';
+} from "@mui/material";
+import { WidgetProps } from "@rjsf/utils";
 
 interface CustomMultiselectCheckboxesProps {
   label: string;
@@ -44,7 +44,7 @@ const MultiSelectCheckboxes: React.FC<WidgetProps> = ({
       <FormLabel
         required={required}
         component="legend"
-        style={{ color: 'inherit' }}
+        style={{ color: "inherit" }}
       >
         {label || schema?.title}
       </FormLabel>
@@ -55,14 +55,14 @@ const MultiSelectCheckboxes: React.FC<WidgetProps> = ({
             key={option.value}
             alignItems="center"
             justifyContent="space-between"
-            style={{ color: 'inherit' }}
+            style={{ color: "inherit" }}
           >
             <Grid item xs={10}>
-              <FormLabel style={{ color: 'inherit' }}>{option.label}</FormLabel>
+              <FormLabel style={{ color: "inherit" }}>{option.label}</FormLabel>
             </Grid>
             <Grid item xs={2}>
               <Checkbox
-                style={{ color: 'inherit' }}
+                style={{ color: "inherit" }}
                 checked={value.includes(option.value)}
                 onChange={handleChange}
                 value={option.value}

@@ -157,7 +157,7 @@ const Block: React.FC = () => {
         dataType: DataType.String,
       },
     ],
-    [t]
+    [t],
   );
 
   const handleStateChange = useCallback(
@@ -176,14 +176,14 @@ const Block: React.FC = () => {
         console.error("Error fetching district data", error);
       }
     },
-    []
+    [],
   );
 
   const handleDistrictChange = useCallback(
     (event: SelectChangeEvent<string>) => {
       setSelectedDistrict(event.target.value);
     },
-    []
+    [],
   );
 
   const handleEdit = useCallback((rowData: any) => {
@@ -205,8 +205,8 @@ const Block: React.FC = () => {
         await deleteOption("blocks", selectedStateForDelete.value);
         setStateData((prevStateData) =>
           prevStateData.filter(
-            (state) => state.value !== selectedStateForDelete.value
-          )
+            (state) => state.value !== selectedStateForDelete.value,
+          ),
         );
         showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
       } catch (error) {
@@ -219,7 +219,7 @@ const Block: React.FC = () => {
 
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
-    value: number
+    value: number,
   ) => {
     setPageOffset(value - 1);
   };
@@ -233,7 +233,7 @@ const Block: React.FC = () => {
       const sortedData = [...blockData];
       const paginatedData = sortedData.slice(
         pageOffset * pageLimit,
-        (pageOffset + 1) * pageLimit
+        (pageOffset + 1) * pageLimit,
       );
       setPageCount(Math.ceil(sortedData.length / pageLimit));
     };
@@ -263,7 +263,7 @@ const Block: React.FC = () => {
     value: string,
     controllingField: string,
     fieldId: string,
-    DistrictId?: string
+    DistrictId?: string,
   ) => {
     const newDistrict = {
       options: [
@@ -280,7 +280,7 @@ const Block: React.FC = () => {
       const response = await createOrUpdateOption(
         fieldId,
         newDistrict,
-        DistrictId
+        DistrictId,
       );
 
       console.log("submit response:", response);

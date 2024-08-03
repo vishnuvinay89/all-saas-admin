@@ -50,7 +50,7 @@ const FileDetails = () => {
       },
       (err) => {
         console.error("Failed to copy link: ", err);
-      }
+      },
     );
   };
 

@@ -54,7 +54,7 @@ describe("CardItem Component", () => {
   it("should display the correct progress", () => {
     render(<CardItem {...defaultProps} />);
     const progressText = screen.getByText(
-      `${defaultProps.card.boardsUploaded} / ${defaultProps.card.totalBoards} COURSE_PLANNER.BOARDS_FULLY_UPLOADED`
+      `${defaultProps.card.boardsUploaded} / ${defaultProps.card.totalBoards} COURSE_PLANNER.BOARDS_FULLY_UPLOADED`,
     );
     expect(progressText).toBeInTheDocument();
   });
@@ -62,7 +62,9 @@ describe("CardItem Component", () => {
   it("should render CustomStepper with the correct completed steps", () => {
     render(<CardItem {...defaultProps} />);
     const stepper = screen.getByTestId("custom-stepper");
-    expect(stepper).toHaveTextContent(`Stepper: ${defaultProps.card.boardsUploaded}`);
+    expect(stepper).toHaveTextContent(
+      `Stepper: ${defaultProps.card.boardsUploaded}`,
+    );
   });
 
   xit("should call onClick handler when the card is clicked", () => {

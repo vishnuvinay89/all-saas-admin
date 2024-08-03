@@ -20,7 +20,7 @@ interface AddStateModalProps {
     name: string,
     value: string,
     fieldId: string,
-    stateId?: string
+    stateId?: string,
   ) => void;
   fieldId: string;
   initialValues?: {

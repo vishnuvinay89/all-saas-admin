@@ -20,7 +20,7 @@ interface AddBlockModalProps {
     value: string,
     controllingField: string,
     fieldId: string,
-    districtId?: string
+    districtId?: string,
   ) => void;
   fieldId: string;
   initialValues?: {

@@ -15,7 +15,7 @@ interface DynamicFormProps {
   formData?: object;
   onSubmit: (
     data: IChangeEvent<any, RJSFSchema, any>,
-    event: React.FormEvent<any>
+    event: React.FormEvent<any>,
   ) => void | Promise<void>;
   onChange: (event: IChangeEvent<any>) => void;
   onError: (errors: any) => void;
@@ -40,7 +40,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   customFields,
   children,
 }) => {
-  console.log(formData)
+  console.log(formData);
   const widgets = {
     MultiSelectCheckboxes: MultiSelectCheckboxes,
     CustomRadioWidget: CustomRadioWidget,
@@ -48,11 +48,11 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   const { t } = useTranslation();
 
   const handleError = (errors: any) => {
-    console.log('handle error', errors);
+    console.log("handle error", errors);
     if (errors.length > 0) {
       const property = errors[0].property?.replace(/^root\./, "");
       const errorField = document.querySelector(
-        `[name$="${property}"]`
+        `[name$="${property}"]`,
       ) as HTMLElement;
 
       if (errorField) {
@@ -67,8 +67,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     onError(errors);
   };
 
-
-
   function transformErrors(errors: any) {
     console.log("errors", errors);
     console.log("schema", schema);
@@ -78,79 +76,75 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           error.message = t("FORM_ERROR_MESSAGES.THIS_IS_REQUIRED_FIELD");
           break;
         }
-        case "maximum":
-          {
-            const property = error.property.substring(1);
+        case "maximum": {
+          const property = error.property.substring(1);
 
-            if (schema.properties?.[property]?.validation?.includes("numeric")) {
-              error.message = t("FORM_ERROR_MESSAGES.MAX_LENGTH_DIGITS_ERROR", {
-                maxLength: schema.properties?.[property]?.maxLength,
-              });
-            }
+          if (schema.properties?.[property]?.validation?.includes("numeric")) {
+            error.message = t("FORM_ERROR_MESSAGES.MAX_LENGTH_DIGITS_ERROR", {
+              maxLength: schema.properties?.[property]?.maxLength,
+            });
           }
-          case "minimum":
-            {
-              const property = error.property.substring(1);
+        }
+        case "minimum": {
+          const property = error.property.substring(1);
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
             error.message = t("FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR", {
               minLength: schema.properties?.[property]?.minLength,
             });
           }
-            }
+        }
         case "pattern": {
           // if (schema.properties?.[property]?.validation?.includes("numeric")) {
-            //   error.message = t("FORM_ERROR_MESSAGES.ENTER_ONLY_DIGITS");
-            // } else if (
-              //   schema.properties?.[property]?.validation?.includes(
-                //     "characters-with-space"
-                //   )
-                // ) {
-                  //   error.message = t(
-                    //     "FORM_ERROR_MESSAGES.NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
+          //   error.message = t("FORM_ERROR_MESSAGES.ENTER_ONLY_DIGITS");
+          // } else if (
+          //   schema.properties?.[property]?.validation?.includes(
+          //     "characters-with-space"
+          //   )
+          // ) {
+          //   error.message = t(
+          //     "FORM_ERROR_MESSAGES.NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
           //   );
           // } else if (error.params.pattern === "^[a-z A-Z]+$") {
-            //   error.message = t(
-              //     "FORM_ERROR_MESSAGES.NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
-              //   );
-              // }
-              
-              const pattern = error?.params?.pattern;
-              console.log(pattern)
-              const property = error.property.substring(1);
+          //   error.message = t(
+          //     "FORM_ERROR_MESSAGES.NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
+          //   );
+          // }
+
+          const pattern = error?.params?.pattern;
+          console.log(pattern);
+          const property = error.property.substring(1);
 
           switch (pattern) {
             case "^[a-z A-Z]+$": {
               error.message = t(
-                "FORM_ERROR_MESSAGES.NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
+                "FORM_ERROR_MESSAGES.NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED",
               );
               break;
             }
             case "^[0-9]{10}$": {
-              if (schema.properties?.[property]?.validation?.includes("mobile")) {
+              if (
+                schema.properties?.[property]?.validation?.includes("mobile")
+              ) {
                 error.message = t(
-                  "FORM_ERROR_MESSAGES.ENTER_VALID_MOBILE_NUMBER"
-                ); 
-                 
-              }
-             else if (schema.properties?.[property]?.validation?.includes(".age")) {
+                  "FORM_ERROR_MESSAGES.ENTER_VALID_MOBILE_NUMBER",
+                );
+              } else if (
+                schema.properties?.[property]?.validation?.includes(".age")
+              ) {
+                error.message = t("age must be valid");
+              } else {
                 error.message = t(
-                  "age must be valid"
-                ); 
-                }
-              else {
-                error.message = t(
-                  "FORM_ERROR_MESSAGES.CHARACTERS_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
+                  "FORM_ERROR_MESSAGES.CHARACTERS_AND_SPECIAL_CHARACTERS_NOT_ALLOWED",
                 );
               }
               break;
             }
-            case "^\d{10}$": {
+            case "^d{10}$": {
               error.message = t(
-                "FORM_ERROR_MESSAGES.CHARACTERS_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
+                "FORM_ERROR_MESSAGES.CHARACTERS_AND_SPECIAL_CHARACTERS_NOT_ALLOWED",
               );
               break;
             }
-            
           }
           break;
         }
@@ -180,7 +174,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             }
           }
         }
-      
       }
 
       return error;

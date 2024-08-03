@@ -23,9 +23,9 @@ import { Role } from "@/utils/app.constant";
 import { getFormRead } from "@/services/CreateUserService";
 import { showToastMessage } from "./Toastify";
 import { capitalizeFirstLetterOfEachWordInArray } from "../utils/Helper";
-import { getUserTableColumns,getTLTableColumns } from "@/data/tableColumns";
-import { useMediaQuery } from '@mui/material';
-import { Theme } from '@mui/system';
+import { getUserTableColumns, getTLTableColumns } from "@/data/tableColumns";
+import { useMediaQuery } from "@mui/material";
+import { Theme } from "@mui/system";
 import CommonUserModal from "./CommonUserModal";
 type UserDetails = {
   userId: any;
@@ -60,19 +60,17 @@ interface UserTableProps {
   userType: string;
   searchPlaceholder: string;
   handleAddUserClick: any;
-  parentState?:boolean
+  parentState?: boolean;
 }
-
-
 
 const UserTable: React.FC<UserTableProps> = ({
   role,
   userType,
   searchPlaceholder,
   handleAddUserClick,
-  parentState
+  parentState,
 }) => {
-  console.log(userType)
+  console.log(userType);
   const [selectedState, setSelectedState] = React.useState<string[]>([]);
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
@@ -93,9 +91,10 @@ const UserTable: React.FC<UserTableProps> = ({
   const [selectedUserId, setSelectedUserId] = useState("");
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
-  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
- // const isMobile = useMediaQuery("(max-width:600px)");
-
+  const isMobile = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm"),
+  );
+  // const isMobile = useMediaQuery("(max-width:600px)");
 
   const [confirmButtonDisable, setConfirmButtonDisable] = useState(false);
   const [pagination, setPagination] = useState(true);
@@ -112,7 +111,6 @@ const UserTable: React.FC<UserTableProps> = ({
   };
   const handleModalSubmit = (value: boolean) => {
     setSubmitValue(true);
-
   };
   const handleCloseAddLearnerModal = () => {
     setOpenAddLearnerModal(false);
@@ -130,19 +128,15 @@ const UserTable: React.FC<UserTableProps> = ({
     setOpenAddFacilitatorModal(false);
   };
 
- 
+  const [openAddTeamLeaderModal, setOpenAddTeamLeaderModal] =
+    React.useState(false);
+  const handleOpenAddTeamLeaderModal = () => {
+    setOpenAddTeamLeaderModal(true);
+  };
 
- const [openAddTeamLeaderModal, setOpenAddTeamLeaderModal] =
-  React.useState(false);
-const handleOpenAddTeamLeaderModal = () => {
-  setOpenAddTeamLeaderModal(true);
-};
-
-const handleCloseAddTeamLeaderModal = () => {
-  setOpenAddTeamLeaderModal(false);
-};
-
-
+  const handleCloseAddTeamLeaderModal = () => {
+    setOpenAddTeamLeaderModal(false);
+  };
 
   const [filters, setFilters] = useState<FilterDetails>({
     role: role,
@@ -155,7 +149,7 @@ const handleCloseAddTeamLeaderModal = () => {
 
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
-    value: number
+    value: number,
   ) => {
     setPageOffset(value - 1);
   };
@@ -189,7 +183,11 @@ const handleCloseAddTeamLeaderModal = () => {
       const stateCodes = code?.join(",");
       setSelectedStateCode(stateCodes);
       if (filters.status)
-        setFilters({ status: [filters.status], states: stateCodes, role: role });
+        setFilters({
+          status: [filters.status],
+          states: stateCodes,
+          role: role,
+        });
       else setFilters({ states: stateCodes, role: role });
     }
 
@@ -313,11 +311,11 @@ const handleCloseAddTeamLeaderModal = () => {
     formFields.fields.forEach((item: any) => {
       const userData = response?.userData;
       const customFieldValue = userData?.customFields?.find(
-        (field: any) => field.fieldId === item.fieldId
+        (field: any) => field.fieldId === item.fieldId,
       );
 
       const getValue = (data: any, field: any) => {
-        console.log(data, field)
+        console.log(data, field);
         if (item.default) {
           return item.default;
         }
@@ -331,19 +329,15 @@ const handleCloseAddTeamLeaderModal = () => {
           }
         } else {
           if (item?.type === "numeric") {
-
             return parseInt(String(field?.value));
           } else if (item?.type === "text") {
             return String(field?.value);
-          }
-          
-           else {
-            if(field?.value ==='FEMALE' || field?.value ==='MALE')
-            {
-              console.log(true)
+          } else {
+            if (field?.value === "FEMALE" || field?.value === "MALE") {
+              console.log(true);
               return field?.value?.toLowerCase();
             }
-          //  console.log()
+            //  console.log()
             return field?.value?.toLowerCase();
           }
         }
@@ -353,11 +347,9 @@ const handleCloseAddTeamLeaderModal = () => {
         if (item?.isMultiSelect) {
           if (userData[item.name] && item?.maxSelections > 1) {
             initialFormData[item.name] = [userData[item.name]];
-          } 
-          else if (item?.type === "checkbox") {
-            initialFormData[item.name]= String(userData[item.name]).split(",");
-          }
-          else {
+          } else if (item?.type === "checkbox") {
+            initialFormData[item.name] = String(userData[item.name]).split(",");
+          } else {
             initialFormData[item.name] = userData[item.name];
           }
         } else if (item?.type === "numeric") {
@@ -365,8 +357,7 @@ const handleCloseAddTeamLeaderModal = () => {
           initialFormData[item.name] = Number(userData[item.name]);
         } else if (item?.type === "text" && userData[item.name]) {
           initialFormData[item.name] = String(userData[item.name]);
-        }
-        else {
+        } else {
           console.log(item.name);
           if (userData[item.name]) {
             initialFormData[item.name] = userData[item.name];
@@ -402,12 +393,11 @@ const handleCloseAddTeamLeaderModal = () => {
       } else if (Role.TEACHER === role) {
         formFields = await getFormRead("USERS", "TEACHER");
         setFormData(mapFields(formFields, response));
-      //  handleOpenAddFacilitatorModal();
-      }
-      else if (Role.TEAM_LEADER === role) {
+        //  handleOpenAddFacilitatorModal();
+      } else if (Role.TEAM_LEADER === role) {
         formFields = await getFormRead("USERS", "TEAM LEADER");
         setFormData(mapFields(formFields, response));
-       // handleOpenAddTeamLeaderModal();
+        // handleOpenAddTeamLeaderModal();
       }
       handleOpenAddLearnerModal();
 
@@ -465,25 +455,25 @@ const handleCloseAddTeamLeaderModal = () => {
         console.log(result);
         const finalResult = result?.map((user: any) => {
           const ageField = user.customFields.find(
-            (field: any) => field.name === "age"
+            (field: any) => field.name === "age",
           );
           const genderField = user.customFields.find(
-            (field: any) => field.name=== "gender"
+            (field: any) => field.name === "gender",
           );
           const blockField = user.customFields.find(
-            (field: any) => field.name === "blocks"
+            (field: any) => field.name === "blocks",
           );
           const districtField = user.customFields.find(
-            (field: any) => field.name === "districts"
+            (field: any) => field.name === "districts",
           );
           const stateField = user.customFields.find(
-            (field: any) => field.name === "states"
+            (field: any) => field.name === "states",
           );
 
           return {
             userId: user.userId,
             username: user.username,
-            status:user.status,
+            status: user.status,
             name:
               user.name.charAt(0).toUpperCase() +
               user.name.slice(1).toLowerCase(),
@@ -494,7 +484,10 @@ const handleCloseAddTeamLeaderModal = () => {
             district: districtField ? districtField.value : null,
             state: stateField ? stateField.value : null,
             blocks: blockField ? blockField.value : null,
-            gender: genderField ? genderField.value?.charAt(0)?.toUpperCase() + genderField.value.slice(1).toLowerCase() : null,
+            gender: genderField
+              ? genderField.value?.charAt(0)?.toUpperCase() +
+                genderField.value.slice(1).toLowerCase()
+              : null,
             // centers: null,
             // Programs: null,
           };
@@ -514,7 +507,15 @@ const handleCloseAddTeamLeaderModal = () => {
       }
     };
     fetchUserList();
-  }, [pageOffset,submitValue, pageLimit, sortBy, filters, openAddFacilitatorModal,  openAddTeamLeaderModal]);
+  }, [
+    pageOffset,
+    submitValue,
+    pageLimit,
+    sortBy,
+    filters,
+    openAddFacilitatorModal,
+    openAddTeamLeaderModal,
+  ]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -526,20 +527,19 @@ const handleCloseAddTeamLeaderModal = () => {
           data?.map(async (user) => {
             const response = await getCohortList(user.userId);
             const cohortNames = response?.result?.cohortData?.map(
-              (cohort: Cohort) => cohort.name
+              (cohort: Cohort) => cohort.name,
             );
             let finalArray;
-            if(cohortNames?.length>=1)
-            {
-              finalArray=capitalizeFirstLetterOfEachWordInArray(cohortNames)
+            if (cohortNames?.length >= 1) {
+              finalArray = capitalizeFirstLetterOfEachWordInArray(cohortNames);
             }
-          //   const finalArray=capitalizeFirstLetterOfEachWordInArray(cohortNames)
+            //   const finalArray=capitalizeFirstLetterOfEachWordInArray(cohortNames)
             // console.log(finalArray)
             return {
               ...user,
               centers: finalArray?.join(" , "),
             };
-          })
+          }),
         );
         setData(newData);
         setCohortsFetched(true);
@@ -605,7 +605,11 @@ const handleCloseAddTeamLeaderModal = () => {
         <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
       ) : data.length !== 0 && loading === false ? (
         <KaTableComponent
-          columns= {role==="Team Leader" ? getTLTableColumns(t, isMobile): getUserTableColumns(t, isMobile)}
+          columns={
+            role === "Team Leader"
+              ? getTLTableColumns(t, isMobile)
+              : getUserTableColumns(t, isMobile)
+          }
           data={data}
           limit={pageLimit}
           offset={pageOffset}
@@ -656,21 +660,24 @@ const handleCloseAddTeamLeaderModal = () => {
         confirmButtonDisable={confirmButtonDisable}
         setConfirmButtonDisable={setConfirmButtonDisable}
       />
-      
-        <CommonUserModal
+
+      <CommonUserModal
         open={openAddLearnerModal}
         onClose={handleCloseAddLearnerModal}
         formData={formdata}
         isEditModal={true}
         userId={userId}
         onSubmit={handleModalSubmit}
-
-        userType={userType==="Learners"? "STUDENT" :userType==="Facilitators"? "TEACHER": "TEAM LEADER"}
+        userType={
+          userType === "Learners"
+            ? "STUDENT"
+            : userType === "Facilitators"
+              ? "TEACHER"
+              : "TEAM LEADER"
+        }
       />
-      
     </HeaderComponent>
   );
 };
-
 
 export default UserTable;

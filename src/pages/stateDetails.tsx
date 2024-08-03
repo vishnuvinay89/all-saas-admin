@@ -82,7 +82,7 @@ const StateDetails = () => {
       },
       (err) => {
         console.error("Failed to copy link: ", err);
-      }
+      },
     );
   };
 

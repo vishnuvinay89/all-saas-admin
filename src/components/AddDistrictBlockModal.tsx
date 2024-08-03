@@ -21,7 +21,7 @@ interface AddDistrictBlockModalProps {
     value: string,
     controllingField: string,
     fieldId: string,
-    districtId?: string
+    districtId?: string,
   ) => void;
   fieldId: string;
   initialValues?: {
@@ -116,7 +116,7 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
   };
 
   const handleControllingFieldChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const inputControllingField = e.target.value;
     if (fieldTextValidation(inputControllingField)) {

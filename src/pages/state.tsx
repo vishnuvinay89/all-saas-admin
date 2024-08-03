@@ -83,8 +83,8 @@ const State: React.FC = () => {
         await deleteOption("states", selectedStateForDelete.value);
         setStateData((prevStateData) =>
           prevStateData.filter(
-            (state) => state.value !== selectedStateForDelete.value
-          )
+            (state) => state.value !== selectedStateForDelete.value,
+          ),
         );
         showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
       } catch (error) {
@@ -108,7 +108,7 @@ const State: React.FC = () => {
   const handleAddStateSubmit = async (
     name: string,
     value: string,
-    stateId?: string
+    stateId?: string,
   ) => {
     const newState = {
       options: [{ name, value }],

@@ -4,9 +4,7 @@ import {
   customFields,
 } from "@/components/GeneratedSchemas";
 import SimpleModal from "@/components/SimpleModal";
-import {
-  getFormRead,
-} from "@/services/CreateUserService";
+import { getFormRead } from "@/services/CreateUserService";
 import { CustomField } from "@/utils/Interfaces";
 import { CohortTypes } from "@/utils/app.constant";
 import { useLocationState } from "@/utils/useLocationState";
@@ -48,7 +46,6 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
   const [uiSchema, setUiSchema] = React.useState<any>();
   const [openAddNewCohort, setOpenAddNewCohort] =
     React.useState<boolean>(false);
-
 
   const { t } = useTranslation();
   const {
@@ -92,7 +89,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
 
   const handleSubmit = async (
     data: IChangeEvent<any, RJSFSchema, any>,
-    event: React.FormEvent<any>
+    event: React.FormEvent<any>,
   ) => {
     const formData = data?.formData;
 
@@ -144,53 +141,52 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
   };
 
   return (
-   
-      <SimpleModal
-        open={open}
-        onClose={onClose}
-        showFooter={false}
-        modalTitle={t("CENTERS.NEW_CENTER")}
+    <SimpleModal
+      open={open}
+      onClose={onClose}
+      showFooter={false}
+      modalTitle={t("CENTERS.NEW_CENTER")}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+          marginTop: "10px",
+        }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "8px",
-            marginTop: "10px",
-          }}
-        >
-          <AreaSelection
-            states={transformArray(states)}
-            districts={transformArray(districts)}
-            blocks={transformArray(blocks)}
-            selectedState={selectedState}
-            selectedDistrict={selectedDistrict}
-            selectedBlock={selectedBlock}
-            handleStateChangeWrapper={handleStateChangeWrapper}
-            handleDistrictChangeWrapper={handleDistrictChangeWrapper}
-            handleBlockChangeWrapper={handleBlockChangeWrapper}
-            isMobile={isMobile}
-            isMediumScreen={isMediumScreen}
-            isCenterSelection={false}
-            allCenters={allCenters}
-            selectedCenter={selectedCenter}
-            handleCenterChangeWrapper={handleCenterChangeWrapper}
-          />
-        </Box>
+        <AreaSelection
+          states={transformArray(states)}
+          districts={transformArray(districts)}
+          blocks={transformArray(blocks)}
+          selectedState={selectedState}
+          selectedDistrict={selectedDistrict}
+          selectedBlock={selectedBlock}
+          handleStateChangeWrapper={handleStateChangeWrapper}
+          handleDistrictChangeWrapper={handleDistrictChangeWrapper}
+          handleBlockChangeWrapper={handleBlockChangeWrapper}
+          isMobile={isMobile}
+          isMediumScreen={isMediumScreen}
+          isCenterSelection={false}
+          allCenters={allCenters}
+          selectedCenter={selectedCenter}
+          handleCenterChangeWrapper={handleCenterChangeWrapper}
+        />
+      </Box>
 
-        {dynamicFormForBlock && schema && uiSchema && (
-          <DynamicForm
-            schema={schema}
-            uiSchema={uiSchema}
-            onSubmit={handleSubmit}
-            onChange={handleChangeForm}
-            onError={handleError}
-            widgets={{}}
-            showErrorList={true}
-            customFields={customFields}
-          ></DynamicForm>
-        )}
-      </SimpleModal>
+      {dynamicFormForBlock && schema && uiSchema && (
+        <DynamicForm
+          schema={schema}
+          uiSchema={uiSchema}
+          onSubmit={handleSubmit}
+          onChange={handleChangeForm}
+          onError={handleError}
+          widgets={{}}
+          showErrorList={true}
+          customFields={customFields}
+        ></DynamicForm>
+      )}
+    </SimpleModal>
   );
 };
 

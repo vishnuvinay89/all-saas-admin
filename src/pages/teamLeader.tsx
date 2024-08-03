@@ -8,32 +8,37 @@ const TeamLeader: React.FC = () => {
   const { t } = useTranslation();
   const handleAddTeamLeaderClick = () => {
     handleOpenAddTeamLeaderModal();
-
   };
   const [submitValue, setSubmitValue] = React.useState<boolean>(false);
 
-  const [openAddTeamLeaderModal, setOpenAddTeamLeaderModal] = React.useState(false);
- const handleOpenAddTeamLeaderModal = () => {
-  setOpenAddTeamLeaderModal(true);
-};
-const handleModalSubmit = (value: boolean) => {
-  setSubmitValue(true);
+  const [openAddTeamLeaderModal, setOpenAddTeamLeaderModal] =
+    React.useState(false);
+  const handleOpenAddTeamLeaderModal = () => {
+    setOpenAddTeamLeaderModal(true);
+  };
+  const handleModalSubmit = (value: boolean) => {
+    setSubmitValue(true);
+  };
+  const handleCloseAddTeamLeaderModal = () => {
+    setOpenAddTeamLeaderModal(false);
+  };
 
-};
-const handleCloseAddTeamLeaderModal = () => {
-  setOpenAddTeamLeaderModal(false);
-};
- 
   return (
     <>
-      <UserTable role={Role.TEAM_LEADER} searchPlaceholder={ t("TEAM_LEADERS.SEARCHBAR_PLACEHOLDER")} userType={t("SIDEBAR.TEAM_LEADERS")} handleAddUserClick={handleAddTeamLeaderClick} parentState={submitValue}/>
-    
-             <CommonUserModal
-             open={openAddTeamLeaderModal}
-             onClose={handleCloseAddTeamLeaderModal}
-            onSubmit={handleModalSubmit}
-            userType= {FormContextType.TEAM_LEADER}
-            />
+      <UserTable
+        role={Role.TEAM_LEADER}
+        searchPlaceholder={t("TEAM_LEADERS.SEARCHBAR_PLACEHOLDER")}
+        userType={t("SIDEBAR.TEAM_LEADERS")}
+        handleAddUserClick={handleAddTeamLeaderClick}
+        parentState={submitValue}
+      />
+
+      <CommonUserModal
+        open={openAddTeamLeaderModal}
+        onClose={handleCloseAddTeamLeaderModal}
+        onSubmit={handleModalSubmit}
+        userType={FormContextType.TEAM_LEADER}
+      />
     </>
   );
 };

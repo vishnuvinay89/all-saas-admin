@@ -1,6 +1,6 @@
-import React, { ChangeEvent , useState, useEffect } from "react";
+import React, { ChangeEvent, useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
-import { DataType ,SortDirection} from "ka-table/enums";
+import { DataType, SortDirection } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import HeaderComponent from "@/components/HeaderComponent";
 import { useTranslation } from "next-i18next";
@@ -24,7 +24,7 @@ import { CustomField } from "@/utils/Interfaces";
 import { showToastMessage } from "@/components/Toastify";
 import AddNewCenters from "@/components/AddNewCenters";
 import { getCenterTableData } from "@/data/tableColumns";
-import { Theme } from '@mui/system';
+import { Theme } from "@mui/system";
 
 type cohortFilterDetails = {
   type?: string;
@@ -82,7 +82,9 @@ const Center: React.FC = () => {
   const handleCloseAddLearnerModal = () => {
     setOpenAddNewCohort(false);
   };
-  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm"),
+  );
   // use api calls
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -173,7 +175,7 @@ const Center: React.FC = () => {
 
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
-    value: number
+    value: number,
   ) => {
     setPageOffset(value - 1);
   };
@@ -228,7 +230,6 @@ const Center: React.FC = () => {
         setFilters({
           status: filters.status,
           states: selectedStateCode,
-
         });
       } else {
         setFilters({
@@ -243,7 +244,6 @@ const Center: React.FC = () => {
           status: filters.status,
           states: selectedStateCode,
           districts: districts,
-
         });
       } else {
         setFilters({
@@ -262,7 +262,6 @@ const Center: React.FC = () => {
           status: filters.status,
           states: selectedStateCode,
           districts: selectedDistrictCode,
-        
         });
       } else {
         setFilters({
@@ -305,7 +304,7 @@ const Center: React.FC = () => {
       if (resp?.responseCode === 200) {
         showToastMessage(t("CENTERS.CENTER_DELETE_SUCCESSFULLY"), "success");
         const cohort = cohortData?.find(
-          (item: any) => item.cohortId == selectedCohortId
+          (item: any) => item.cohortId == selectedCohortId,
         );
         if (cohort) {
           cohort.status = Status.ARCHIVED;
@@ -439,12 +438,9 @@ const Center: React.FC = () => {
     }
   };
 
- 
-
   const handleAddUserClick = () => {
     setOpenAddNewCohort(true);
   };
-
 
   // props to send in header
   const userProps = {
@@ -500,12 +496,11 @@ const Center: React.FC = () => {
         modalOpen={confirmationModalOpen}
       />
       <HeaderComponent {...userProps}>
-        
         {loading ? (
           <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
-        ) : cohortData?.length > 0    ? (
+        ) : cohortData?.length > 0 ? (
           <KaTableComponent
-            columns= {getCenterTableData(t, isMobile)}
+            columns={getCenterTableData(t, isMobile)}
             data={cohortData}
             limit={pageLimit}
             offset={pageOffset}

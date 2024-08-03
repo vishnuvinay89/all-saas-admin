@@ -120,8 +120,8 @@ const District: React.FC = () => {
         await deleteOption("districts", selectedStateForDelete.value);
         setDistrictData((prev) =>
           prev.filter(
-            (district) => district.value !== selectedStateForDelete.value
-          )
+            (district) => district.value !== selectedStateForDelete.value,
+          ),
         );
         showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
       } catch (error) {
@@ -136,7 +136,7 @@ const District: React.FC = () => {
     value: string,
     controllingField: string,
     fieldId: string,
-    DistrictId?: string
+    DistrictId?: string,
   ) => {
     const newDistrict = {
       options: [
@@ -152,7 +152,7 @@ const District: React.FC = () => {
       const response = await createOrUpdateOption(
         fieldId,
         newDistrict,
-        DistrictId
+        DistrictId,
       );
 
       if (response) {
@@ -179,7 +179,7 @@ const District: React.FC = () => {
             value,
             controllingField,
             districtFieldId,
-            selectedStateForEdit?.value
+            selectedStateForEdit?.value,
           )
         }
         fieldId={districtFieldId}

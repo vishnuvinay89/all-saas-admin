@@ -44,7 +44,7 @@ const ActionCell: React.FC<ActionCellProps> = ({
     <React.Fragment>
       {extraActions?.length > 0 ? (
         <Box>
-          <IconButton size="small" onClick={handleClick} role="button"  >
+          <IconButton size="small" onClick={handleClick} role="button">
             <MoreVertIcon fontSize="small" />
           </IconButton>
           <Menu

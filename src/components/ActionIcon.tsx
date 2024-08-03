@@ -68,7 +68,9 @@ const ActionIcon: React.FC<ActionCellProps> = ({
                 : "rgb(244, 67, 54)",
             }}
           />
-          <Typography variant="body2" fontFamily={"Poppins"}>{t("COMMON.DELETE")}</Typography>
+          <Typography variant="body2" fontFamily={"Poppins"}>
+            {t("COMMON.DELETE")}
+          </Typography>
         </Box>
       </Tooltip>
     </Box>

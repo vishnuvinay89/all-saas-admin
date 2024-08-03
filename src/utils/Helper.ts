@@ -47,15 +47,15 @@ export const getDeviceId = () => {
 
 export const generateUsernameAndPassword = (
   stateCode: string,
-  role: string
+  role: string,
 ) => {
   const currentYear = new Date().getFullYear().toString().slice(-2); // Last two digits of the current year
   const randomNum = Math.floor(10000 + Math.random() * 90000).toString(); //NOSONAR
 
   const rolePrefixes: Record<string, string> = {
-    [FormContextType.TEACHER]: 'FSC',
-    [FormContextType.STUDENT]: 'SC',
-    [FormContextType.TEAM_LEADER]: 'TL'
+    [FormContextType.TEACHER]: "FSC",
+    [FormContextType.STUDENT]: "SC",
+    [FormContextType.TEAM_LEADER]: "TL",
   };
 
   if (!(role in rolePrefixes)) {
@@ -100,14 +100,14 @@ export const firstLetterInUpperCase = (label: string): string | null => {
     ?.join(" ");
 };
 export const capitalizeFirstLetterOfEachWordInArray = (
-  arr: string[]
+  arr: string[],
 ): string[] => {
   if (!arr) {
     return arr;
   }
   console.log(arr);
   return arr.map((str) =>
-    str.replace(/\b[a-z]/g, (char) => char.toUpperCase())
+    str.replace(/\b[a-z]/g, (char) => char.toUpperCase()),
   );
 };
 export const fieldTextValidation = (text: string) => {
