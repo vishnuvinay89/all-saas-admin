@@ -19,9 +19,6 @@ import { deleteUser } from "../services/DeleteUser";
 import { getCohortList } from "../services/GetCohortList";
 import { userList, getUserDetails } from "../services/UserList";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
-import AddLearnerModal from "@/components/AddLeanerModal";
-import AddFacilitatorModal from "./AddFacilitator";
-import AddTeamLeaderModal from "./AddTeamLeaderModal";
 import { Role } from "@/utils/app.constant";
 import { getFormRead } from "@/services/CreateUserService";
 import { showToastMessage } from "./Toastify";
@@ -29,7 +26,7 @@ import { capitalizeFirstLetterOfEachWordInArray } from "../utils/Helper";
 import { getUserTableColumns,getTLTableColumns } from "@/data/tableColumns";
 import { useMediaQuery } from '@mui/material';
 import { Theme } from '@mui/system';
-
+import CommonUserModal from "./CommonUserModal";
 type UserDetails = {
   userId: any;
   username: any;
@@ -75,6 +72,7 @@ const UserTable: React.FC<UserTableProps> = ({
   handleAddUserClick,
   parentState
 }) => {
+  console.log(userType)
   const [selectedState, setSelectedState] = React.useState<string[]>([]);
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
@@ -340,8 +338,7 @@ const handleCloseAddTeamLeaderModal = () => {
           }
           
            else {
-             console.log("asakas",field?.value)
-            if(field.value ==='FEMALE' || field.value ==='MALE')
+            if(field?.value ==='FEMALE' || field?.value ==='MALE')
             {
               console.log(true)
               return field?.value?.toLowerCase();
@@ -402,17 +399,17 @@ const handleCloseAddTeamLeaderModal = () => {
         formFields = await getFormRead("USERS", "STUDENT");
         setFormData(mapFields(formFields, response));
         console.log("mapped formdata", formdata);
-        handleOpenAddLearnerModal();
       } else if (Role.TEACHER === role) {
         formFields = await getFormRead("USERS", "TEACHER");
         setFormData(mapFields(formFields, response));
-        handleOpenAddFacilitatorModal();
+      //  handleOpenAddFacilitatorModal();
       }
       else if (Role.TEAM_LEADER === role) {
         formFields = await getFormRead("USERS", "TEAM LEADER");
         setFormData(mapFields(formFields, response));
-        handleOpenAddTeamLeaderModal();
+       // handleOpenAddTeamLeaderModal();
       }
+      handleOpenAddLearnerModal();
 
       console.log("response", response);
       console.log("formFields", formFields);
@@ -659,38 +656,21 @@ const handleCloseAddTeamLeaderModal = () => {
         confirmButtonDisable={confirmButtonDisable}
         setConfirmButtonDisable={setConfirmButtonDisable}
       />
-      <AddLearnerModal
+      
+        <CommonUserModal
         open={openAddLearnerModal}
         onClose={handleCloseAddLearnerModal}
         formData={formdata}
         isEditModal={true}
         userId={userId}
         onSubmit={handleModalSubmit}
+
+        userType={userType==="Learners"? "STUDENT" :userType==="Facilitators"? "TEACHER": "TEAM LEADER"}
       />
-      <AddFacilitatorModal
-        open={openAddFacilitatorModal}
-        onClose={handleCloseAddFacilitatorModal}
-        formData={formdata}
-        isEditModal={true}
-        userId={userId}
-      />
-      <AddTeamLeaderModal
-        open={openAddTeamLeaderModal}
-        onClose={handleCloseAddTeamLeaderModal}
-        formData={formdata}
-        isEditModal={true}
-        userId={userId}
-      />
+      
     </HeaderComponent>
   );
 };
 
-// export async function getStaticProps({ locale }: any) {
-//   return {
-//     props: {
-//       ...(await serverSideTranslations(locale, ["common"])),
-//     },
-//   };
-// }
 
 export default UserTable;

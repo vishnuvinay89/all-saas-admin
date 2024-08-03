@@ -83,7 +83,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
     handleBlockChangeWrapper,
     handleCenterChangeWrapper,
     selectedCenterCode,
-    selectedBlockFieldId,
+    selectedBlockCohortId,
     dynamicFormForBlock,
   } = useLocationState(open, onClose);
 
@@ -305,7 +305,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
   //     //   console.error('Error creating user', error);
   //     // }
   //   };
-  console.log("selectedBlockFieldId", selectedBlockFieldId);
+  console.log("selectedBlockFieldId", selectedBlockCohortId);
   useEffect(() => {
     const getAddLearnerFormData = async () => {
       try {
@@ -335,8 +335,8 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
   ) => {
     const formData = data.formData;
 
-    if (selectedBlockFieldId) {
-      const parentId = selectedBlockFieldId;
+    if (selectedBlockCohortId) {
+      const parentId = selectedBlockCohortId;
       const cohortDetails: CohortDetails = {
         name: formData.name,
         type: "COHORT",

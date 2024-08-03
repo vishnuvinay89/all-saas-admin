@@ -51,9 +51,9 @@ export const generateUsernameAndPassword = (
   const randomNum = Math.floor(10000 + Math.random() * 90000).toString();
 
   const username =
-    role === 'Teacher'
+    role === 'TEACHER'
       ? `FSC${stateCode}${currentYear}${randomNum}`
-      :  role === 'Student'?`SC${stateCode}${currentYear}${randomNum}`:`TL${stateCode}${currentYear}${randomNum}`;
+      :  role === 'STUDENT'?`SC${stateCode}${currentYear}${randomNum}`:`TL${stateCode}${currentYear}${randomNum}`;
   const password = randomNum;
 
   return { username, password };

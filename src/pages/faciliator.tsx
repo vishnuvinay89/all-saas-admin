@@ -2,15 +2,20 @@ import React from "react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import UserTable from "@/components/UserTable";
 import { useTranslation } from "next-i18next";
-import { Role } from "@/utils/app.constant";
-import AddFacilitatorModal from "@/components/AddFacilitator";
+import { Role, FormContextType } from "@/utils/app.constant";
+import CommonUserModal from "@/components/CommonUserModal";
 const Faciliator: React.FC = () => {
   const { t } = useTranslation();
   const [openAddFacilitatorModal,  setOpenAddFacilitatorModal] = React.useState(false);
+  const [submitValue, setSubmitValue] = React.useState<boolean>(false);
+
  const handleOpenAddFacilitatorModal = () => {
   setOpenAddFacilitatorModal(true);
 };
+const handleModalSubmit = (value: boolean) => {
+  setSubmitValue(true);
 
+};
 const handleCloseAddFacilitatorModal = () => {
   setOpenAddFacilitatorModal(false);
 };
@@ -20,10 +25,14 @@ const handleCloseAddFacilitatorModal = () => {
   };
   return (
     <>
-      <UserTable role={Role.TEACHER} userType= {t("SIDEBAR.FACILITATORS")} searchPlaceholder={ t("FACILITATORS.SEARCHBAR_PLACEHOLDER")}handleAddUserClick={handleAddFaciliatorClick} parentState={openAddFacilitatorModal}/>
-      <AddFacilitatorModal
+      <UserTable role={Role.TEACHER} userType= {t("SIDEBAR.FACILITATORS")} searchPlaceholder={ t("FACILITATORS.SEARCHBAR_PLACEHOLDER")}handleAddUserClick={handleAddFaciliatorClick} parentState={submitValue}/>
+      <CommonUserModal
+       
               open={openAddFacilitatorModal}
               onClose={handleCloseAddFacilitatorModal}
+              userType={FormContextType.TEACHER}
+              onSubmit={handleModalSubmit}
+
             />
     </>
   );

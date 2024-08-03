@@ -32,10 +32,10 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
   const [selectedBlock, setSelectedBlock] = useState<string[]>([]);
   const [selectedBlockCode, setSelectedBlockCode] = useState("");
   const [selectedCenterCode, setSelectedCenterCode] = useState("");
-  const [selectedBlockFieldId, setSelectedBlockFieldId] = useState("");
-  const [BlockFieldId, setBlockFieldId] = useState("");
-  const [StateFieldId, setStateFieldId] = useState("");
-  const [DistrctFieldId, setDistrictFieldId] = useState("");
+  const [selectedBlockCohortId, setSelectedBlockCohortId] = useState("");
+  const [blockFieldId, setBlockFieldId] = useState("");
+  const [stateFieldId, setStateFieldId] = useState("");
+  const [distrctFieldId, setDistrictFieldId] = useState("");
 
   const handleStateChangeWrapper = useCallback(
     async (selectedNames: string[], selectedCodes: string[]) => {
@@ -120,7 +120,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
         },
         }
         const response = await getCenterList(getBlockIdObject);
-        setSelectedBlockFieldId(
+        setSelectedBlockCohortId(
           response?.result?.results?.cohortDetails[0].cohortId
         );
         console.log(response?.result?.results?.cohortDetails[0].cohortId);
@@ -246,14 +246,14 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
     selectedBlock,
     selectedBlockCode,
     dynamicFormForBlock,
-    BlockFieldId,
-    DistrctFieldId,
-    StateFieldId,
+    blockFieldId,
+    distrctFieldId,
+    stateFieldId,
     handleStateChangeWrapper,
     handleDistrictChangeWrapper,
     handleBlockChangeWrapper,
     handleCenterChangeWrapper,
     selectedCenterCode,
-    selectedBlockFieldId,
+    selectedBlockCohortId,
   };
 };
