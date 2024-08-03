@@ -1,6 +1,6 @@
 import FingerprintJS from "fingerprintjs2";
 import { getUserDetails } from "../services/UserList";
-import { Role } from "./app.constant";
+import { Role, FormContextType } from "./app.constant";
 import { State } from "./Interfaces";
 
 export const generateUUID = () => {
@@ -53,9 +53,9 @@ export const generateUsernameAndPassword = (
   const randomNum = Math.floor(10000 + Math.random() * 90000).toString(); // 5 digit random number
 
   const rolePrefixes: Record<string, string> = {
-    [Role.TEACHER]: 'FSC',
-    [Role.STUDENT]: 'SC',
-    [Role.TEAM_LEADER]: 'TL'
+    [FormContextType.TEACHER]: 'FSC',
+    [FormContextType.STUDENT]: 'SC',
+    [FormContextType.TEAM_LEADER]: 'TL'
   };
 
   if (!(role in rolePrefixes)) {
