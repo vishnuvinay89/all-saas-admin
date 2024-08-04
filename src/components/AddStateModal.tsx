@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
-import { fieldTextValidation } from "@/utils/Helper";
 
 interface AddStateModalProps {
   open: boolean;
@@ -20,7 +19,7 @@ interface AddStateModalProps {
     name: string,
     value: string,
     fieldId: string,
-    stateId?: string,
+    stateId?: string
   ) => void;
   fieldId: string;
   initialValues?: {
@@ -38,67 +37,67 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
   initialValues = {},
   stateId,
 }) => {
-  const [name, setName] = useState(initialValues.name || "");
-  const [value, setValue] = useState(initialValues.value || "");
-  const [nameError, setNameError] = useState<string | null>(null);
-  const [valueError, setValueError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    name: initialValues.name || "",
+    value: initialValues.value || "",
+  });
+  const [errors, setErrors] = useState<{ name?: string; value?: string }>({});
   const { t } = useTranslation();
 
   useEffect(() => {
-    setName(initialValues.name || "");
-    setValue(initialValues.value || "");
-    setNameError(null);
-    setValueError(null);
+    setFormData({
+      name: initialValues.name || "",
+      value: initialValues.value || "",
+    });
+    setErrors({});
   }, [initialValues]);
 
+  const isAlphabetic = (input: string) =>
+    input === "" || /^[a-zA-Z]+$/.test(input);
+
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
+    if (value === "") {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: t(
+          field === "name"
+            ? "COMMON.STATE_NAME_REQUIRED"
+            : "COMMON.CODE_REQUIRED"
+        ),
+      }));
+    } else if (!isAlphabetic(value)) {
+      setErrors((prev) => ({ ...prev, [field]: t("COMMON.INVALID_TEXT") }));
+    } else {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: { name?: string; value?: string } = {};
+
+    if (!formData.name) {
+      newErrors.name = t("COMMON.STATE_NAME_REQUIRED");
+    }
+    if (!isAlphabetic(formData.name)) {
+      newErrors.name = t("COMMON.INVALID_TEXT");
+    }
+    if (!formData.value) {
+      newErrors.value = t("COMMON.CODE_REQUIRED");
+    }
+    if (!isAlphabetic(formData.value)) {
+      newErrors.value = t("COMMON.INVALID_TEXT");
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = () => {
-    let hasError = false;
-
-    if (!name) {
-      setNameError(t("COMMON.NAME_REQUIRED"));
-      hasError = true;
-    } else if (!fieldTextValidation(name)) {
-      setNameError(t("COMMON.INVALID_TEXT"));
-      hasError = true;
-    } else {
-      setNameError(null);
-    }
-
-    if (!value) {
-      setValueError(t("COMMON.CODE_REQUIRED"));
-      hasError = true;
-    } else if (!fieldTextValidation(value)) {
-      setValueError(t("COMMON.INVALID_TEXT"));
-      hasError = true;
-    } else {
-      setValueError(null);
-    }
-
-    if (!hasError) {
-      onSubmit(name, value, fieldId, stateId);
-      setName("");
-      setValue("");
+    if (validateForm()) {
+      onSubmit(formData.name, formData.value, fieldId, stateId);
       onClose();
-    }
-  };
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputName = e.target.value;
-    if (fieldTextValidation(inputName)) {
-      setName(inputName);
-      setNameError(null);
-    } else {
-      setNameError(t("COMMON.INVALID_TEXT"));
-    }
-  };
-
-  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value.toUpperCase();
-    if (fieldTextValidation(inputValue)) {
-      setValue(inputValue);
-      setValueError(null);
-    } else {
-      setValueError(t("COMMON.INVALID_TEXT"));
     }
   };
 
@@ -115,10 +114,10 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
           type="text"
           fullWidth
           variant="outlined"
-          value={name}
-          onChange={handleNameChange}
-          error={!!nameError}
-          helperText={nameError}
+          value={formData.name}
+          onChange={(e) => handleChange("name", e.target.value)}
+          error={!!errors.name}
+          helperText={errors.name}
         />
         <TextField
           margin="dense"
@@ -126,10 +125,10 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
           type="text"
           fullWidth
           variant="outlined"
-          value={value}
-          onChange={handleValueChange}
-          error={!!valueError}
-          helperText={valueError}
+          value={formData.value}
+          onChange={(e) => handleChange("value", e.target.value.toUpperCase())}
+          error={!!errors.value}
+          helperText={errors.value}
         />
         <Box display="flex" alignItems="center" mt={2}>
           <InfoOutlinedIcon color="primary" sx={{ mr: 1 }} />
