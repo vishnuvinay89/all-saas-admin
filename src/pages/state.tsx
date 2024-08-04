@@ -29,6 +29,7 @@ type StateBlockDistrictListParams = {
   offset: number;
   fieldName: string;
   optionName?: string;
+  sort?: any;
 };
 
 const State: React.FC = () => {
@@ -49,6 +50,7 @@ const State: React.FC = () => {
   const [pageOffset, setPageOffset] = useState<number>(Numbers.ZERO);
   const [pageLimit, setPageLimit] = useState<number>(Numbers.TEN);
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10]);
+  const [selectedSort, setSelectedSort] = useState("Sort");
 
   const columns = [
     { key: "label", title: t("MASTER.STATE_NAMES") },
@@ -68,10 +70,11 @@ const State: React.FC = () => {
     setConfirmationDialogOpen(true);
   };
 
-  const handleSortChange = (event: SelectChangeEvent) => {
+  const handleSortChange = async (event: SelectChangeEvent) => {
     const sortOrder =
       event.target.value === "Z-A" ? SORT.DESCENDING : SORT.ASCENDING;
     setSortBy(["name", sortOrder]);
+    setSelectedSort(event.target.value);
   };
 
   const handleConfirmDelete = async () => {
@@ -169,6 +172,7 @@ const State: React.FC = () => {
         offset: pageOffset * pageLimit,
         fieldName: "states",
         optionName: keyword,
+        sort: sortBy, // Ensure this is correctly formatted
       };
 
       const resp = await getStateBlockDistrictList(data);
@@ -195,7 +199,7 @@ const State: React.FC = () => {
 
   useEffect(() => {
     fetchStateData(searchKeyword);
-  }, [searchKeyword, pageLimit, pageOffset]);
+  }, [searchKeyword, pageLimit, pageOffset, sortBy]);
 
   return (
     <HeaderComponent
@@ -205,6 +209,7 @@ const State: React.FC = () => {
       handleSortChange={handleSortChange}
       showAddNew={true}
       showSort={true}
+      selectedSort={selectedSort}
       showFilter={false}
       handleSearch={handleSearch}
       handleAddUserClick={handleAddStateClick}
@@ -267,10 +272,12 @@ const State: React.FC = () => {
   );
 };
 
-export const getServerSideProps = async ({ locale }: { locale: string }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ["common"])),
-  },
-});
-
 export default State;
+
+export const getServerSideProps = async ({ locale }: { locale: string }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common", "master"])),
+    },
+  };
+};
