@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -8,9 +8,13 @@ import {
   Button,
   Typography,
   Box,
+  Select,
+  MenuItem,
+  CircularProgress,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
+import { getStateBlockDistrictList } from "@/services/MasterDataService";
 
 interface AddDistrictBlockModalProps {
   open: boolean;
@@ -46,6 +50,7 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
   });
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
+  const [states, setStates] = useState<{ value: string; label: string }[]>([]);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -57,33 +62,57 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
     setErrors({});
   }, [initialValues]);
 
-  const validateField = useCallback(
-    (field: keyof typeof formData, value: string, requiredMessage: string) => {
-      if (!value) return requiredMessage;
-      if (!/^[a-zA-Z]*$/.test(value)) return t("COMMON.INVALID_TEXT");
-      return null;
-    },
-    [t]
-  );
+  useEffect(() => {
+    const fetchStates = async () => {
+      try {
+        const response = await getStateBlockDistrictList({
+          fieldName: "states",
+        });
+        if (response) {
+          setStates(response.result.values);
+        } else {
+          console.error("Unexpected response format:", response);
+          setStates([]);
+        }
+      } catch (error) {
+        console.error("Error fetching states:", error);
+        setStates([]);
+      } finally {
+      }
+    };
 
-  const handleChange = useCallback(
+    if (open) fetchStates();
+  }, [open]);
+
+  const validateField = (
+    field: keyof typeof formData,
+    value: string,
+    requiredMessage: string
+  ) => {
+    if (!value) return requiredMessage;
+    if (field !== "controllingField" && !/^[a-zA-Z]*$/.test(value))
+      return t("COMMON.INVALID_TEXT");
+    return null;
+  };
+
+  const handleChange =
     (field: keyof typeof formData) =>
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { value } = e.target;
-        setFormData((prev) => ({ ...prev, [field]: value }));
-        setErrors((prev) => ({
-          ...prev,
-          [field]: validateField(
-            field,
-            value,
-            t(`COMMON.${field.toUpperCase()}_REQUIRED`)
-          ),
-        }));
-      },
-    [validateField, t]
-  );
+    (
+      e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
+    ) => {
+      const { value } = e.target as HTMLInputElement;
+      setFormData((prev) => ({ ...prev, [field]: value }));
+      setErrors((prev) => ({
+        ...prev,
+        [field]: validateField(
+          field,
+          value,
+          t(`COMMON.${field.toUpperCase()}_REQUIRED`)
+        ),
+      }));
+    };
 
-  const validateForm = useCallback(() => {
+  const validateForm = () => {
     const newErrors = {
       name: validateField(
         "name",
@@ -100,9 +129,9 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
 
     setErrors(newErrors);
     return !Object.values(newErrors).some((error) => error !== null);
-  }, [formData, validateField, t]);
+  };
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = () => {
     if (validateForm()) {
       onSubmit(
         formData.name,
@@ -118,68 +147,74 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
       });
       onClose();
     }
-  }, [formData, validateForm, onSubmit, fieldId, districtId, onClose]);
+  };
 
-  const isEditing = useMemo(() => !!initialValues.name, [initialValues]);
-  const buttonText = useMemo(
-    () => (isEditing ? t("COMMON.UPDATE") : t("COMMON.SUBMIT")),
-    [isEditing, t]
-  );
-  const dialogTitle = useMemo(
-    () => (isEditing ? t("COMMON.UPDATE_DISTRICT") : t("COMMON.ADD_DISTRICT")),
-    [isEditing, t]
-  );
-
-  const renderTextField = useCallback(
-    (
-      label: string,
-      value: string,
-      error: string | null,
-      field: keyof typeof formData
-    ) => (
-      <TextField
-        margin="dense"
-        label={label}
-        type="text"
-        fullWidth
-        variant="outlined"
-        value={value}
-        onChange={handleChange(field)}
-        error={!!error}
-        helperText={error}
-      />
-    ),
-    [handleChange]
-  );
+  const isEditing = !!initialValues.name;
+  const buttonText = isEditing ? t("COMMON.UPDATE") : t("COMMON.SUBMIT");
+  const dialogTitle = isEditing
+    ? t("COMMON.UPDATE_DISTRICT")
+    : t("COMMON.ADD_DISTRICT");
 
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle sx={{ fontSize: "14px" }}>{dialogTitle}</DialogTitle>
       <DialogContent>
-        {renderTextField(
-          t("COMMON.STATE_NAME"),
-          formData.controllingField,
-          errors.controllingField,
-          "controllingField"
-        )}
-        {renderTextField(
-          t("COMMON.DISTRICT_NAME"),
-          formData.name,
-          errors.name,
-          "name"
-        )}
-        {renderTextField(
-          t("COMMON.DISTRICT_CODE"),
-          formData.value,
-          errors.value,
-          "value"
-        )}
-        <Box display="flex" alignItems="center" mt={2}>
-          <InfoOutlinedIcon color="primary" sx={{ mr: 1 }} />
-          <Typography variant="caption" color="textSecondary">
-            {t("COMMON.CODE_NOTIFICATION")}
-          </Typography>
-        </Box>
+        <>
+          <Select
+            value={formData.controllingField}
+            onChange={(e) =>
+              handleChange("controllingField")(
+                e as React.ChangeEvent<HTMLInputElement>
+              )
+            }
+            fullWidth
+            displayEmpty
+            variant="outlined"
+            margin="dense"
+          >
+            <MenuItem value="" disabled>
+              {t("COMMON.SELECT_STATE")}
+            </MenuItem>
+            {states.map((state) => (
+              <MenuItem key={state.value} value={state.value}>
+                {state.label}
+              </MenuItem>
+            ))}
+          </Select>
+          {errors.controllingField && (
+            <Typography variant="caption" color="error">
+              {errors.controllingField}
+            </Typography>
+          )}
+          <TextField
+            margin="dense"
+            label={t("COMMON.DISTRICT_NAME")}
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={formData.name}
+            onChange={handleChange("name")}
+            error={!!errors.name}
+            helperText={errors.name}
+          />
+          <TextField
+            margin="dense"
+            label={t("COMMON.DISTRICT_CODE")}
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={formData.value}
+            onChange={handleChange("value")}
+            error={!!errors.value}
+            helperText={errors.value}
+          />
+          <Box display="flex" alignItems="center" mt={2}>
+            <InfoOutlinedIcon color="primary" sx={{ mr: 1 }} />
+            <Typography variant="caption" color="textSecondary">
+              {t("COMMON.CODE_NOTIFICATION")}
+            </Typography>
+          </Box>
+        </>
       </DialogContent>
       <DialogActions>
         <Button
