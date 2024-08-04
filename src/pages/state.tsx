@@ -12,6 +12,9 @@ import Loader from "@/components/Loader";
 import { AddStateModal } from "@/components/AddStateModal";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { showToastMessage } from "@/components/Toastify";
+import { SORT, Numbers } from "@/utils/app.constant";
+import { Box, Pagination, SelectChangeEvent } from "@mui/material";
+import PageSizeSelector from "@/components/PageSelector";
 
 export interface StateDetail {
   updatedAt: any;
@@ -22,49 +25,37 @@ export interface StateDetail {
 }
 
 type StateBlockDistrictListParams = {
-  controllingfieldfk?: string;
+  limit: number;
+  offset: number;
   fieldName: string;
-  limit?: number;
-  offset?: number;
   optionName?: string;
 };
 
 const State: React.FC = () => {
   const { t } = useTranslation();
-  const [selectedSort, setSelectedSort] = useState<string>("Sort");
   const [stateData, setStateData] = useState<StateDetail[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [confirmationDialogOpen, setConfirmationDialogOpen] =
     useState<boolean>(false);
+  const [addStateModalOpen, setAddStateModalOpen] = useState<boolean>(false);
   const [selectedStateForDelete, setSelectedStateForDelete] =
     useState<StateDetail | null>(null);
-  const [addStateModalOpen, setAddStateModalOpen] = useState<boolean>(false);
   const [selectedStateForEdit, setSelectedStateForEdit] =
     useState<StateDetail | null>(null);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [fieldId, setFieldId] = useState<string>("");
+  const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
+  const [pageCount, setPageCount] = useState<number>(Numbers.ONE);
+  const [pageOffset, setPageOffset] = useState<number>(Numbers.ZERO);
+  const [pageLimit, setPageLimit] = useState<number>(Numbers.TEN);
+  const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10]);
 
   const columns = [
-    {
-      key: "label",
-      title: t("MASTER.STATE_NAMES"),
-    },
-    {
-      key: "value",
-      title: t("MASTER.STATE_CODE"),
-    },
-    {
-      key: "createdAt",
-      title: t("MASTER.CREATED_AT"),
-    },
-    {
-      key: "updatedAt",
-      title: t("MASTER.UPDATED_AT"),
-    },
-    {
-      key: "actions",
-      title: t("MASTER.ACTIONS"),
-    },
+    { key: "label", title: t("MASTER.STATE_NAMES") },
+    { key: "value", title: t("MASTER.STATE_CODE") },
+    { key: "createdAt", title: t("MASTER.CREATED_AT") },
+    { key: "updatedAt", title: t("MASTER.UPDATED_AT") },
+    { key: "actions", title: t("MASTER.ACTIONS") },
   ];
 
   const handleEdit = (rowData: StateDetail) => {
@@ -77,27 +68,32 @@ const State: React.FC = () => {
     setConfirmationDialogOpen(true);
   };
 
+  const handleSortChange = (event: SelectChangeEvent) => {
+    const sortOrder =
+      event.target.value === "Z-A" ? SORT.DESCENDING : SORT.ASCENDING;
+    setSortBy(["name", sortOrder]);
+  };
+
   const handleConfirmDelete = async () => {
     if (selectedStateForDelete) {
       try {
         await deleteOption("states", selectedStateForDelete.value);
         setStateData((prevStateData) =>
           prevStateData.filter(
-            (state) => state.value !== selectedStateForDelete.value,
-          ),
+            (state) => state.value !== selectedStateForDelete.value
+          )
         );
         showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
       } catch (error) {
         console.error("Error deleting state", error);
         showToastMessage(t("COMMON.STATE_DELETED_FAILURE"), "error");
       }
+      setConfirmationDialogOpen(false);
     }
-    setConfirmationDialogOpen(false);
   };
 
   const handleSearch = (keyword: string) => {
     setSearchKeyword(keyword);
-    fetchStateData(keyword);
   };
 
   const handleAddStateClick = () => {
@@ -108,11 +104,9 @@ const State: React.FC = () => {
   const handleAddStateSubmit = async (
     name: string,
     value: string,
-    stateId?: string,
+    stateId?: string
   ) => {
-    const newState = {
-      options: [{ name, value }],
-    };
+    const newState = { options: [{ name, value }] };
 
     try {
       if (fieldId) {
@@ -130,20 +124,66 @@ const State: React.FC = () => {
     }
     setAddStateModalOpen(false);
   };
+
+  const handleChangePageSize = (event: SelectChangeEvent<number>) => {
+    const newSize = Number(event.target.value);
+    setPageSizeArray((prev) =>
+      prev.includes(newSize) ? prev : [...prev, newSize]
+    );
+    setPageLimit(newSize);
+  };
+
+  const handlePaginationChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPageOffset(value - 1);
+  };
+
+  const PagesSelector = () => (
+    <Box mt={3}>
+      <Pagination
+        color="primary"
+        count={pageCount}
+        page={pageOffset + 1}
+        onChange={handlePaginationChange}
+      />
+    </Box>
+  );
+
+  const PageSizeSelectorFunction = () => (
+    <Box mt={2}>
+      <PageSizeSelector
+        handleChange={handleChangePageSize}
+        pageSize={pageLimit}
+        options={pageSizeArray}
+      />
+    </Box>
+  );
+
   const fetchStateData = async (keyword?: string) => {
     try {
       setLoading(true);
-      const data = await getStateBlockDistrictList({
+      const data: StateBlockDistrictListParams = {
+        limit: pageLimit,
+        offset: pageOffset * pageLimit,
         fieldName: "states",
         optionName: keyword,
-      } as StateBlockDistrictListParams);
+      };
 
-      setFieldId(data.result.fieldId);
+      const resp = await getStateBlockDistrictList(data);
 
-      if (data.result.fieldId) {
-        setStateData(data.result.values);
+      setFieldId(resp.result.fieldId);
+
+      if (resp.result.fieldId) {
+        setStateData(resp.result.values);
+        const totalCount = resp.result.values.length;
+        setPageSizeArray(
+          totalCount >= 15 ? [5, 10, 15] : totalCount >= 10 ? [5, 10] : [5]
+        );
+        setPageCount(Math.ceil(totalCount / pageLimit));
       } else {
-        console.error("Unexpected fieldId:", data.result.fieldId);
+        console.error("Unexpected fieldId:", resp.result.fieldId);
         setStateData([]);
       }
     } catch (error) {
@@ -152,85 +192,84 @@ const State: React.FC = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchStateData(searchKeyword);
-  }, [searchKeyword]);
-
-  const userProps = {
-    userType: t("MASTER.STATE"),
-    searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_STATE"),
-    showStateDropdown: false,
-    showAddNew: true,
-    showSort: true,
-    showFilter: false,
-    paginationEnable: true,
-  };
+  }, [searchKeyword, pageLimit, pageOffset]);
 
   return (
-    <>
-      <HeaderComponent
-        {...userProps}
-        handleSearch={handleSearch}
-        handleAddUserClick={handleAddStateClick}
-      >
-        {loading ? (
-          <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
-        ) : (
-          <div>
-            <KaTableComponent
-              columns={columns}
-              data={stateData.map((stateDetail) => ({
-                label: stateDetail.label ?? "",
-                value: stateDetail.value,
-                createdAt: stateDetail.createdAt,
-                updatedAt: stateDetail.updatedAt,
-              }))}
-              PagesSelector={() => null}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              extraActions={[]}
-              noDataMessage={
-                stateData.length === 0 ? t("COMMON.STATE_NOT_FOUND") : ""
-              }
-            />
-          </div>
-        )}
-      </HeaderComponent>
-
-      <AddStateModal
-        open={addStateModalOpen}
-        onClose={() => setAddStateModalOpen(false)}
-        onSubmit={(name: string, value: string) =>
-          handleAddStateSubmit(name, value, selectedStateForEdit?.value)
-        }
-        fieldId={fieldId}
-        initialValues={
-          selectedStateForEdit
-            ? {
-                name: selectedStateForEdit.label,
-                value: selectedStateForEdit.value,
-              }
-            : {}
-        }
-        stateId={selectedStateForEdit?.value}
-      />
-      <ConfirmationModal
-        modalOpen={confirmationDialogOpen}
-        message={t("COMMON.ARE_YOU_SURE_DELETE")}
-        handleAction={handleConfirmDelete}
-        buttonNames={{
-          primary: t("COMMON.DELETE"),
-          secondary: t("COMMON.CANCEL"),
-        }}
-        handleCloseModal={() => setConfirmationDialogOpen(false)}
-      />
-    </>
+    <HeaderComponent
+      userType={t("MASTER.STATE")}
+      searchPlaceHolder={t("MASTER.SEARCHBAR_PLACEHOLDER_STATE")}
+      showStateDropdown={false}
+      handleSortChange={handleSortChange}
+      showAddNew={true}
+      showSort={true}
+      showFilter={false}
+      handleSearch={handleSearch}
+      handleAddUserClick={handleAddStateClick}
+    >
+      {loading ? (
+        <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
+      ) : (
+        <div>
+          <KaTableComponent
+            columns={columns}
+            data={stateData.map((stateDetail) => ({
+              label: stateDetail.label ?? "",
+              value: stateDetail.value,
+              createdAt: stateDetail.createdAt,
+              updatedAt: stateDetail.updatedAt,
+            }))}
+            limit={pageLimit}
+            offset={pageOffset}
+            paginationEnable={true}
+            PagesSelector={PagesSelector}
+            PageSizeSelector={PageSizeSelectorFunction}
+            pageSizes={pageSizeArray}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            noDataMessage={
+              stateData.length === 0 ? t("COMMON.STATE_NOT_FOUND") : ""
+            }
+            extraActions={[]}
+          />
+          <AddStateModal
+            open={addStateModalOpen}
+            onClose={() => setAddStateModalOpen(false)}
+            onSubmit={(name, value) =>
+              handleAddStateSubmit(name, value, selectedStateForEdit?.value)
+            }
+            fieldId={fieldId}
+            initialValues={
+              selectedStateForEdit
+                ? {
+                    name: selectedStateForEdit.label,
+                    value: selectedStateForEdit.value,
+                  }
+                : {}
+            }
+            stateId={selectedStateForEdit?.value}
+          />
+          <ConfirmationModal
+            modalOpen={confirmationDialogOpen}
+            message={t("COMMON.ARE_YOU_SURE_DELETE")}
+            handleAction={handleConfirmDelete}
+            buttonNames={{
+              primary: t("COMMON.DELETE"),
+              secondary: t("COMMON.CANCEL"),
+            }}
+            handleCloseModal={() => setConfirmationDialogOpen(false)}
+          />
+        </div>
+      )}
+    </HeaderComponent>
   );
 };
 
-export const getServerSideProps = async (context: any) => ({
+export const getServerSideProps = async ({ locale }: { locale: string }) => ({
   props: {
-    ...(await serverSideTranslations(context.locale, ["common"])),
+    ...(await serverSideTranslations(locale, ["common", "master"])),
   },
 });
 
