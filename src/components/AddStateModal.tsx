@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
-import { fieldTextValidation } from "@/utils/Helper";
 
 interface AddStateModalProps {
   open: boolean;
@@ -20,7 +19,7 @@ interface AddStateModalProps {
     name: string,
     value: string,
     fieldId: string,
-    stateId?: string,
+    stateId?: string
   ) => void;
   fieldId: string;
   initialValues?: {
@@ -51,13 +50,16 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
     setValueError(null);
   }, [initialValues]);
 
+  const isAlphabetic = (input: string) =>
+    input === "" || /^[a-zA-Z]+$/.test(input);
+
   const handleSubmit = () => {
     let hasError = false;
 
     if (!name) {
-      setNameError(t("COMMON.NAME_REQUIRED"));
+      setNameError(t("COMMON.STATE_NAME_REQUIRED"));
       hasError = true;
-    } else if (!fieldTextValidation(name)) {
+    } else if (!isAlphabetic(name)) {
       setNameError(t("COMMON.INVALID_TEXT"));
       hasError = true;
     } else {
@@ -67,8 +69,8 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
     if (!value) {
       setValueError(t("COMMON.CODE_REQUIRED"));
       hasError = true;
-    } else if (!fieldTextValidation(value)) {
-      setValueError(t("COMMON.INVALID_TEXT"));
+    } else if (!isAlphabetic(value)) {
+      setValueError(t("COMMON.INVALID_TEXT")); 
       hasError = true;
     } else {
       setValueError(null);
@@ -84,7 +86,7 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputName = e.target.value;
-    if (fieldTextValidation(inputName)) {
+    if (isAlphabetic(inputName)) {
       setName(inputName);
       setNameError(null);
     } else {
@@ -94,7 +96,7 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
 
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value.toUpperCase();
-    if (fieldTextValidation(inputValue)) {
+    if (isAlphabetic(inputValue)) {
       setValue(inputValue);
       setValueError(null);
     } else {

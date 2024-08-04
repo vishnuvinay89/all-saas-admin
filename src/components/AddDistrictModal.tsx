@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
-import { fieldTextValidation } from "@/utils/Helper";
 
 interface AddDistrictBlockModalProps {
   open: boolean;
@@ -21,7 +20,7 @@ interface AddDistrictBlockModalProps {
     value: string,
     controllingField: string,
     fieldId: string,
-    districtId?: string,
+    districtId?: string
   ) => void;
   fieldId: string;
   initialValues?: {
@@ -32,7 +31,7 @@ interface AddDistrictBlockModalProps {
   districtId?: string;
 }
 
-export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
+export const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
   open,
   onClose,
   onSubmit,
@@ -65,19 +64,17 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
     setControllingFieldError(null);
   }, [initialValues]);
 
-  const handleChange =
-    (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData((prev) => ({ ...prev, [field]: event.target.value }));
-    };
+  const isAlphabetic = (input: string) =>
+    input === "" || /^[a-zA-Z]+$/.test(input);
 
   const handleSubmit = () => {
     const { name, value, controllingField } = formData;
     let hasError = false;
 
     if (!controllingField) {
-      setControllingFieldError(t("COMMON.STATE_REQUIRED"));
+      setControllingFieldError(t("COMMON.STATE_NAME_REQUIRED"));
       hasError = true;
-    } else if (!fieldTextValidation(controllingField)) {
+    } else if (!isAlphabetic(controllingField)) {
       setControllingFieldError(t("COMMON.INVALID_TEXT"));
       hasError = true;
     } else {
@@ -85,9 +82,9 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
     }
 
     if (!name) {
-      setNameError(t("COMMON.NAME_REQUIRED"));
+      setNameError(t("COMMON.DISTRICT_NAME_REQUIRED"));
       hasError = true;
-    } else if (!fieldTextValidation(name)) {
+    } else if (!isAlphabetic(name)) {
       setNameError(t("COMMON.INVALID_TEXT"));
       hasError = true;
     } else {
@@ -97,7 +94,7 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
     if (!value) {
       setValueError(t("COMMON.CODE_REQUIRED"));
       hasError = true;
-    } else if (!fieldTextValidation(value)) {
+    } else if (!isAlphabetic(value)) {
       setValueError(t("COMMON.INVALID_TEXT"));
       hasError = true;
     } else {
@@ -116,10 +113,10 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
   };
 
   const handleControllingFieldChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const inputControllingField = e.target.value;
-    if (fieldTextValidation(inputControllingField)) {
+    if (isAlphabetic(inputControllingField)) {
       setFormData((prev) => ({
         ...prev,
         controllingField: inputControllingField,
@@ -132,7 +129,7 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputName = e.target.value;
-    if (fieldTextValidation(inputName)) {
+    if (isAlphabetic(inputName)) {
       setFormData((prev) => ({ ...prev, name: inputName }));
       setNameError(null);
     } else {
@@ -142,7 +139,7 @@ export const AddDistrictBlockModal: React.FC<AddDistrictBlockModalProps> = ({
 
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value.toUpperCase();
-    if (fieldTextValidation(inputValue)) {
+    if (isAlphabetic(inputValue)) {
       setFormData((prev) => ({ ...prev, value: inputValue }));
       setValueError(null);
     } else {

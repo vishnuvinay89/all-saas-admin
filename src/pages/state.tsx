@@ -269,7 +269,7 @@ const State: React.FC = () => {
 
 export const getServerSideProps = async ({ locale }: { locale: string }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ["common", "master"])),
+    ...(await serverSideTranslations(locale, ["common"])),
   },
 });
 

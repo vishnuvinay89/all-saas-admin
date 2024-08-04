@@ -20,7 +20,7 @@ interface AddBlockModalProps {
     value: string,
     controllingField: string,
     fieldId: string,
-    districtId?: string,
+    districtId?: string
   ) => void;
   fieldId: string;
   initialValues?: {
@@ -61,11 +61,8 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     });
   }, [initialValues]);
 
-  const handleChange =
-    (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData((prev) => ({ ...prev, [field]: event.target.value }));
-      setErrors((prev) => ({ ...prev, [field]: "" }));
-    };
+  const isAlphabetic = (input: string) =>
+    input === "" || /^[a-zA-Z]+$/.test(input);
 
   const validate = () => {
     let valid = true;
@@ -74,19 +71,41 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     if (!formData.name.trim()) {
       errors.name = t("COMMON.REQUIRED_FIELD");
       valid = false;
+    } else if (!isAlphabetic(formData.name)) {
+      errors.name = t("COMMON.INVALID_TEXT");
+      valid = false;
     }
+
     if (!formData.value.trim()) {
       errors.value = t("COMMON.REQUIRED_FIELD");
       valid = false;
+    } else if (!isAlphabetic(formData.value)) {
+      errors.value = t("COMMON.INVALID_TEXT");
+      valid = false;
     }
+
     if (!formData.controllingField.trim()) {
       errors.controllingField = t("COMMON.REQUIRED_FIELD");
+      valid = false;
+    } else if (!isAlphabetic(formData.controllingField)) {
+      errors.controllingField = t("COMMON.INVALID_TEXT");
       valid = false;
     }
 
     setErrors(errors);
     return valid;
   };
+
+  const handleChange =
+    (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setFormData((prev) => ({ ...prev, [field]: value }));
+      if (isAlphabetic(value)) {
+        setErrors((prev) => ({ ...prev, [field]: "" }));
+      } else {
+        setErrors((prev) => ({ ...prev, [field]: t("COMMON.INVALID_TEXT") }));
+      }
+    };
 
   const handleSubmit = () => {
     if (validate()) {
