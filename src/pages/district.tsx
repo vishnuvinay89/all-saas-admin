@@ -16,10 +16,10 @@ import {
   deleteOption,
 } from "@/services/MasterDataService";
 import { transformLabel } from "@/utils/Helper";
-import { AddDistrictModal } from "@/components/AddDistrictModal";
 import { showToastMessage } from "@/components/Toastify";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import Loader from "@/components/Loader";
+import AddDistrictModal from "@/components/AddDistrictModal";
 
 type StateDetail = {
   value: string;

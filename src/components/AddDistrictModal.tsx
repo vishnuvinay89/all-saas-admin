@@ -31,7 +31,9 @@ interface AddDistrictBlockModalProps {
   districtId?: string;
 }
 
-export const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
+const validateInput = (input: string): boolean => /^[a-zA-Z]*$/.test(input);
+
+const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
   open,
   onClose,
   onSubmit,
@@ -45,11 +47,11 @@ export const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
     controllingField: initialValues.controllingField || "",
   });
 
-  const [nameError, setNameError] = useState<string | null>(null);
-  const [valueError, setValueError] = useState<string | null>(null);
-  const [controllingFieldError, setControllingFieldError] = useState<
-    string | null
-  >(null);
+  const [errors, setErrors] = useState({
+    name: null as string | null,
+    value: null as string | null,
+    controllingField: null as string | null,
+  });
 
   const { t } = useTranslation();
 
@@ -59,47 +61,50 @@ export const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
       value: initialValues.value || "",
       controllingField: initialValues.controllingField || "",
     });
-    setNameError(null);
-    setValueError(null);
-    setControllingFieldError(null);
+    setErrors({
+      name: null,
+      value: null,
+      controllingField: null,
+    });
   }, [initialValues]);
 
-  const isAlphabetic = (input: string) =>
-    input === "" || /^[a-zA-Z]+$/.test(input);
+  const handleChange =
+    (field: keyof typeof formData) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      const isValid = validateInput(value);
+      setFormData((prev) => ({ ...prev, [field]: value }));
+      setErrors((prev) => ({
+        ...prev,
+        [field]: isValid ? null : t("COMMON.INVALID_TEXT"),
+      }));
+    };
 
   const handleSubmit = () => {
     const { name, value, controllingField } = formData;
     let hasError = false;
 
-    if (!controllingField) {
-      setControllingFieldError(t("COMMON.STATE_NAME_REQUIRED"));
-      hasError = true;
-    } else if (!isAlphabetic(controllingField)) {
-      setControllingFieldError(t("COMMON.INVALID_TEXT"));
-      hasError = true;
-    } else {
-      setControllingFieldError(null);
-    }
+    const newErrors = {
+      name: name
+        ? validateInput(name)
+          ? null
+          : t("COMMON.INVALID_TEXT")
+        : t("COMMON.DISTRICT_NAME_REQUIRED"),
+      value: value
+        ? validateInput(value)
+          ? null
+          : t("COMMON.INVALID_TEXT")
+        : t("COMMON.CODE_REQUIRED"),
+      controllingField: controllingField
+        ? validateInput(controllingField)
+          ? null
+          : t("COMMON.INVALID_TEXT")
+        : t("COMMON.STATE_NAME_REQUIRED"),
+    };
 
-    if (!name) {
-      setNameError(t("COMMON.DISTRICT_NAME_REQUIRED"));
-      hasError = true;
-    } else if (!isAlphabetic(name)) {
-      setNameError(t("COMMON.INVALID_TEXT"));
-      hasError = true;
-    } else {
-      setNameError(null);
-    }
+    setErrors(newErrors);
 
-    if (!value) {
-      setValueError(t("COMMON.CODE_REQUIRED"));
-      hasError = true;
-    } else if (!isAlphabetic(value)) {
-      setValueError(t("COMMON.INVALID_TEXT"));
-      hasError = true;
-    } else {
-      setValueError(null);
-    }
+    hasError = Object.values(newErrors).some((error) => error !== null);
 
     if (!hasError) {
       onSubmit(name, value, controllingField, fieldId, districtId);
@@ -109,41 +114,6 @@ export const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
         controllingField: "",
       });
       onClose();
-    }
-  };
-
-  const handleControllingFieldChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const inputControllingField = e.target.value;
-    if (isAlphabetic(inputControllingField)) {
-      setFormData((prev) => ({
-        ...prev,
-        controllingField: inputControllingField,
-      }));
-      setControllingFieldError(null);
-    } else {
-      setControllingFieldError(t("COMMON.INVALID_TEXT"));
-    }
-  };
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputName = e.target.value;
-    if (isAlphabetic(inputName)) {
-      setFormData((prev) => ({ ...prev, name: inputName }));
-      setNameError(null);
-    } else {
-      setNameError(t("COMMON.INVALID_TEXT"));
-    }
-  };
-
-  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value.toUpperCase();
-    if (isAlphabetic(inputValue)) {
-      setFormData((prev) => ({ ...prev, value: inputValue }));
-      setValueError(null);
-    } else {
-      setValueError(t("COMMON.INVALID_TEXT"));
     }
   };
 
@@ -169,9 +139,9 @@ export const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
           fullWidth
           variant="outlined"
           value={formData.controllingField}
-          onChange={handleControllingFieldChange}
-          error={!!controllingFieldError}
-          helperText={controllingFieldError}
+          onChange={handleChange("controllingField")}
+          error={!!errors.controllingField}
+          helperText={errors.controllingField}
         />
         <TextField
           margin="dense"
@@ -180,9 +150,9 @@ export const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
           fullWidth
           variant="outlined"
           value={formData.name}
-          onChange={handleNameChange}
-          error={!!nameError}
-          helperText={nameError}
+          onChange={handleChange("name")}
+          error={!!errors.name}
+          helperText={errors.name}
         />
         <TextField
           margin="dense"
@@ -191,9 +161,9 @@ export const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
           fullWidth
           variant="outlined"
           value={formData.value}
-          onChange={handleValueChange}
-          error={!!valueError}
-          helperText={valueError}
+          onChange={handleChange("value")}
+          error={!!errors.value}
+          helperText={errors.value}
         />
         <Box display="flex" alignItems="center" mt={2}>
           <InfoOutlinedIcon color="primary" sx={{ mr: 1 }} />
@@ -231,3 +201,5 @@ export const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
     </Dialog>
   );
 };
+
+export default AddDistrictModal;
