@@ -62,7 +62,8 @@
     "DISTRICT_NOT_FOUND": "Districts not found",
     "USERS_EMAIL": "Users Email",
     "STATE_NAME_REQUIRED": "State Name is Required",
-    "DISTRICT_NAME_REQUIRED": "District Name is Required"
+    "DISTRICT_NAME_REQUIRED": "District Name is Required",
+    "SELECT_STATE": "Select State"  
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",

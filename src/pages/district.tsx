@@ -20,6 +20,9 @@ import { showToastMessage } from "@/components/Toastify";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import Loader from "@/components/Loader";
 import AddDistrictModal from "@/components/AddDistrictModal";
+import { Pagination } from "@mui/material";
+import PageSizeSelector from "@/components/PageSelector";
+import { Numbers } from "@/utils/app.constant";
 
 type StateDetail = {
   value: string;
@@ -33,6 +36,12 @@ type DistrictDetail = {
   label: string;
 };
 
+type DistrictsForStateParams = {
+  controllingfieldfk: string;
+  fieldName: string;
+  limit?: number;
+  offset: number;
+};
 const District: React.FC = () => {
   const { t } = useTranslation();
   const [selectedState, setSelectedState] = useState<string>("");
@@ -47,6 +56,47 @@ const District: React.FC = () => {
     useState<boolean>(false);
   const [districtFieldId, setDistrictFieldId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedSort, setSelectedSort] = useState("Sort");
+  const [pageCount, setPageCount] = useState<number>(Numbers.ONE);
+  const [pageOffset, setPageOffset] = useState<number>(Numbers.ZERO);
+  const [pageLimit, setPageLimit] = useState<number>(Numbers.TEN);
+  const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10]);
+
+  const handleChangePageSize = (event: SelectChangeEvent<number>) => {
+    const newSize = Number(event.target.value);
+    setPageSizeArray((prev) =>
+      prev.includes(newSize) ? prev : [...prev, newSize]
+    );
+    setPageLimit(newSize);
+  };
+
+  const handlePaginationChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPageOffset(value - 1);
+  };
+
+  const PagesSelector = () => (
+    <Box mt={3}>
+      <Pagination
+        color="primary"
+        count={pageCount}
+        page={pageOffset + 1}
+        onChange={handlePaginationChange}
+      />
+    </Box>
+  );
+
+  const PageSizeSelectorFunction = () => (
+    <Box mt={2}>
+      <PageSizeSelector
+        handleChange={handleChangePageSize}
+        pageSize={pageLimit}
+        options={pageSizeArray}
+      />
+    </Box>
+  );
 
   useEffect(() => {
     const fetchStateData = async () => {
@@ -57,6 +107,8 @@ const District: React.FC = () => {
           setStateData(data.result.values);
           const initialSelectedState = data.result.values[0]?.value || "";
           setSelectedState(initialSelectedState);
+
+          console.log("intialSelectedState", initialSelectedState);
 
           fetchDistrictData(initialSelectedState);
         } else {
@@ -74,10 +126,20 @@ const District: React.FC = () => {
         const initialDistrictData = await getDistrictsForState({
           controllingfieldfk: stateId,
           fieldName: "districts",
-        });
+          limit: pageLimit,
+          offset: pageOffset * pageLimit,
+        } as DistrictsForStateParams);
         setDistrictFieldId(initialDistrictData?.result?.fieldId || "");
+
         if (initialDistrictData?.result?.fieldId) {
           setDistrictData(initialDistrictData.result.values || []);
+          const totalCount = initialDistrictData.result.values.length;
+          console.log("totalCount district", totalCount);
+
+          setPageSizeArray(
+            totalCount >= 15 ? [5, 10, 15] : totalCount >= 10 ? [5, 10] : [5]
+          );
+          setPageCount(Math.ceil(totalCount / pageLimit));
         } else {
           setDistrictData([]);
         }
@@ -87,7 +149,7 @@ const District: React.FC = () => {
     };
 
     fetchStateData();
-  }, []);
+  }, [pageLimit, pageOffset]);
 
   const handleStateChange = async (event: SelectChangeEvent<string>) => {
     const selectedState = event.target.value;
@@ -211,6 +273,7 @@ const District: React.FC = () => {
         selectedState={selectedState}
         showStateDropdown={false}
         handleSearch={() => {}}
+        selectedSort={selectedSort}
         showFilter={false}
         handleAddUserClick={() => {
           setModalOpen(true);
@@ -270,7 +333,12 @@ const District: React.FC = () => {
                 updatedAt: districtDetail.updatedAt,
                 value: districtDetail.value,
               }))}
-              PagesSelector={() => null}
+              limit={pageLimit}
+              offset={pageOffset}
+              paginationEnable={true}
+              PagesSelector={PagesSelector}
+              PageSizeSelector={PageSizeSelectorFunction}
+              pageSizes={pageSizeArray}
               onEdit={handleEdit}
               onDelete={handleDelete}
               extraActions={[]}
