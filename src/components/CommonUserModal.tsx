@@ -216,12 +216,15 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           fieldSchema?.hasOwnProperty("isDropdown") ||
           fieldSchema?.hasOwnProperty("isCheckbox")
         ) {
-          apiBody.customFields.push({
+          
+            apiBody.customFields.push({
             fieldId: fieldId,
             value: [String(fieldValue)],
           });
+         
+        
         } else {
-          if (fieldSchema.checkbox && fieldSchema.type === "array") {
+          if (fieldSchema.checkbox && fieldSchema.type === "array" && isEditModal) {
             apiBody.customFields.push({
               fieldId: fieldId,
               value: String(fieldValue).split(","),
@@ -275,6 +278,8 @@ const CommonUserModal: React.FC<UserModalProps> = ({
         showToastMessage(t(messageKey), "success");
       } else {
         const response = await createUser(apiBody);
+        if (response) {
+
         const messageKey =
           userType === FormContextType.STUDENT
             ? "LEARNERS.LEARNER_CREATED_SUCCESSFULLY"
@@ -283,10 +288,13 @@ const CommonUserModal: React.FC<UserModalProps> = ({
               : "TEAM_LEADERS.TEAM_LEADER_CREATED_SUCCESSFULLY";
 
         showToastMessage(t(messageKey), "success");
+        }
       }
       onSubmit(true);
       onClose();
     } catch (error) {
+      showToastMessage(t('COMMON.SOMETHING_WENT_WRONG'), 'error');
+
       onClose();
       console.log(error);
     }

@@ -117,3 +117,7 @@ export const fieldTextValidation = (text: string) => {
   const regex = /^[A-Za-z\s]+$/;
   return regex.test(text);
 };
+export const getCurrentYearPattern = () => {
+  const currentYear = new Date().getFullYear();
+  return `^(19[0-9][0-9]|20[0-${Math.floor(currentYear / 10) % 10}][0-${currentYear % 10}])$`;
+};

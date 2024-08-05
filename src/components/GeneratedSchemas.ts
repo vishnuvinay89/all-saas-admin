@@ -2,6 +2,7 @@ import { UiSchema } from "@rjsf/utils";
 import { JSONSchema7 } from "json-schema";
 import NumberInputField from "./form/NumberInputField";
 import { FormData, Field, FieldOption } from "@/utils/Interfaces";
+import { getCurrentYearPattern } from "@/utils/Helper";
 export const customFields = {
   NumberInputField: NumberInputField,
 };
@@ -34,6 +35,7 @@ export const GenerateSchemaAndUiSchema = (
       dependsOn,
       pattern,
       required,
+      isRequired
     } = field;
     const fieldSchema: any = {
       title: t(`FORM.${label}`),
@@ -191,7 +193,7 @@ export const GenerateSchemaAndUiSchema = (
       fieldSchema.pattern = pattern;
       // fieldUiSchema["ui:help"]= "Only alphabetic characters are allowed.";
     }
-    if (required) {
+    if (isRequired) {
       schema.required?.push(name);
     }
     if (field?.minLength) {
@@ -201,8 +203,11 @@ export const GenerateSchemaAndUiSchema = (
       fieldSchema.maxLength = Number(field.maxLength);
     }
     if (field?.validation) {
-      if (field?.validation?.includes("numeric")) {
+      if (field?.validation?.includes('numeric')) {
         // fieldUiSchema['ui:field'] = 'NumberInputField';
+      }
+      if (field?.validation?.includes('currentYear')) {
+        fieldSchema.pattern = getCurrentYearPattern();
       }
       fieldSchema.validation = field.validation;
     }
