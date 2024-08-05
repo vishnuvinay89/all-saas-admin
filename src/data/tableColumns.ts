@@ -6,14 +6,14 @@ export const getUserTableColumns = (t: any, isMobile: any) => {
       key: "name",
       title: t("FORM.NAME"),
       dataType: DataType.String,
-      sortDirection: SortDirection.Ascend,
+     // sortDirection: SortDirection.Ascend,
       width: isMobile ? 160 : null,
     },
     {
       key: "status",
       title: t("FORM.STATUS"),
       dataType: DataType.String,
-      sortDirection: SortDirection.Ascend,
+    ///  sortDirection: SortDirection.Ascend,
       width: isMobile ? 160 : null,
     },
 
@@ -79,14 +79,14 @@ export const getTLTableColumns = (t: any, isMobile: any) => {
       key: "name",
       title: t("FORM.NAME"),
       dataType: DataType.String,
-      sortDirection: SortDirection.Ascend,
+      //sortDirection: SortDirection.Ascend,
       // width: isMobile?160:null,
     },
     {
       key: "status",
       title: t("FORM.STATUS"),
       dataType: DataType.String,
-      sortDirection: SortDirection.Ascend,
+    //  sortDirection: SortDirection.Ascend,
       // width: isMobile?160:null,
     },
 
@@ -122,7 +122,7 @@ export const getTLTableColumns = (t: any, isMobile: any) => {
       key: "blocks",
       title: t("FORM.BLOCK"),
       dataType: DataType.String,
-      sortDirection: SortDirection.Ascend,
+     // sortDirection: SortDirection.Ascend,
       // width: isMobile?160:null,
     },
 
