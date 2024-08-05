@@ -14,10 +14,9 @@ export interface StateListParam {
   controllingfieldfk?: string;
   fieldName: string;
   optionName?: string;
-  sort?: [string, string]; // Array for sorting
+  sort?: [string, string]; //
 }
 
-// API function for fetching state, block, and district list
 export const getStateBlockDistrictList = async ({
   controllingfieldfk,
   fieldName,
@@ -34,18 +33,12 @@ export const getStateBlockDistrictList = async ({
     offset,
     sort,
   };
-
-  // Conditionally add optional fields to the requestBody
   if (controllingfieldfk) {
     requestBody.controllingfieldfk = controllingfieldfk;
   }
-
   if (optionName) {
     requestBody.optionName = optionName;
   }
-
-  console.log("Request Body:", requestBody);
-
   try {
     const response = await post(apiUrl, requestBody);
     return response?.data;
@@ -54,19 +47,24 @@ export const getStateBlockDistrictList = async ({
     throw error;
   }
 };
-
 export const getDistrictsForState = async ({
   controllingfieldfk,
   fieldName,
+  optionName,
+  sort,
 }: {
   controllingfieldfk: string;
   fieldName: string;
+  optionName?: string;
+  sort?: [string, string];
 }): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/options/read`;
   try {
     const response = await post(apiUrl, {
       controllingfieldfk,
       fieldName,
+      optionName,
+      sort,
     });
     return response?.data;
   } catch (error) {

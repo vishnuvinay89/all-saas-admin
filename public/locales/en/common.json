@@ -63,7 +63,7 @@
     "USERS_EMAIL": "Users Email",
     "STATE_NAME_REQUIRED": "State Name is Required",
     "DISTRICT_NAME_REQUIRED": "District Name is Required",
-    "SELECT_STATE": "Select State"  
+    "SELECT_STATE": "Select State"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -152,6 +152,8 @@
     "BLOCKS": "Blocks",
     "UPDATED_AT": "Updated Date",
     "CREATED_AT": "Created Date",
+    "CREATED_BY": "Created By",
+    "UPDATED_BY": "Updated By",
     "STATE_CODE": "State Code",
     "DISTRICT_CODE": "District Code",
     "BLOCK_CODE": "Block Code"

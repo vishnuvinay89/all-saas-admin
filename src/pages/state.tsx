@@ -19,19 +19,12 @@ import PageSizeSelector from "@/components/PageSelector";
 export interface StateDetail {
   updatedAt: any;
   createdAt: any;
+  createdBy: string;
+  updatedBy: string;
   label: string | undefined;
   name: string;
   value: string;
 }
-
-type StateBlockDistrictListParams = {
-  limit?: number;
-  offset?: number;
-  controllingfieldfk?: string;
-  fieldName: string;
-  optionName?: string;
-  sort: Array<string>;
-};
 
 const State: React.FC = () => {
   const { t } = useTranslation();
@@ -56,6 +49,8 @@ const State: React.FC = () => {
   const columns = [
     { key: "label", title: t("MASTER.STATE_NAMES") },
     { key: "value", title: t("MASTER.STATE_CODE") },
+    { key: "createdBy", title: t("MASTER.CREATED_BY") },
+    { key: "updatedBy", title: t("MASTER.UPDATED_BY") },
     { key: "createdAt", title: t("MASTER.CREATED_AT") },
     { key: "updatedAt", title: t("MASTER.UPDATED_AT") },
     { key: "actions", title: t("MASTER.ACTIONS") },
@@ -168,29 +163,41 @@ const State: React.FC = () => {
   const fetchStateData = async (keyword = "") => {
     try {
       setLoading(true);
+      const limit = pageLimit;
+      const offset = pageOffset * limit;
 
-      const data: StateBlockDistrictListParams = {
-        limit: pageLimit,
-        offset: pageOffset * pageLimit,
+      const data = {
+        limit: limit,
+        offset: offset,
         fieldName: "states",
         optionName: keyword,
         sort: sortBy,
       };
 
+      console.log("fetchStateData", data);
+
       const resp = await getStateBlockDistrictList(data);
-      console.log("resp", resp);
+      // console.log("resp", resp);
 
       if (resp?.result?.fieldId) {
         setFieldId(resp.result.fieldId);
         setStateData(resp.result.values);
 
-        const totalCount = resp.result.values.length;
+        const totalCount = resp?.result?.values.length;
+        console.log("totalCount", totalCount);
 
-        setPageSizeArray(
-          totalCount >= 15 ? [5, 10, 15] : totalCount >= 10 ? [5, 10] : [5]
-        );
+        // Update page size array based on total count
+        if (totalCount >= 15) {
+          setPageSizeArray([5, 10, 15]);
+        } else if (totalCount >= 10) {
+          setPageSizeArray([5, 10]);
+        } else {
+          setPageSizeArray([5]);
+        }
 
-        setPageCount(Math.ceil(totalCount / pageLimit));
+        // Calculate the total number of pages
+        const pageCount = Math.ceil(totalCount / limit);
+        setPageCount(pageCount);
       } else {
         console.error("Unexpected fieldId:", resp?.result?.fieldId);
         setStateData([]);
@@ -229,6 +236,8 @@ const State: React.FC = () => {
               value: stateDetail.value,
               createdAt: stateDetail.createdAt,
               updatedAt: stateDetail.updatedAt,
+              createdBy: stateDetail.createdBy,
+              updatedBy: stateDetail.updatedBy,
             }))}
             limit={pageLimit}
             offset={pageOffset}

@@ -22,7 +22,7 @@ import Loader from "@/components/Loader";
 import AddDistrictModal from "@/components/AddDistrictModal";
 import { Pagination } from "@mui/material";
 import PageSizeSelector from "@/components/PageSelector";
-import { Numbers } from "@/utils/app.constant";
+import { Numbers, SORT } from "@/utils/app.constant";
 
 type StateDetail = {
   value: string;
@@ -30,18 +30,14 @@ type StateDetail = {
 };
 
 type DistrictDetail = {
+  updatedBy: any;
+  createdBy: any;
   updatedAt: any;
   createdAt: any;
   value: string;
   label: string;
 };
 
-type DistrictsForStateParams = {
-  controllingfieldfk: string;
-  fieldName: string;
-  limit?: number;
-  offset: number;
-};
 const District: React.FC = () => {
   const { t } = useTranslation();
   const [selectedState, setSelectedState] = useState<string>("");
@@ -61,6 +57,8 @@ const District: React.FC = () => {
   const [pageOffset, setPageOffset] = useState<number>(Numbers.ZERO);
   const [pageLimit, setPageLimit] = useState<number>(Numbers.TEN);
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10]);
+  const [sortBy, setSortBy] = useState<[string, string]>(["name", "asc"]);
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   const handleChangePageSize = (event: SelectChangeEvent<number>) => {
     const newSize = Number(event.target.value);
@@ -121,19 +119,26 @@ const District: React.FC = () => {
       }
     };
 
-    const fetchDistrictData = async (stateId: any) => {
+    const fetchDistrictData = async (stateId: string, keyword = "") => {
       try {
-        const initialDistrictData = await getDistrictsForState({
+        const data = {
           controllingfieldfk: stateId,
           fieldName: "districts",
           limit: pageLimit,
           offset: pageOffset * pageLimit,
-        } as DistrictsForStateParams);
-        setDistrictFieldId(initialDistrictData?.result?.fieldId || "");
+          optionName: keyword,
+          sort: sortBy,
+        };
+
+        const initialDistrictData = await getDistrictsForState(data);
 
         if (initialDistrictData?.result?.fieldId) {
-          setDistrictData(initialDistrictData.result.values || []);
-          const totalCount = initialDistrictData.result.values.length;
+          setDistrictFieldId(initialDistrictData?.result?.fieldId);
+          setDistrictData(initialDistrictData?.result?.values || []);
+
+          console.log("district data", districtData);
+
+          const totalCount = districtData?.length || 0;
           console.log("totalCount district", totalCount);
 
           setPageSizeArray(
@@ -144,12 +149,19 @@ const District: React.FC = () => {
           setDistrictData([]);
         }
       } catch (error) {
+        console.error("Failed to fetch district data:", error);
         setDistrictData([]);
       }
     };
-
     fetchStateData();
-  }, [pageLimit, pageOffset]);
+  }, [searchKeyword, pageLimit, pageOffset, sortBy]);
+
+  const handleSortChange = async (event: SelectChangeEvent) => {
+    const sortOrder =
+      event.target.value === "Z-A" ? SORT.DESCENDING : SORT.ASCENDING;
+    setSortBy(["name", sortOrder]);
+    setSelectedSort(event.target.value);
+  };
 
   const handleStateChange = async (event: SelectChangeEvent<string>) => {
     const selectedState = event.target.value;
@@ -174,6 +186,9 @@ const District: React.FC = () => {
   const handleDelete = (rowData: DistrictDetail) => {
     setSelectedStateForDelete(rowData);
     setConfirmationDialogOpen(true);
+  };
+  const handleSearch = (keyword: string) => {
+    setSearchKeyword(keyword);
   };
 
   const handleConfirmDelete = async () => {
@@ -272,8 +287,10 @@ const District: React.FC = () => {
         districts={districtData.map((district) => district.label)}
         selectedState={selectedState}
         showStateDropdown={false}
-        handleSearch={() => {}}
+        handleSortChange={handleSortChange}
+        showSort={true}
         selectedSort={selectedSort}
+        handleSearch={handleSearch}
         showFilter={false}
         handleAddUserClick={() => {
           setModalOpen(true);
@@ -319,6 +336,9 @@ const District: React.FC = () => {
                   title: t("MASTER.DISTRICT_CODE"),
                   dataType: DataType.String,
                 },
+                { key: "createdBy", title: t("MASTER.CREATED_BY") },
+                { key: "updatedBy", title: t("MASTER.UPDATED_BY") },
+
                 { key: "createdAt", title: t("MASTER.CREATED_AT") },
                 { key: "updatedAt", title: t("MASTER.UPDATED_AT") },
                 {
@@ -331,6 +351,8 @@ const District: React.FC = () => {
                 label: transformLabel(districtDetail.label),
                 createdAt: districtDetail.createdAt,
                 updatedAt: districtDetail.updatedAt,
+                createdBy: districtDetail.createdBy,
+                updatedBy: districtDetail.updatedBy,
                 value: districtDetail.value,
               }))}
               limit={pageLimit}
