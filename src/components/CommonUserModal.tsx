@@ -148,7 +148,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
     event: React.FormEvent<any>,
   ) => {
     // setOpenModal(true);
-    const target = event.target as HTMLFormElement;
+    const target = event?.target as HTMLFormElement;
     // const elementsArray = Array.from(target.elements);
 
     console.log("onsubmit", data);

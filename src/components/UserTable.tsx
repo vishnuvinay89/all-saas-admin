@@ -437,8 +437,12 @@ const UserTable: React.FC<UserTableProps> = ({
         const result = resp?.getUserDetails;
         // console.log(resp?.totalCount)
         if (resp?.totalCount >= 15) {
+          setPagination(true);
+
           setPageSizeArray([5, 10, 15]);
         } else if (resp?.totalCount >= 10) {
+          setPagination(true);
+
           // setPageSize(resp?.totalCount);
           setPageSizeArray([5, 10]);
         } else if (resp?.totalCount > 5) {
