@@ -341,6 +341,9 @@ const District: React.FC = () => {
               pageSizes={pageSizeArray}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              noDataMessage={
+                districtData.length === 0 ? t("COMMON.DISTRICT_NOT_FOUND") : ""
+              }
               extraActions={[]}
             />
           </>
