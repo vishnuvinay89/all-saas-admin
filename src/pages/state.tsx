@@ -25,11 +25,12 @@ export interface StateDetail {
 }
 
 type StateBlockDistrictListParams = {
-  limit: number;
-  offset: number;
+  limit?: number;
+  offset?: number;
+  controllingfieldfk?: string;
   fieldName: string;
   optionName?: string;
-  sort?: any;
+  sort: Array<string>;
 };
 
 const State: React.FC = () => {
@@ -45,7 +46,7 @@ const State: React.FC = () => {
     useState<StateDetail | null>(null);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [fieldId, setFieldId] = useState<string>("");
-  const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
+  const [sortBy, setSortBy] = useState<[string, string]>(["name", "asc"]);
   const [pageCount, setPageCount] = useState<number>(Numbers.ONE);
   const [pageOffset, setPageOffset] = useState<number>(Numbers.ZERO);
   const [pageLimit, setPageLimit] = useState<number>(Numbers.TEN);
@@ -164,30 +165,34 @@ const State: React.FC = () => {
     </Box>
   );
 
-  const fetchStateData = async (keyword?: string) => {
+  const fetchStateData = async (keyword = "") => {
     try {
       setLoading(true);
+
       const data: StateBlockDistrictListParams = {
         limit: pageLimit,
         offset: pageOffset * pageLimit,
         fieldName: "states",
         optionName: keyword,
-        sort: sortBy, // Ensure this is correctly formatted
+        sort: sortBy,
       };
 
       const resp = await getStateBlockDistrictList(data);
+      console.log("resp", resp);
 
-      setFieldId(resp.result.fieldId);
-
-      if (resp.result.fieldId) {
+      if (resp?.result?.fieldId) {
+        setFieldId(resp.result.fieldId);
         setStateData(resp.result.values);
+
         const totalCount = resp.result.values.length;
+
         setPageSizeArray(
           totalCount >= 15 ? [5, 10, 15] : totalCount >= 10 ? [5, 10] : [5]
         );
+
         setPageCount(Math.ceil(totalCount / pageLimit));
       } else {
-        console.error("Unexpected fieldId:", resp.result.fieldId);
+        console.error("Unexpected fieldId:", resp?.result?.fieldId);
         setStateData([]);
       }
     } catch (error) {
@@ -196,7 +201,6 @@ const State: React.FC = () => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchStateData(searchKeyword);
   }, [searchKeyword, pageLimit, pageOffset, sortBy]);
