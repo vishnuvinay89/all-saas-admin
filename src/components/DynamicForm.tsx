@@ -41,7 +41,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   children,
 }) => {
   console.log(formData);
-  const widgets = {
+  const widgets: any = {
     MultiSelectCheckboxes: MultiSelectCheckboxes,
     CustomRadioWidget: CustomRadioWidget,
   };

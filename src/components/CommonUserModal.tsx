@@ -169,11 +169,15 @@ const CommonUserModal: React.FC<UserModalProps> = ({
     const formData = data.formData;
     console.log("Form data submitted:", formData);
     const schemaProperties = schema.properties;
-
-    const { username, password } = generateUsernameAndPassword(
-      selectedStateCode,
-      userType,
-    );
+    const result = generateUsernameAndPassword(selectedStateCode, userType);
+    if (result !== null) {
+      const { username, password } = result;
+      // You can now use username and password safely here
+    
+    // const { username, password } = generateUsernameAndPassword(
+    //   selectedStateCode,
+    //   userType
+    // );
 
     let apiBody: any = {
       username: username,
@@ -286,7 +290,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
       onClose();
       console.log(error);
     }
-  };
+  }};
 
   const handleChange = (event: IChangeEvent<any>) => {
     console.log("Form data changed:", event.formData);
