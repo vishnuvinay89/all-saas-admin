@@ -30,6 +30,8 @@ export interface Field {
   fieldId: string;
   required?: boolean;
   default: string | number;
+  isRequired?: boolean;
+
 }
 export interface TenantCohortRoleMapping {
   tenantId: string;
@@ -39,6 +41,8 @@ export interface TenantCohortRoleMapping {
 export interface CustomField {
   fieldId: string;
   value: string;
+  isRequired?: boolean;
+
 }
 export interface FormData {
   formid: string;
