@@ -182,6 +182,13 @@ export const getCenterTableData = (t: any, isMobile: any) => {
     },
 
     {
+      key: "customFieldValues",
+      title: t("FORM.TYPE_OF_COHORT"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+      width: isMobile ? 95 : "",
+    },
+    {
       key: "actions",
       title: t("TABLE_TITLE.ACTIONS"),
       dataType: DataType.String,
