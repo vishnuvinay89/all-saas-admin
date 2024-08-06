@@ -2,12 +2,10 @@ import { deleteApi, patch, post } from "./RestClient";
 
 export interface CenterListParam {
   limit?: number;
-
   filters?: any;
   offset?: number;
 }
 
-// Define the interface to ensure consistency
 export interface StateListParam {
   limit?: number;
   offset?: number;
