@@ -59,6 +59,7 @@ const District: React.FC = () => {
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10, 20, 50]);
   const [sortBy, setSortBy] = useState<[string, string]>(["name", "asc"]);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [fieldId, setFieldId] = useState<string>("");
 
   const handleChangePageSize = (event: SelectChangeEvent<number>) => {
     const newSize = Number(event.target.value);
@@ -142,6 +143,7 @@ const District: React.FC = () => {
 
         const districtData = await getDistrictsForState(data);
         setDistrictData(districtData.result.values || []);
+        setFieldId(districtData.result.fieldId);
 
         const totalCount = districtData?.result?.totalCount || 0;
         console.log("totalCount", totalCount);
@@ -172,6 +174,8 @@ const District: React.FC = () => {
 
     try {
       const data = {
+        limit: pageLimit,
+        offset: pageOffset * pageLimit,
         controllingfieldfk: selectedState === "ALL" ? undefined : selectedState,
         fieldName: "districts",
       };
@@ -216,19 +220,19 @@ const District: React.FC = () => {
     name: string,
     value: string,
     controllingField: string,
-    fieldId: string,
-    DistrictId?: string
+    DistrictId?: string,
+    extraArgument?: any
   ) => {
     const newDistrict = {
       options: [
         {
-          controllingField,
+          controllingfieldfk: controllingField,
           name,
           value,
         },
       ],
     };
-
+    console.log("field Id district", fieldId);
     try {
       const response = await createOrUpdateOption(
         fieldId,
@@ -236,12 +240,14 @@ const District: React.FC = () => {
         DistrictId
       );
 
-      if (response) {
+      console.log("submit response district", response);
+      if (response && response.success) {
         showToastMessage("District added successfully", "success");
       } else {
         showToastMessage("Failed to create/update district", "error");
       }
     } catch (error) {
+      console.error("Error adding district:", error);
       showToastMessage("Error adding district", "error");
     }
 

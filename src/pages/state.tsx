@@ -105,9 +105,9 @@ const State: React.FC = () => {
     value: string,
     stateId?: string
   ) => {
-    const newState = { options: [{ name, value }] };
-
+    const newState = { options: [{ name, value, controllingfieldfk: "" }] };
     try {
+      console.log("fieldId state", fieldId);
       if (fieldId) {
         const response = await createOrUpdateOption(fieldId, newState, stateId);
         if (response) {

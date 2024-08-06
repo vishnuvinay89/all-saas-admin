@@ -135,26 +135,21 @@ export const deleteOption = async (
 
 export const createOrUpdateOption = async (
   fieldId: string,
-  fieldParams: { options: { name: string; value: string }[] },
+  fieldParams: {
+    options: { name: string; value: string; controllingfieldfk: string }[];
+  },
   stateId?: string
 ): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/update/${fieldId}`;
 
-  if (stateId) {
-    try {
-      const response = await patch(apiUrl, { fieldParams, stateId });
-      return response?.data;
-    } catch (error) {
-      console.error("Error updating state", error);
-      return error;
-    }
-  } else {
-    try {
-      const response = await patch(apiUrl, { fieldParams });
-      return response?.data;
-    } catch (error) {
-      console.error("Error creating state", error);
-      return error;
-    }
+  console.log("API URL:", apiUrl); 
+  console.log("Request Body:", { fieldParams, stateId });
+
+  try {
+    const response = await patch(apiUrl, { fieldParams, stateId });
+    return response?.data;
+  } catch (error) {
+    console.error("Error in createOrUpdateOption:", error);
+    return error;
   }
 };

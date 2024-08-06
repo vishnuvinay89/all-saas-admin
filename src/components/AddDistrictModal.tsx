@@ -10,7 +10,6 @@ import {
   Box,
   Select,
   MenuItem,
-  CircularProgress,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
@@ -30,7 +29,7 @@ interface AddDistrictBlockModalProps {
   initialValues?: {
     name?: string;
     value?: string;
-    controllingField?: string; 
+    controllingField?: string;
   };
   districtId?: string;
 }
@@ -49,7 +48,6 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
     controllingField: "",
   });
 
-  const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [states, setStates] = useState<{ value: string; label: string }[]>([]);
   const { t } = useTranslation();
 
@@ -60,7 +58,6 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
       value: initialValues.value || "",
       controllingField: initialValues.controllingField || "", // Set initial state value
     });
-    setErrors({});
   }, [initialValues]);
 
   useEffect(() => {
@@ -84,17 +81,6 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
     if (open) fetchStates();
   }, [open]);
 
-  const validateField = (
-    field: keyof typeof formData,
-    value: string,
-    requiredMessage: string
-  ) => {
-    if (!value) return requiredMessage;
-    if (field !== "controllingField" && !/^[a-zA-Z]*$/.test(value))
-      return t("COMMON.INVALID_TEXT");
-    return null;
-  };
-
   const handleChange =
     (field: keyof typeof formData) =>
     (
@@ -102,51 +88,22 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
     ) => {
       const { value } = e.target as HTMLInputElement;
       setFormData((prev) => ({ ...prev, [field]: value }));
-      setErrors((prev) => ({
-        ...prev,
-        [field]: validateField(
-          field,
-          value,
-          t(`COMMON.${field.toUpperCase()}_REQUIRED`)
-        ),
-      }));
     };
-
-  const validateForm = () => {
-    const newErrors = {
-      name: validateField(
-        "name",
-        formData.name,
-        t("COMMON.DISTRICT_NAME_REQUIRED")
-      ),
-      value: validateField("value", formData.value, t("COMMON.CODE_REQUIRED")),
-      controllingField: validateField(
-        "controllingField",
-        formData.controllingField,
-        t("COMMON.STATE_NAME_REQUIRED")
-      ),
-    };
-
-    setErrors(newErrors);
-    return !Object.values(newErrors).some((error) => error !== null);
-  };
 
   const handleSubmit = () => {
-    if (validateForm()) {
-      onSubmit(
-        formData.name,
-        formData.value,
-        formData.controllingField,
-        fieldId,
-        districtId
-      );
-      setFormData({
-        name: "",
-        value: "",
-        controllingField: "",
-      });
-      onClose();
-    }
+    onSubmit(
+      formData.name,
+      formData.value,
+      formData.controllingField,
+      fieldId,
+      districtId
+    );
+    setFormData({
+      name: "",
+      value: "",
+      controllingField: "",
+    });
+    onClose();
   };
 
   const isEditing = !!initialValues.name;
@@ -177,15 +134,10 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
             </MenuItem>
             {states.map((state) => (
               <MenuItem key={state.value} value={state.value}>
-                {state.label}
+                {state.label} {/* Displaying state label */}
               </MenuItem>
             ))}
           </Select>
-          {errors.controllingField && (
-            <Typography variant="caption" color="error">
-              {errors.controllingField}
-            </Typography>
-          )}
           <TextField
             margin="dense"
             label={t("COMMON.DISTRICT_NAME")}
@@ -194,8 +146,6 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
             variant="outlined"
             value={formData.name}
             onChange={handleChange("name")}
-            error={!!errors.name}
-            helperText={errors.name}
           />
           <TextField
             margin="dense"
@@ -205,8 +155,6 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
             variant="outlined"
             value={formData.value}
             onChange={handleChange("value")}
-            error={!!errors.value}
-            helperText={errors.value}
           />
           <Box display="flex" alignItems="center" mt={2}>
             <InfoOutlinedIcon color="primary" sx={{ mr: 1 }} />
