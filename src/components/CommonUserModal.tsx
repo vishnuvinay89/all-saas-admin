@@ -147,6 +147,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
     data: IChangeEvent<any, RJSFSchema, any>,
     event: React.FormEvent<any>,
   ) => {
+    console.log("submitted")
     // setOpenModal(true);
     const target = event?.target as HTMLFormElement;
     // const elementsArray = Array.from(target.elements);
@@ -433,6 +434,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                 showErrorList={true}
                 customFields={customFields}
                 formData={formData}
+                buttonName={!isEditModal?"Add":"Update"}
               >
                 {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
               </DynamicForm>
@@ -451,6 +453,8 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                   showErrorList={true}
                   customFields={customFields}
                   formData={formValue}
+                  buttonName={!isEditModal?"Add":"Update"}
+
                 >
                   {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
                 </DynamicForm>
@@ -468,6 +472,8 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                   showErrorList={true}
                   customFields={customFields}
                   formData={formValue}
+                  buttonName={!isEditModal?"Add":"Update"}
+
                 >
                   {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
                 </DynamicForm>

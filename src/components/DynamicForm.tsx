@@ -6,7 +6,11 @@ import { useTranslation } from "next-i18next";
 import React, { ReactNode, useState } from "react";
 import CustomRadioWidget from "./CustomRadioWidget";
 import MultiSelectCheckboxes from "./MultiSelectCheckboxes";
+import {
+ 
+  Button, Box
 
+} from "@mui/material";
 const FormWithMaterialUI = withTheme(MaterialUITheme);
 
 interface DynamicFormProps {
@@ -28,6 +32,7 @@ interface DynamicFormProps {
     [key: string]: React.FC<RegistryFieldsType<any, RJSFSchema, any>>;
   };
   children?: ReactNode;
+  buttonName?:string
 }
 
 const DynamicForm: React.FC<DynamicFormProps> = ({
@@ -39,14 +44,15 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   onError,
   customFields,
   children,
+  buttonName
 }) => {
-  const { t } = useTranslation();
-  const [submitted, setSubmitted] = useState(false);
-
+  console.log(formData);
   const widgets: any = {
     MultiSelectCheckboxes: MultiSelectCheckboxes,
     CustomRadioWidget: CustomRadioWidget,
   };
+  const { t } = useTranslation();
+  const [submitted, setSubmitted] = useState(false);
 
   const handleError = (errors: any) => {
     console.log("handle error", errors);
@@ -68,48 +74,68 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     onError(errors);
   };
 
-  function transformErrors(errors: any) {
-    if (!submitted) return [];
+  const handleSubmit = (event: IChangeEvent<any, RJSFSchema, any>, formEvent: React.FormEvent<any>) => {
+    console.log("Submit button clicked");
+    setSubmitted(true);
+    onSubmit(event, formEvent);
+  };
+
+  const handleChange = (event: any) => {
+    console.log("Form data changed:", event.formData);
+    onChange(event);
+  };
+
+  const transformErrors = (errors: any) => {
+    console.log("errors", errors);
+    console.log("schema", schema);
+    //if (!submitted) return [];
 
     return errors?.map((error: any) => {
-      const property = error.property.substring(1);
-
       switch (error.name) {
         case "required": {
-          error.message = t("FORM_ERROR_MESSAGES.THIS_IS_REQUIRED_FIELD");
+          console.log(submitted)
+          error.message = submitted ? t("FORM_ERROR_MESSAGES.THIS_IS_REQUIRED_FIELD") : "";
           break;
         }
         case "maximum": {
+          const property = error.property.substring(1);
+
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
             error.message = t("FORM_ERROR_MESSAGES.MAX_LENGTH_DIGITS_ERROR", {
               maxLength: schema.properties?.[property]?.maxLength,
             });
           }
-          break;
         }
         case "minimum": {
+          const property = error.property.substring(1);
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
             error.message = t("FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR", {
               minLength: schema.properties?.[property]?.minLength,
             });
           }
-          break;
         }
         case "pattern": {
           const pattern = error?.params?.pattern;
+          console.log(pattern);
+          const property = error.property.substring(1);
+
           switch (pattern) {
-            case '^[a-zA-Z][a-zA-Z ]*[a-zA-Z]$':{
+            case '^[a-zA-Z][a-zA-Z ]*[a-zA-Z]$': {
               error.message = t(
                 "FORM_ERROR_MESSAGES.NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED",
               );
               break;
             }
             case "^[0-9]{10}$": {
-              if (schema.properties?.[property]?.validation?.includes("mobile")) {
+              if (
+                schema.properties?.[property]?.validation?.includes("mobile")
+              ) {
                 error.message = t(
                   "FORM_ERROR_MESSAGES.ENTER_VALID_MOBILE_NUMBER",
                 );
-              } else if (schema.properties?.[property]?.validation?.includes("age")) {
+              } else if (
+                schema.properties?.[property]?.validation?.includes(".age")
+              ) {
                 error.message = t("age must be valid");
               } else {
                 error.message = t(
@@ -128,6 +154,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           break;
         }
         case "minLength": {
+          const property = error.property.substring(1);
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
             error.message = t("FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR", {
               minLength: schema.properties?.[property]?.minLength,
@@ -136,6 +163,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           break;
         }
         case "maxLength": {
+          const property = error.property.substring(1);
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
             error.message = t("FORM_ERROR_MESSAGES.MAX_LENGTH_DIGITS_ERROR", {
               maxLength: schema.properties?.[property]?.maxLength,
@@ -152,19 +180,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           }
         }
       }
+
       return error;
     });
-  }
-
-  function handleChange(event: any) {
-    console.log("Form data changed:", event.formData);
-    onChange(event);
-  }
-
-  function handleSubmit(event: IChangeEvent<any, RJSFSchema, any>, formEvent: React.FormEvent<any>) {
-    setSubmitted(true);
-    onSubmit(event, formEvent);
-  }
+  };
 
   return (
     <div>
@@ -184,6 +203,22 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         fields={customFields}
       >
         {children}
+        <Box display="flex" justifyContent="center" mt={2} mb={2}>
+          <Button
+            variant="contained"
+            type="submit"
+            onClick={() => {
+              setSubmitted(true);
+              console.log("Submit button was clicked");
+            }}
+            sx={{
+              padding: '12px 24px', // Adjust padding as needed
+              width: '200px', // Set the desired width
+            }}
+          >
+           { buttonName}
+          </Button>
+        </Box>
       </FormWithMaterialUI>
     </div>
   );
