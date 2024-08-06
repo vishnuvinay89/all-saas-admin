@@ -40,7 +40,7 @@ type DistrictDetail = {
 
 const District: React.FC = () => {
   const { t } = useTranslation();
-  const [selectedState, setSelectedState] = useState<string>("");
+  const [selectedState, setSelectedState] = useState("ALL"); // Default to "ALL"
   const [stateData, setStateData] = useState<StateDetail[]>([]);
   const [districtData, setDistrictData] = useState<DistrictDetail[]>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -56,7 +56,7 @@ const District: React.FC = () => {
   const [pageCount, setPageCount] = useState<number>(Numbers.ONE);
   const [pageOffset, setPageOffset] = useState<number>(Numbers.ZERO);
   const [pageLimit, setPageLimit] = useState<number>(Numbers.TEN);
-  const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10]);
+  const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10, 20, 50]);
   const [sortBy, setSortBy] = useState<[string, string]>(["name", "asc"]);
   const [searchKeyword, setSearchKeyword] = useState("");
 
@@ -101,83 +101,62 @@ const District: React.FC = () => {
       try {
         setLoading(true);
         const data = await getStateBlockDistrictList({ fieldName: "states" });
-        if (data?.result?.fieldId) {
+
+        if (data?.result?.values) {
           setStateData(data.result.values);
-          const initialSelectedState = data.result.values[0]?.value || "";
-          setSelectedState(initialSelectedState);
-
-          console.log("intialSelectedState", initialSelectedState);
-
-          fetchDistrictData(initialSelectedState);
+          setSelectedState(data.result.values[0]?.value || "ALL");
+          fetchDistrictData(data.result.values[0]?.value || "ALL");
         } else {
           setStateData([]);
         }
       } catch (error) {
+        console.error("Error fetching state data:", error);
         setStateData([]);
       } finally {
         setLoading(false);
       }
     };
 
-    const fetchDistrictData = async (stateId: string, keyword = "") => {
+    const fetchDistrictData = async (stateId: string) => {
       try {
+        if (stateId === "ALL") {
+          setDistrictData([]);
+          return;
+        }
+
         const data = {
           controllingfieldfk: stateId,
           fieldName: "districts",
-          limit: pageLimit,
-          offset: pageOffset * pageLimit,
-          optionName: keyword,
-          sort: sortBy,
         };
 
-        const initialDistrictData = await getDistrictsForState(data);
-
-        if (initialDistrictData?.result?.fieldId) {
-          setDistrictFieldId(initialDistrictData?.result?.fieldId);
-          setDistrictData(initialDistrictData?.result?.values || []);
-
-          console.log("district data", districtData);
-
-          const totalCount = districtData?.length || 0;
-          console.log("totalCount district", totalCount);
-
-          setPageSizeArray(
-            totalCount >= 15 ? [5, 10, 15] : totalCount >= 10 ? [5, 10] : [5]
-          );
-          setPageCount(Math.ceil(totalCount / pageLimit));
-        } else {
-          setDistrictData([]);
-        }
+        const districtData = await getDistrictsForState(data);
+        setDistrictData(districtData.result.values || []);
       } catch (error) {
-        console.error("Failed to fetch district data:", error);
+        console.error("Error fetching district data:", error);
         setDistrictData([]);
       }
     };
+
     fetchStateData();
-  }, [searchKeyword, pageLimit, pageOffset, sortBy]);
-
-  const handleSortChange = async (event: SelectChangeEvent) => {
-    const sortOrder =
-      event.target.value === "Z-A" ? SORT.DESCENDING : SORT.ASCENDING;
-    setSortBy(["name", sortOrder]);
-    setSelectedSort(event.target.value);
-  };
-
+  }, []);
   const handleStateChange = async (event: SelectChangeEvent<string>) => {
     const selectedState = event.target.value;
     setSelectedState(selectedState);
 
+    console.log("selectedState", selectedState);
+
     try {
-      const data = await getDistrictsForState({
-        controllingfieldfk: selectedState,
+      const data = {
+        controllingfieldfk: selectedState === "ALL" ? undefined : selectedState,
         fieldName: "districts",
-      });
-      setDistrictData(data.result.values || []);
+      };
+
+      const districtData = await getDistrictsForState(data);
+      setDistrictData(districtData.result.values || []);
     } catch (error) {
       console.error("Error fetching district data", error);
     }
   };
-
   const handleEdit = (rowData: DistrictDetail) => {
     setModalOpen(true);
     setSelectedStateForEdit(rowData);
@@ -287,7 +266,7 @@ const District: React.FC = () => {
         districts={districtData.map((district) => district.label)}
         selectedState={selectedState}
         showStateDropdown={false}
-        handleSortChange={handleSortChange}
+        // handleSortChange={handleSortChange}
         showSort={true}
         selectedSort={selectedSort}
         handleSearch={handleSearch}
@@ -316,6 +295,7 @@ const District: React.FC = () => {
                   onChange={handleStateChange}
                   label={t("MASTER.STATE")}
                 >
+                  <MenuItem value="ALL">{t("ALL")}</MenuItem>
                   {stateData.map((state) => (
                     <MenuItem key={state.value} value={state.value}>
                       {transformLabel(state.label)}

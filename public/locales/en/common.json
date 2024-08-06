@@ -1,7 +1,7 @@
 {
   "COMMON": {
     "LANGUAGE": "Language",
-    "LOADING": "Loading",
+    "LOADING": "Loading", 
     "ADD_NEW": "Add New",
     "PAGE_SIZE": "Page Size",
     "DELETE_USER": "Delete User Permanently",
@@ -64,7 +64,7 @@
     "STATE_NAME_REQUIRED": "State Name is Required",
     "DISTRICT_NAME_REQUIRED": "District Name is Required",
     "SELECT_STATE": "Select State",
-    "SOMETHING_WENT_WRONG":"Something went wrong"
+    "SOMETHING_WENT_WRONG": "Something went wrong"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -141,10 +141,10 @@
   },
   "MASTER": {
     "STATE": "State",
-    "STATE_NAMES": "State Names",
+    "STATE_NAMES": "State Name",
     "SORT": "Sort",
-    "DISTRICT_NAMES": "District Names",
-    "BLOCK_NAMES": "Block Names",
+    "DISTRICT_NAMES": "District Name",
+    "BLOCK_NAMES": "Block Name",
     "ACTIONS": "Actions",
     "DISTRICTS": "Districts",
     "SEARCHBAR_PLACEHOLDER_STATE": "Search States",

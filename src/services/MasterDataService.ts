@@ -53,7 +53,7 @@ export const getDistrictsForState = async ({
   optionName,
   sort,
 }: {
-  controllingfieldfk: string;
+  controllingfieldfk: string | undefined;
   fieldName: string;
   optionName?: string;
   sort?: [string, string];
@@ -67,6 +67,8 @@ export const getDistrictsForState = async ({
       sort,
     });
     return response?.data;
+
+    console.log("response", response);
   } catch (error) {
     console.error("Error fetching district data", error);
     return error;

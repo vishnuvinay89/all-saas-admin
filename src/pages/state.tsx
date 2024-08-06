@@ -177,16 +177,14 @@ const State: React.FC = () => {
       console.log("fetchStateData", data);
 
       const resp = await getStateBlockDistrictList(data);
-      // console.log("resp", resp);
 
       if (resp?.result?.fieldId) {
         setFieldId(resp.result.fieldId);
         setStateData(resp.result.values);
 
-        const totalCount = resp?.result?.values.length;
+        const totalCount = resp?.result?.totalCount || 0;
         console.log("totalCount", totalCount);
 
-        // Update page size array based on total count
         if (totalCount >= 15) {
           setPageSizeArray([5, 10, 15]);
         } else if (totalCount >= 10) {
@@ -195,7 +193,6 @@ const State: React.FC = () => {
           setPageSizeArray([5]);
         }
 
-        // Calculate the total number of pages
         const pageCount = Math.ceil(totalCount / limit);
         setPageCount(pageCount);
       } else {
