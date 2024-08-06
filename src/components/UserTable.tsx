@@ -46,6 +46,7 @@ type FilterDetails = {
   districts?: any;
   states?: any;
   blocks?: any;
+  name?:any
 };
 
 interface Cohort {
@@ -110,6 +111,7 @@ const UserTable: React.FC<UserTableProps> = ({
     setOpenAddLearnerModal(true);
   };
   const handleModalSubmit = (value: boolean) => {
+    console.log("true")
     setSubmitValue(true);
   };
   const handleCloseAddLearnerModal = () => {
@@ -202,7 +204,7 @@ const UserTable: React.FC<UserTableProps> = ({
         ...prevFilters,
         status: [Status.ACTIVE],
       }));
-    } else if (event.target.value === "Archived") {
+    } else if (event.target.value === "InActive") {
       setFilters((prevFilters) => ({
         ...prevFilters,
         status: [Status.ARCHIVED],
@@ -376,6 +378,10 @@ const UserTable: React.FC<UserTableProps> = ({
     return initialFormData;
   };
   const handleEdit = async (rowData: any) => {
+    if(submitValue)
+    {
+      setSubmitValue(false);
+    }
     console.log("Edit row:", rowData);
 
     try {
@@ -496,7 +502,19 @@ const UserTable: React.FC<UserTableProps> = ({
             // Programs: null,
           };
         });
-        setData(finalResult);
+        if(filters?.name)
+        {
+          const prioritizedResult = finalResult
+          .filter((user:any) => user.name.toLowerCase().startsWith(filters?.name))
+          .concat(finalResult.filter((user:any) => !user.name.toLowerCase().startsWith(filters?.name)));
+          setData(prioritizedResult)
+        }
+        
+    else{
+      setData(finalResult);
+
+    }
+
         setLoading(false);
         setCohortsFetched(false);
       } catch (error: any) {
@@ -517,8 +535,7 @@ const UserTable: React.FC<UserTableProps> = ({
     pageLimit,
     sortBy,
     filters,
-    openAddFacilitatorModal,
-    openAddTeamLeaderModal,
+    parentState
   ]);
 
   useEffect(() => {
@@ -530,9 +547,15 @@ const UserTable: React.FC<UserTableProps> = ({
         const newData = await Promise.all(
           data?.map(async (user) => {
             const response = await getCohortList(user.userId);
-            const cohortNames = response?.result?.cohortData?.map(
-              (cohort: Cohort) => cohort.name,
-            );
+            // const cohortNames = response?.result?.cohortData?.map(
+            //   (cohort: Cohort) => cohort.name,
+            // );
+            const cohortNames = response?.result?.cohortData
+            ?.filter((cohort: Cohort) => cohort.type !== 'BLOCK') // Filter out cohorts with type 'block'
+            .map((cohort: Cohort) => cohort.name); //
+
+
+
             let finalArray;
             if (cohortNames?.length >= 1) {
               finalArray = capitalizeFirstLetterOfEachWordInArray(cohortNames);
@@ -632,7 +655,7 @@ const UserTable: React.FC<UserTableProps> = ({
           <Box display="flex" marginLeft="40%" gap="20px">
             {/* <Image src={glass} alt="" /> */}
             <PersonSearchIcon fontSize="large" />
-            <Typography marginTop="10px">
+            <Typography marginTop="10px" variant="h2">
               {t("COMMON.NO_USER_FOUND")}
             </Typography>
           </Box>

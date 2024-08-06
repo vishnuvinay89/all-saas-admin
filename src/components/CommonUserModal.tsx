@@ -225,16 +225,20 @@ const CommonUserModal: React.FC<UserModalProps> = ({
          
         
         } else {
-          if (fieldSchema.checkbox && fieldSchema.type === "array" && isEditModal) {
+          if (fieldSchema?.checkbox && fieldSchema.type === "array" ) {
             apiBody.customFields.push({
               fieldId: fieldId,
               value: String(fieldValue).split(","),
             });
           } else {
-            apiBody.customFields.push({
-              fieldId: fieldId,
-              value: String(fieldValue),
-            });
+            if(fieldId)
+            {
+              apiBody.customFields.push({
+                fieldId: fieldId,
+                value: String(fieldValue),
+              });
+            }
+            
           }
         }
       }

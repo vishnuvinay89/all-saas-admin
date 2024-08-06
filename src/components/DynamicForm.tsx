@@ -6,11 +6,8 @@ import { useTranslation } from "next-i18next";
 import React, { ReactNode, useState } from "react";
 import CustomRadioWidget from "./CustomRadioWidget";
 import MultiSelectCheckboxes from "./MultiSelectCheckboxes";
-import {
- 
-  Button, Box
+import { Button, Box } from "@mui/material";
 
-} from "@mui/material";
 const FormWithMaterialUI = withTheme(MaterialUITheme);
 
 interface DynamicFormProps {
@@ -46,20 +43,21 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   children,
   buttonName
 }) => {
-  console.log(formData);
-  const widgets: any = {
-    MultiSelectCheckboxes: MultiSelectCheckboxes,
-    CustomRadioWidget: CustomRadioWidget,
-  };
   const { t } = useTranslation();
   const [submitted, setSubmitted] = useState(false);
+  const [localFormData, setLocalFormData] = useState(formData || {});
+
+  const widgets: any = {
+    MultiSelectCheckboxes: MultiSelectCheckboxes,
+    CustomRadioWidget: CustomRadioWidget
+  };
 
   const handleError = (errors: any) => {
-    console.log("handle error", errors);
+    console.log("handle error1", errors);
     if (errors.length > 0) {
       const property = errors[0].property?.replace(/^root\./, "");
       const errorField = document.querySelector(
-        `[name$="${property}"]`,
+        `[name$="${property}"]`
       ) as HTMLElement;
 
       if (errorField) {
@@ -74,15 +72,36 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     onError(errors);
   };
 
-  const handleSubmit = (event: IChangeEvent<any, RJSFSchema, any>, formEvent: React.FormEvent<any>) => {
+  const handleSubmit = (
+    event: IChangeEvent<any, RJSFSchema, any>,
+    formEvent: React.FormEvent<any>
+  ) => {
     console.log("Submit button clicked");
     setSubmitted(true);
     onSubmit(event, formEvent);
   };
 
-  const handleChange = (event: any) => {
-    console.log("Form data changed:", event.formData);
-    onChange(event);
+  const handleChange = (event: IChangeEvent<any>) => {
+    const cleanAndReplace = (data: any) => {
+      for (const key in data) {
+        if (Array.isArray(data[key])) {
+          data[key] = Array.from(
+            new Set(
+              data[key]
+                .filter((item: any) => item !== "")
+                .map((item: any) => (item === "_lifeskills" ? "life_skills" : item))
+            )
+          );
+        }
+      }
+      return data;
+    };
+
+    const cleanedFormData = cleanAndReplace(event.formData);
+    console.log("Form data changed:", cleanedFormData);
+
+    setLocalFormData(cleanedFormData); // Update local form data state
+    onChange({ ...event, formData: cleanedFormData });
   };
 
   const transformErrors = (errors: any) => {
@@ -93,7 +112,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     return errors?.map((error: any) => {
       switch (error.name) {
         case "required": {
-          console.log(submitted)
+          console.log(submitted);
           error.message = submitted ? t("FORM_ERROR_MESSAGES.THIS_IS_REQUIRED_FIELD") : "";
           break;
         }
@@ -102,17 +121,19 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
             error.message = t("FORM_ERROR_MESSAGES.MAX_LENGTH_DIGITS_ERROR", {
-              maxLength: schema.properties?.[property]?.maxLength,
+              maxLength: schema.properties?.[property]?.maxLength
             });
           }
+          break;
         }
         case "minimum": {
           const property = error.property.substring(1);
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
             error.message = t("FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR", {
-              minLength: schema.properties?.[property]?.minLength,
+              minLength: schema.properties?.[property]?.minLength
             });
           }
+          break;
         }
         case "pattern": {
           const pattern = error?.params?.pattern;
@@ -190,7 +211,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
       <FormWithMaterialUI
         schema={schema}
         uiSchema={uiSchema}
-        formData={formData}
+        formData={localFormData} 
         onChange={handleChange}
         onSubmit={handleSubmit}
         validator={validator}
