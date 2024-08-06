@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState, useEffect } from "react";
+import React, { ChangeEvent, useState, useEffect, useCallback } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType, SortDirection } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -25,6 +25,7 @@ import { showToastMessage } from "@/components/Toastify";
 import AddNewCenters from "@/components/AddNewCenters";
 import { getCenterTableData } from "@/data/tableColumns";
 import { Theme } from "@mui/system";
+import { debounce, firstLetterInUpperCase } from "@/utils/Helper";
 
 type cohortFilterDetails = {
   type?: string;
@@ -32,8 +33,18 @@ type cohortFilterDetails = {
   states?: string;
   districts?: string;
   blocks?: string;
+  name?:string
 };
 
+interface centerData {
+  name?: string;
+  status?: string;
+  updatedBy?: string;
+  createdBy?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  customFieldValues?: string;
+}
 interface CohortDetails {
   name?: string;
   type?: string;
@@ -79,6 +90,7 @@ const Center: React.FC = () => {
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
   const [selectedBlockCode, setSelectedBlockCode] = useState("");
   const [formdata, setFormData] = useState<any>();
+  const [totalCount,setTotalCound] = useState<number>(0)
   const handleCloseAddLearnerModal = () => {
     setOpenAddNewCohort(false);
   };
@@ -111,9 +123,26 @@ const Center: React.FC = () => {
       const resp = await getCohortList(data);
       if (resp) {
         const result = resp?.results?.cohortDetails;
-        setCohortData(result);
+        const resultData:centerData[] = []
+        result?.forEach((item:any)=>{
+          const cohortType = item?.customFields?.map((field:any) => firstLetterInUpperCase(field?.value))
+          const requiredData = {
+            name:item?.name,
+            status:item?.status,
+            updatedBy: item?.updatedBy,
+            createdBy: item?.createdBy,
+            createdAt: item?.createdAt,
+            updatedAt: item?.updatedAt,
+            customFieldValues:cohortType || ""
+          }
+          resultData?.push(requiredData)
+        })
+        setCohortData(resultData);
         const totalCount = resp?.count;
-        if (totalCount >= 15) {
+        setTotalCound(totalCount)
+        if (totalCount >= 20) {
+          setPageSizeArray([5, 10, 15,20]);
+        }else if (totalCount >= 15) {
           setPageSizeArray([5, 10, 15]);
         } else if (totalCount >= 10) {
           setPageSizeArray([5, 10]);
@@ -504,7 +533,7 @@ const Center: React.FC = () => {
             data={cohortData}
             limit={pageLimit}
             offset={pageOffset}
-            paginationEnable={true}
+            paginationEnable={totalCount > 5 }
             PagesSelector={PagesSelector}
             PageSizeSelector={PageSizeSelectorFunction}
             pageSizes={pageSizeArray}

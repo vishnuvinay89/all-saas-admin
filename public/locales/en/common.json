@@ -81,7 +81,7 @@
     "DASHBOARD": "Dashboard",
     "MANAGE_USERS": "Manage Users",
     "COURSE_PLANNER": "Course Planner",
-    "CENTER": "Center",
+    "CENTER": "Centers",
     "FACILITATORS": "Facilitators",
     "LEARNERS": "Learners",
     "TEAM_LEADERS": "Team Leaders",
@@ -178,7 +178,7 @@
     "RENAME": "Rename",
     "CENTER_RENAMED": "Center Renamed Successfully!",
     "SEND_REQUEST": "Send Request",
-    "SURE_DELETE_CENTER": "Are you sure you want to Delete Center ?",
+    "SURE_DELETE_CENTER": "Are you sure you want to Delete Center?",
     "CENTER_UPDATE_SUCCESSFULLY": "Center has been Successfully Updated",
     "CENTER_DELETE_SUCCESSFULLY": "Center has been Successfully Deleted",
     "CENTER_CREATED_SUCCESSFULLY": "Center Created Successfully",
@@ -247,7 +247,7 @@
     "DESIGNATION": "Designation",
     "REGULAR": "Regular",
     "REMOTE": "Remote",
-    "NOTE_THIS_WILL_BE_CENTER_NAME": "Note : This Will Be Center Name",
+    "NOTE_THIS_WILL_BE_CENTER_NAME": "Note : This will be center name",
     "STATE": "State",
     "DISTRICT": "District",
     "BLOCK": "Block",
@@ -256,6 +256,7 @@
     "NAME": "Name",
     "MOBILE_NUMBER": "Mobile Number",
     "CENTER": "Center"
+    
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",
