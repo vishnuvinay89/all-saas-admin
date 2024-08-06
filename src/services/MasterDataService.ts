@@ -67,8 +67,6 @@ export const getDistrictsForState = async ({
       sort,
     });
     return response?.data;
-
-    console.log("response", response);
   } catch (error) {
     console.error("Error fetching district data", error);
     return error;

@@ -67,6 +67,12 @@ const District: React.FC = () => {
     );
     setPageLimit(newSize);
   };
+  const handleSortChange = async (event: SelectChangeEvent) => {
+    const sortOrder =
+      event.target.value === "Z-A" ? SORT.DESCENDING : SORT.ASCENDING;
+    setSortBy(["name", sortOrder]);
+    setSelectedSort(event.target.value);
+  };
 
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
@@ -127,6 +133,7 @@ const District: React.FC = () => {
         const data = {
           controllingfieldfk: stateId,
           fieldName: "districts",
+          sort: sortBy,
         };
 
         const districtData = await getDistrictsForState(data);
@@ -138,7 +145,7 @@ const District: React.FC = () => {
     };
 
     fetchStateData();
-  }, []);
+  }, [sortBy]);
   const handleStateChange = async (event: SelectChangeEvent<string>) => {
     const selectedState = event.target.value;
     setSelectedState(selectedState);
@@ -266,7 +273,7 @@ const District: React.FC = () => {
         districts={districtData.map((district) => district.label)}
         selectedState={selectedState}
         showStateDropdown={false}
-        // handleSortChange={handleSortChange}
+        handleSortChange={handleSortChange}
         showSort={true}
         selectedSort={selectedSort}
         handleSearch={handleSearch}
