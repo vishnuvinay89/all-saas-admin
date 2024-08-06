@@ -129,8 +129,12 @@ const District: React.FC = () => {
           setDistrictData([]);
           return;
         }
+        const limit = pageLimit;
+        const offset = pageOffset * limit;
 
         const data = {
+          limit: limit,
+          offset: offset,
           controllingfieldfk: stateId,
           fieldName: "districts",
           sort: sortBy,
@@ -138,6 +142,20 @@ const District: React.FC = () => {
 
         const districtData = await getDistrictsForState(data);
         setDistrictData(districtData.result.values || []);
+
+        const totalCount = districtData?.result?.totalCount || 0;
+        console.log("totalCount", totalCount);
+
+        if (totalCount >= 15) {
+          setPageSizeArray([5, 10, 15]);
+        } else if (totalCount >= 10) {
+          setPageSizeArray([5, 10]);
+        } else {
+          setPageSizeArray([5]);
+        }
+
+        const pageCount = Math.ceil(totalCount / limit);
+        setPageCount(pageCount);
       } catch (error) {
         console.error("Error fetching district data:", error);
         setDistrictData([]);
@@ -145,7 +163,7 @@ const District: React.FC = () => {
     };
 
     fetchStateData();
-  }, [sortBy]);
+  }, [sortBy, pageLimit, pageOffset]);
   const handleStateChange = async (event: SelectChangeEvent<string>) => {
     const selectedState = event.target.value;
     setSelectedState(selectedState);

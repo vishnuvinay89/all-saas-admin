@@ -48,11 +48,14 @@ export const getStateBlockDistrictList = async ({
   }
 };
 export const getDistrictsForState = async ({
+  limit,
+  offset,
   controllingfieldfk,
   fieldName,
-  optionName,
   sort,
 }: {
+  limit: number;
+  offset: number;
   controllingfieldfk: string | undefined;
   fieldName: string;
   optionName?: string;
@@ -61,9 +64,10 @@ export const getDistrictsForState = async ({
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/options/read`;
   try {
     const response = await post(apiUrl, {
+      limit,
+      offset,
       controllingfieldfk,
       fieldName,
-      optionName,
       sort,
     });
     return response?.data;
