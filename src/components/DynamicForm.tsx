@@ -3,11 +3,11 @@ import { Theme as MaterialUITheme } from "@rjsf/mui";
 import { RJSFSchema, RegistryFieldsType, WidgetProps } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
 import { useTranslation } from "next-i18next";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useState , useEffect} from "react";
 import CustomRadioWidget from "./CustomRadioWidget";
 import MultiSelectCheckboxes from "./MultiSelectCheckboxes";
 import { Button, Box } from "@mui/material";
-
+import useSubmittedButtonStore from "@/utils/useSharedState";
 const FormWithMaterialUI = withTheme(MaterialUITheme);
 
 interface DynamicFormProps {
@@ -21,6 +21,8 @@ interface DynamicFormProps {
   onChange: (event: IChangeEvent<any>) => void;
   onError: (errors: any) => void;
   showErrorList: boolean;
+  id?: string; // Optional id prop
+
 
   widgets: {
     [key: string]: React.FC<WidgetProps<any, RJSFSchema, any>>;
@@ -29,10 +31,11 @@ interface DynamicFormProps {
     [key: string]: React.FC<RegistryFieldsType<any, RJSFSchema, any>>;
   };
   children?: ReactNode;
-  buttonName?:string
+  
 }
 
 const DynamicForm: React.FC<DynamicFormProps> = ({
+  id,
   schema,
   uiSchema,
   formData,
@@ -41,11 +44,16 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   onError,
   customFields,
   children,
-  buttonName
+  
 }) => {
   const { t } = useTranslation();
-  const [submitted, setSubmitted] = useState(false);
   const [localFormData, setLocalFormData] = useState(formData || {});
+  const submittedButtonStatus = useSubmittedButtonStore((state: any) => state.submittedButtonStatus);
+  const setSubmittedButtonStatus = useSubmittedButtonStore((state:any) => state.setSubmittedButtonStatus);
+  const setSubmittedButtonEnable = useSubmittedButtonStore((state:any) => state.setSubmittedButtonEnable);
+  const submittedButtonEnable = useSubmittedButtonStore((state: any) => state.submittedButtonEnable);
+
+
 
   const widgets: any = {
     MultiSelectCheckboxes: MultiSelectCheckboxes,
@@ -77,7 +85,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     formEvent: React.FormEvent<any>
   ) => {
     console.log("Submit button clicked");
-    setSubmitted(true);
+   
     onSubmit(event, formEvent);
   };
 
@@ -100,7 +108,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     const cleanedFormData = cleanAndReplace(event.formData);
     console.log("Form data changed:", cleanedFormData);
 
-    setLocalFormData(cleanedFormData); // Update local form data state
+    setLocalFormData(cleanedFormData); 
+    // Update local form data state
     onChange({ ...event, formData: cleanedFormData });
   };
 
@@ -112,8 +121,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     return errors?.map((error: any) => {
       switch (error.name) {
         case "required": {
-          console.log(submitted);
-          error.message = submitted ? t("FORM_ERROR_MESSAGES.THIS_IS_REQUIRED_FIELD") : "";
+          console.log(submittedButtonStatus);
+          error.message = submittedButtonStatus? t("FORM_ERROR_MESSAGES.THIS_IS_REQUIRED_FIELD") : "";
           break;
         }
         case "maximum": {
@@ -205,9 +214,12 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
       return error;
     });
   };
+  useEffect(() => {
+    setSubmittedButtonStatus(false)
 
+  }, []);
   return (
-    <div>
+    <div >
       <FormWithMaterialUI
         schema={schema}
         uiSchema={uiSchema}
@@ -222,24 +234,12 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         onError={handleError}
         transformErrors={transformErrors}
         fields={customFields}
+        id={id}
       >
+                <style>{`.rjsf-default-submit { display: none !important; }`}</style>
+
         {children}
-        <Box display="flex" justifyContent="center" mt={2} mb={2}>
-          <Button
-            variant="contained"
-            type="submit"
-            onClick={() => {
-              setSubmitted(true);
-              console.log("Submit button was clicked");
-            }}
-            sx={{
-              padding: '12px 24px', // Adjust padding as needed
-              width: '200px', // Set the desired width
-            }}
-          >
-           { buttonName}
-          </Button>
-        </Box>
+        
       </FormWithMaterialUI>
     </div>
   );

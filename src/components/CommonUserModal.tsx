@@ -30,7 +30,7 @@ import { showToastMessage } from "./Toastify";
 import { transformArray } from "../utils/Helper";
 import { useLocationState } from "@/utils/useLocationState";
 import { tenantId } from "../../app.config";
-
+import useSubmittedButtonStore from "@/utils/useSharedState";
 interface UserModalProps {
   open: boolean;
   onClose: () => void;
@@ -53,8 +53,12 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   console.log(userType);
   const [schema, setSchema] = React.useState<any>();
   const [uiSchema, setUiSchema] = React.useState<any>();
+  const [submitButtonEnable, setSubmitButtonEnable] = React.useState<boolean>(false);
+
   const { t } = useTranslation();
   const [formValue, setFormValue] = useState<any>();
+  const setSubmittedButtonStatus = useSubmittedButtonStore((state:any) => state.setSubmittedButtonStatus);
+
   const modalTitle = !isEditModal
     ? userType === FormContextType.STUDENT
       ? t("LEARNERS.NEW_LEARNER")
@@ -391,17 +395,54 @@ const CommonUserModal: React.FC<UserModalProps> = ({
     //   console.error('Error creating user', error);
     // }
   };
+  useEffect(() => {
+    
+    if(!open)
+    {
+      setSubmitButtonEnable(false)
 
+    }
+    if(dynamicForm && userType!=FormContextType.TEAM_LEADER || isEditModal)
+    {
+      setSubmitButtonEnable(true)
+    }
+    if(dynamicFormForBlock && userType===FormContextType.TEAM_LEADER || isEditModal)
+    {
+      setSubmitButtonEnable(true)
+
+    }
+
+  }, [dynamicForm,dynamicFormForBlock, open]);
   return (
     <>
       <SimpleModal
         open={open}
         onClose={onClose}
-        showFooter={false}
+        showFooter={true}
         modalTitle={modalTitle}
+        footer={
+          <Box display="flex" justifyContent="center" mt={2} mb={2}>
+            <Button
+              variant="contained"
+              type="submit"
+             form="dynamic-form" // Add this line
+              sx={{
+                padding: '12px 24px', // Adjust padding as needed
+                width: '200px', // Set the desired width
+              }}
+              disabled={!submitButtonEnable}
+              onClick={() => {
+                setSubmittedButtonStatus(true);
+                console.log("Submit button was clicked");
+              }}
+            >
+              {!isEditModal?t("COMMON.ADD"):t("COMMON.UPDATE")}
+            </Button>
+          </Box>
+        }
       >
-        <>
-          <Box
+ 
+        {!isEditModal &&(  <Box
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -431,13 +472,14 @@ const CommonUserModal: React.FC<UserModalProps> = ({
               selectedCenter={selectedCenter}
               handleCenterChangeWrapper={handleCenterChangeWrapper}
             />
-          </Box>
-        </>
-
+          </Box>)
+}
         {formData
           ? schema &&
             uiSchema && (
               <DynamicForm
+              id="dynamic-form" 
+
                 schema={schema}
                 uiSchema={uiSchema}
                 onSubmit={handleSubmit}
@@ -447,8 +489,9 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                 showErrorList={true}
                 customFields={customFields}
                 formData={formData}
-                buttonName={!isEditModal?t("COMMON.ADD"):t("COMMON.UPDATE")}
               >
+               
+            
                 {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
               </DynamicForm>
             )
@@ -457,6 +500,8 @@ const CommonUserModal: React.FC<UserModalProps> = ({
               schema &&
               uiSchema && (
                 <DynamicForm
+                id="dynamic-form" 
+
                   schema={schema}
                   uiSchema={uiSchema}
                   onSubmit={handleSubmit}
@@ -466,7 +511,6 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                   showErrorList={true}
                   customFields={customFields}
                   formData={formValue}
-                  buttonName={!isEditModal?t("COMMON.ADD"):t("COMMON.UPDATE")}
 
                 >
                   {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
@@ -476,6 +520,8 @@ const CommonUserModal: React.FC<UserModalProps> = ({
               schema &&
               uiSchema && (
                 <DynamicForm
+                id="dynamic-form" 
+
                   schema={schema}
                   uiSchema={uiSchema}
                   onSubmit={handleSubmit}
@@ -485,12 +531,12 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                   showErrorList={true}
                   customFields={customFields}
                   formData={formValue}
-                  buttonName={!isEditModal?t("COMMON.ADD"):t("COMMON.UPDATE")}
 
                 >
                   {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
                 </DynamicForm>
               )}
+              
       </SimpleModal>
     </>
   );

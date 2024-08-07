@@ -92,12 +92,13 @@ const UserTable: React.FC<UserTableProps> = ({
   const [selectedUserId, setSelectedUserId] = useState("");
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
-  const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm"),
-  );
-  // const isMobile = useMediaQuery("(max-width:600px)");
+  const [deleteUserState, setDeleteUserState] = useState(false);
 
-  const [confirmButtonDisable, setConfirmButtonDisable] = useState(false);
+  const isMobile: boolean = useMediaQuery((theme: Theme) =>
+  theme.breakpoints.down('sm'),
+);
+
+  const [confirmButtonDisable, setConfirmButtonDisable] = useState(true);
   const [pagination, setPagination] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState("All");
   const [formdata, setFormData] = useState<any>();
@@ -112,7 +113,7 @@ const UserTable: React.FC<UserTableProps> = ({
   };
   const handleModalSubmit = (value: boolean) => {
     console.log("true")
-    setSubmitValue(true);
+    submitValue?setSubmitValue(false):setSubmitValue(true);
   };
   const handleCloseAddLearnerModal = () => {
     setOpenAddLearnerModal(false);
@@ -162,6 +163,7 @@ const UserTable: React.FC<UserTableProps> = ({
       count={pageCount}
       page={pageOffset + 1}
       onChange={handlePaginationChange}
+      sx={{marginTop:"10px"}}
     />
   );
 
@@ -489,15 +491,15 @@ const UserTable: React.FC<UserTableProps> = ({
               user.name.slice(1).toLowerCase(),
             role: user.role,
             //  gender: user.gender,
-            mobile: user.mobile === "NaN" ? "" : user.mobile,
-            age: ageField ? ageField.value : null,
-            district: districtField ? districtField.value : null,
-            state: stateField ? stateField.value : null,
-            blocks: blockField ? blockField.value : null,
+            mobile: user.mobile === "NaN" ? "-" : user.mobile,
+            age: ageField ? ageField.value : "-",
+            district: districtField ? districtField.value : "-",
+            state: stateField ? stateField.value : "-",
+            blocks: blockField ? blockField.value : "-",
             gender: genderField
               ? genderField.value?.charAt(0)?.toUpperCase() +
                 genderField.value.slice(1).toLowerCase()
-              : null,
+              : "-",
             // centers: null,
             // Programs: null,
           };
@@ -535,7 +537,9 @@ const UserTable: React.FC<UserTableProps> = ({
     pageLimit,
     sortBy,
     filters,
-    parentState
+    parentState,
+    deleteUserState
+  
   ]);
 
   useEffect(() => {
@@ -564,7 +568,7 @@ const UserTable: React.FC<UserTableProps> = ({
             // console.log(finalArray)
             return {
               ...user,
-              centers: finalArray?.join(" , "),
+              centers: finalArray? finalArray?.join(" , "):"-",
             };
           }),
         );
@@ -581,6 +585,7 @@ const UserTable: React.FC<UserTableProps> = ({
     setSelectedReason("");
     setOtherReason("");
     setIsDeleteModalOpen(false);
+    setConfirmButtonDisable(true);
   };
 
   const handleDeleteUser = async (category: string) => {
@@ -594,6 +599,10 @@ const UserTable: React.FC<UserTableProps> = ({
         },
       };
       const response = await deleteUser(userId, userData);
+      if(response)
+      {
+        deleteUserState?setDeleteUserState(false):setDeleteUserState(true)
+      }
       handleCloseDeleteModal();
       showToastMessage(t("COMMON.USER_DELETE_SUCCSSFULLY"), "success");
     } catch (error) {
@@ -605,7 +614,15 @@ const UserTable: React.FC<UserTableProps> = ({
     { name: "Edit", onClick: handleEdit, icon: EditIcon },
     { name: "Delete", onClick: handleDelete, icon: DeleteIcon },
   ];
-
+  const noUserFoundJSX = (
+    <Box display="flex" marginLeft="40%" gap="20px">
+      {/* <Image src={glass} alt="" /> */}
+      <PersonSearchIcon fontSize="large" />
+      <Typography marginTop="10px" variant="h2">
+        {t("COMMON.NO_USER_FOUND")}
+      </Typography>
+    </Box>
+  );
   const userProps = {
     userType: userType,
     searchPlaceHolder: searchPlaceholder,
@@ -648,22 +665,27 @@ const UserTable: React.FC<UserTableProps> = ({
           onEdit={handleEdit}
           onDelete={handleDelete}
           pagination={pagination}
+          noDataMessage={
+            data.length === 0 ? t("COMMON.NO_USER_FOUND") : ""
+          }
         />
       ) : (
         loading === false &&
         data.length === 0 && (
-          <Box display="flex" marginLeft="40%" gap="20px">
-            {/* <Image src={glass} alt="" /> */}
-            <PersonSearchIcon fontSize="large" />
-            <Typography marginTop="10px" variant="h2">
-              {t("COMMON.NO_USER_FOUND")}
-            </Typography>
-          </Box>
-        )
-      )}
+          // <Box display="flex" marginLeft="40%" gap="20px">
+          //   {/* <Image src={glass} alt="" /> */}
+          //   <PersonSearchIcon fontSize="large" />
+          //   <Typography marginTop="10px" variant="h2">
+          //     {t("COMMON.NO_USER_FOUND")}
+          //   </Typography>
+          // </Box>
 
-      {/* <KaTableComponent
-          columns={columns}
+<KaTableComponent
+          columns={
+            role === "Team Leader"
+              ? getTLTableColumns(t, isMobile)
+              : getUserTableColumns(t, isMobile)
+          }
           data={data}
           limit={pageLimit}
           offset={pageOffset}
@@ -674,8 +696,17 @@ const UserTable: React.FC<UserTableProps> = ({
           showIcons={true}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          
-        /> */}
+          pagination={false}
+          noDataMessage={
+            data.length === 0 ? noUserFoundJSX : ""
+          }
+        />
+
+        )
+       
+      )}
+
+     
       <DeleteUserModal
         open={isDeleteModalOpen}
         onClose={handleCloseDeleteModal}

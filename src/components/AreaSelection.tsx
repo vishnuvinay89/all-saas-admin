@@ -3,6 +3,7 @@ import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import MultipleSelectCheckmarks from "./FormControl";
+import { capitalizeFirstLetterOfEachWordInArray} from "@/utils/Helper";
 interface State {
   value: string;
   label: string;
@@ -125,7 +126,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
         {isCenterSelection && (
           <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
             <MultipleSelectCheckmarks
-              names={allCenters?.map((centers) => centers.name)}
+              names={capitalizeFirstLetterOfEachWordInArray(allCenters?.map((centers) => centers.name))}
               codes={allCenters?.map((centers) => centers.cohortId)}
               tagName={t("CENTERS.CENTERS")}
               selectedCategories={selectedCenter}
