@@ -1,7 +1,7 @@
 import DeleteUserModal from "@/components/DeleteUserModal";
 import HeaderComponent from "@/components/HeaderComponent";
 import PageSizeSelector from "@/components/PageSelector";
-import { SORT, Status } from "@/utils/app.constant";
+import { FormContextType, SORT, Status } from "@/utils/app.constant";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import Box from "@mui/material/Box";
@@ -200,13 +200,13 @@ const UserTable: React.FC<UserTableProps> = ({
   const handleFilterChange = async (event: SelectChangeEvent) => {
     console.log(event.target.value as string);
     setSelectedFilter(event.target.value as string);
-    if (event.target.value === "Active") {
+    if (event.target.value ===  Status.ACTIVE_LABEL ) {
       console.log(true);
       setFilters((prevFilters) => ({
         ...prevFilters,
         status: [Status.ACTIVE],
       }));
-    } else if (event.target.value === "InActive") {
+    } else if (event.target.value === Status.INACTIVE) {
       setFilters((prevFilters) => ({
         ...prevFilters,
         status: [Status.ARCHIVED],
@@ -506,10 +506,16 @@ const UserTable: React.FC<UserTableProps> = ({
         });
         if(filters?.name)
         {
-          const prioritizedResult = finalResult
-          .filter((user:any) => user.name.toLowerCase().startsWith(filters?.name))
-          .concat(finalResult.filter((user:any) => !user.name.toLowerCase().startsWith(filters?.name)));
-          setData(prioritizedResult)
+          const prioritizedResult = finalResult.sort((a: any, b: any) => {
+            const aStartsWith = a.name.toLowerCase().startsWith(filters?.name);
+            const bStartsWith = b.name.toLowerCase().startsWith(filters?.name);
+          
+            if (aStartsWith && !bStartsWith) return -1;
+            if (!aStartsWith && bStartsWith) return 1;
+            return 0;
+          });
+          
+          setData(prioritizedResult);
         }
         
     else{
@@ -650,7 +656,7 @@ const UserTable: React.FC<UserTableProps> = ({
       ) : data.length !== 0 && loading === false ? (
         <KaTableComponent
           columns={
-            role === "Team Leader"
+            role === Role.TEAM_LEADER
               ? getTLTableColumns(t, isMobile)
               : getUserTableColumns(t, isMobile)
           }
@@ -682,7 +688,7 @@ const UserTable: React.FC<UserTableProps> = ({
 
 <KaTableComponent
           columns={
-            role === "Team Leader"
+            role === Role.TEAM_LEADER
               ? getTLTableColumns(t, isMobile)
               : getUserTableColumns(t, isMobile)
           }
@@ -727,11 +733,11 @@ const UserTable: React.FC<UserTableProps> = ({
         userId={userId}
         onSubmit={handleModalSubmit}
         userType={
-          userType === "Learners"
-            ? "STUDENT"
-            : userType === "Facilitators"
-              ? "TEACHER"
-              : "TEAM LEADER"
+          userType === Role.LEARNERS
+            ? FormContextType.STUDENT
+            : userType === Role.FACILITATORS
+              ? FormContextType.TEACHER
+              : FormContextType.TEAM_LEADER
         }
       />
     </HeaderComponent>

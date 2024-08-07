@@ -402,7 +402,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
       setSubmitButtonEnable(false)
 
     }
-    if(dynamicForm && userType!=FormContextType.TEAM_LEADER || isEditModal)
+    if(dynamicForm && userType!==FormContextType.TEAM_LEADER || isEditModal)
     {
       setSubmitButtonEnable(true)
     }
@@ -495,7 +495,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                 {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
               </DynamicForm>
             )
-          : userType === "TEAM LEADER"
+          : userType === FormContextType.TEAM_LEADER
             ? dynamicFormForBlock &&
               schema &&
               uiSchema && (

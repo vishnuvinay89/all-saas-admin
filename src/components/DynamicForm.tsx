@@ -97,7 +97,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             new Set(
               data[key]
                 .filter((item: any) => item !== "")
-                .map((item: any) => (item === "_lifeskills" ? "life_skills" : item))
+                //.map((item: any) => (item === "_lifeskills" ? "life_skills" : item))
             )
           );
         }
