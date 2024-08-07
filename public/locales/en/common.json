@@ -1,7 +1,7 @@
 {
   "COMMON": {
     "LANGUAGE": "Language",
-    "LOADING": "Loading",
+    "LOADING": "Loading", 
     "ADD_NEW": "Add New",
     "PAGE_SIZE": "Page Size",
     "DELETE_USER": "Delete User Permanently",
@@ -63,10 +63,11 @@
     "USERS_EMAIL": "Users Email",
     "STATE_NAME_REQUIRED": "State Name is Required",
     "DISTRICT_NAME_REQUIRED": "District Name is Required",
-    "SELECT_STATE": "Select State"  ,
-    "SOMETHING_WENT_WRONG":"Something went wrong",
+    
     "ADD":"Add",
-    "INACTIVE":"Inactive"
+    "INACTIVE":"Inactive",
+    "SELECT_STATE": "Select State",
+    "SOMETHING_WENT_WRONG": "Something went wrong"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -83,7 +84,7 @@
     "DASHBOARD": "Dashboard",
     "MANAGE_USERS": "Manage Users",
     "COURSE_PLANNER": "Course Planner",
-    "CENTER": "Center",
+    "CENTER": "Centers",
     "FACILITATORS": "Facilitators",
     "LEARNERS": "Learners",
     "TEAM_LEADERS": "Team Leaders",
@@ -143,10 +144,10 @@
   },
   "MASTER": {
     "STATE": "State",
-    "STATE_NAMES": "State Names",
+    "STATE_NAMES": "State Name",
     "SORT": "Sort",
-    "DISTRICT_NAMES": "District Names",
-    "BLOCK_NAMES": "Block Names",
+    "DISTRICT_NAMES": "District Name",
+    "BLOCK_NAMES": "Block Name",
     "ACTIONS": "Actions",
     "DISTRICTS": "Districts",
     "SEARCHBAR_PLACEHOLDER_STATE": "Search States",
@@ -155,6 +156,8 @@
     "BLOCKS": "Blocks",
     "UPDATED_AT": "Updated Date",
     "CREATED_AT": "Created Date",
+    "CREATED_BY": "Created By",
+    "UPDATED_BY": "Updated By",
     "STATE_CODE": "State Code",
     "DISTRICT_CODE": "District Code",
     "BLOCK_CODE": "Block Code"
@@ -178,7 +181,7 @@
     "RENAME": "Rename",
     "CENTER_RENAMED": "Center Renamed Successfully!",
     "SEND_REQUEST": "Send Request",
-    "SURE_DELETE_CENTER": "Are you sure you want to Delete Center ?",
+    "SURE_DELETE_CENTER": "Are you sure you want to Delete Center?",
     "CENTER_UPDATE_SUCCESSFULLY": "Center has been Successfully Updated",
     "CENTER_DELETE_SUCCESSFULLY": "Center has been Successfully Deleted",
     "CENTER_CREATED_SUCCESSFULLY": "Center Created Successfully",
@@ -247,7 +250,7 @@
     "DESIGNATION": "Designation",
     "REGULAR": "Regular",
     "REMOTE": "Remote",
-    "NOTE_THIS_WILL_BE_CENTER_NAME": "Note : This Will Be Center Name",
+    "NOTE_THIS_WILL_BE_CENTER_NAME": "Note : This will be center name",
     "STATE": "State",
     "DISTRICT": "District",
     "BLOCK": "Block",
@@ -256,6 +259,7 @@
     "NAME": "Name",
     "MOBILE_NUMBER": "Mobile Number",
     "CENTER": "Center"
+    
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",
