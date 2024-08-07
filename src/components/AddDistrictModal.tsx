@@ -53,15 +53,6 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
   const { t } = useTranslation();
 
   useEffect(() => {
-    setFormData({
-      name: initialValues.name || "",
-      value: initialValues.value || "",
-      controllingField: initialValues.controllingField || "",
-    });
-    setErrors({});
-  }, [initialValues]);
-
-  useEffect(() => {
     const fetchStates = async () => {
       try {
         const response = await getStateBlockDistrictList({
@@ -79,57 +70,63 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
       }
     };
 
-    if (open) fetchStates();
+    if (open) {
+      fetchStates();
+    }
   }, [open]);
 
-  const validateField = (
-    field: keyof typeof formData,
-    value: string,
-    requiredMessage: string
-  ) => {
-    if (!value) return requiredMessage;
-    if (field !== "controllingField" && !/^[a-zA-Z\s]+$/.test(value))
-      return t("COMMON.INVALID_TEXT");
-    return null;
-  };
+  useEffect(() => {
+    setFormData({
+      name: initialValues.name || "",
+      value: initialValues.value || "",
+      controllingField: initialValues.controllingField || "",
+    });
+    setErrors({});
+  }, [initialValues, states]);
 
-  const handleChange =
-    (field: keyof typeof formData) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      setFormData((prev) => ({ ...prev, [field]: value }));
+  const isAlphabetic = (input: string) =>
+    input === "" || /^[a-zA-Z\s]+$/.test(input);
 
-      let errorMessage: string | null = null;
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
 
-      if (field === "name") {
-        errorMessage = validateField(
-          field,
-          value,
-          t("COMMON.STATE_NAME_REQUIRED")
-        );
-      } else if (field === "value") {
-        errorMessage = validateField(field, value, t("COMMON.CODE_REQUIRED"));
-      }
-
+    if (value === "") {
       setErrors((prev) => ({
         ...prev,
-        [field]: errorMessage,
+        [field]: t(
+          field === "name"
+            ? "COMMON.DISTRICT_NAME_REQUIRED"
+            : field === "controllingField"
+              ? "COMMON.STATE_NAME_REQUIRED"
+              : "COMMON.CODE_REQUIRED"
+        ),
       }));
-    };
+    } else if (field !== "controllingField" && !isAlphabetic(value)) {
+      setErrors((prev: Record<string, string | null>) => {
+        const newErrors: Record<string, string | null> = {
+          ...prev,
+          [field]: field === "controllingField" ? value : null,
+        };
+        return newErrors;
+      });
+    }
+  };
 
   const validateForm = () => {
     const newErrors = {
-      name: validateField(
-        "name",
-        formData.name,
-        t("COMMON.DISTRICT_NAME_REQUIRED")
-      ),
-      value: validateField("value", formData.value, t("COMMON.CODE_REQUIRED")),
-      controllingField: validateField(
-        "controllingField",
-        formData.controllingField,
-        t("COMMON.STATE_NAME_REQUIRED")
-      ),
+      name: !formData.name
+        ? t("COMMON.DISTRICT_NAME_REQUIRED")
+        : !isAlphabetic(formData.name)
+          ? t("COMMON.INVALID_TEXT")
+          : null,
+      value: !formData.value
+        ? t("COMMON.CODE_REQUIRED")
+        : !isAlphabetic(formData.value)
+          ? t("COMMON.INVALID_TEXT")
+          : null,
+      controllingField: !formData.controllingField
+        ? t("COMMON.STATE_NAME_REQUIRED")
+        : null,
     };
 
     setErrors(newErrors);
@@ -166,11 +163,7 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
       <DialogContent>
         <Select
           value={formData.controllingField}
-          onChange={(e) =>
-            handleChange("controllingField")(
-              e as React.ChangeEvent<HTMLInputElement>
-            )
-          }
+          onChange={(e) => handleChange("controllingField", e.target.value)}
           fullWidth
           displayEmpty
           variant="outlined"
@@ -198,7 +191,7 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
           fullWidth
           variant="outlined"
           value={formData.name}
-          onChange={handleChange("name")}
+          onChange={(e) => handleChange("name", e.target.value)}
           error={!!errors.name}
           helperText={errors.name}
         />
@@ -209,7 +202,7 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
           fullWidth
           variant="outlined"
           value={formData.value}
-          onChange={handleChange("value")}
+          onChange={(e) => handleChange("value", e.target.value.toUpperCase())}
           error={!!errors.value}
           helperText={errors.value}
         />
