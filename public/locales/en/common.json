@@ -64,7 +64,9 @@
     "STATE_NAME_REQUIRED": "State Name is Required",
     "DISTRICT_NAME_REQUIRED": "District Name is Required",
     "SELECT_STATE": "Select State"  ,
-    "SOMETHING_WENT_WRONG":"Something went wrong"
+    "SOMETHING_WENT_WRONG":"Something went wrong",
+    "ADD":"Add",
+    "INACTIVE":"Inactive"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",

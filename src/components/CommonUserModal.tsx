@@ -217,19 +217,23 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           fieldSchema?.hasOwnProperty("isDropdown") ||
           fieldSchema?.hasOwnProperty("isCheckbox")
         ) {
-          
-            apiBody.customFields.push({
-            fieldId: fieldId,
-            value: [String(fieldValue)],
-          });
          
-        
-        } else {
+            apiBody.customFields.push({
+              fieldId: fieldId,
+              value: [String(fieldValue)],
+            });
+          
+          
+          } else {
           if (fieldSchema?.checkbox && fieldSchema.type === "array" ) {
+                  if(String(fieldValue).length!=0)
+         {
             apiBody.customFields.push({
               fieldId: fieldId,
               value: String(fieldValue).split(","),
             });
+          }
+           
           } else {
             if(fieldId)
             {
@@ -283,6 +287,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
         showToastMessage(t(messageKey), "success");
       } else {
         const response = await createUser(apiBody);
+        console.log(response)
         if (response) {
 
         const messageKey =
@@ -294,11 +299,15 @@ const CommonUserModal: React.FC<UserModalProps> = ({
 
         showToastMessage(t(messageKey), "success");
         }
+        else{
+          showToastMessage(t('COMMON.SOMETHING_WENT_WRONG'), 'error');
+  
+        }
       }
+    
       onSubmit(true);
       onClose();
     } catch (error) {
-      showToastMessage(t('COMMON.SOMETHING_WENT_WRONG'), 'error');
 
       onClose();
       console.log(error);
@@ -438,7 +447,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                 showErrorList={true}
                 customFields={customFields}
                 formData={formData}
-                buttonName={!isEditModal?"Add":"Update"}
+                buttonName={!isEditModal?t("COMMON.ADD"):t("COMMON.UPDATE")}
               >
                 {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
               </DynamicForm>
@@ -457,7 +466,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                   showErrorList={true}
                   customFields={customFields}
                   formData={formValue}
-                  buttonName={!isEditModal?"Add":"Update"}
+                  buttonName={!isEditModal?t("COMMON.ADD"):t("COMMON.UPDATE")}
 
                 >
                   {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
@@ -476,7 +485,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                   showErrorList={true}
                   customFields={customFields}
                   formData={formValue}
-                  buttonName={!isEditModal?"Add":"Update"}
+                  buttonName={!isEditModal?t("COMMON.ADD"):t("COMMON.UPDATE")}
 
                 >
                   {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
