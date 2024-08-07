@@ -1,7 +1,7 @@
 {
   "COMMON": {
     "LANGUAGE": "Language",
-    "LOADING": "Loading", 
+    "LOADING": "Loading",
     "ADD_NEW": "Add New",
     "PAGE_SIZE": "Page Size",
     "DELETE_USER": "Delete User Permanently",
@@ -64,7 +64,10 @@
     "STATE_NAME_REQUIRED": "State Name is Required",
     "DISTRICT_NAME_REQUIRED": "District Name is Required",
     "SELECT_STATE": "Select State",
-    "SOMETHING_WENT_WRONG": "Something went wrong"
+    "SELECT_DISTRICT": "Select District",
+    "SOMETHING_WENT_WRONG": "Something went wrong",
+    "BLOCK_NAME_REQUIRED": "Block Name is Required",
+    "BLOCK_CODE_REQUIRED": "Code is Required"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -256,7 +259,6 @@
     "NAME": "Name",
     "MOBILE_NUMBER": "Mobile Number",
     "CENTER": "Center"
-    
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",

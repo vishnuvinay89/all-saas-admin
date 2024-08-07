@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import HeaderComponent from "@/components/HeaderComponent";
-import Pagination from "@mui/material/Pagination";
+import { Pagination } from "@mui/material";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -22,6 +22,7 @@ import { transformLabel } from "@/utils/Helper";
 import { showToastMessage } from "@/components/Toastify";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { AddBlockModal } from "@/components/AddBlockModal";
+import PageSizeSelector from "@/components/PageSelector";
 
 type StateDetail = {
   value: string;
@@ -64,50 +65,48 @@ const Block: React.FC = () => {
   const [fieldId, setFieldId] = useState<string>("");
   const [districtFieldId, setDistrictFieldId] = useState<string>("");
   const [sortBy, setSortBy] = useState<[string, string]>(["name", "asc"]);
+  const [paginationCount, setPaginationCount] = useState<number>(0);
+  const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10, 20, 50]);
 
   //get state list
   useEffect(() => {
     const fetchStates = async () => {
-      setLoading(true);
       try {
+        setLoading(true);
         const data = await getStateBlockDistrictList({ fieldName: "states" });
-        const states = data?.result?.values || [];
-        setStateData(states);
-        if (states.length > 0) {
-          setSelectedState(states[0].value);
+
+        if (data?.result?.values) {
+          setStateData(data.result.values);
+        } else {
+          setStateData([]);
         }
       } catch (error) {
-        console.error("Error fetching states", error);
+        console.error("Error fetching state data:", error);
+        setStateData([]);
       } finally {
         setLoading(false);
       }
     };
-
     fetchStates();
   }, []);
 
   //get district list upon states
   useEffect(() => {
     const fetchDistricts = async () => {
-      if (selectedState) {
-        setLoading(true);
-        try {
-          const data = await getDistrictsForState({
-            limit: 10,
-            offset: 0,
-            controllingfieldfk: selectedState,
-            fieldName: "districts",
-          });
-          const districts = data?.result?.values || [];
-          setDistrictData(districts);
-          if (districts.length > 0) {
-            setSelectedDistrict(districts[0].value);
-          }
-        } catch (error) {
-          console.error("Error fetching districts", error);
-        } finally {
-          setLoading(false);
-        }
+      setLoading(true);
+      try {
+        const data = await getDistrictsForState({
+          limit: 10,
+          offset: 0,
+          controllingfieldfk: selectedState,
+          fieldName: "districts",
+        });
+        const districts = data?.result?.values || [];
+        setDistrictData(districts);
+      } catch (error) {
+        console.error("Error fetching districts", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -117,124 +116,127 @@ const Block: React.FC = () => {
   //get block list upon district
   useEffect(() => {
     const fetchBlocks = async () => {
-      if (selectedDistrict) {
-        setLoading(true);
-        try {
-          const limit = pageLimit;
-          const offset = pageOffset * limit;
+      setLoading(true);
+      try {
+        const limit = pageLimit;
+        const offset = pageOffset * limit;
 
-          const data = {
-            limit: limit,
-            offset: offset,
-            controllingfieldfk: selectedDistrict,
-            fieldName: "blocks",
-            sort: sortBy,
-          };
+        const data = {
+          limit: limit,
+          offset: offset,
+          controllingfieldfk: selectedDistrict,
+          fieldName: "blocks",
+          sort: sortBy,
+        };
 
-          const response = await getBlocksForDistricts(data);
-          setBlockData(response?.result?.values || []);
-          setFieldId(response?.result?.fieldId || "");
-          console.log("fieldId blocks", fieldId);
-        } catch (error) {
-          console.error("Error fetching blocks", error);
-        } finally {
-          setLoading(false);
+        const response = await getBlocksForDistricts(data);
+        setBlockData(response?.result?.values || []);
+        setFieldId(response?.result?.fieldId || "");
+
+        const totalCount = response?.result?.totalCount || 0;
+        console.log("totalCount", totalCount);
+
+        if (totalCount >= 15) {
+          setPageSizeArray([5, 10, 15]);
+        } else if (totalCount >= 10) {
+          setPageSizeArray([5, 10]);
+        } else {
+          setPageSizeArray([5]);
         }
+
+        const pageCount = Math.ceil(totalCount / limit);
+        setPageCount(pageCount);
+      } catch (error) {
+        console.error("Error fetching blocks", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchBlocks();
-  }, [sortBy, selectedDistrict]);
+  }, [sortBy, pageOffset, pageLimit]);
 
-  const columns = useMemo(
-    () => [
-      {
-        key: "block",
-        title: t("MASTER.BLOCK_NAMES"),
-        dataType: DataType.String,
-      },
-      {
-        key: "value",
-        title: t("MASTER.BLOCK_CODE"),
-        dataType: DataType.String,
-      },
-      {
-        key: "createdAt",
-        title: t("MASTER.CREATED_AT"),
-        dataType: DataType.String,
-      },
-      {
-        key: "updatedAt",
-        title: t("MASTER.UPDATED_AT"),
-        dataType: DataType.String,
-      },
-
-      {
-        key: "actions",
-        title: t("MASTER.ACTIONS"),
-        dataType: DataType.String,
-      },
-    ],
-    [t]
-  );
-
-  const handleStateChange = useCallback(
-    async (event: SelectChangeEvent<string>) => {
-      const selectedState = event.target.value;
-      setSelectedState(selectedState);
-
-      try {
-        const data = {
-          limit: 10,
-          offset: 0,
-          controllingfieldfk: selectedState,
-          fieldName: "districts",
-        };
-        const response = await getDistrictsForState(data);
-        setDistrictData(response.result.values || []);
-      } catch (error) {
-        console.error("Error fetching district data", error);
-      }
+  const columns = [
+    {
+      key: "block",
+      title: t("MASTER.BLOCK_NAMES"),
+      dataType: DataType.String,
     },
-    []
-  );
-
-  const handleDistrictChange = useCallback(
-    async (event: SelectChangeEvent<string>) => {
-      const selectedDistrict = event.target.value;
-      setSelectedState(selectedDistrict);
-
-      try {
-        const data = {
-          limit: 10,
-          offset: 0,
-          controllingfieldfk: selectedDistrict,
-          fieldName: "blocks",
-        };
-        const response = await getBlocksForDistricts(data);
-        setBlockData(response.result.values || []);
-        console.log("fieldId blocks", response);
-      } catch (error) {
-        console.error("Error fetching district data", error);
-      }
+    {
+      key: "value",
+      title: t("MASTER.BLOCK_CODE"),
+      dataType: DataType.String,
     },
-    []
-  );
+    {
+      key: "createdAt",
+      title: t("MASTER.CREATED_AT"),
+      dataType: DataType.String,
+    },
+    {
+      key: "updatedAt",
+      title: t("MASTER.UPDATED_AT"),
+      dataType: DataType.String,
+    },
+    {
+      key: "actions",
+      title: t("MASTER.ACTIONS"),
+      dataType: DataType.String,
+    },
+  ];
 
-  const handleEdit = useCallback((rowData: any) => {
+  const handleStateChange = async (event: SelectChangeEvent<string>) => {
+    const selectedState = event.target.value;
+    setSelectedState(selectedState);
+
+    try {
+      const data = {
+        limit: 10,
+        offset: 0,
+        controllingfieldfk: selectedState,
+        fieldName: "districts",
+      };
+      const response = await getDistrictsForState(data);
+      setDistrictData(response.result.values || []);
+
+      console.log("selected state", response);
+    } catch (error) {
+      console.error("Error fetching district data", error);
+    }
+  };
+
+  const handleDistrictChange = async (event: SelectChangeEvent<string>) => {
+    const selectedDistrict = event.target.value;
+    setSelectedDistrict(selectedDistrict);
+
+    try {
+      const data = {
+        limit: 10,
+        offset: 0,
+        controllingfieldfk: selectedDistrict,
+        fieldName: "blocks",
+      };
+      const response = await getBlocksForDistricts(data);
+      setBlockData(response.result.values || []);
+      console.log("fieldId blocks", response);
+    } catch (error) {
+      console.error("Error fetching district data", error);
+    }
+  };
+
+  const handleEdit = (rowData: any) => {
     console.log(rowData);
     setModalOpen(true);
     setSelectedStateForEdit(rowData);
-  }, []);
+  };
 
-  const handleDelete = useCallback((rowData: BlockDetail) => {
+  const handleDelete = (rowData: BlockDetail) => {
     console.log("BlockDetails", rowData);
     setSelectedStateForDelete(rowData);
     setConfirmationDialogOpen(true);
-  }, []);
+  };
 
-  const handleConfirmDelete = useCallback(async () => {
-    console.log("selected state for delte", selectedStateForDelete);
+  const handleConfirmDelete = async () => {
+    console.log("selected state for delete", selectedStateForDelete);
     if (selectedStateForDelete) {
       try {
         await deleteOption("blocks", selectedStateForDelete.value);
@@ -250,7 +252,15 @@ const Block: React.FC = () => {
       }
     }
     setConfirmationDialogOpen(false);
-  }, [selectedStateForDelete, t]);
+  };
+
+  const handleChangePageSize = (event: SelectChangeEvent<number>) => {
+    const newSize = Number(event.target.value);
+    setPageSizeArray((prev) =>
+      prev.includes(newSize) ? prev : [...prev, newSize]
+    );
+    setPageLimit(newSize);
+  };
 
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
@@ -258,23 +268,26 @@ const Block: React.FC = () => {
   ) => {
     setPageOffset(value - 1);
   };
+  const PagesSelector = () => (
+    <Box mt={3}>
+      <Pagination
+        color="primary"
+        count={pageCount}
+        page={pageOffset + 1}
+        onChange={handlePaginationChange}
+      />
+    </Box>
+  );
 
-  useEffect(() => {
-    const sortedAndPaginatedData = () => {
-      if (blockData.length === 0) {
-        setPageCount(1);
-        return;
-      }
-      const sortedData = [...blockData];
-      const paginatedData = sortedData.slice(
-        pageOffset * pageLimit,
-        (pageOffset + 1) * pageLimit
-      );
-      setPageCount(Math.ceil(sortedData.length / pageLimit));
-    };
-
-    sortedAndPaginatedData();
-  }, [blockData, pageOffset, pageLimit]);
+  const PageSizeSelectorFunction = () => (
+    <Box mt={2}>
+      <PageSizeSelector
+        handleChange={handleChangePageSize}
+        pageSize={pageLimit}
+        options={pageSizeArray}
+      />
+    </Box>
+  );
 
   const userProps = {
     selectedSort,
@@ -285,7 +298,6 @@ const Block: React.FC = () => {
     showFilter: false,
   };
 
-  const showPagination = blockData.length > pageLimit;
   const handleAddNewBlock = () => {
     setEditState(null);
     setSelectedStateForEdit(null);
@@ -333,7 +345,6 @@ const Block: React.FC = () => {
     setSelectedStateForEdit(null);
   };
 
-  // const fieldId = "4aab68ae-8382-43aa-a45a-e9b239319857";
 
   return (
     <React.Fragment>
@@ -359,7 +370,7 @@ const Block: React.FC = () => {
               }
             : {}
         }
-        stateId={""}
+        districtId={""}
       />
 
       <ConfirmationModal
@@ -452,19 +463,10 @@ const Block: React.FC = () => {
                 }))}
                 limit={pageLimit}
                 offset={pageOffset}
-                PagesSelector={() =>
-                  showPagination && (
-                    <Pagination
-                      color="primary"
-                      count={pageCount}
-                      page={pageOffset + 1}
-                      onChange={handlePaginationChange}
-                      shape="rounded"
-                      variant="outlined"
-                      size="small"
-                    />
-                  )
-                }
+                paginationEnable={true}
+                PagesSelector={PagesSelector}
+                PageSizeSelector={PageSizeSelectorFunction}
+                pageSizes={pageSizeArray}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
                 extraActions={[]}

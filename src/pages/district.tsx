@@ -172,7 +172,6 @@ const District: React.FC = () => {
     const selectedState = event.target.value;
     setSelectedState(selectedState);
 
-    console.log("selectedState", selectedState);
 
     try {
       const data = {

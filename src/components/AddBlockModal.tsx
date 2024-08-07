@@ -31,8 +31,7 @@ interface AddBlockModalProps {
     value?: string;
     controllingField?: string;
   };
-  stateId: string; // Add a stateId prop to fetch districts
-  districtId?: string; // Add this line
+  districtId?: string;
 }
 
 export const AddBlockModal: React.FC<AddBlockModalProps> = ({
@@ -41,7 +40,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   onSubmit,
   fieldId,
   initialValues = {},
-  stateId,
+  districtId,
 }) => {
   const [formData, setFormData] = useState({
     name: initialValues.name || "",
@@ -68,13 +67,12 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     const fetchDistricts = async () => {
       try {
         const response = await getDistrictsForState({
-          fieldName: "districts",
-          controllingfieldfk: "MH",
           limit: 10,
           offset: 0,
+          controllingfieldfk: "MH",
+          fieldName: "districts",
         });
 
-        console.log("modal response", response);
         if (response) {
           setDistricts(response.result.values);
         } else {
@@ -88,7 +86,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     };
 
     if (open) fetchDistricts();
-  }, [open, stateId]);
+  }, [open, districtId]);
   const validateField = (
     field: keyof typeof formData,
     value: string,
@@ -164,7 +162,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
         formData.value,
         formData.controllingField,
         fieldId,
-        formData.controllingField
+        districtId
       );
       setFormData({
         name: "",
