@@ -76,17 +76,27 @@ export const getDistrictsForState = async ({
 };
 
 export const getBlocksForDistricts = async ({
+  limit,
+  offset,
   controllingfieldfk,
   fieldName,
+  sort,
 }: {
-  controllingfieldfk: string;
+  limit: number;
+  offset: number;
+  controllingfieldfk: string | undefined;
   fieldName: string;
+  optionName?: string;
+  sort?: [string, string];
 }): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/options/read`;
   try {
     const response = await post(apiUrl, {
+      limit,
+      offset,
       controllingfieldfk,
       fieldName,
+      sort,
     });
     return response?.data;
   } catch (error) {
@@ -140,7 +150,7 @@ export const createOrUpdateOption = async (
 ): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/update/${fieldId}`;
 
-  console.log("API URL:", apiUrl); 
+  console.log("API URL:", apiUrl);
   console.log("Request Body:", { fieldParams, stateId });
 
   try {

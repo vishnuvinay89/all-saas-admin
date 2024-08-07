@@ -61,7 +61,11 @@ const Block: React.FC = () => {
   const [editState, setEditState] = useState<StateDetail | null>(null);
   const [selectedStateForEdit, setSelectedStateForEdit] =
     useState<StateDetail | null>(null);
+  const [fieldId, setFieldId] = useState<string>("");
+  const [districtFieldId, setDistrictFieldId] = useState<string>("");
+  const [sortBy, setSortBy] = useState<[string, string]>(["name", "asc"]);
 
+  //get state list
   useEffect(() => {
     const fetchStates = async () => {
       setLoading(true);
@@ -82,12 +86,15 @@ const Block: React.FC = () => {
     fetchStates();
   }, []);
 
+  //get district list upon states
   useEffect(() => {
     const fetchDistricts = async () => {
       if (selectedState) {
         setLoading(true);
         try {
           const data = await getDistrictsForState({
+            limit: 10,
+            offset: 0,
             controllingfieldfk: selectedState,
             fieldName: "districts",
           });
@@ -107,16 +114,27 @@ const Block: React.FC = () => {
     fetchDistricts();
   }, [selectedState]);
 
+  //get block list upon district
   useEffect(() => {
     const fetchBlocks = async () => {
       if (selectedDistrict) {
         setLoading(true);
         try {
-          const data = await getBlocksForDistricts({
+          const limit = pageLimit;
+          const offset = pageOffset * limit;
+
+          const data = {
+            limit: limit,
+            offset: offset,
             controllingfieldfk: selectedDistrict,
             fieldName: "blocks",
-          });
-          setBlockData(data?.result?.values || []);
+            sort: sortBy,
+          };
+
+          const response = await getBlocksForDistricts(data);
+          setBlockData(response?.result?.values || []);
+          setFieldId(response?.result?.fieldId || "");
+          console.log("fieldId blocks", fieldId);
         } catch (error) {
           console.error("Error fetching blocks", error);
         } finally {
@@ -126,7 +144,7 @@ const Block: React.FC = () => {
     };
 
     fetchBlocks();
-  }, [selectedDistrict]);
+  }, [sortBy, selectedDistrict]);
 
   const columns = useMemo(
     () => [
@@ -157,7 +175,7 @@ const Block: React.FC = () => {
         dataType: DataType.String,
       },
     ],
-    [t],
+    [t]
   );
 
   const handleStateChange = useCallback(
@@ -166,24 +184,41 @@ const Block: React.FC = () => {
       setSelectedState(selectedState);
 
       try {
-        const data = await getDistrictsForState({
+        const data = {
+          limit: 10,
+          offset: 0,
           controllingfieldfk: selectedState,
-          fieldName: "blocks",
-        });
-        setDistrictData(data.result.values || []);
-        setSelectedDistrict("-");
+          fieldName: "districts",
+        };
+        const response = await getDistrictsForState(data);
+        setDistrictData(response.result.values || []);
       } catch (error) {
         console.error("Error fetching district data", error);
       }
     },
-    [],
+    []
   );
 
   const handleDistrictChange = useCallback(
-    (event: SelectChangeEvent<string>) => {
-      setSelectedDistrict(event.target.value);
+    async (event: SelectChangeEvent<string>) => {
+      const selectedDistrict = event.target.value;
+      setSelectedState(selectedDistrict);
+
+      try {
+        const data = {
+          limit: 10,
+          offset: 0,
+          controllingfieldfk: selectedDistrict,
+          fieldName: "blocks",
+        };
+        const response = await getBlocksForDistricts(data);
+        setBlockData(response.result.values || []);
+        console.log("fieldId blocks", response);
+      } catch (error) {
+        console.error("Error fetching district data", error);
+      }
     },
-    [],
+    []
   );
 
   const handleEdit = useCallback((rowData: any) => {
@@ -205,8 +240,8 @@ const Block: React.FC = () => {
         await deleteOption("blocks", selectedStateForDelete.value);
         setStateData((prevStateData) =>
           prevStateData.filter(
-            (state) => state.value !== selectedStateForDelete.value,
-          ),
+            (state) => state.value !== selectedStateForDelete.value
+          )
         );
         showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
       } catch (error) {
@@ -219,7 +254,7 @@ const Block: React.FC = () => {
 
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
-    value: number,
+    value: number
   ) => {
     setPageOffset(value - 1);
   };
@@ -233,7 +268,7 @@ const Block: React.FC = () => {
       const sortedData = [...blockData];
       const paginatedData = sortedData.slice(
         pageOffset * pageLimit,
-        (pageOffset + 1) * pageLimit,
+        (pageOffset + 1) * pageLimit
       );
       setPageCount(Math.ceil(sortedData.length / pageLimit));
     };
@@ -263,12 +298,12 @@ const Block: React.FC = () => {
     value: string,
     controllingField: string,
     fieldId: string,
-    DistrictId?: string,
+    DistrictId?: string
   ) => {
     const newDistrict = {
       options: [
         {
-          controllingField,
+          controllingfieldfk: controllingField,
           name,
           value,
         },
@@ -280,18 +315,17 @@ const Block: React.FC = () => {
       const response = await createOrUpdateOption(
         fieldId,
         newDistrict,
-        DistrictId,
+        DistrictId
       );
 
-      console.log("submit response:", response);
-
-      if (response) {
+      console.log("submit response district", response);
+      if (response && response.success) {
         showToastMessage("District added successfully", "success");
       } else {
         showToastMessage("Failed to create/update district", "error");
       }
     } catch (error) {
-      console.error("Error creating/updating district:", error);
+      console.error("Error adding district:", error);
       showToastMessage("Error adding district", "error");
     }
 
@@ -299,7 +333,7 @@ const Block: React.FC = () => {
     setSelectedStateForEdit(null);
   };
 
-  const fieldId = "4aab68ae-8382-43aa-a45a-e9b239319857";
+  // const fieldId = "4aab68ae-8382-43aa-a45a-e9b239319857";
 
   return (
     <React.Fragment>
@@ -307,7 +341,13 @@ const Block: React.FC = () => {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onSubmit={(name: string, value: string, controllingField: string) =>
-          handleAddDistrictSubmit(name, value, controllingField, fieldId)
+          handleAddDistrictSubmit(
+            name,
+            value,
+            controllingField,
+            fieldId,
+            selectedStateForEdit?.value
+          )
         }
         fieldId={fieldId}
         initialValues={
@@ -319,7 +359,7 @@ const Block: React.FC = () => {
               }
             : {}
         }
-        districtId={selectedStateForEdit?.value}
+        stateId={""}
       />
 
       <ConfirmationModal

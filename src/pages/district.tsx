@@ -60,6 +60,7 @@ const District: React.FC = () => {
   const [sortBy, setSortBy] = useState<[string, string]>(["name", "asc"]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [fieldId, setFieldId] = useState<string>("");
+  const [paginationCount, setPaginationCount] = useState<number>(Numbers.ZERO);
 
   const handleChangePageSize = (event: SelectChangeEvent<number>) => {
     const newSize = Number(event.target.value);
@@ -144,6 +145,7 @@ const District: React.FC = () => {
         const districtData = await getDistrictsForState(data);
         setDistrictData(districtData.result.values || []);
         setFieldId(districtData.result.fieldId);
+        setPaginationCount(districtData?.result?.totalCount || 0);
 
         const totalCount = districtData?.result?.totalCount || 0;
         console.log("totalCount", totalCount);
@@ -368,7 +370,7 @@ const District: React.FC = () => {
               }))}
               limit={pageLimit}
               offset={pageOffset}
-              paginationEnable={true}
+              paginationEnable={paginationCount >= 5}
               PagesSelector={PagesSelector}
               PageSizeSelector={PageSizeSelectorFunction}
               pageSizes={pageSizeArray}
