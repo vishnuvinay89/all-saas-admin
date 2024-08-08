@@ -49,10 +49,9 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   });
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
-  const [districts, setDistricts] = useState<
-    { value: string; label: string }[]
-  >([]);
-  const [selectedState, setSelectedState] = useState<string>("");
+  const [districts, setDistricts] = useState<{ value: string; label: string }[]>(
+    []
+  );
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -70,7 +69,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
         const response = await getDistrictsForState({
           limit: 10,
           offset: 0,
-          controllingfieldfk: selectedState,
+          controllingfieldfk: initialValues.controllingField || "",
           fieldName: "districts",
         });
 
@@ -87,7 +86,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     };
 
     if (open) fetchDistricts();
-  }, [open, districtId]);
+  }, [open, initialValues.controllingField]);
 
   const validateField = (
     field: keyof typeof formData,
@@ -197,6 +196,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           variant="outlined"
           margin="dense"
           error={!!errors.controllingField}
+          disabled={isEditing} // Disable if editing
         >
           <MenuItem value="" disabled>
             {t("COMMON.SELECT_DISTRICT")}

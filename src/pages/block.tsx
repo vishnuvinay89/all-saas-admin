@@ -349,7 +349,7 @@ const Block: React.FC = () => {
             name,
             value,
             controllingField,
-            blocksFieldId, // This should be checked
+            blocksFieldId, 
             selectedStateForEdit?.value
           )
         }

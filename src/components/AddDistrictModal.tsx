@@ -82,7 +82,7 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
       controllingField: initialValues.controllingField ?? "",
     });
     setErrors({});
-  }, [initialValues, states]);
+  }, [initialValues]);
 
   const isAlphabetic = (input: string) =>
     input === "" || /^[a-zA-Z\s]+$/.test(input);

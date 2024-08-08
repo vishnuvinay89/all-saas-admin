@@ -266,7 +266,6 @@ const State: React.FC = () => {
                   }
                 : {}
             }
-            stateId={selectedStateForEdit?.value}
           />
           <ConfirmationModal
             modalOpen={confirmationDialogOpen}

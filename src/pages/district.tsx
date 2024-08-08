@@ -28,6 +28,7 @@ type StateDetail = {
   controllingField: string | undefined;
   value: string;
   label: string;
+  selectedState?: string; // Add the selectedState property here
 };
 
 type DistrictDetail = {
@@ -43,6 +44,7 @@ type DistrictDetail = {
 const District: React.FC = () => {
   const { t } = useTranslation();
   const [selectedState, setSelectedState] = useState("ALL");
+
   const [stateData, setStateData] = useState<StateDetail[]>([]);
   const [districtData, setDistrictData] = useState<DistrictDetail[]>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -108,6 +110,7 @@ const District: React.FC = () => {
           controllingField: stateId, // Add controllingField to each district
         })) || []
       );
+      console.log(stateId);
       setFieldId(districtData.result.fieldId);
       setPaginationCount(districtData?.result?.totalCount || 0);
 
@@ -131,6 +134,8 @@ const District: React.FC = () => {
 
   const handleStateChange = async (event: SelectChangeEvent<string>) => {
     const selectedState = event.target.value;
+    console.log("selectedState", selectedState);
+
     setSelectedState(selectedState);
 
     try {
@@ -149,8 +154,14 @@ const District: React.FC = () => {
   };
   const handleEdit = (rowData: DistrictDetail) => {
     setModalOpen(true);
-    setSelectedStateForEdit(rowData);
-    console.log("RowData", rowData);
+    // selectedState
+    const updatedRowData = {
+      ...rowData,
+      selectedState: selectedState,
+    };
+    console.log("updatedRowData", updatedRowData.value);
+
+    setSelectedStateForEdit(updatedRowData);
   };
 
   const handleDelete = (rowData: DistrictDetail) => {
@@ -194,7 +205,9 @@ const District: React.FC = () => {
         },
       ],
     };
+
     console.log("field Id district", fieldId);
+
     try {
       const response = await createOrUpdateOption(
         fieldId,
@@ -203,8 +216,15 @@ const District: React.FC = () => {
       );
 
       console.log("submit response district", response);
-      if (response && response.success) {
-        showToastMessage("District added successfully", "success");
+
+      if (response) {
+        if (DistrictId) {
+          showToastMessage("District updated successfully", "success");
+        } else {
+          showToastMessage("District added successfully", "success");
+        }
+
+        fetchDistrictData(fieldId); // Pass stateId here
       } else {
         showToastMessage("Failed to create/update district", "error");
       }
@@ -276,9 +296,9 @@ const District: React.FC = () => {
         initialValues={
           selectedStateForEdit
             ? {
-                controllingField: selectedStateForEdit.controllingField, // Use controllingField here
                 name: selectedStateForEdit.label,
                 value: selectedStateForEdit.value,
+                controllingField: selectedStateForEdit.selectedState,
               }
             : {}
         }
