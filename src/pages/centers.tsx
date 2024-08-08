@@ -25,7 +25,7 @@ import { showToastMessage } from "@/components/Toastify";
 import AddNewCenters from "@/components/AddNewCenters";
 import { getCenterTableData } from "@/data/tableColumns";
 import { Theme } from "@mui/system";
-import {  firstLetterInUpperCase } from "@/utils/Helper";
+import { firstLetterInUpperCase } from "@/utils/Helper";
 
 type cohortFilterDetails = {
   type?: string;
@@ -33,7 +33,7 @@ type cohortFilterDetails = {
   states?: string;
   districts?: string;
   blocks?: string;
-  name?:string
+  name?: string;
 };
 
 interface centerData {
@@ -90,12 +90,12 @@ const Center: React.FC = () => {
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
   const [selectedBlockCode, setSelectedBlockCode] = useState("");
   const [formdata, setFormData] = useState<any>();
-  const [totalCount,setTotalCound] = useState<number>(0)
+  const [totalCount, setTotalCound] = useState<number>(0);
   const handleCloseAddLearnerModal = () => {
     setOpenAddNewCohort(false);
   };
   const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm"),
+    theme.breakpoints.down("sm")
   );
   // use api calls
   useEffect(() => {
@@ -123,26 +123,33 @@ const Center: React.FC = () => {
       const resp = await getCohortList(data);
       if (resp) {
         const result = resp?.results?.cohortDetails;
-        const resultData:centerData[] = []
-        result?.forEach((item:any)=>{
-          const cohortType = item?.customFields?.map((field:any) => firstLetterInUpperCase(field?.value))
+        const resultData: centerData[] = [];
+        result?.forEach((item: any) => {
+          const cohortType = item?.customFields
+            ? item?.customFields?.map((field: any) =>
+                firstLetterInUpperCase(field?.value)
+              )
+            : "-";
+          console.log("cohortType", cohortType);
           const requiredData = {
-            name:item?.name,
-            status:item?.status,
+            name: item?.name,
+            status: item?.status,
             updatedBy: item?.updatedBy,
             createdBy: item?.createdBy,
             createdAt: item?.createdAt,
             updatedAt: item?.updatedAt,
-            customFieldValues:cohortType || ""
-          }
-          resultData?.push(requiredData)
-        })
+            cohortId: item?.cohortId,
+            customFieldValues: cohortType[0] ? cohortType : "-",
+          };
+          resultData?.push(requiredData);
+        });
+
         setCohortData(resultData);
         const totalCount = resp?.count;
-        setTotalCound(totalCount)
+        setTotalCound(totalCount);
         if (totalCount >= 20) {
-          setPageSizeArray([5, 10, 15,20]);
-        }else if (totalCount >= 15) {
+          setPageSizeArray([5, 10, 15, 20]);
+        } else if (totalCount >= 15) {
           setPageSizeArray([5, 10, 15]);
         } else if (totalCount >= 10) {
           setPageSizeArray([5, 10]);
@@ -204,7 +211,7 @@ const Center: React.FC = () => {
 
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
-    value: number,
+    value: number
   ) => {
     setPageOffset(value - 1);
   };
@@ -333,7 +340,7 @@ const Center: React.FC = () => {
       if (resp?.responseCode === 200) {
         showToastMessage(t("CENTERS.CENTER_DELETE_SUCCESSFULLY"), "success");
         const cohort = cohortData?.find(
-          (item: any) => item.cohortId == selectedCohortId,
+          (item: any) => item.cohortId == selectedCohortId
         );
         if (cohort) {
           cohort.status = Status.ARCHIVED;
@@ -440,7 +447,6 @@ const Center: React.FC = () => {
     try {
       setLoading(true);
       setConfirmButtonDisable(true);
-
       if (!selectedCohortId) {
         setLoading(false);
         console.log("No cohort Id Selected");
@@ -533,7 +539,7 @@ const Center: React.FC = () => {
             data={cohortData}
             limit={pageLimit}
             offset={pageOffset}
-            paginationEnable={totalCount > 5 }
+            paginationEnable={totalCount > 5}
             PagesSelector={PagesSelector}
             PageSizeSelector={PageSizeSelectorFunction}
             pageSizes={pageSizeArray}

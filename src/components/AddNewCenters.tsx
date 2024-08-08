@@ -8,7 +8,7 @@ import { getFormRead } from "@/services/CreateUserService";
 import { CustomField } from "@/utils/Interfaces";
 import { CohortTypes } from "@/utils/app.constant";
 import { useLocationState } from "@/utils/useLocationState";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
 import React, { useEffect } from "react";
@@ -89,10 +89,10 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
 
   const handleSubmit = async (
     data: IChangeEvent<any, RJSFSchema, any>,
-    event: React.FormEvent<any>,
+    event: React.FormEvent<any>
   ) => {
     const formData = data?.formData;
-
+    console.log("selectedBlockCohortId", selectedBlockCohortId);
     if (selectedBlockCohortId) {
       const parentId = selectedBlockCohortId;
       const cohortDetails: CohortDetails = {
@@ -174,7 +174,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
         />
       </Box>
 
-      {dynamicFormForBlock && schema && uiSchema && (
+      {dynamicFormForBlock && schema && uiSchema && selectedBlockCohortId && (
         <DynamicForm
           schema={schema}
           uiSchema={uiSchema}
@@ -184,7 +184,28 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
           widgets={{}}
           showErrorList={true}
           customFields={customFields}
-        ></DynamicForm>
+          id="xyz"
+        >
+          <Box
+            style={{
+              display: "flex",
+              justifyContent: "center", // Centers the button horizontally
+              marginTop: "20px", // Adjust margin as needed
+            }}
+          >
+            <Button
+              variant="contained"
+              type="submit"
+              form="xyz" // Add this line
+              sx={{
+                padding: "12px 24px", // Adjust padding as needed
+                width: "200px", // Set the desired width
+              }}
+            >
+              {t("COMMON.ADD")}
+            </Button>
+          </Box>
+        </DynamicForm>
       )}
     </SimpleModal>
   );
