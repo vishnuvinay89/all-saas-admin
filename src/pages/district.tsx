@@ -25,6 +25,7 @@ import PageSizeSelector from "@/components/PageSelector";
 import { Numbers, SORT } from "@/utils/app.constant";
 
 type StateDetail = {
+  controllingField: string | undefined;
   value: string;
   label: string;
 };
@@ -36,6 +37,7 @@ type DistrictDetail = {
   createdAt: any;
   value: string;
   label: string;
+  controllingField: string; // Add this line
 };
 
 const District: React.FC = () => {
@@ -61,7 +63,6 @@ const District: React.FC = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [fieldId, setFieldId] = useState<string>("");
   const [paginationCount, setPaginationCount] = useState<number>(Numbers.ZERO);
-
 
   const fetchStateData = async () => {
     try {
@@ -101,7 +102,12 @@ const District: React.FC = () => {
       };
 
       const districtData = await getDistrictsForState(data);
-      setDistrictData(districtData.result.values || []);
+      setDistrictData(
+        districtData.result.values.map((district: any) => ({
+          ...district,
+          controllingField: stateId, // Add controllingField to each district
+        })) || []
+      );
       setFieldId(districtData.result.fieldId);
       setPaginationCount(districtData?.result?.totalCount || 0);
 
@@ -144,7 +150,7 @@ const District: React.FC = () => {
   const handleEdit = (rowData: DistrictDetail) => {
     setModalOpen(true);
     setSelectedStateForEdit(rowData);
-    console.log("RowData",rowData);
+    console.log("RowData", rowData);
   };
 
   const handleDelete = (rowData: DistrictDetail) => {
@@ -270,7 +276,7 @@ const District: React.FC = () => {
         initialValues={
           selectedStateForEdit
             ? {
-                controllingField: selectedStateForEdit.value,
+                controllingField: selectedStateForEdit.controllingField, // Use controllingField here
                 name: selectedStateForEdit.label,
                 value: selectedStateForEdit.value,
               }
