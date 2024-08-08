@@ -25,7 +25,7 @@ const Menuitems = [
   },
 
   {
-    title: "SIDEBAR.CENTER",
+    title: "SIDEBAR.CENTERS",
     icon: "users",
     href: "/centers",
   },

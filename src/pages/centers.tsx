@@ -473,7 +473,7 @@ const Center: React.FC = () => {
 
   // props to send in header
   const userProps = {
-    userType: t("SIDEBAR.CENTER"),
+    userType: t("SIDEBAR.CENTERS"),
     searchPlaceHolder: t("CENTERS.SEARCHBAR_PLACEHOLDER"),
     selectedState: selectedState,
     selectedStateCode: selectedStateCode,
