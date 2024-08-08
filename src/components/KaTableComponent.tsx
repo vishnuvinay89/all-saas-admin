@@ -127,7 +127,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                   if (props.rowData?.status === Status.ARCHIVED) {
                     return (
                       <Chip
-                        label={firstLetterInUpperCase(props.rowData?.status)}
+                        label={t("COMMON.INACTIVE")}
                         color="error"
                         variant="outlined"
                         size={isMobile ? "small" : "medium"}

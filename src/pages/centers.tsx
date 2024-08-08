@@ -25,7 +25,7 @@ import { showToastMessage } from "@/components/Toastify";
 import AddNewCenters from "@/components/AddNewCenters";
 import { getCenterTableData } from "@/data/tableColumns";
 import { Theme } from "@mui/system";
-import { debounce, firstLetterInUpperCase } from "@/utils/Helper";
+import {  firstLetterInUpperCase } from "@/utils/Helper";
 
 type cohortFilterDetails = {
   type?: string;

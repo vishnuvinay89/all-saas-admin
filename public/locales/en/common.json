@@ -63,6 +63,9 @@
     "USERS_EMAIL": "Users Email",
     "STATE_NAME_REQUIRED": "State Name is Required",
     "DISTRICT_NAME_REQUIRED": "District Name is Required",
+    
+    "ADD":"Add",
+    "INACTIVE":"Inactive",
     "SELECT_STATE": "Select State",
     "SOMETHING_WENT_WRONG": "Something went wrong"
   },
@@ -265,7 +268,7 @@
     "ENTER_ONLY_DIGITS": "Please enter only digits",
     "MIN_LENGTH_DIGITS_ERROR": "Minimum {{minLength}} Digits required",
     "MAX_LENGTH_DIGITS_ERROR": "Maximum {{maxLength}} Digits allowed",
-    "MIN_LENGTH_CHARACTERS_ERROR": "Minimum {{minLength}} characters required",
+     "MIN_LENGTH_CHARACTERS_ERROR": "Minimum {{minLength}} characters required",
     "MAX_LENGTH_CHARACTERS_ERROR": "Maximum {{maxLength}} characters allowed",
     "NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED": "Numbers and special characters are not allowed",
     "CHARACTERS_AND_SPECIAL_CHARACTERS_NOT_ALLOWED": "Characters and special characters are not allowed",
