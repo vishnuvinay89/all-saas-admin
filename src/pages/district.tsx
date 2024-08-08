@@ -88,7 +88,7 @@ const District: React.FC = () => {
 
   useEffect(() => {
     fetchStateData();
-  }, [sortBy, pageOffset, pageLimit]);
+  }, [pageOffset, pageLimit]);
 
   const fetchDistrictData = async (stateId: string) => {
     try {
@@ -209,21 +209,13 @@ const District: React.FC = () => {
     console.log("field Id district", fieldId);
 
     try {
-      const response = await createOrUpdateOption(
-        fieldId,
-        newDistrict,
-        DistrictId
-      );
+      const response = await createOrUpdateOption(fieldId, newDistrict);
 
       console.log("submit response district", response);
 
       if (response) {
-        if (DistrictId) {
-          showToastMessage("District updated successfully", "success");
-        } else {
-          showToastMessage("District added successfully", "success");
-        }
-
+        showToastMessage("District updated successfully", "success");
+        // showToastMessage("District added successfully", "success");
         fetchDistrictData(fieldId); // Pass stateId here
       } else {
         showToastMessage("Failed to create/update district", "error");
@@ -248,6 +240,24 @@ const District: React.FC = () => {
       event.target.value === "Z-A" ? SORT.DESCENDING : SORT.ASCENDING;
     setSortBy(["name", sortOrder]);
     setSelectedSort(event.target.value);
+
+    // state.value, selectedState
+
+    // {stateData.map((state) => (
+    //   <MenuItem key={state.value} value={state.value}>
+    //     {transformLabel(state.label)}
+    //   </MenuItem>
+    // ))}
+
+    const afterFilter = stateData.filter((item) => {
+      return item.value === selectedState;
+    });
+    const setSort =
+      afterFilter[0]?.label === undefined ? "ALL" : afterFilter[0]?.label;
+
+    console.log(setSort);
+
+    fetchDistrictData(setSort);
   };
 
   const handlePaginationChange = (
@@ -391,7 +401,7 @@ const District: React.FC = () => {
               }))}
               limit={pageLimit}
               offset={pageOffset}
-              paginationEnable={true}
+              paginationEnable={paginationCount >= 5  }
               PagesSelector={PagesSelector}
               PageSizeSelector={PageSizeSelectorFunction}
               pageSizes={pageSizeArray}

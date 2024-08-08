@@ -49,9 +49,9 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   });
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
-  const [districts, setDistricts] = useState<{ value: string; label: string }[]>(
-    []
-  );
+  const [districts, setDistricts] = useState<
+    { value: string; label: string }[]
+  >([]);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -67,13 +67,9 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     const fetchDistricts = async () => {
       try {
         const response = await getDistrictsForState({
-          limit: 10,
-          offset: 0,
-          controllingfieldfk: initialValues.controllingField || "",
           fieldName: "districts",
         });
-
-        if (response && response.result && response.result.values) {
+        if (response.result.values) {
           setDistricts(response.result.values);
         } else {
           console.error("Unexpected response format:", response);
@@ -86,7 +82,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     };
 
     if (open) fetchDistricts();
-  }, [open, initialValues.controllingField]);
+  }, [open, formData.controllingField]);
 
   const validateField = (
     field: keyof typeof formData,
@@ -201,11 +197,15 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           <MenuItem value="" disabled>
             {t("COMMON.SELECT_DISTRICT")}
           </MenuItem>
-          {districts.map((district) => (
-            <MenuItem key={district.value} value={district.value}>
-              {district.label}
-            </MenuItem>
-          ))}
+          {districts.length > 0 ? (
+            districts.map((district) => (
+              <MenuItem key={district.value} value={district.value}>
+                {district.label}
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem disabled>{t("COMMON.NO_DISTRICTS")}</MenuItem>
+          )}
         </Select>
         {errors.controllingField && (
           <Typography variant="caption" color="error">

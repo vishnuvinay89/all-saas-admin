@@ -103,14 +103,12 @@ const State: React.FC = () => {
 
   const handleAddStateSubmit = async (
     name: string,
-    value: string,
-    stateId?: string
+    value: string
   ) => {
-    const newState = { options: [{ name, value, controllingfieldfk: "" }] };
+    const newState = { options: [{ name, value }] };
     try {
-      console.log("fieldId state", fieldId);
       if (fieldId) {
-        const response = await createOrUpdateOption(fieldId, newState, stateId);
+        const response = await createOrUpdateOption(fieldId, newState);
         if (response) {
           await fetchStateData(searchKeyword);
           showToastMessage(t("COMMON.STATE_ADDED_SUCCESS"), "success");
@@ -124,7 +122,6 @@ const State: React.FC = () => {
     }
     setAddStateModalOpen(false);
   };
-
   const handleChangePageSize = (event: SelectChangeEvent<number>) => {
     const newSize = Number(event.target.value);
     setPageSizeArray((prev) =>

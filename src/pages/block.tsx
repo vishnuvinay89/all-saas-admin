@@ -320,7 +320,7 @@ const Block: React.FC = () => {
 
     try {
       const response = await createOrUpdateOption(
-        blocksFieldId, // Verify this is being passed correctly
+        blocksFieldId,
         newDistrict,
         DistrictId
       );
@@ -349,7 +349,7 @@ const Block: React.FC = () => {
             name,
             value,
             controllingField,
-            blocksFieldId, 
+            blocksFieldId,
             selectedStateForEdit?.value
           )
         }
