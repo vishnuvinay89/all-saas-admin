@@ -116,7 +116,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     return errors?.map((error: any) => {
       switch (error.name) {
         case "required": {
-          console.log(submittedButtonStatus);
+         // console.log(submittedButtonStatus);
           error.message = submittedButtonStatus? t("FORM_ERROR_MESSAGES.THIS_IS_REQUIRED_FIELD") : "";
           break;
         }
