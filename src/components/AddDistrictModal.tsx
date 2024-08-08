@@ -10,7 +10,6 @@ import {
   Box,
   Select,
   MenuItem,
-  CircularProgress,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
@@ -30,7 +29,7 @@ interface AddDistrictBlockModalProps {
   initialValues?: {
     name?: string;
     value?: string;
-    controllingField?: string; 
+    controllingField?: string;
   };
   districtId?: string;
 }
@@ -44,24 +43,14 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
   districtId,
 }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    value: "",
-    controllingField: "",
+    name: initialValues?.name ?? "",
+    value: initialValues?.value ?? "",
+    controllingField: initialValues?.controllingField ?? "",
   });
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [states, setStates] = useState<{ value: string; label: string }[]>([]);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    // Set initial values including controllingField (state) for editing mode
-    setFormData({
-      name: initialValues.name || "",
-      value: initialValues.value || "",
-      controllingField: initialValues.controllingField || "", // Set initial state value
-    });
-    setErrors({});
-  }, [initialValues]);
 
   useEffect(() => {
     const fetchStates = async () => {
@@ -81,50 +70,63 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
       }
     };
 
-    if (open) fetchStates();
+    if (open) {
+      fetchStates();
+    }
   }, [open]);
 
-  const validateField = (
-    field: keyof typeof formData,
-    value: string,
-    requiredMessage: string
-  ) => {
-    if (!value) return requiredMessage;
-    if (field !== "controllingField" && !/^[a-zA-Z]*$/.test(value))
-      return t("COMMON.INVALID_TEXT");
-    return null;
-  };
+  useEffect(() => {
+    setFormData({
+      name: initialValues.name ?? "",
+      value: initialValues.value ?? "",
+      controllingField: initialValues.controllingField ?? "",
+    });
+    setErrors({});
+  }, [initialValues, states]);
 
-  const handleChange =
-    (field: keyof typeof formData) =>
-    (
-      e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
-    ) => {
-      const { value } = e.target as HTMLInputElement;
-      setFormData((prev) => ({ ...prev, [field]: value }));
+  const isAlphabetic = (input: string) =>
+    input === "" || /^[a-zA-Z\s]+$/.test(input);
+
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
+    if (value === "") {
       setErrors((prev) => ({
         ...prev,
-        [field]: validateField(
-          field,
-          value,
-          t(`COMMON.${field.toUpperCase()}_REQUIRED`)
+        [field]: t(
+          field === "name"
+            ? "COMMON.DISTRICT_NAME_REQUIRED"
+            : field === "controllingField"
+              ? "COMMON.STATE_NAME_REQUIRED"
+              : "COMMON.CODE_REQUIRED"
         ),
       }));
-    };
+    } else if (field !== "controllingField" && !isAlphabetic(value)) {
+      setErrors((prev: Record<string, string | null>) => {
+        const newErrors: Record<string, string | null> = {
+          ...prev,
+          [field]: field === "controllingField" ? value : null,
+        };
+        return newErrors;
+      });
+    }
+  };
 
   const validateForm = () => {
     const newErrors = {
-      name: validateField(
-        "name",
-        formData.name,
-        t("COMMON.DISTRICT_NAME_REQUIRED")
-      ),
-      value: validateField("value", formData.value, t("COMMON.CODE_REQUIRED")),
-      controllingField: validateField(
-        "controllingField",
-        formData.controllingField,
-        t("COMMON.STATE_NAME_REQUIRED")
-      ),
+      name: !formData.name
+        ? t("COMMON.DISTRICT_NAME_REQUIRED")
+        : !isAlphabetic(formData.name)
+          ? t("COMMON.INVALID_TEXT")
+          : null,
+      value: !formData.value
+        ? t("COMMON.CODE_REQUIRED")
+        : !isAlphabetic(formData.value)
+          ? t("COMMON.INVALID_TEXT")
+          : null,
+      controllingField: !formData.controllingField
+        ? t("COMMON.STATE_NAME_REQUIRED")
+        : null,
     };
 
     setErrors(newErrors);
@@ -159,62 +161,57 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
     <Dialog open={open} onClose={onClose}>
       <DialogTitle sx={{ fontSize: "14px" }}>{dialogTitle}</DialogTitle>
       <DialogContent>
-        <>
-          <Select
-            value={formData.controllingField}
-            onChange={(e) =>
-              handleChange("controllingField")(
-                e as React.ChangeEvent<HTMLInputElement>
-              )
-            }
-            fullWidth
-            displayEmpty
-            variant="outlined"
-            margin="dense"
-          >
-            <MenuItem value="" disabled>
-              {t("COMMON.SELECT_STATE")}
+        <Select
+          value={formData.controllingField}
+          onChange={(e) => handleChange("controllingField", e.target.value)}
+          fullWidth
+          displayEmpty
+          variant="outlined"
+          margin="dense"
+          error={!!errors.controllingField}
+        >
+          <MenuItem value="" disabled>
+            {t("COMMON.SELECT_STATE")}
+          </MenuItem>
+          {states.map((state) => (
+            <MenuItem key={state.value} value={state.value}>
+              {state.label}
             </MenuItem>
-            {states.map((state) => (
-              <MenuItem key={state.value} value={state.value}>
-                {state.label}
-              </MenuItem>
-            ))}
-          </Select>
-          {errors.controllingField && (
-            <Typography variant="caption" color="error">
-              {errors.controllingField}
-            </Typography>
-          )}
-          <TextField
-            margin="dense"
-            label={t("COMMON.DISTRICT_NAME")}
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formData.name}
-            onChange={handleChange("name")}
-            error={!!errors.name}
-            helperText={errors.name}
-          />
-          <TextField
-            margin="dense"
-            label={t("COMMON.DISTRICT_CODE")}
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formData.value}
-            onChange={handleChange("value")}
-            error={!!errors.value}
-            helperText={errors.value}
-          />
-          <Box display="flex" alignItems="center" mt={2}>
-            <InfoOutlinedIcon color="primary" sx={{ mr: 1 }} />
-            <Typography variant="caption" color="textSecondary">
-              {t("COMMON.CODE_NOTIFICATION")}
-            </Typography>
-          </Box>
-        </>
+          ))}
+        </Select>
+        {errors.controllingField && (
+          <Typography variant="caption" color="error">
+            {errors.controllingField}
+          </Typography>
+        )}
+        <TextField
+          margin="dense"
+          label={t("COMMON.DISTRICT_NAME")}
+          type="text"
+          fullWidth
+          variant="outlined"
+          value={formData.name}
+          onChange={(e) => handleChange("name", e.target.value)}
+          error={!!errors.name}
+          helperText={errors.name}
+        />
+        <TextField
+          margin="dense"
+          label={t("COMMON.DISTRICT_CODE")}
+          type="text"
+          fullWidth
+          variant="outlined"
+          value={formData.value}
+          onChange={(e) => handleChange("value", e.target.value.toUpperCase())}
+          error={!!errors.value}
+          helperText={errors.value}
+        />
+        <Box display="flex" alignItems="center" mt={2}>
+          <InfoOutlinedIcon color="primary" sx={{ mr: 1 }} />
+          <Typography variant="caption" color="textSecondary">
+            {t("COMMON.CODE_NOTIFICATION")}
+          </Typography>
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button

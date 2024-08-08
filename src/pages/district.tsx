@@ -25,6 +25,7 @@ import PageSizeSelector from "@/components/PageSelector";
 import { Numbers, SORT } from "@/utils/app.constant";
 
 type StateDetail = {
+  controllingField: string | undefined;
   value: string;
   label: string;
 };
@@ -36,11 +37,12 @@ type DistrictDetail = {
   createdAt: any;
   value: string;
   label: string;
+  controllingField: string; // Add this line
 };
 
 const District: React.FC = () => {
   const { t } = useTranslation();
-  const [selectedState, setSelectedState] = useState("ALL"); // Default to "ALL"
+  const [selectedState, setSelectedState] = useState("ALL");
   const [stateData, setStateData] = useState<StateDetail[]>([]);
   const [districtData, setDistrictData] = useState<DistrictDetail[]>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -59,7 +61,161 @@ const District: React.FC = () => {
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10, 20, 50]);
   const [sortBy, setSortBy] = useState<[string, string]>(["name", "asc"]);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [fieldId, setFieldId] = useState<string>("");
+  const [paginationCount, setPaginationCount] = useState<number>(Numbers.ZERO);
 
+  const fetchStateData = async () => {
+    try {
+      setLoading(true);
+      const data = await getStateBlockDistrictList({ fieldName: "states" });
+
+      if (data?.result?.values) {
+        setStateData(data.result.values);
+        setSelectedState("ALL");
+        fetchDistrictData("ALL");
+      } else {
+        setStateData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching state data:", error);
+      setStateData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStateData();
+  }, [sortBy, pageOffset, pageLimit]);
+
+  const fetchDistrictData = async (stateId: string) => {
+    try {
+      const limit = pageLimit;
+      const offset = pageOffset * limit;
+
+      const data = {
+        limit: limit,
+        offset: offset,
+        controllingfieldfk: stateId === "ALL" ? undefined : stateId,
+        fieldName: "districts",
+        sort: sortBy,
+      };
+
+      const districtData = await getDistrictsForState(data);
+      setDistrictData(
+        districtData.result.values.map((district: any) => ({
+          ...district,
+          controllingField: stateId, // Add controllingField to each district
+        })) || []
+      );
+      setFieldId(districtData.result.fieldId);
+      setPaginationCount(districtData?.result?.totalCount || 0);
+
+      const totalCount = districtData?.result?.totalCount || 0;
+      const pageCount = Math.ceil(totalCount / limit);
+      setPageCount(pageCount);
+
+      // Update page size options based on total count
+      if (totalCount >= 15) {
+        setPageSizeArray([5, 10, 15]);
+      } else if (totalCount >= 10) {
+        setPageSizeArray([5, 10]);
+      } else {
+        setPageSizeArray([5]);
+      }
+    } catch (error) {
+      console.error("Error fetching district data:", error);
+      setDistrictData([]);
+    }
+  };
+
+  const handleStateChange = async (event: SelectChangeEvent<string>) => {
+    const selectedState = event.target.value;
+    setSelectedState(selectedState);
+
+    try {
+      const data = {
+        limit: pageLimit,
+        offset: pageOffset * pageLimit,
+        controllingfieldfk: selectedState === "ALL" ? undefined : selectedState,
+        fieldName: "districts",
+      };
+      const districtData = await getDistrictsForState(data);
+      setDistrictData(districtData.result.values || []);
+    } catch (error) {
+      console.error("Error fetching district data", error);
+      setDistrictData([]);
+    }
+  };
+  const handleEdit = (rowData: DistrictDetail) => {
+    setModalOpen(true);
+    setSelectedStateForEdit(rowData);
+    console.log("RowData", rowData);
+  };
+
+  const handleDelete = (rowData: DistrictDetail) => {
+    setSelectedStateForDelete(rowData);
+    setConfirmationDialogOpen(true);
+  };
+  const handleSearch = (keyword: string) => {
+    setSearchKeyword(keyword);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (selectedStateForDelete) {
+      try {
+        await deleteOption("districts", selectedStateForDelete.value);
+        setDistrictData((prev) =>
+          prev.filter(
+            (district) => district.value !== selectedStateForDelete.value
+          )
+        );
+        showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
+      } catch (error) {
+        showToastMessage(t("COMMON.STATE_DELETED_FAILURE"), "error");
+      }
+    }
+    setConfirmationDialogOpen(false);
+  };
+
+  const handleAddDistrictSubmit = async (
+    name: string,
+    value: string,
+    controllingField: string,
+    DistrictId?: string,
+    extraArgument?: any
+  ) => {
+    const newDistrict = {
+      options: [
+        {
+          controllingfieldfk: controllingField,
+          name,
+          value,
+        },
+      ],
+    };
+    console.log("field Id district", fieldId);
+    try {
+      const response = await createOrUpdateOption(
+        fieldId,
+        newDistrict,
+        DistrictId
+      );
+
+      console.log("submit response district", response);
+      if (response && response.success) {
+        showToastMessage("District added successfully", "success");
+      } else {
+        showToastMessage("Failed to create/update district", "error");
+      }
+    } catch (error) {
+      console.error("Error adding district:", error);
+      showToastMessage("Error adding district", "error");
+    }
+
+    setModalOpen(false);
+    setSelectedStateForEdit(null);
+  };
   const handleChangePageSize = (event: SelectChangeEvent<number>) => {
     const newSize = Number(event.target.value);
     setPageSizeArray((prev) =>
@@ -102,153 +258,6 @@ const District: React.FC = () => {
     </Box>
   );
 
-  useEffect(() => {
-    const fetchStateData = async () => {
-      try {
-        setLoading(true);
-        const data = await getStateBlockDistrictList({ fieldName: "states" });
-
-        if (data?.result?.values) {
-          setStateData(data.result.values);
-          setSelectedState(data.result.values[0]?.value || "ALL");
-          fetchDistrictData(data.result.values[0]?.value || "ALL");
-        } else {
-          setStateData([]);
-        }
-      } catch (error) {
-        console.error("Error fetching state data:", error);
-        setStateData([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchDistrictData = async (stateId: string) => {
-      try {
-        if (stateId === "ALL") {
-          setDistrictData([]);
-          return;
-        }
-        const limit = pageLimit;
-        const offset = pageOffset * limit;
-
-        const data = {
-          limit: limit,
-          offset: offset,
-          controllingfieldfk: stateId,
-          fieldName: "districts",
-          sort: sortBy,
-        };
-
-        const districtData = await getDistrictsForState(data);
-        setDistrictData(districtData.result.values || []);
-
-        const totalCount = districtData?.result?.totalCount || 0;
-        console.log("totalCount", totalCount);
-
-        if (totalCount >= 15) {
-          setPageSizeArray([5, 10, 15]);
-        } else if (totalCount >= 10) {
-          setPageSizeArray([5, 10]);
-        } else {
-          setPageSizeArray([5]);
-        }
-
-        const pageCount = Math.ceil(totalCount / limit);
-        setPageCount(pageCount);
-      } catch (error) {
-        console.error("Error fetching district data:", error);
-        setDistrictData([]);
-      }
-    };
-
-    fetchStateData();
-  }, [sortBy, pageLimit, pageOffset]);
-  const handleStateChange = async (event: SelectChangeEvent<string>) => {
-    const selectedState = event.target.value;
-    setSelectedState(selectedState);
-
-    console.log("selectedState", selectedState);
-
-    try {
-      const data = {
-        controllingfieldfk: selectedState === "ALL" ? undefined : selectedState,
-        fieldName: "districts",
-      };
-
-      const districtData = await getDistrictsForState(data);
-      setDistrictData(districtData.result.values || []);
-    } catch (error) {
-      console.error("Error fetching district data", error);
-    }
-  };
-  const handleEdit = (rowData: DistrictDetail) => {
-    setModalOpen(true);
-    setSelectedStateForEdit(rowData);
-  };
-
-  const handleDelete = (rowData: DistrictDetail) => {
-    setSelectedStateForDelete(rowData);
-    setConfirmationDialogOpen(true);
-  };
-  const handleSearch = (keyword: string) => {
-    setSearchKeyword(keyword);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (selectedStateForDelete) {
-      try {
-        await deleteOption("districts", selectedStateForDelete.value);
-        setDistrictData((prev) =>
-          prev.filter(
-            (district) => district.value !== selectedStateForDelete.value
-          )
-        );
-        showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
-      } catch (error) {
-        showToastMessage(t("COMMON.STATE_DELETED_FAILURE"), "error");
-      }
-    }
-    setConfirmationDialogOpen(false);
-  };
-
-  const handleAddDistrictSubmit = async (
-    name: string,
-    value: string,
-    controllingField: string,
-    fieldId: string,
-    DistrictId?: string
-  ) => {
-    const newDistrict = {
-      options: [
-        {
-          controllingField,
-          name,
-          value,
-        },
-      ],
-    };
-
-    try {
-      const response = await createOrUpdateOption(
-        fieldId,
-        newDistrict,
-        DistrictId
-      );
-
-      if (response) {
-        showToastMessage("District added successfully", "success");
-      } else {
-        showToastMessage("Failed to create/update district", "error");
-      }
-    } catch (error) {
-      showToastMessage("Error adding district", "error");
-    }
-
-    setModalOpen(false);
-    setSelectedStateForEdit(null);
-  };
-
   return (
     <>
       <AddDistrictModal
@@ -267,7 +276,7 @@ const District: React.FC = () => {
         initialValues={
           selectedStateForEdit
             ? {
-                controllingField: selectedStateForEdit.value,
+                controllingField: selectedStateForEdit.controllingField, // Use controllingField here
                 name: selectedStateForEdit.label,
                 value: selectedStateForEdit.value,
               }
@@ -369,7 +378,7 @@ const District: React.FC = () => {
               onEdit={handleEdit}
               onDelete={handleDelete}
               noDataMessage={
-                districtData.length === 0 ? t("COMMON.DISTRICT_NOT_FOUND") : ""
+                !districtData.length ? t("COMMON.DISTRICT_NOT_FOUND") : ""
               }
               extraActions={[]}
             />

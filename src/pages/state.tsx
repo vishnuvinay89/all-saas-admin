@@ -45,6 +45,7 @@ const State: React.FC = () => {
   const [pageLimit, setPageLimit] = useState<number>(Numbers.TEN);
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10]);
   const [selectedSort, setSelectedSort] = useState("Sort");
+  const [paginationCount, setPaginationCount] = useState<number>(Numbers.ZERO);
 
   const columns = [
     { key: "label", title: t("MASTER.STATE_NAMES") },
@@ -105,9 +106,9 @@ const State: React.FC = () => {
     value: string,
     stateId?: string
   ) => {
-    const newState = { options: [{ name, value }] };
-
+    const newState = { options: [{ name, value, controllingfieldfk: "" }] };
     try {
+      console.log("fieldId state", fieldId);
       if (fieldId) {
         const response = await createOrUpdateOption(fieldId, newState, stateId);
         if (response) {
@@ -181,6 +182,7 @@ const State: React.FC = () => {
       if (resp?.result?.fieldId) {
         setFieldId(resp.result.fieldId);
         setStateData(resp.result.values);
+        setPaginationCount(resp?.result?.totalCount || 0);
 
         const totalCount = resp?.result?.totalCount || 0;
         console.log("totalCount", totalCount);
@@ -238,7 +240,7 @@ const State: React.FC = () => {
             }))}
             limit={pageLimit}
             offset={pageOffset}
-            paginationEnable={true}
+            paginationEnable={paginationCount >= 5}
             PagesSelector={PagesSelector}
             PageSizeSelector={PageSizeSelectorFunction}
             pageSizes={pageSizeArray}

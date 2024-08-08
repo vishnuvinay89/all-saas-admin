@@ -8,9 +8,12 @@ import {
   Button,
   Typography,
   Box,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
+import { getDistrictsForState } from "@/services/MasterDataService";
 
 interface AddBlockModalProps {
   open: boolean;
@@ -45,12 +48,11 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     controllingField: initialValues.controllingField || "",
   });
 
-  const [errors, setErrors] = useState({
-    name: "",
-    value: "",
-    controllingField: "",
-  });
-
+  const [errors, setErrors] = useState<Record<string, string | null>>({});
+  const [districts, setDistricts] = useState<
+    { value: string; label: string }[]
+  >([]);
+  const [selectedState, setSelectedState] = useState<string>("");
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -59,92 +61,157 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
       value: initialValues.value || "",
       controllingField: initialValues.controllingField || "",
     });
+    setErrors({});
   }, [initialValues]);
 
-  const isAlphabetic = (input: string) =>
-    input === "" || /^[a-zA-Z]+$/.test(input);
+  useEffect(() => {
+    const fetchDistricts = async () => {
+      try {
+        const response = await getDistrictsForState({
+          limit: 10,
+          offset: 0,
+          controllingfieldfk: selectedState,
+          fieldName: "districts",
+        });
 
-  const validate = () => {
-    let valid = true;
-    let errors = { name: "", value: "", controllingField: "" };
-
-    if (!formData.name.trim()) {
-      errors.name = t("COMMON.REQUIRED_FIELD");
-      valid = false;
-    } else if (!isAlphabetic(formData.name)) {
-      errors.name = t("COMMON.INVALID_TEXT");
-      valid = false;
-    }
-
-    if (!formData.value.trim()) {
-      errors.value = t("COMMON.REQUIRED_FIELD");
-      valid = false;
-    } else if (!isAlphabetic(formData.value)) {
-      errors.value = t("COMMON.INVALID_TEXT");
-      valid = false;
-    }
-
-    if (!formData.controllingField.trim()) {
-      errors.controllingField = t("COMMON.REQUIRED_FIELD");
-      valid = false;
-    } else if (!isAlphabetic(formData.controllingField)) {
-      errors.controllingField = t("COMMON.INVALID_TEXT");
-      valid = false;
-    }
-
-    setErrors(errors);
-    return valid;
-  };
-
-  const handleChange =
-    (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = event.target.value;
-      setFormData((prev) => ({ ...prev, [field]: value }));
-      if (isAlphabetic(value)) {
-        setErrors((prev) => ({ ...prev, [field]: "" }));
-      } else {
-        setErrors((prev) => ({ ...prev, [field]: t("COMMON.INVALID_TEXT") }));
+        if (response && response.result && response.result.values) {
+          setDistricts(response.result.values);
+        } else {
+          console.error("Unexpected response format:", response);
+          setDistricts([]);
+        }
+      } catch (error: any) {
+        console.error("Error fetching districts:", error.message);
+        setDistricts([]);
       }
     };
 
+    if (open) fetchDistricts();
+  }, [open, districtId]);
+
+  const validateField = (
+    field: keyof typeof formData,
+    value: string,
+    requiredMessage: string
+  ) => {
+    if (!value) return requiredMessage;
+    if (field !== "controllingField" && !/^[a-zA-Z\s]+$/.test(value))
+      return t("COMMON.INVALID_TEXT");
+    return null;
+  };
+
+  const handleChange =
+    (field: keyof typeof formData) =>
+    (e: React.ChangeEvent<HTMLInputElement | { value: unknown }>) => {
+      const value = typeof e.target.value === "string" ? e.target.value : "";
+      setFormData((prev) => ({ ...prev, [field]: value }));
+
+      let errorMessage: string | null = null;
+
+      if (field === "name") {
+        errorMessage = validateField(
+          field,
+          value,
+          t("COMMON.BLOCK_NAME_REQUIRED")
+        );
+      } else if (field === "value") {
+        errorMessage = validateField(
+          field,
+          value,
+          t("COMMON.BLOCK_CODE_REQUIRED")
+        );
+      } else if (field === "controllingField") {
+        errorMessage = validateField(
+          field,
+          value,
+          t("COMMON.DISTRICT_NAME_REQUIRED")
+        );
+      }
+
+      setErrors((prev) => ({
+        ...prev,
+        [field]: errorMessage,
+      }));
+    };
+
+  const validateForm = () => {
+    const newErrors = {
+      name: validateField(
+        "name",
+        formData.name,
+        t("COMMON.BLOCK_NAME_REQUIRED")
+      ),
+      value: validateField(
+        "value",
+        formData.value,
+        t("COMMON.BLOCK_CODE_REQUIRED")
+      ),
+      controllingField: validateField(
+        "controllingField",
+        formData.controllingField,
+        t("COMMON.DISTRICT_NAME_REQUIRED")
+      ),
+    };
+
+    setErrors(newErrors);
+    return !Object.values(newErrors).some((error) => error !== null);
+  };
+
   const handleSubmit = () => {
-    if (validate()) {
-      const { name, value, controllingField } = formData;
-      onSubmit(name, value, controllingField, fieldId, districtId);
+    if (validateForm()) {
+      onSubmit(
+        formData.name,
+        formData.value,
+        formData.controllingField,
+        fieldId,
+        districtId
+      );
+      setFormData({
+        name: "",
+        value: "",
+        controllingField: "",
+      });
       onClose();
     }
   };
 
-  const isEditing = !!(
-    initialValues.name ||
-    initialValues.value ||
-    initialValues.controllingField
-  );
+  const isEditing = !!initialValues.name;
   const buttonText = isEditing ? t("COMMON.UPDATE") : t("COMMON.SUBMIT");
   const dialogTitle = isEditing
     ? t("COMMON.UPDATE_BLOCK")
     : t("COMMON.ADD_BLOCK");
 
-  const buttonStyles = {
-    fontSize: "14px",
-    fontWeight: "500",
-  };
-
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle sx={{ fontSize: "14px" }}>{dialogTitle}</DialogTitle>
       <DialogContent>
-        <TextField
-          margin="dense"
-          label={t("COMMON.DISTRICT_NAME")}
-          type="text"
-          fullWidth
-          variant="outlined"
+        <Select
           value={formData.controllingField}
-          onChange={handleChange("controllingField")}
+          onChange={(e) =>
+            handleChange("controllingField")(
+              e as React.ChangeEvent<HTMLInputElement>
+            )
+          }
+          fullWidth
+          displayEmpty
+          variant="outlined"
+          margin="dense"
           error={!!errors.controllingField}
-          helperText={errors.controllingField}
-        />
+        >
+          <MenuItem value="" disabled>
+            {t("COMMON.SELECT_DISTRICT")}
+          </MenuItem>
+          {districts.map((district) => (
+            <MenuItem key={district.value} value={district.value}>
+              {district.label}
+            </MenuItem>
+          ))}
+        </Select>
+        {errors.controllingField && (
+          <Typography variant="caption" color="error">
+            {errors.controllingField}
+          </Typography>
+        )}
         <TextField
           margin="dense"
           label={t("COMMON.BLOCK_NAME")}
@@ -177,24 +244,16 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
       <DialogActions>
         <Button
           onClick={onClose}
-          sx={{
-            border: "none",
-            color: "secondary",
-            fontSize: "14px",
-            fontWeight: "500",
-            "&:hover": {
-              border: "none",
-              backgroundColor: "transparent",
-            },
-          }}
           variant="outlined"
+          sx={{ fontSize: "14px" }}
+          color="primary"
         >
           {t("COMMON.CANCEL")}
         </Button>
         <Button
           onClick={handleSubmit}
-          sx={{ ...buttonStyles, width: "auto", height: "40px" }}
           variant="contained"
+          sx={{ fontSize: "14px" }}
           color="primary"
         >
           {buttonText}
