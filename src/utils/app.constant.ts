@@ -3,6 +3,8 @@ export enum Role {
   TEACHER = "Teacher",
   TEAM_LEADER = "Team Leader",
   ADMIN = "Admin",
+  LEARNERS="Learners",
+  FACILITATORS="Facilitators"
 }
 
 export enum Status {
@@ -11,6 +13,7 @@ export enum Status {
   ACTIVE = "active",
   ACTIVE_LABEL = "Active",
   ALL_LABEL = "All",
+  INACTIVE="Inactive"
 }
 export enum SORT {
   ASCENDING = "asc",

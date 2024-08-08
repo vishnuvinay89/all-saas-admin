@@ -32,7 +32,7 @@ interface Block {
   label: string;
 }
 const Sort = ["A-Z", "Z-A"];
-const Filter = ["Active", "Archived"];
+const Filter = ["Active", "InActive"];
 
 const HeaderComponent = ({
   children,

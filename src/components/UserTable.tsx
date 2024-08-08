@@ -1,7 +1,7 @@
 import DeleteUserModal from "@/components/DeleteUserModal";
 import HeaderComponent from "@/components/HeaderComponent";
 import PageSizeSelector from "@/components/PageSelector";
-import { SORT, Status } from "@/utils/app.constant";
+import { FormContextType, SORT, Status } from "@/utils/app.constant";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import Box from "@mui/material/Box";
@@ -46,6 +46,7 @@ type FilterDetails = {
   districts?: any;
   states?: any;
   blocks?: any;
+  name?:any
 };
 
 interface Cohort {
@@ -91,12 +92,13 @@ const UserTable: React.FC<UserTableProps> = ({
   const [selectedUserId, setSelectedUserId] = useState("");
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
-  const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm"),
-  );
-  // const isMobile = useMediaQuery("(max-width:600px)");
+  const [deleteUserState, setDeleteUserState] = useState(false);
 
-  const [confirmButtonDisable, setConfirmButtonDisable] = useState(false);
+  const isMobile: boolean = useMediaQuery((theme: Theme) =>
+  theme.breakpoints.down('sm'),
+);
+
+  const [confirmButtonDisable, setConfirmButtonDisable] = useState(true);
   const [pagination, setPagination] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState("All");
   const [formdata, setFormData] = useState<any>();
@@ -110,7 +112,8 @@ const UserTable: React.FC<UserTableProps> = ({
     setOpenAddLearnerModal(true);
   };
   const handleModalSubmit = (value: boolean) => {
-    setSubmitValue(true);
+    console.log("true")
+    submitValue?setSubmitValue(false):setSubmitValue(true);
   };
   const handleCloseAddLearnerModal = () => {
     setOpenAddLearnerModal(false);
@@ -160,6 +163,7 @@ const UserTable: React.FC<UserTableProps> = ({
       count={pageCount}
       page={pageOffset + 1}
       onChange={handlePaginationChange}
+      sx={{marginTop:"10px"}}
     />
   );
 
@@ -196,13 +200,13 @@ const UserTable: React.FC<UserTableProps> = ({
   const handleFilterChange = async (event: SelectChangeEvent) => {
     console.log(event.target.value as string);
     setSelectedFilter(event.target.value as string);
-    if (event.target.value === "Active") {
+    if (event.target.value ===  Status.ACTIVE_LABEL ) {
       console.log(true);
       setFilters((prevFilters) => ({
         ...prevFilters,
         status: [Status.ACTIVE],
       }));
-    } else if (event.target.value === "Archived") {
+    } else if (event.target.value === Status.INACTIVE) {
       setFilters((prevFilters) => ({
         ...prevFilters,
         status: [Status.ARCHIVED],
@@ -376,6 +380,10 @@ const UserTable: React.FC<UserTableProps> = ({
     return initialFormData;
   };
   const handleEdit = async (rowData: any) => {
+    if(submitValue)
+    {
+      setSubmitValue(false);
+    }
     console.log("Edit row:", rowData);
 
     try {
@@ -437,8 +445,12 @@ const UserTable: React.FC<UserTableProps> = ({
         const result = resp?.getUserDetails;
         // console.log(resp?.totalCount)
         if (resp?.totalCount >= 15) {
+          setPagination(true);
+
           setPageSizeArray([5, 10, 15]);
         } else if (resp?.totalCount >= 10) {
+          setPagination(true);
+
           // setPageSize(resp?.totalCount);
           setPageSizeArray([5, 10]);
         } else if (resp?.totalCount > 5) {
@@ -479,20 +491,38 @@ const UserTable: React.FC<UserTableProps> = ({
               user.name.slice(1).toLowerCase(),
             role: user.role,
             //  gender: user.gender,
-            mobile: user.mobile === "NaN" ? "" : user.mobile,
-            age: ageField ? ageField.value : null,
-            district: districtField ? districtField.value : null,
-            state: stateField ? stateField.value : null,
-            blocks: blockField ? blockField.value : null,
+            mobile: user.mobile === "NaN" ? "-" : user.mobile,
+            age: ageField ? ageField.value : "-",
+            district: districtField ? districtField.value : "-",
+            state: stateField ? stateField.value : "-",
+            blocks: blockField ? blockField.value : "-",
             gender: genderField
               ? genderField.value?.charAt(0)?.toUpperCase() +
                 genderField.value.slice(1).toLowerCase()
-              : null,
+              : "-",
             // centers: null,
             // Programs: null,
           };
         });
-        setData(finalResult);
+        if(filters?.name)
+        {
+          const prioritizedResult = finalResult.sort((a: any, b: any) => {
+            const aStartsWith = a.name.toLowerCase().startsWith(filters?.name);
+            const bStartsWith = b.name.toLowerCase().startsWith(filters?.name);
+          
+            if (aStartsWith && !bStartsWith) return -1;
+            if (!aStartsWith && bStartsWith) return 1;
+            return 0;
+          });
+          
+          setData(prioritizedResult);
+        }
+        
+    else{
+      setData(finalResult);
+
+    }
+
         setLoading(false);
         setCohortsFetched(false);
       } catch (error: any) {
@@ -513,8 +543,9 @@ const UserTable: React.FC<UserTableProps> = ({
     pageLimit,
     sortBy,
     filters,
-    openAddFacilitatorModal,
-    openAddTeamLeaderModal,
+    parentState,
+    deleteUserState
+  
   ]);
 
   useEffect(() => {
@@ -526,9 +557,15 @@ const UserTable: React.FC<UserTableProps> = ({
         const newData = await Promise.all(
           data?.map(async (user) => {
             const response = await getCohortList(user.userId);
-            const cohortNames = response?.result?.cohortData?.map(
-              (cohort: Cohort) => cohort.name,
-            );
+            // const cohortNames = response?.result?.cohortData?.map(
+            //   (cohort: Cohort) => cohort.name,
+            // );
+            const cohortNames = response?.result?.cohortData
+            ?.filter((cohort: Cohort) => cohort.type !== 'BLOCK') // Filter out cohorts with type 'block'
+            .map((cohort: Cohort) => cohort.name); //
+
+
+
             let finalArray;
             if (cohortNames?.length >= 1) {
               finalArray = capitalizeFirstLetterOfEachWordInArray(cohortNames);
@@ -537,7 +574,7 @@ const UserTable: React.FC<UserTableProps> = ({
             // console.log(finalArray)
             return {
               ...user,
-              centers: finalArray?.join(" , "),
+              centers: finalArray? finalArray?.join(" , "):"-",
             };
           }),
         );
@@ -554,6 +591,7 @@ const UserTable: React.FC<UserTableProps> = ({
     setSelectedReason("");
     setOtherReason("");
     setIsDeleteModalOpen(false);
+    setConfirmButtonDisable(true);
   };
 
   const handleDeleteUser = async (category: string) => {
@@ -567,6 +605,10 @@ const UserTable: React.FC<UserTableProps> = ({
         },
       };
       const response = await deleteUser(userId, userData);
+      if(response)
+      {
+        deleteUserState?setDeleteUserState(false):setDeleteUserState(true)
+      }
       handleCloseDeleteModal();
       showToastMessage(t("COMMON.USER_DELETE_SUCCSSFULLY"), "success");
     } catch (error) {
@@ -578,7 +620,15 @@ const UserTable: React.FC<UserTableProps> = ({
     { name: "Edit", onClick: handleEdit, icon: EditIcon },
     { name: "Delete", onClick: handleDelete, icon: DeleteIcon },
   ];
-
+  const noUserFoundJSX = (
+    <Box display="flex" marginLeft="40%" gap="20px">
+      {/* <Image src={glass} alt="" /> */}
+      <PersonSearchIcon fontSize="large" />
+      <Typography marginTop="10px" variant="h2">
+        {t("COMMON.NO_USER_FOUND")}
+      </Typography>
+    </Box>
+  );
   const userProps = {
     userType: userType,
     searchPlaceHolder: searchPlaceholder,
@@ -606,7 +656,7 @@ const UserTable: React.FC<UserTableProps> = ({
       ) : data.length !== 0 && loading === false ? (
         <KaTableComponent
           columns={
-            role === "Team Leader"
+            role === Role.TEAM_LEADER
               ? getTLTableColumns(t, isMobile)
               : getUserTableColumns(t, isMobile)
           }
@@ -621,22 +671,27 @@ const UserTable: React.FC<UserTableProps> = ({
           onEdit={handleEdit}
           onDelete={handleDelete}
           pagination={pagination}
+          noDataMessage={
+            data.length === 0 ? t("COMMON.NO_USER_FOUND") : ""
+          }
         />
       ) : (
         loading === false &&
         data.length === 0 && (
-          <Box display="flex" marginLeft="40%" gap="20px">
-            {/* <Image src={glass} alt="" /> */}
-            <PersonSearchIcon fontSize="large" />
-            <Typography marginTop="10px">
-              {t("COMMON.NO_USER_FOUND")}
-            </Typography>
-          </Box>
-        )
-      )}
+          // <Box display="flex" marginLeft="40%" gap="20px">
+          //   {/* <Image src={glass} alt="" /> */}
+          //   <PersonSearchIcon fontSize="large" />
+          //   <Typography marginTop="10px" variant="h2">
+          //     {t("COMMON.NO_USER_FOUND")}
+          //   </Typography>
+          // </Box>
 
-      {/* <KaTableComponent
-          columns={columns}
+<KaTableComponent
+          columns={
+            role === Role.TEAM_LEADER
+              ? getTLTableColumns(t, isMobile)
+              : getUserTableColumns(t, isMobile)
+          }
           data={data}
           limit={pageLimit}
           offset={pageOffset}
@@ -647,8 +702,17 @@ const UserTable: React.FC<UserTableProps> = ({
           showIcons={true}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          
-        /> */}
+          pagination={false}
+          noDataMessage={
+            data.length === 0 ? noUserFoundJSX : ""
+          }
+        />
+
+        )
+       
+      )}
+
+     
       <DeleteUserModal
         open={isDeleteModalOpen}
         onClose={handleCloseDeleteModal}
@@ -669,11 +733,11 @@ const UserTable: React.FC<UserTableProps> = ({
         userId={userId}
         onSubmit={handleModalSubmit}
         userType={
-          userType === "Learners"
-            ? "STUDENT"
-            : userType === "Facilitators"
-              ? "TEACHER"
-              : "TEAM LEADER"
+          userType === Role.LEARNERS
+            ? FormContextType.STUDENT
+            : userType === Role.FACILITATORS
+              ? FormContextType.TEACHER
+              : FormContextType.TEAM_LEADER
         }
       />
     </HeaderComponent>

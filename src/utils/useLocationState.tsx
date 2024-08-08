@@ -124,7 +124,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
         //   const result = response?.result?.cohortDetails;
         const dataArray = response?.result?.results?.cohortDetails;
 
-        const cohortInfo = dataArray?.map((item: any) => ({
+        const cohortInfo = dataArray?.filter((cohort: any) => cohort.type !== 'BLOCK').map((item: any) => ({
           cohortId: item?.cohortId,
           name: item?.name,
         }));

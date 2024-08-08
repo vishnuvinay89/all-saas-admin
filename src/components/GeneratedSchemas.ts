@@ -21,7 +21,7 @@ export const GenerateSchemaAndUiSchema = (
   };
   const uiSchema: UiSchema = {}; //form ui schema
   let formValues: any = {};
-  // console.log('FormData', formData)
+   console.log('FormData', formData)
   formData?.fields?.forEach((field: Field) => {
     const {
       label,
@@ -86,9 +86,9 @@ export const GenerateSchemaAndUiSchema = (
           oneOf: options?.map((opt: FieldOption) => ({
             const: opt.value,
             title:
-              t(`FORM.${opt.label}`) === `FORM.${opt.label}`
-                ? opt.label
-                : t(`FORM.${opt.label}`),
+            t(`FORM.${opt.value}`) === `FORM.${opt.value}`
+              ? opt.value
+              : t(`FORM.${opt.value}`),
           })),
         };
         fieldSchema.uniqueItems = true;

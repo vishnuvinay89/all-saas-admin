@@ -25,7 +25,7 @@ import { showToastMessage } from "@/components/Toastify";
 import AddNewCenters from "@/components/AddNewCenters";
 import { getCenterTableData } from "@/data/tableColumns";
 import { Theme } from "@mui/system";
-import { debounce, firstLetterInUpperCase } from "@/utils/Helper";
+import {  firstLetterInUpperCase } from "@/utils/Helper";
 
 type cohortFilterDetails = {
   type?: string;
@@ -473,7 +473,7 @@ const Center: React.FC = () => {
 
   // props to send in header
   const userProps = {
-    userType: t("SIDEBAR.CENTER"),
+    userType: t("SIDEBAR.CENTERS"),
     searchPlaceHolder: t("CENTERS.SEARCHBAR_PLACEHOLDER"),
     selectedState: selectedState,
     selectedStateCode: selectedStateCode,
