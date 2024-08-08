@@ -155,9 +155,14 @@ export const createOrUpdateOption = async (
 
   try {
     const response = await patch(apiUrl, { fieldParams, stateId });
+    console.log("api response", response?.data);
     return response?.data;
-  } catch (error) {
-    console.error("Error in createOrUpdateOption:", error);
-    return error;
+  } catch (error: any) {
+    console.error(
+      "Error in createOrUpdateOption:",
+      error.message,
+      error.response?.data
+    );
+    throw new Error("Failed to update options");
   }
 };

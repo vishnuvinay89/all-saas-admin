@@ -62,6 +62,7 @@ const District: React.FC = () => {
   const [fieldId, setFieldId] = useState<string>("");
   const [paginationCount, setPaginationCount] = useState<number>(Numbers.ZERO);
 
+
   const fetchStateData = async () => {
     try {
       setLoading(true);
@@ -143,6 +144,7 @@ const District: React.FC = () => {
   const handleEdit = (rowData: DistrictDetail) => {
     setModalOpen(true);
     setSelectedStateForEdit(rowData);
+    console.log("RowData",rowData);
   };
 
   const handleDelete = (rowData: DistrictDetail) => {

@@ -43,9 +43,9 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
   districtId,
 }) => {
   const [formData, setFormData] = useState({
-    name: initialValues.name || "",
-    value: initialValues.value || "",
-    controllingField: initialValues.controllingField || "",
+    name: initialValues?.name ?? "",
+    value: initialValues?.value ?? "",
+    controllingField: initialValues?.controllingField ?? "",
   });
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
@@ -77,9 +77,9 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
 
   useEffect(() => {
     setFormData({
-      name: initialValues.name || "",
-      value: initialValues.value || "",
-      controllingField: initialValues.controllingField || "",
+      name: initialValues.name ?? "",
+      value: initialValues.value ?? "",
+      controllingField: initialValues.controllingField ?? "",
     });
     setErrors({});
   }, [initialValues, states]);

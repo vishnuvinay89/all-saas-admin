@@ -52,6 +52,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   const [districts, setDistricts] = useState<
     { value: string; label: string }[]
   >([]);
+  const [selectedState, setSelectedState] = useState<string>("");
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -69,24 +70,25 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
         const response = await getDistrictsForState({
           limit: 10,
           offset: 0,
-          controllingfieldfk: "MH",
+          controllingfieldfk: selectedState,
           fieldName: "districts",
         });
 
-        if (response) {
+        if (response && response.result && response.result.values) {
           setDistricts(response.result.values);
         } else {
           console.error("Unexpected response format:", response);
           setDistricts([]);
         }
-      } catch (error) {
-        console.error("Error fetching districts:", error);
+      } catch (error: any) {
+        console.error("Error fetching districts:", error.message);
         setDistricts([]);
       }
     };
 
     if (open) fetchDistricts();
   }, [open, districtId]);
+
   const validateField = (
     field: keyof typeof formData,
     value: string,
@@ -242,29 +244,16 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
       <DialogActions>
         <Button
           onClick={onClose}
-          sx={{
-            border: "none",
-            color: "secondary",
-            fontSize: "14px",
-            fontWeight: "500",
-            "&:hover": {
-              border: "none",
-              backgroundColor: "transparent",
-            },
-          }}
           variant="outlined"
+          sx={{ fontSize: "14px" }}
+          color="primary"
         >
           {t("COMMON.CANCEL")}
         </Button>
         <Button
           onClick={handleSubmit}
-          sx={{
-            fontSize: "14px",
-            fontWeight: "500",
-            width: "auto",
-            height: "40px",
-          }}
           variant="contained"
+          sx={{ fontSize: "14px" }}
           color="primary"
         >
           {buttonText}

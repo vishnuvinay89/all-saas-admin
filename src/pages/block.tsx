@@ -35,6 +35,8 @@ type DistrictDetail = {
 };
 
 type BlockDetail = {
+  updatedBy: any;
+  createdBy: any;
   updatedAt: any;
   createdAt: any;
   value: string;
@@ -62,7 +64,7 @@ const Block: React.FC = () => {
   const [editState, setEditState] = useState<StateDetail | null>(null);
   const [selectedStateForEdit, setSelectedStateForEdit] =
     useState<StateDetail | null>(null);
-  const [fieldId, setFieldId] = useState<string>("");
+  const [blocksFieldId, setBlocksFieldId] = useState<string>("");
   const [districtFieldId, setDistrictFieldId] = useState<string>("");
   const [sortBy, setSortBy] = useState<[string, string]>(["name", "asc"]);
   const [paginationCount, setPaginationCount] = useState<number>(0);
@@ -118,34 +120,17 @@ const Block: React.FC = () => {
     const fetchBlocks = async () => {
       setLoading(true);
       try {
-        const limit = pageLimit;
-        const offset = pageOffset * limit;
-
-        const data = {
-          limit: limit,
-          offset: offset,
+        const response = await getBlocksForDistricts({
+          limit: pageLimit,
+          offset: pageOffset * pageLimit,
           controllingfieldfk: selectedDistrict,
           fieldName: "blocks",
           sort: sortBy,
-        };
+        });
 
-        const response = await getBlocksForDistricts(data);
         setBlockData(response?.result?.values || []);
-        setFieldId(response?.result?.fieldId || "");
-
-        const totalCount = response?.result?.totalCount || 0;
-        console.log("totalCount", totalCount);
-
-        if (totalCount >= 15) {
-          setPageSizeArray([5, 10, 15]);
-        } else if (totalCount >= 10) {
-          setPageSizeArray([5, 10]);
-        } else {
-          setPageSizeArray([5]);
-        }
-
-        const pageCount = Math.ceil(totalCount / limit);
-        setPageCount(pageCount);
+        setBlocksFieldId(response?.result?.fieldId || "");
+        console.log("Fetched fieldId:", blocksFieldId); // Check if this logs correctly
       } catch (error) {
         console.error("Error fetching blocks", error);
       } finally {
@@ -154,7 +139,7 @@ const Block: React.FC = () => {
     };
 
     fetchBlocks();
-  }, [sortBy, pageOffset, pageLimit]);
+  }, [selectedDistrict, sortBy, pageOffset, pageLimit]);
 
   const columns = [
     {
@@ -165,6 +150,16 @@ const Block: React.FC = () => {
     {
       key: "value",
       title: t("MASTER.BLOCK_CODE"),
+      dataType: DataType.String,
+    },
+    {
+      key: "createdBy",
+      title: t("MASTER.CREATED_AT"),
+      dataType: DataType.String,
+    },
+    {
+      key: "updatedBy",
+      title: t("MASTER.UPDATED_AT"),
       dataType: DataType.String,
     },
     {
@@ -309,7 +304,7 @@ const Block: React.FC = () => {
     name: string,
     value: string,
     controllingField: string,
-    fieldId: string,
+    blocksFieldId: string,
     DistrictId?: string
   ) => {
     const newDistrict = {
@@ -325,12 +320,11 @@ const Block: React.FC = () => {
 
     try {
       const response = await createOrUpdateOption(
-        fieldId,
+        blocksFieldId, // Verify this is being passed correctly
         newDistrict,
         DistrictId
       );
 
-      console.log("submit response district", response);
       if (response && response.success) {
         showToastMessage("District added successfully", "success");
       } else {
@@ -345,7 +339,6 @@ const Block: React.FC = () => {
     setSelectedStateForEdit(null);
   };
 
-
   return (
     <React.Fragment>
       <AddBlockModal
@@ -356,11 +349,11 @@ const Block: React.FC = () => {
             name,
             value,
             controllingField,
-            fieldId,
+            blocksFieldId, // This should be checked
             selectedStateForEdit?.value
           )
         }
-        fieldId={fieldId}
+        fieldId={blocksFieldId}
         initialValues={
           selectedStateForEdit
             ? {
@@ -370,7 +363,6 @@ const Block: React.FC = () => {
               }
             : {}
         }
-        districtId={""}
       />
 
       <ConfirmationModal
@@ -459,6 +451,8 @@ const Block: React.FC = () => {
                   block: transformLabel(block.label),
                   createdAt: block.createdAt,
                   updatedAt: block.updatedAt,
+                  createdBy: block.createdBy,
+                  updatedBy: block.updatedBy,
                   value: block.value,
                 }))}
                 limit={pageLimit}
