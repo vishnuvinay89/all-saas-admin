@@ -95,7 +95,7 @@ const UserTable: React.FC<UserTableProps> = ({
   const [deleteUserState, setDeleteUserState] = useState(false);
 
   const isMobile: boolean = useMediaQuery((theme: Theme) =>
-  theme.breakpoints.down('sm'),
+  theme.breakpoints.down('md'), 
 );
 
   const [confirmButtonDisable, setConfirmButtonDisable] = useState(true);
@@ -467,19 +467,19 @@ const UserTable: React.FC<UserTableProps> = ({
         console.log(result);
         const finalResult = result?.map((user: any) => {
           const ageField = user.customFields.find(
-            (field: any) => field.name === "age",
+            (field: any) => field.label === "AGE",
           );
           const genderField = user.customFields.find(
-            (field: any) => field.name === "gender",
+            (field: any) => field.label === "GENDER",
           );
           const blockField = user.customFields.find(
-            (field: any) => field.name === "blocks",
+            (field: any) => field.label === "BLOCKS",
           );
           const districtField = user.customFields.find(
-            (field: any) => field.name === "districts",
+            (field: any) => field.label === "DISTRICTS",
           );
           const stateField = user.customFields.find(
-            (field: any) => field.name === "states",
+            (field: any) => field.label === "STATES",
           );
 
           return {
@@ -500,6 +500,10 @@ const UserTable: React.FC<UserTableProps> = ({
               ? genderField.value?.charAt(0)?.toUpperCase() +
                 genderField.value.slice(1).toLowerCase()
               : "-",
+              createdAt:user.createdAt,
+              updatedAt:user.updatedAt,
+              createdBy:user.createdBy,
+              updatedBy:user.updatedBy
             // centers: null,
             // Programs: null,
           };
