@@ -8,7 +8,7 @@ import { getFormRead } from "@/services/CreateUserService";
 import { CustomField } from "@/utils/Interfaces";
 import { CohortTypes } from "@/utils/app.constant";
 import { useLocationState } from "@/utils/useLocationState";
-import { Box } from "@mui/material";
+import { Box , Button} from "@mui/material";
 import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
 import React, { useEffect } from "react";
@@ -92,8 +92,11 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
     event: React.FormEvent<any>,
   ) => {
     const formData = data?.formData;
+    console.log( selectedBlockCohortId)
 
     if (selectedBlockCohortId) {
+      console.log("handlesubmit" , selectedBlockCohortId)
+
       const parentId = selectedBlockCohortId;
       const cohortDetails: CohortDetails = {
         name: formData.name,
@@ -184,7 +187,27 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
           widgets={{}}
           showErrorList={true}
           customFields={customFields}
-        ></DynamicForm>
+          id="xyz"
+        >
+<Button
+              variant="contained"
+              type="submit"
+             form="xyz" // Add this line
+              sx={{
+                padding: '12px 24px', // Adjust padding as needed
+                width: '200px', // Set the desired width
+              }}
+              // disabled={!submitButtonEnable}
+              // onClick={() => {
+              //   setSubmittedButtonStatus(true);
+              //   console.log("Submit button was clicked");
+              // }}
+            >
+              add
+              {/* {!isEditModal?t("COMMON.ADD"):t("COMMON.UPDATE")} */}
+            </Button>
+
+        </DynamicForm>
       )}
     </SimpleModal>
   );

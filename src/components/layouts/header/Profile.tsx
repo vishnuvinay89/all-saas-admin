@@ -10,9 +10,14 @@ import {
   List,
   ListItemText,
   Button,
+  IconButton,
   Divider,
 } from "@mui/material";
 import { Storage } from "@/utils/app.constant";
+import EditIcon from '@mui/icons-material/Edit';
+import PhoneIcon from '@mui/icons-material/Phone';
+import MailIcon from '@mui/icons-material/Mail';
+import { getUserDetails } from "@/services/UserList";
 
 const Profile = () => {
   const [anchorEl4, setAnchorEl4] = React.useState<null | HTMLElement>(null);
@@ -43,6 +48,13 @@ const Profile = () => {
 
   useEffect(() => {
     getUserName();
+
+
+    const fetchUserDetail = async () => {
+   
+    };
+    fetchUserDetail();
+    
   }, []);
 
   return (
@@ -103,30 +115,46 @@ const Profile = () => {
           },
         }}
       >
-        <Box>
-          <Box p={2} pt={0}>
-            <List
-              component="nav"
-              aria-label="secondary mailbox folder"
-              onClick={handleClose4}
-            >
-              {/* <ListItemButton>
-                <ListItemText primary="Edit Profile" />
-              </ListItemButton>
-              <ListItemButton>
-                <ListItemText primary="Account" />
-              </ListItemButton>
-              <ListItemButton>
-                <ListItemText primary="Change Password" />
-              </ListItemButton> */}
-              <ListItemButton>
-                <ListItemText primary="My Settings" />
-              </ListItemButton>
-            </List>
-          </Box>
-          <Divider />
-          <Box p={2}>
-            <Button
+      <Box sx={{ 
+    //  backgroundColor: 'ivory', 
+      padding: '20px', 
+      borderRadius: '10px', 
+      display: 'flex', 
+      flexDirection: 'column', 
+      alignItems: 'center'
+    }}>
+      <Box sx={{ 
+        backgroundColor: '#FFC107', 
+        padding: '10px', 
+        borderRadius: '50%', 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        marginBottom: '20px' 
+      }}>
+        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+          VS
+        </Typography>
+      </Box>
+      <Typography variant="h5" sx={{ marginBottom: '10px' }}>
+        Vivek Shah
+      </Typography>
+      <Typography variant="subtitle1" sx={{ marginBottom: '20px' }}>
+        Admin
+      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+        <PhoneIcon sx={{ marginRight: '10px' }} />
+        <Typography variant="body1">
+          4038402420
+        </Typography>
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+        <MailIcon sx={{ marginRight: '10px' }} />
+        <Typography variant="body1">
+          vivek.shah123@email.com
+        </Typography>
+      </Box>
+      <Button
               fullWidth
               variant="contained"
               color="primary"
@@ -135,9 +163,15 @@ const Profile = () => {
             >
               Logout
             </Button>
-          </Box>
-        </Box>
+      {/* <IconButton sx={{ marginLeft: '10px' }}>
+          <EditIcon />
+        </IconButton> */}
+    </Box>
       </Menu>
+
+
+
+      
     </>
   );
 };

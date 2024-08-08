@@ -26,6 +26,7 @@ interface MultipleSelectCheckmarksProps {
   onCategoryChange: (selectedNames: string[], selectedCodes: string[]) => void;
   disabled?: boolean;
   overall?: boolean;
+  defaultValue?:string
 }
 
 const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
@@ -36,11 +37,14 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
   onCategoryChange,
   disabled = false,
   overall = true,
+  defaultValue
 }) => {
+  console.log(selectedCategories.length, selectedCategories[0])
   const { t } = useTranslation();
   const handleChange = (
     event: SelectChangeEvent<typeof selectedCategories>,
   ) => {
+   // console.log(value)
     const {
       target: { value },
     } = event;
@@ -58,7 +62,7 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
         <Select
           labelId="multiple-checkbox-label"
           id="multiple-checkbox"
-          value={selectedCategories}
+          value={selectedCategories?.length===0  || selectedCategories[0]===""?defaultValue?[defaultValue]:"":selectedCategories}
           onChange={handleChange}
           input={<OutlinedInput label={tagName} />}
           renderValue={(selected) => selected.join(", ")}

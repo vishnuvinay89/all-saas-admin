@@ -54,7 +54,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   const [schema, setSchema] = React.useState<any>();
   const [uiSchema, setUiSchema] = React.useState<any>();
   const [submitButtonEnable, setSubmitButtonEnable] = React.useState<boolean>(false);
-
+   const roleType=userType;
   const { t } = useTranslation();
   const [formValue, setFormValue] = useState<any>();
   const setSubmittedButtonStatus = useSubmittedButtonStore((state:any) => state.setSubmittedButtonStatus);
@@ -96,7 +96,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
     distrctFieldId,
     stateFieldId,
     dynamicFormForBlock,
-  } = useLocationState(open, onClose);
+  } = useLocationState(open, onClose, roleType);
 
   useEffect(() => {
     const getAddUserFormData = async () => {
@@ -471,6 +471,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
               allCenters={allCenters}
               selectedCenter={selectedCenter}
               handleCenterChangeWrapper={handleCenterChangeWrapper}
+              inModal={true}
             />
           </Box>)
 }

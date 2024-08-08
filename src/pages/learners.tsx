@@ -4,10 +4,13 @@ import UserTable from "@/components/UserTable";
 import { useTranslation } from "next-i18next";
 import { Role, FormContextType } from "@/utils/app.constant";
 import CommonUserModal from "@/components/CommonUserModal";
+import useSubmittedButtonStore from "@/utils/useSharedState";
+
 const Learners: React.FC = () => {
   const { t } = useTranslation();
   const [openAddLearnerModal, setOpenAddLearnerModal] = React.useState(false);
   const [submitValue, setSubmitValue] = React.useState<boolean>(false);
+  const setSubmittedButtonStatus = useSubmittedButtonStore((state:any) => state.setSubmittedButtonStatus);
 
   const handleOpenAddLearnerModal = () => {
     setOpenAddLearnerModal(true);
@@ -16,6 +19,7 @@ const Learners: React.FC = () => {
     setSubmitValue(true);
   };
   const handleCloseAddLearnerModal = () => {
+    setSubmittedButtonStatus(false)
     setOpenAddLearnerModal(false);
   };
   const handleAddLearnerClick = () => {

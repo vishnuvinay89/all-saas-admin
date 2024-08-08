@@ -31,6 +31,7 @@ interface DropdownBoxProps {
   selectedDistrict: string[];
   selectedBlock: string[];
   selectedCenter?: any;
+  inModal?:boolean
   handleStateChangeWrapper: (
     selectedNames: string[],
     selectedCodes: string[],
@@ -68,6 +69,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
   isMobile,
   isMediumScreen,
   isCenterSelection = false,
+  inModal=false,
   handleCenterChangeWrapper = () => {},
 }) => {
   const { t } = useTranslation();
@@ -96,7 +98,8 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
             tagName={t("FACILITATORS.STATE")}
             selectedCategories={selectedState}
             onCategoryChange={handleStateChangeWrapper}
-            overall={isCenterSelection ? false : true}
+            overall={inModal ? false : true}
+            defaultValue="All states"
           />
         </Grid>
         <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
@@ -106,8 +109,10 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
             tagName={t("FACILITATORS.DISTRICT")}
             selectedCategories={selectedDistrict}
             onCategoryChange={handleDistrictChangeWrapper}
-            disabled={selectedState.length === 0 || selectedState[0] === ""}
-            overall={isCenterSelection ? false : true}
+            disabled={selectedState?.length === 0 || (selectedState && selectedState[0] === "")}
+            overall={inModal ? false : true}
+            defaultValue="All districts"
+
           />
         </Grid>
         <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
@@ -118,9 +123,10 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
             selectedCategories={selectedBlock}
             onCategoryChange={handleBlockChangeWrapper}
             disabled={
-              selectedDistrict.length === 0 || selectedDistrict[0] === ""
+              selectedDistrict?.length === 0 || (selectedDistrict && selectedDistrict[0] === "")
             }
-            overall={isCenterSelection ? false : true}
+            overall={inModal ? false : true}
+            defaultValue={t("COMMON.ALL_BLOCKS")}
           />
         </Grid>
         {isCenterSelection && (
@@ -132,8 +138,8 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
               selectedCategories={selectedCenter}
               onCategoryChange={handleCenterChangeWrapper}
               disabled={selectedBlock.length === 0 || selectedCenter[0] === ""}
-              overall={isCenterSelection ? false : true}
-            />
+              overall={inModal ? false : true}
+              />
           </Grid>
         )}
       </Grid>
