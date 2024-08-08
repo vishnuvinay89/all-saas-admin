@@ -33,21 +33,21 @@ export const getUserTableColumns = (t: any, isMobile: any) => {
       key: "mobile",
       title: t("FORM.MOBILE_NUMBER"),
       dataType: DataType.String,
-      width: isMobile ? 160 : undefined,
+      width: 130,
     },
     {
       key: "state",
       title: t("FORM.STATE"),
       dataType: DataType.String,
       sortDirection: SortDirection.Ascend,
-      width: isMobile ? 160 : undefined,
+      width: 130,
     },
     {
       key: "district",
       title: t("FORM.DISTRICT"),
       dataType: DataType.String,
       sortDirection: SortDirection.Ascend,
-      width: isMobile ? 160 : undefined,
+      width: 130,
     },
 
     {
@@ -64,12 +64,43 @@ export const getUserTableColumns = (t: any, isMobile: any) => {
       sortDirection: SortDirection.Ascend,
       width: isMobile ? 160 : undefined,
     },
+  
+    {
+      key: "updatedBy",
+      title: t("TABLE_TITLE.UPDATED_BY"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+      width: isMobile ? 95 : "",
+    },
+    {
+      key: "createdBy",
+      title: t("TABLE_TITLE.CREATED_BY"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+      width: isMobile ? 95 : "",
+    },
+    {
+      key: "createdAt",
+      title: t("TABLE_TITLE.CREATED_DATE"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+      width: isMobile ? 95 : "",
+    },
+
+    {
+      key: "updatedAt",
+      title: t("TABLE_TITLE.UPDATED_DATE"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+      width: isMobile ? 95 : "",
+    },
     {
       key: "actions",
       title: t("FORM.ACTION"),
       dataType: DataType.String,
       width: isMobile ? 160 : undefined,
     },
+
   ];
 };
 
@@ -108,14 +139,14 @@ export const getTLTableColumns = (t: any, isMobile: any) => {
       title: t("FORM.STATE"),
       dataType: DataType.String,
       sortDirection: SortDirection.Ascend,
-      width: isMobile?160:undefined,
+      width: 160,
     },
     {
       key: "district",
       title: t("FORM.DISTRICT"),
       dataType: DataType.String,
       sortDirection: SortDirection.Ascend,
-      width: isMobile?160:undefined,
+      width: 160,
     },
 
     {
@@ -125,6 +156,36 @@ export const getTLTableColumns = (t: any, isMobile: any) => {
      // sortDirection: SortDirection.Ascend,
      width: isMobile?160:undefined,
     },
+    {
+      key: "updatedBy",
+      title: t("TABLE_TITLE.UPDATED_BY"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+      width: isMobile ? 95 : "",
+    },
+    {
+      key: "createdBy",
+      title: t("TABLE_TITLE.CREATED_BY"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+      width: isMobile ? 95 : "",
+    },
+    {
+      key: "createdAt",
+      title: t("TABLE_TITLE.CREATED_DATE"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+      width: isMobile ? 95 : "",
+    },
+
+    {
+      key: "updatedAt",
+      title: t("TABLE_TITLE.UPDATED_DATE"),
+      dataType: DataType.String,
+      sortDirection: SortDirection.Ascend,
+      width: isMobile ? 95 : "",
+    },
+
 
     {
       key: "actions",

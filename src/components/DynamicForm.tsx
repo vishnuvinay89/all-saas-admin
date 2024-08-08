@@ -1,13 +1,12 @@
+import useSubmittedButtonStore from "@/utils/useSharedState";
 import { IChangeEvent, withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme } from "@rjsf/mui";
 import { RJSFSchema, RegistryFieldsType, WidgetProps } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
 import { useTranslation } from "next-i18next";
-import React, { ReactNode, useState , useEffect} from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import CustomRadioWidget from "./CustomRadioWidget";
 import MultiSelectCheckboxes from "./MultiSelectCheckboxes";
-import { Button, Box } from "@mui/material";
-import useSubmittedButtonStore from "@/utils/useSharedState";
 const FormWithMaterialUI = withTheme(MaterialUITheme);
 
 interface DynamicFormProps {
@@ -50,10 +49,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   const [localFormData, setLocalFormData] = useState(formData || {});
   const submittedButtonStatus = useSubmittedButtonStore((state: any) => state.submittedButtonStatus);
   const setSubmittedButtonStatus = useSubmittedButtonStore((state:any) => state.setSubmittedButtonStatus);
-  const setSubmittedButtonEnable = useSubmittedButtonStore((state:any) => state.setSubmittedButtonEnable);
-  const submittedButtonEnable = useSubmittedButtonStore((state: any) => state.submittedButtonEnable);
-
-
 
   const widgets: any = {
     MultiSelectCheckboxes: MultiSelectCheckboxes,
