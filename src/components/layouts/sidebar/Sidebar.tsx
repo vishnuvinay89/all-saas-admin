@@ -19,6 +19,8 @@ import { useState } from "react";
 import LogoIcon from "../logo/LogoIcon";
 import Buynow from "./Buynow";
 import Menuitems from "./MenuItems";
+import Image from "next/image";
+import MasterIcon  from '../../../../public/images/database.svg';
 
 const Sidebar = ({
   isMobileSidebarOpen,
@@ -66,6 +68,7 @@ const Sidebar = ({
                   selected={location === item.href}
                   sx={{
                     mb: 1,
+                    
                     ...(location === item.href && {
                       color: "black",
                       backgroundColor: (theme) =>
@@ -73,10 +76,14 @@ const Sidebar = ({
                     }),
                   }}
                 >
-                  <ListItemIcon>
-                    <FeatherIcon icon={item.icon} />
-                  </ListItemIcon>
-                  <ListItemText>
+             {/* {  item.icon && (<ListItemIcon>
+  {item.icon}
+</ListItemIcon>) */}
+<ListItemIcon>
+<Image src={item.icon} alt="" />
+
+</ListItemIcon>
+      <ListItemText>
                     <Typography variant="h2" sx={{ fontWeight: "bold" }}>
                       {t(item.title)}
                     </Typography>
@@ -106,7 +113,7 @@ const Sidebar = ({
                           selected={location === subItem.href}
                           sx={{
                             pl: 8,
-                            ml: 2,
+                           ml: 2,
                             mb: 1,
                             ...(location === subItem.href && {
                               color: "black",
