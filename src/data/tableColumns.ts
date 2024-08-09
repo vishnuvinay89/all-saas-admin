@@ -41,8 +41,8 @@ export const getTLTableColumns = (t: any, isMobile: boolean) => [
 ];
 
 export const getCenterTableData = (t: any, isMobile: boolean) => [
-  createColumn("name", t("TABLE_TITLE.NAME"), DataType.String, isMobile, SortDirection.Ascend, 95),
-  createColumn("status", t("TABLE_TITLE.STATUS"), DataType.String, isMobile, SortDirection.Ascend, 95),
+  createColumn("name", t("TABLE_TITLE.NAME"), DataType.String, isMobile),
+  createColumn("status", t("TABLE_TITLE.STATUS"), DataType.String, isMobile),
   createColumn("updatedBy", t("TABLE_TITLE.UPDATED_BY"), DataType.String, isMobile, SortDirection.Ascend, 95),
   createColumn("createdBy", t("TABLE_TITLE.CREATED_BY"), DataType.String, isMobile, SortDirection.Ascend, 95),
   createColumn("createdAt", t("TABLE_TITLE.CREATED_DATE"), DataType.String, isMobile, SortDirection.Ascend, 95),
