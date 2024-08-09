@@ -7,6 +7,7 @@ import {
   IconButton,
   useTheme,
   useMediaQuery,
+  Grid,
 } from "@mui/material";
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
@@ -107,7 +108,7 @@ const StateDetails = () => {
         handleDropdownChange={handleDropdownChange}
         card={undefined}
         selectFilter={""}
-        onBackClick={() => {}}
+        onBackClick={() => { }}
       />
       <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
         <IconButton onClick={handleBackClick}>
@@ -127,81 +128,86 @@ const StateDetails = () => {
           </Typography>
         </Box>
       </Box>
-      <Box sx={{ marginTop: "16px" }}>
+      <Grid spacing={2} container sx={{ marginTop: "16px" }}>
         {card.boards?.map((board: string, index: number) => (
-          <Card
-            key={index}
-            sx={{
-              display: "grid",
-              gridTemplateColumns: "1fr 2fr 1fr",
-              alignItems: "center",
-              cursor: "pointer",
-              border: "1px solid #0000001A",
-              boxShadow: "none",
-              transition: "background-color 0.3s",
-              "&:hover": {
-                backgroundColor: "#EAF2FF",
-              },
-              marginTop: "8px",
-              padding: "16px",
-            }}
-            onClick={() => {
-              if (typeof board === "string") {
-                handleBoardClick(board);
-              }
-            }}
-          >
+          <Grid item xs={12} md={4}>
             <Box
+              key={index}
               sx={{
-                display: "flex",
+
                 alignItems: "center",
-                gap: "8px",
+                cursor: "pointer",
+                border: "1px solid #0000001A",
+                boxShadow: "none",
+                transition: "background-color 0.3s",
+                "&:hover": {
+                  backgroundColor: "#EAF2FF",
+                },
+                marginTop: "8px",
+                padding: "16px",
+                display:'flex',
+                justifyContent:'space-between'
+              }}
+              onClick={() => {
+                if (typeof board === "string") {
+                  handleBoardClick(board);
+                }
               }}
             >
-              <FolderOutlinedIcon />
-              <Typography variant="h6" sx={{ fontSize: "16px" }}>
-                {board}
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-              }}
-            >
-              <Box sx={{ width: "40px", height: "40px" }}>
-                <CircularProgressbar
-                  value={(card.boardsUploaded / card.totalBoards) * 100}
-                  strokeWidth={10}
-                  styles={buildStyles({
-                    pathColor: "#06A816",
-                    trailColor: "#E6E6E6",
-                    strokeLinecap: "round",
-                  })}
-                />
+              <Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <FolderOutlinedIcon />
+                  <Typography variant="h6" sx={{ fontSize: "16px" }}>
+                    {board}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "16px",
+                  }}
+                >
+                  <Box sx={{ width: "40px", height: "40px" }}>
+                    <CircularProgressbar
+                      value={(card.boardsUploaded / card.totalBoards) * 100}
+                      strokeWidth={10}
+                      styles={buildStyles({
+                        pathColor: "#06A816",
+                        trailColor: "#E6E6E6",
+                        strokeLinecap: "round",
+                      })}
+                    />
+                  </Box>
+                  <Typography sx={{ fontSize: "14px" }}>
+                    {card.boardsUploaded} / {card.totalBoards}{" "}
+                    {t("COURSE_PLANNER.SUBJECTS_UPLOADED")}
+                  </Typography>
+                </Box>
               </Box>
-              <Typography sx={{ fontSize: "14px" }}>
-                {card.boardsUploaded} / {card.totalBoards}{" "}
-                {t("COURSE_PLANNER.SUBJECTS_UPLOADED")}
-              </Typography>
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (typeof board === "string") {
+                      handleCopyLink(board);
+                    }
+                  }}
+                  sx={{ minWidth: "auto", padding: 0 }}
+                >
+                  <InsertLinkOutlinedIcon />
+                </Button>
+              </Box>
             </Box>
-            <Box sx={{ display: "flex", justifyContent: "center" }}>
-              <Button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (typeof board === "string") {
-                    handleCopyLink(board);
-                  }
-                }}
-                sx={{ minWidth: "auto", padding: 0 }}
-              >
-                <InsertLinkOutlinedIcon />
-              </Button>
-            </Box>
-          </Card>
+          </Grid>
         ))}{" "}
-      </Box>
+      </Grid>
     </Box>
   );
 };

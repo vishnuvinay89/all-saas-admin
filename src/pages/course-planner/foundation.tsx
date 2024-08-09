@@ -6,6 +6,7 @@ import {
   Button,
   useMediaQuery,
   useTheme,
+  Grid,
 } from "@mui/material";
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
@@ -99,8 +100,8 @@ const Foundation = () => {
         {loading ? (
           <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
         ) : (
-          <Box>
-            <Box
+          <Box sx={{ pl: '20px' }}>
+            {/* <Box
               sx={{
                 display: "grid",
                 gridTemplateColumns: "1fr 2fr 1fr",
@@ -111,66 +112,69 @@ const Foundation = () => {
               <Typography>{t("MASTER.STATE")}</Typography>
               <Typography>{t("COURSE_PLANNER.ACTIVITY")}</Typography>
               <Typography>{t("COURSE_PLANNER.COPY_LINK")}</Typography>
-            </Box>
-            {!selectedCardId ? (
-              cardData?.map((card) => (
-                <Card
-                  key={card.id}
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 2fr 1fr",
-                    padding: "14px",
-                    cursor: "pointer",
-                    border: "1px solid #0000001A",
-                    boxShadow: "none",
-                    transition: "background-color 0.3s",
-                    "&:hover": {
-                      backgroundColor: "#EAF2FF",
-                    },
-                    marginTop: "8px",
-                  }}
-                  onClick={() => handleCardClick(card.id)}
-                >
-                  <Box
-                    sx={{ display: "flex", alignItems: "center", gap: "18px" }}
-                  >
-                    <FolderOutlinedIcon />
-                    <Typography>{card.state}</Typography>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "8px",
-                    }}
-                  >
-                    <CustomStepper completedSteps={card.boardsUploaded} />
-                    <Typography
+            </Box> */}
+            <Grid container spacing={2}>
+              {!selectedCardId ? (
+                cardData?.map((card) => (
+                  <Grid item xs={12} md={4} key={card.id}> {/* Added item prop and key here */}
+                    <Box
                       sx={{
-                        fontSize: isSmallScreen ? "12px" : "14px",
-                        color: "#7C766F",
+                        cursor: "pointer",
+                        border: "1px solid #D0C5B4",
+                        padding: '10px',
+                        borderRadius: '8px',
+                        display:'flex',
+                        justifyContent:'space-between',
+                        "&:hover": {
+                          backgroundColor: "#D0C5B4",
+                        },
                       }}
+                      onClick={() => handleCardClick(card.id)}
                     >
-                      ({card.boardsUploaded}/{card.totalBoards}{" "}
-                      {t("COURSE_PLANNER.BOARDS_FULLY_UPLOADED")})
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCopyLink(card.state);
-                      }}
-                      sx={{ minWidth: "auto", padding: 0 }}
-                    >
-                      <InsertLinkOutlinedIcon />
-                    </Button>
-                  </Box>
-                </Card>
-              ))
-            ) : (
-              <Typography>{""}</Typography>
-            )}
+                      <Box>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: "18px" }}
+                        >
+                          <FolderOutlinedIcon />
+                          <Typography>{card.state}</Typography>
+                        </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "8px",
+                          }}
+                        >
+                          <CustomStepper completedSteps={card.boardsUploaded} />
+                          <Typography
+                            sx={{
+                              fontSize: isSmallScreen ? "12px" : "14px",
+                              color: "#7C766F",
+                            }}
+                          >
+                            ({card.boardsUploaded}/{card.totalBoards}{" "}
+                            {t("COURSE_PLANNER.BOARDS_FULLY_UPLOADED")})
+                          </Typography>
+                        </Box>
+                      </Box>
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCopyLink(card.state);
+                          }}
+                          sx={{ minWidth: "auto", padding: 0 }}
+                        >
+                          <InsertLinkOutlinedIcon />
+                        </Button>
+                      </Box>
+                    </Box>
+                  </Grid>
+                ))
+              ) : (
+                <Typography>{""}</Typography>
+              )}
+            </Grid>
           </Box>
         )}
       </>
