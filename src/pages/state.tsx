@@ -15,6 +15,7 @@ import { showToastMessage } from "@/components/Toastify";
 import { SORT, Numbers } from "@/utils/app.constant";
 import { Box, Pagination, SelectChangeEvent } from "@mui/material";
 import PageSizeSelector from "@/components/PageSelector";
+import { getCohortList } from "@/services/CohortService/cohortService";
 
 export interface StateDetail {
   updatedAt: any;
@@ -25,6 +26,15 @@ export interface StateDetail {
   name: string;
   value: string;
 }
+
+type cohortFilterDetails = {
+  type?: string;
+  status?: any;
+  states?: string;
+  districts?: string;
+  blocks?: string;
+  name?: string;
+};
 
 const State: React.FC = () => {
   const { t } = useTranslation();
@@ -46,6 +56,9 @@ const State: React.FC = () => {
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10]);
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [paginationCount, setPaginationCount] = useState<number>(Numbers.ZERO);
+  const [filters, setFilters] = useState<cohortFilterDetails>({
+    type: "COHORT",
+  });
 
   const columns = [
     { key: "label", title: t("MASTER.STATE_NAMES") },
@@ -100,17 +113,24 @@ const State: React.FC = () => {
     setSelectedStateForEdit(null);
     setAddStateModalOpen(true);
   };
-
-  const handleAddStateSubmit = async (
-    name: string,
-    value: string
-  ) => {
+  const queryParameters = {
+    limit: pageLimit,
+    offset: pageOffset * pageLimit,
+    sort: sortBy,
+    filters: filters, 
+  };
+  const handleAddStateSubmit = async (name: string, value: string) => {
     const newState = { options: [{ name, value }] };
     try {
       if (fieldId) {
         const response = await createOrUpdateOption(fieldId, newState);
         if (response) {
           await fetchStateData(searchKeyword);
+
+          console.log("beforore cohortList");
+          const cohortList = await getCohortList(queryParameters);
+          console.log("fetched cohorlist success", cohortList);
+
           showToastMessage(t("COMMON.STATE_ADDED_SUCCESS"), "success");
         } else {
           console.error("Failed to create/update state:", response);
