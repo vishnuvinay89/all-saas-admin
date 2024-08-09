@@ -125,11 +125,10 @@ const Center: React.FC = () => {
         const result = resp?.results?.cohortDetails;
         const resultData: centerData[] = [];
         result?.forEach((item: any) => {
-          const cohortType = item?.customFields
-            ? item?.customFields?.map((field: any) =>
-                firstLetterInUpperCase(field?.value)
-              )
-            : "-";
+          const cohortType =
+            item?.customFields?.map((field: any) =>
+              firstLetterInUpperCase(field?.value)
+            ) ?? "-";
           console.log("cohortType", cohortType);
           const requiredData = {
             name: item?.name,
