@@ -1,12 +1,23 @@
+import masterIcon  from '../../../../public/images/database.svg';
+import centerIcon  from '../../../../public/images/centers.svg';
+import dashboardIcon  from '../../../../public/images/dashboard.svg';
+import userIcon  from '../../../../public/images/group.svg';
+import coursePannerIcon  from '../../../../public/images/event_available.svg';
+
+
+
+// 
+
+
 const Menuitems = [
   {
     title: "SIDEBAR.DASHBOARD",
-    icon: "home",
+    icon: dashboardIcon,
     href: "/dashboard",
   },
   {
     title: "SIDEBAR.MANAGE_USERS",
-    icon: "user",
+    icon: userIcon,
     //  href: "/",
     subOptions: [
       {
@@ -26,13 +37,13 @@ const Menuitems = [
 
   {
     title: "SIDEBAR.CENTERS",
-    icon: "users",
+    icon: centerIcon,
     href: "/centers",
   },
 
   {
     title: "Master ",
-    icon: "database",
+    icon: masterIcon,
     // href: "/",
     subOptions: [
       {
@@ -51,7 +62,7 @@ const Menuitems = [
   },
   {
     title: "SIDEBAR.COURSE_PLANNER",
-    icon: "calendar",
+    icon: coursePannerIcon,
     href: "/course-planner",
     subOptions: [
       {

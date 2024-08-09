@@ -28,7 +28,7 @@ import { telemetryFactory } from "@/utils/telemetry";
 import { logEvent } from "@/utils/googleAnalytics";
 import { showToastMessage } from "@/components/Toastify";
 import Link from "@mui/material/Link";
-import loginImage from "../../public/6300830.jpg";
+import loginImage from "../../public/loginImage.jpg";
 import { useUserIdStore } from "@/store/useUserIdStore";
 
 const LoginPage = () => {
