@@ -441,17 +441,11 @@ const UserTable: React.FC<UserTableProps> = ({
         // const filters = { role: role , status:"active"};
         const sort = sortBy;
         console.log("filters", filters);
-       let resp;
         if(filters.name)
         {
           offset=0;
-           resp = await userList({ limit, filters, sort, offset, fields });
-
         }
-        else{
-           resp = await userList({ limit, filters, sort, offset, fields });
-
-        }
+        const resp = await userList({ limit, filters, sort, offset, fields });
 
         const result = resp?.getUserDetails;
         // console.log(resp?.totalCount)
