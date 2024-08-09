@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import FeatherIcon from "feather-icons-react";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useTranslation } from "next-i18next";
+
 import { useRouter } from "next/router";
 import {
   Box,
@@ -10,17 +12,34 @@ import {
   List,
   ListItemText,
   Button,
+  IconButton,
   Divider,
 } from "@mui/material";
 import { Storage } from "@/utils/app.constant";
+import EditIcon from '@mui/icons-material/Edit';
+import PhoneIcon from '@mui/icons-material/Phone';
+import MailIcon from '@mui/icons-material/Mail';
+import { getUserDetails } from "@/services/UserList";
 
 const Profile = () => {
   const [anchorEl4, setAnchorEl4] = React.useState<null | HTMLElement>(null);
+  const [profileClick, setProfileClick] = React.useState<boolean>(false);
+
   const [userName, setUserName] = React.useState<string | null>("");
+  const [role, setRole] = React.useState<string | null>("");
+
+  const [mobile, setMobile] = React.useState<string | null>("");
+  const [initials, setInitials] = React.useState<string | null>("");
+
+  const [email, setEmail] = React.useState<string | null>("");
+  const { t } = useTranslation();
+
+
   const router = useRouter();
 
   const handleClick4 = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl4(event.currentTarget);
+    setProfileClick(true)
   };
 
   const handleClose4 = () => {
@@ -43,7 +62,43 @@ const Profile = () => {
 
   useEffect(() => {
     getUserName();
-  }, []);
+
+console.log(profileClick)
+    const fetchUserDetail = async () => {
+     let userId;
+     try{
+      if (typeof window !== "undefined" && window.localStorage) {
+         userId = localStorage.getItem(Storage.USER_ID);
+      }  
+      console.log(profileClick   , userId)
+
+     if(userId && profileClick)   
+      {
+        console.log("true")
+        const response=await getUserDetails(userId)
+         console.log(response.userData)
+         setMobile(response?.userData?.mobile);
+         setEmail(response?.userData?.email);
+         setRole(response?.userData?.role);
+         const initialLetters = userName?.split(' ').map(word => word[0]) .join('');   
+         if(initialLetters)
+         setInitials(initialLetters)   
+      } 
+    
+  
+     }
+     
+     catch(error)
+  {
+    console.log(error)
+
+  }
+  }
+  fetchUserDetail();
+
+  
+    
+  }, [profileClick]);
 
   return (
     <>
@@ -103,41 +158,63 @@ const Profile = () => {
           },
         }}
       >
-        <Box>
-          <Box p={2} pt={0}>
-            <List
-              component="nav"
-              aria-label="secondary mailbox folder"
-              onClick={handleClose4}
-            >
-              {/* <ListItemButton>
-                <ListItemText primary="Edit Profile" />
-              </ListItemButton>
-              <ListItemButton>
-                <ListItemText primary="Account" />
-              </ListItemButton>
-              <ListItemButton>
-                <ListItemText primary="Change Password" />
-              </ListItemButton> */}
-              <ListItemButton>
-                <ListItemText primary="My Settings" />
-              </ListItemButton>
-            </List>
-          </Box>
-          <Divider />
-          <Box p={2}>
-            <Button
+      <Box sx={{ 
+    //  backgroundColor: 'ivory', 
+      padding: '20px', 
+      borderRadius: '10px', 
+      display: 'flex', 
+      flexDirection: 'column', 
+      alignItems: 'center'
+    }}>
+      <Box sx={{ 
+        backgroundColor: '#FFC107', 
+        padding: '10px', 
+        borderRadius: '50%', 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        marginBottom: '20px' 
+      }}>
+        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+          {initials}
+        </Typography>
+      </Box>
+      <Typography variant="h5" sx={{ marginBottom: '10px' }}>
+        {userName}
+      </Typography>
+      <Typography variant="subtitle1" sx={{ marginBottom: '20px' }}>
+        {role}
+      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+        <PhoneIcon sx={{ marginRight: '10px' }} />
+        <Typography variant="body1">
+          {mobile}
+        </Typography>
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+        <MailIcon sx={{ marginRight: '10px' }} />
+        <Typography variant="body1">
+          {email}
+        </Typography>
+      </Box>
+      <Button
               fullWidth
               variant="contained"
               color="primary"
               onClick={handleLogout}
               sx={{ fontSize: "16px" }}
             >
-              Logout
+             {t("COMMON.LOGOUT")} 
             </Button>
-          </Box>
-        </Box>
+      {/* <IconButton sx={{ marginLeft: '10px' }}>
+          <EditIcon />
+        </IconButton> */}
+    </Box>
       </Menu>
+
+
+
+      
     </>
   );
 };

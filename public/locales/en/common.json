@@ -70,7 +70,12 @@
     "SELECT_DISTRICT": "Select District",
     "SOMETHING_WENT_WRONG": "Something went wrong",
     "BLOCK_NAME_REQUIRED": "Block Name is Required",
-    "BLOCK_CODE_REQUIRED": "Code is Required"
+    "BLOCK_CODE_REQUIRED": "Code is Required",
+    "ALL_BLOCKS":"All Blocks",
+    "ALL_DISTRICTS":"All Districts",
+    "ALL_STATES":"All States",
+    "LOGOUT":"Log out"
+    
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
