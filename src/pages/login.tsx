@@ -63,7 +63,7 @@ const LoginPage = () => {
 
       const token = localStorage.getItem("token");
       if (token) {
-        router.push("/dashboard");
+        router.push("/centers");
       }
     }
   }, []);
@@ -136,7 +136,7 @@ const LoginPage = () => {
           },
         };
         telemetryFactory.interact(telemetryInteract);
-        router.push("/dashboard");
+        router.push("/centers");
       } catch (error: any) {
         setLoading(false);
         const errorMessage = t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT");

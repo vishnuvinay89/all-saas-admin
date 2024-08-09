@@ -374,21 +374,30 @@ const District: React.FC = () => {
                   key: "label",
                   title: t("MASTER.DISTRICT_NAMES"),
                   dataType: DataType.String,
+                  width:'130'
                 },
                 {
                   key: "value",
                   title: t("MASTER.DISTRICT_CODE"),
                   dataType: DataType.String,
+                  width:'130'
                 },
-                { key: "createdBy", title: t("MASTER.CREATED_BY") },
-                { key: "updatedBy", title: t("MASTER.UPDATED_BY") },
+                { key: "createdBy", title: t("MASTER.CREATED_BY"),
+                  width:'130'
+                 },
+                { key: "updatedBy", title: t("MASTER.UPDATED_BY"),
+                  width:'130'
+                 },
 
-                { key: "createdAt", title: t("MASTER.CREATED_AT") },
-                { key: "updatedAt", title: t("MASTER.UPDATED_AT") },
+                  
+                { key: "createdAt", title: t("MASTER.CREATED_AT"),width:'160' },
+                { key: "updatedAt", title: t("MASTER.UPDATED_AT"),width:'160'
+                 },
                 {
                   key: "actions",
                   title: t("MASTER.ACTIONS"),
                   dataType: DataType.String,
+                  width:'130'
                 },
               ]}
               data={districtData.map((districtDetail) => ({

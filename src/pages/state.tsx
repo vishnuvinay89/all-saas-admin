@@ -64,13 +64,13 @@ const State: React.FC = () => {
   });
 
   const columns = [
-    { key: "label", title: t("MASTER.STATE_NAMES") },
-    { key: "value", title: t("MASTER.STATE_CODE") },
-    { key: "createdBy", title: t("MASTER.CREATED_BY") },
-    { key: "updatedBy", title: t("MASTER.UPDATED_BY") },
-    { key: "createdAt", title: t("MASTER.CREATED_AT") },
-    { key: "updatedAt", title: t("MASTER.UPDATED_AT") },
-    { key: "actions", title: t("MASTER.ACTIONS") },
+    { key: "label", title: t("MASTER.STATE_NAMES"),width:'130' },
+    { key: "value", title: t("MASTER.STATE_CODE"),width:'130' },
+    { key: "createdBy", title: t("MASTER.CREATED_BY"),width:'130' },
+    { key: "updatedBy", title: t("MASTER.UPDATED_BY"),width:'130' },
+    { key: "createdAt", title: t("MASTER.CREATED_AT"),width:'160' },
+    { key: "updatedAt", title: t("MASTER.UPDATED_AT"),width:'160' },
+    { key: "actions", title: t("MASTER.ACTIONS"),width:'130' },
   ];
 
   const handleEdit = (rowData: StateDetail) => {
