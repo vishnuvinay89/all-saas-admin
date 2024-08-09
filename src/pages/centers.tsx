@@ -381,7 +381,7 @@ const Center: React.FC = () => {
         ...prevFilters,
         status: [Status.ACTIVE],
       }));
-    } else if (event.target.value === Status.ARCHIVED_LABEL) {
+    } else if (event.target.value === Status.INACTIVE) {
       setFilters((prevFilters) => ({
         ...prevFilters,
         status: [Status.ARCHIVED],
