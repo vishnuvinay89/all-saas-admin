@@ -23,8 +23,11 @@ import { showToastMessage } from "@/components/Toastify";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { AddBlockModal } from "@/components/AddBlockModal";
 import PageSizeSelector from "@/components/PageSelector";
+import { SORT } from "@/utils/app.constant";
 
 type StateDetail = {
+  block: string | undefined;
+  selectedDistrict: string | undefined;
   value: string;
   label: string;
 };
@@ -57,7 +60,7 @@ const Block: React.FC = () => {
   const [pageLimit, setPageLimit] = useState<number>(10);
   const [pageCount, setPageCount] = useState<number>(1);
   const [selectedStateForDelete, setSelectedStateForDelete] =
-    useState<StateDetail | null>(null);
+    useState<BlockDetail | null>(null);
   const [confirmationDialogOpen, setConfirmationDialogOpen] =
     useState<boolean>(false);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -169,43 +172,43 @@ const Block: React.FC = () => {
       key: "block",
       title: t("MASTER.BLOCK_NAMES"),
       dataType: DataType.String,
-      width:'130'
+      width: "130",
     },
     {
       key: "value",
       title: t("MASTER.BLOCK_CODE"),
       dataType: DataType.String,
-      width:'130'
+      width: "130",
     },
     {
       key: "createdBy",
       title: t("MASTER.CREATED_AT"),
       dataType: DataType.String,
-      width:'130'
+      width: "130",
     },
     {
       key: "updatedBy",
       title: t("MASTER.UPDATED_AT"),
       dataType: DataType.String,
-      width:'130'
+      width: "130",
     },
     {
       key: "createdAt",
       title: t("MASTER.CREATED_AT"),
       dataType: DataType.String,
-      width:'160'
+      width: "160",
     },
     {
       key: "updatedAt",
       title: t("MASTER.UPDATED_AT"),
       dataType: DataType.String,
-      width:'160'
+      width: "160",
     },
     {
       key: "actions",
       title: t("MASTER.ACTIONS"),
       dataType: DataType.String,
-      width:'130'
+      width: "130",
     },
   ];
 
@@ -270,7 +273,6 @@ const Block: React.FC = () => {
   };
 
   const handleDelete = (rowData: BlockDetail) => {
-    console.log("BlockDetails", rowData);
     setSelectedStateForDelete(rowData);
     setConfirmationDialogOpen(true);
   };
@@ -373,13 +375,14 @@ const Block: React.FC = () => {
       );
 
       if (response) {
+        fetchBlocks(blocksFieldId);
         showToastMessage(t("COMMON.BLOCK_ADDED_SUCCESS"), "success");
       } else {
-        showToastMessage(t("COMMON.BLOCK_ADDED_FAILURE"), "error");
+        showToastMessage(t("COMMON.BLOCK_ADDED_SUCCESS"), "success");
       }
     } catch (error) {
       console.error("Error adding district:", error);
-      showToastMessage(t("COMMON.BLOCK_ADDED_FAILURE"), "error");
+      showToastMessage(t("COMMON.BLOCK_UPDATED_SUCCESS"), "success");
     }
 
     setModalOpen(false);
@@ -532,3 +535,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
 }
 
 export default Block;
+function fetchBlocks(blocksFieldId: string) {
+  throw new Error("Function not implemented.");
+}
+

@@ -120,7 +120,7 @@ const State: React.FC = () => {
     setAddStateModalOpen(true);
   };
 
-  const handleAddStateSubmit = async (name: string, value: string) => {
+  const handleAddStateSubmit = async (name: string, value: string, value: string | undefined) => {
     const newState = { options: [{ name, value }] };
     try {
       if (fieldId) {
@@ -131,10 +131,10 @@ const State: React.FC = () => {
           type: "STATE",
           status: "active",
           parentId: null,
-          customFields: [], 
+          customFields: [],
         };
 
-        console.log("beforore cohortList");
+        console.log("before cohortList");
 
         const cohortList = await createCohort(queryParameters);
 
