@@ -63,13 +63,13 @@ export const getTLTableColumns = (t: any, isMobile: boolean) => {
 
 export const getCenterTableData = (t: any, isMobile: boolean) => {
   const configs: ColumnConfig[] = [
-    { key: "name", titleKey: "TABLE_TITLE.NAME", width: 95, sortDirection: SortDirection.Ascend },
-    { key: "status", titleKey: "TABLE_TITLE.STATUS", width: 95, sortDirection: SortDirection.Ascend },
-    { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 95, sortDirection: SortDirection.Ascend },
-    { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 95, sortDirection: SortDirection.Ascend },
-    { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 95, sortDirection: SortDirection.Ascend },
-    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 95, sortDirection: SortDirection.Ascend },
-    { key: "customFieldValues", titleKey: "FORM.TYPE_OF_COHORT", width: 95, sortDirection: SortDirection.Ascend },
+    { key: "name", titleKey: "TABLE_TITLE.NAME", width: 95 },
+    { key: "status", titleKey: "TABLE_TITLE.STATUS", width: 95},
+    { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 95 },
+    { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 95 },
+    { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 95 },
+    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 95 },
+    { key: "customFieldValues", titleKey: "FORM.TYPE_OF_COHORT", width: 95 },
     { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 },
   ];
 
