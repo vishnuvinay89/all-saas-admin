@@ -15,7 +15,10 @@ import { showToastMessage } from "@/components/Toastify";
 import { SORT, Numbers } from "@/utils/app.constant";
 import { Box, Pagination, SelectChangeEvent } from "@mui/material";
 import PageSizeSelector from "@/components/PageSelector";
-import { getCohortList } from "@/services/CohortService/cohortService";
+import {
+  createCohort,
+  getCohortList,
+} from "@/services/CohortService/cohortService";
 
 export interface StateDetail {
   updatedAt: any;
@@ -114,10 +117,12 @@ const State: React.FC = () => {
     setAddStateModalOpen(true);
   };
   const queryParameters = {
-    limit: pageLimit,
-    offset: pageOffset * pageLimit,
-    sort: sortBy,
-    filters: filters, 
+    name: "selectedState",
+    type: "STATES",
+    status: "active",
+
+    // parentId: "parentId",
+    customFields: [],
   };
   const handleAddStateSubmit = async (name: string, value: string) => {
     const newState = { options: [{ name, value }] };
@@ -128,7 +133,7 @@ const State: React.FC = () => {
           await fetchStateData(searchKeyword);
 
           console.log("beforore cohortList");
-          const cohortList = await getCohortList(queryParameters);
+          const cohortList = await createCohort(queryParameters);
           console.log("fetched cohorlist success", cohortList);
 
           showToastMessage(t("COMMON.STATE_ADDED_SUCCESS"), "success");
