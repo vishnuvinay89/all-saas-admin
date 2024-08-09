@@ -64,7 +64,7 @@ export const getTLTableColumns = (t: any, isMobile: boolean) => {
 export const getCenterTableData = (t: any, isMobile: boolean) => {
   const configs: ColumnConfig[] = [
     { key: "name", titleKey: "TABLE_TITLE.NAME", width: 95, sortDirection: SortDirection.Ascend },
-    { key: "status", titleKey: "TABLE_TITLE.STATUS", width: 95, sortDirection: SortDirection.Ascend },
+    { key: "status", titleKey: "TABLE_TITLE.STATUS", width: 130, sortDirection: SortDirection.Ascend },
     { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 95, sortDirection: SortDirection.Ascend },
     { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 95, sortDirection: SortDirection.Ascend },
     { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 95, sortDirection: SortDirection.Ascend },

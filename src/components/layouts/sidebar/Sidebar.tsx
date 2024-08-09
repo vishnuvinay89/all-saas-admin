@@ -84,7 +84,7 @@ const Sidebar = ({
 
 </ListItemIcon>
       <ListItemText>
-                    <Typography variant="h2" sx={{ fontWeight: "bold" }}>
+                    <Typography variant="h2" sx={{ fontWeight: "700px" }}>
                       {t(item.title)}
                     </Typography>
                   </ListItemText>
