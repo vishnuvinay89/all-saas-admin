@@ -424,6 +424,7 @@ const UserTable: React.FC<UserTableProps> = ({
     console.log("Delete row:", rowData.userId);
   };
   const handleSearch = (keyword: string) => {
+  //  console.log(filters)
     setFilters((prevFilters) => ({
       ...prevFilters,
       name: keyword,
@@ -435,12 +436,22 @@ const UserTable: React.FC<UserTableProps> = ({
       setLoading(true);
       try {
         const fields = ["age", "districts", "states", "blocks", "gender"];
-        const limit = pageLimit;
-        const offset = pageOffset * limit;
+        let limit = pageLimit;
+        let offset = pageOffset * limit;
         // const filters = { role: role , status:"active"};
         const sort = sortBy;
         console.log("filters", filters);
-        const resp = await userList({ limit, filters, sort, offset, fields });
+       let resp;
+        if(filters.name)
+        {
+          offset=0;
+           resp = await userList({ limit, filters, sort, offset, fields });
+
+        }
+        else{
+           resp = await userList({ limit, filters, sort, offset, fields });
+
+        }
 
         const result = resp?.getUserDetails;
         // console.log(resp?.totalCount)
@@ -657,7 +668,7 @@ const UserTable: React.FC<UserTableProps> = ({
     <HeaderComponent {...userProps}>
       {loading ? (
         <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
-      ) : data.length !== 0 && loading === false ? (
+      ) : data?.length !== 0 && loading === false ? (
         <KaTableComponent
           columns={
             role === Role.TEAM_LEADER
@@ -676,7 +687,7 @@ const UserTable: React.FC<UserTableProps> = ({
           onDelete={handleDelete}
           pagination={pagination}
           noDataMessage={
-            data.length === 0 ? t("COMMON.NO_USER_FOUND") : ""
+            data?.length === 0 ? t("COMMON.NO_USER_FOUND") : ""
           }
         />
       ) : (

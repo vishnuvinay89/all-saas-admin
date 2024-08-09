@@ -39,7 +39,11 @@ export const useLocationState = (open: boolean, onClose: () => void, userType?: 
 
   const handleStateChangeWrapper = useCallback(
     async (selectedNames: string[], selectedCodes: string[]) => {
+      console.log("true", selectedCodes)
       try {
+        setDistricts([]);
+        setBlocks([]);
+        setAllCenters([]);
         setSelectedStateCode(selectedCodes[0]);
 
         const object = {
@@ -64,6 +68,8 @@ export const useLocationState = (open: boolean, onClose: () => void, userType?: 
         handleBlockChange([], []);
       }
       try {
+        setBlocks([]);
+        setAllCenters([]);
         setSelectedDistrictCode(selectedCodes[0]);
         const object = {
           controllingfieldfk: selectedCodes[0],
@@ -88,6 +94,8 @@ export const useLocationState = (open: boolean, onClose: () => void, userType?: 
         handleCenterChange([], []);
       }
       try {
+        setAllCenters([]);
+
         console.log(selectedStateCode, selectedDistrictCode);
         console.log(userType)
         if(userType===FormContextType.TEAM_LEADER)
@@ -237,7 +245,6 @@ export const useLocationState = (open: boolean, onClose: () => void, userType?: 
 
     fetchData();
   }, []);
-
   return {
     states,
     districts,
