@@ -146,36 +146,43 @@ const Block: React.FC = () => {
       key: "block",
       title: t("MASTER.BLOCK_NAMES"),
       dataType: DataType.String,
+      width:'130'
     },
     {
       key: "value",
       title: t("MASTER.BLOCK_CODE"),
       dataType: DataType.String,
+      width:'130'
     },
     {
       key: "createdBy",
       title: t("MASTER.CREATED_AT"),
       dataType: DataType.String,
+      width:'130'
     },
     {
       key: "updatedBy",
       title: t("MASTER.UPDATED_AT"),
       dataType: DataType.String,
+      width:'130'
     },
     {
       key: "createdAt",
       title: t("MASTER.CREATED_AT"),
       dataType: DataType.String,
+      width:'160'
     },
     {
       key: "updatedAt",
       title: t("MASTER.UPDATED_AT"),
       dataType: DataType.String,
+      width:'160'
     },
     {
       key: "actions",
       title: t("MASTER.ACTIONS"),
       dataType: DataType.String,
+      width:'130'
     },
   ];
 
