@@ -73,7 +73,8 @@
     "BLOCK_CODE_REQUIRED": "Code is Required",
     "ALL_BLOCKS":"All Blocks",
     "ALL_DISTRICTS":"All Districts",
-    "ALL_STATES":"All States"
+    "ALL_STATES":"All States",
+    "LOGOUT":"Log out"
     
   },
   "LOGIN_PAGE": {

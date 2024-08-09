@@ -58,17 +58,26 @@ const Profile = () => {
 
 
     const fetchUserDetail = async () => {
-     let userId;
-      if (typeof window !== "undefined" && window.localStorage) {
-         userId = localStorage.getItem(Storage.USER_ID);
-      }  
-    //  if(userId)   
-    //   {
-    //     const response=await getUserDetails(userId)
-    //      console.log(response)
-    //   } 
-    };
-    fetchUserDetail();
+  //    let userId;
+  //    try{
+  //     if (typeof window !== "undefined" && window.localStorage) {
+  //        userId = localStorage.getItem(Storage.USER_ID);
+  //     }  
+  //    if(userId)   
+  //     {
+  //       const response=await getUserDetails(userId)
+  //        console.log(response)
+  //     } 
+    
+  
+  //   fetchUserDetail();
+  //    }
+  //    catch(error)
+  // {
+
+  // }
+  }
+  
     
   }, []);
 
