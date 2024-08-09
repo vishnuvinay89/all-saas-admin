@@ -24,7 +24,7 @@ const generateColumns = (
 export const getUserTableColumns = (t: any, isMobile: boolean) => {
   const configs: ColumnConfig[] = [
     { key: "name", titleKey: "FORM.NAME", width: 130 },
-    { key: "status", titleKey: "FORM.STATUS", width: 100 },
+    { key: "status", titleKey: "FORM.STATUS", width: 130 },
     { key: "age", titleKey: "FORM.AGE", width: 100 },
     { key: "gender", titleKey: "FORM.GENDER", width: 130 },
     { key: "mobile", titleKey: "FORM.MOBILE_NUMBER", width: 130 },
@@ -45,7 +45,7 @@ export const getUserTableColumns = (t: any, isMobile: boolean) => {
 export const getTLTableColumns = (t: any, isMobile: boolean) => {
   const configs: ColumnConfig[] = [
     { key: "name", titleKey: "FORM.NAME", width: 130 },
-    { key: "status", titleKey: "FORM.STATUS", width: 100 },
+    { key: "status", titleKey: "TABLE_TITLE.STATUS", width: 130, sortDirection: SortDirection.Ascend },
     { key: "age", titleKey: "FORM.AGE", width: 100 },
     { key: "gender", titleKey: "FORM.GENDER", width: 130 },
     { key: "state", titleKey: "FORM.STATE", width: 130, sortDirection: SortDirection.Ascend },
