@@ -43,6 +43,7 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
     backgroundColor: "#fff",
     borderRadius: theme.shape.borderRadius,
     boxShadow: theme.shadows[5],
+
   };
 
   const titleStyle = {
@@ -52,6 +53,7 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
     padding: theme.spacing(2),
     zIndex: 9999,
     borderBottom: `1px solid ${theme.palette.divider}`,
+    borderRadius: theme.shape.borderRadius,
   };
 
   const contentStyle = {

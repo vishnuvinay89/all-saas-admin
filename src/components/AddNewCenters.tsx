@@ -8,15 +8,16 @@ import { getFormRead } from "@/services/CreateUserService";
 import { CustomField } from "@/utils/Interfaces";
 import { CohortTypes } from "@/utils/app.constant";
 import { useLocationState } from "@/utils/useLocationState";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { transformArray } from "../utils/Helper";
 import AreaSelection from "./AreaSelection";
 import { showToastMessage } from "./Toastify";
 import { createCohort } from "@/services/CohortService/cohortService";
+import useSubmittedButtonStore from "@/utils/useSharedState";
 
 interface CohortDetails {
   name?: string;
@@ -66,7 +67,9 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
     selectedBlockCohortId,
     dynamicFormForBlock,
   } = useLocationState(open, onClose);
-
+  const setSubmittedButtonStatus = useSubmittedButtonStore(
+    (state: any) => state.setSubmittedButtonStatus
+  );
   useEffect(() => {
     const getAddLearnerFormData = async () => {
       try {
@@ -107,10 +110,10 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
         const fieldId = fieldSchema?.fieldId;
 
         if (fieldId !== null) {
-          cohortDetails?.customFields?.push({
-            fieldId: fieldId,
-            value: formData.cohort_type,
-          });
+        cohortDetails?.customFields?.push({
+          fieldId: fieldId,
+          value: formData.cohort_type,
+        });
         }
       });
       if (
@@ -118,12 +121,12 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
         cohortDetails?.customFields?.length > 0 &&
         cohortDetails?.name
       ) {
-        const cohortData = await createCohort(cohortDetails);
-        if (cohortData) {
-          showToastMessage(t("CENTERS.CENTER_CREATED_SUCCESSFULLY"), "success");
-          setOpenAddNewCohort(false);
-          onClose();
-        }
+      const cohortData = await createCohort(cohortDetails);
+      if (cohortData) {
+        showToastMessage(t("CENTERS.CENTER_CREATED_SUCCESSFULLY"), "success");
+        setOpenAddNewCohort(false);
+        onClose();
+      }
       } else {
         showToastMessage("Please Input Data", "warning");
       }
@@ -171,9 +174,9 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
           allCenters={allCenters}
           selectedCenter={selectedCenter}
           handleCenterChangeWrapper={handleCenterChangeWrapper}
+          inModal={true}
         />
       </Box>
-
       {dynamicFormForBlock && schema && uiSchema && selectedBlockCohortId && (
         <DynamicForm
           schema={schema}
@@ -189,10 +192,23 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
           <Box
             style={{
               display: "flex",
-              justifyContent: "center", // Centers the button horizontally
+              justifyContent: "right", // Centers the button horizontally
               marginTop: "20px", // Adjust margin as needed
             }}
+            gap={2}
           >
+            <Button
+              variant="outlined"
+              type="submit"
+              form="xyz" // Add this line
+              sx={{
+                padding: "12px 24px", // Adjust padding as needed
+                width: "200px", // Set the desired width
+              }}
+              onClick={onClose}
+            >
+              {t("COMMON.CANCEL")}
+            </Button>
             <Button
               variant="contained"
               type="submit"
@@ -201,11 +217,22 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
                 padding: "12px 24px", // Adjust padding as needed
                 width: "200px", // Set the desired width
               }}
+              onClick={() => {
+                setSubmittedButtonStatus(true);
+                console.log("Submit button was clicked");
+              }}
             >
-              {t("COMMON.ADD")}
+              {t("COMMON.CREATE")}
             </Button>
           </Box>
         </DynamicForm>
+      )}
+      {!selectedBlockCohortId && selectedBlockCohortId !== "" && (
+        <Box mt={2} textAlign={"center"}>
+          <Typography color={"error"}>
+            {t("CENTERS.NOT_ABLE_CREATE_CENTER")}
+          </Typography>
+        </Box>
       )}
     </SimpleModal>
   );
