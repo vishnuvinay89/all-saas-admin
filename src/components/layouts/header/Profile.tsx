@@ -23,8 +23,14 @@ import { getUserDetails } from "@/services/UserList";
 
 const Profile = () => {
   const [anchorEl4, setAnchorEl4] = React.useState<null | HTMLElement>(null);
+  const [profileClick, setProfileClick] = React.useState<boolean>(false);
+
   const [userName, setUserName] = React.useState<string | null>("");
+  const [role, setRole] = React.useState<string | null>("");
+
   const [mobile, setMobile] = React.useState<string | null>("");
+  const [initials, setInitials] = React.useState<string | null>("");
+
   const [email, setEmail] = React.useState<string | null>("");
   const { t } = useTranslation();
 
@@ -33,6 +39,7 @@ const Profile = () => {
 
   const handleClick4 = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl4(event.currentTarget);
+    setProfileClick(true)
   };
 
   const handleClose4 = () => {
@@ -56,30 +63,42 @@ const Profile = () => {
   useEffect(() => {
     getUserName();
 
-
+console.log(profileClick)
     const fetchUserDetail = async () => {
-  //    let userId;
-  //    try{
-  //     if (typeof window !== "undefined" && window.localStorage) {
-  //        userId = localStorage.getItem(Storage.USER_ID);
-  //     }  
-  //    if(userId)   
-  //     {
-  //       const response=await getUserDetails(userId)
-  //        console.log(response)
-  //     } 
-    
-  
-  //   fetchUserDetail();
-  //    }
-  //    catch(error)
-  // {
+     let userId;
+     try{
+      if (typeof window !== "undefined" && window.localStorage) {
+         userId = localStorage.getItem(Storage.USER_ID);
+      }  
+      console.log(profileClick   , userId)
 
-  // }
+     if(userId && profileClick)   
+      {
+        console.log("true")
+        const response=await getUserDetails(userId)
+         console.log(response.userData)
+         setMobile(response?.userData?.mobile);
+         setEmail(response?.userData?.email);
+         setRole(response?.userData?.role);
+         const initialLetters = userName?.split(' ').map(word => word[0]) .join('');   
+         if(initialLetters)
+         setInitials(initialLetters)   
+      } 
+    
+  
+     }
+     
+     catch(error)
+  {
+    console.log(error)
+
   }
+  }
+  fetchUserDetail();
+
   
     
-  }, []);
+  }, [profileClick]);
 
   return (
     <>
@@ -157,25 +176,25 @@ const Profile = () => {
         marginBottom: '20px' 
       }}>
         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-          VS
+          {initials}
         </Typography>
       </Box>
       <Typography variant="h5" sx={{ marginBottom: '10px' }}>
-        Vivek Shah
+        {userName}
       </Typography>
       <Typography variant="subtitle1" sx={{ marginBottom: '20px' }}>
-        Admin
+        {role}
       </Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
         <PhoneIcon sx={{ marginRight: '10px' }} />
         <Typography variant="body1">
-          4038402420
+          {mobile}
         </Typography>
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
         <MailIcon sx={{ marginRight: '10px' }} />
         <Typography variant="body1">
-          vivek.shah123@email.com
+          {email}
         </Typography>
       </Box>
       <Button
