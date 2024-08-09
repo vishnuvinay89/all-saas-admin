@@ -1,52 +1,77 @@
 import { DataType, SortDirection } from "ka-table";
 
-const createColumn = (key: string, title: string, dataType: DataType, isMobile: boolean, sortDirection?: SortDirection, width?: number) => ({
-  key,
-  title,
-  dataType,
-  sortDirection,
-  width: isMobile ? (width || 160) : width,
-});
+interface ColumnConfig {
+  key: string;
+  titleKey: string;
+  width?: number;
+  sortDirection?: SortDirection;
+}
 
-export const getUserTableColumns = (t: any, isMobile: boolean) => [
-  createColumn("name", t("FORM.NAME"), DataType.String, isMobile),
-  createColumn("status", t("FORM.STATUS"), DataType.String, isMobile),
-  createColumn("age", t("FORM.AGE"), DataType.String, isMobile),
-  createColumn("gender", t("FORM.GENDER"), DataType.String, isMobile),
-  createColumn("mobile", t("FORM.MOBILE_NUMBER"), DataType.String, isMobile, undefined, 130),
-  createColumn("state", t("FORM.STATE"), DataType.String, isMobile, SortDirection.Ascend, 130),
-  createColumn("district", t("FORM.DISTRICT"), DataType.String, isMobile, SortDirection.Ascend, 130),
-  createColumn("blocks", t("FORM.BLOCK"), DataType.String, isMobile),
-  createColumn("centers", t("FORM.CENTER"), DataType.String, isMobile),
-  createColumn("updatedBy", t("TABLE_TITLE.UPDATED_BY"), DataType.String, isMobile, SortDirection.Ascend, 95),
-  createColumn("createdBy", t("TABLE_TITLE.CREATED_BY"), DataType.String, isMobile, SortDirection.Ascend, 95),
-  createColumn("createdAt", t("TABLE_TITLE.CREATED_DATE"), DataType.String, isMobile, SortDirection.Ascend, 95),
-  createColumn("updatedAt", t("TABLE_TITLE.UPDATED_DATE"), DataType.String, isMobile, SortDirection.Ascend, 95),
-  createColumn("actions", t("FORM.ACTION"), DataType.String, isMobile),
-];
+const generateColumns = (
+  t: any,
+  configs: ColumnConfig[],
+  isMobile: boolean
+) => {
+  return configs.map((config) => ({
+    key: config.key,
+    title: t(config.titleKey),
+    dataType: DataType.String,
+    sortDirection: config.sortDirection,
+    width: isMobile && config.width ? config.width : config.width || undefined,
+  }));
+};
 
-export const getTLTableColumns = (t: any, isMobile: boolean) => [
-  createColumn("name", t("FORM.NAME"), DataType.String, isMobile),
-  createColumn("status", t("FORM.STATUS"), DataType.String, isMobile),
-  createColumn("age", t("FORM.AGE"), DataType.String, isMobile),
-  createColumn("gender", t("FORM.GENDER"), DataType.String, isMobile),
-  createColumn("state", t("FORM.STATE"), DataType.String, isMobile, SortDirection.Ascend, 160),
-  createColumn("district", t("FORM.DISTRICT"), DataType.String, isMobile, SortDirection.Ascend, 160),
-  createColumn("blocks", t("FORM.BLOCK"), DataType.String, isMobile),
-  createColumn("updatedBy", t("TABLE_TITLE.UPDATED_BY"), DataType.String, isMobile, SortDirection.Ascend, 95),
-  createColumn("createdBy", t("TABLE_TITLE.CREATED_BY"), DataType.String, isMobile, SortDirection.Ascend, 95),
-  createColumn("createdAt", t("TABLE_TITLE.CREATED_DATE"), DataType.String, isMobile, SortDirection.Ascend, 95),
-  createColumn("updatedAt", t("TABLE_TITLE.UPDATED_DATE"), DataType.String, isMobile, SortDirection.Ascend, 95),
-  createColumn("actions", t("FORM.ACTION"), DataType.String, isMobile),
-];
+export const getUserTableColumns = (t: any, isMobile: boolean) => {
+  const configs: ColumnConfig[] = [
+    { key: "name", titleKey: "FORM.NAME", width: 130 },
+    { key: "status", titleKey: "FORM.STATUS", width: 100 },
+    { key: "age", titleKey: "FORM.AGE", width: 100 },
+    { key: "gender", titleKey: "FORM.GENDER", width: 130 },
+    { key: "mobile", titleKey: "FORM.MOBILE_NUMBER", width: 130 },
+    { key: "state", titleKey: "FORM.STATE", width: 130, sortDirection: SortDirection.Ascend },
+    { key: "district", titleKey: "FORM.DISTRICT", width: 130, sortDirection: SortDirection.Ascend },
+    { key: "blocks", titleKey: "FORM.BLOCK", width: 130, sortDirection: SortDirection.Ascend },
+    { key: "centers", titleKey: "FORM.CENTER", width: 130, sortDirection: SortDirection.Ascend },
+    { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130, sortDirection: SortDirection.Ascend },
+    { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130, sortDirection: SortDirection.Ascend },
+    { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 160, sortDirection: SortDirection.Ascend },
+    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 160, sortDirection: SortDirection.Ascend },
+    { key: "actions", titleKey: "FORM.ACTION", width: 130 },
+  ];
 
-export const getCenterTableData = (t: any, isMobile: boolean) => [
-  createColumn("name", t("TABLE_TITLE.NAME"), DataType.String, isMobile, SortDirection.Ascend, 95),
-  createColumn("status", t("TABLE_TITLE.STATUS"), DataType.String, isMobile, SortDirection.Ascend, 95),
-  createColumn("updatedBy", t("TABLE_TITLE.UPDATED_BY"), DataType.String, isMobile, SortDirection.Ascend, 95),
-  createColumn("createdBy", t("TABLE_TITLE.CREATED_BY"), DataType.String, isMobile, SortDirection.Ascend, 95),
-  createColumn("createdAt", t("TABLE_TITLE.CREATED_DATE"), DataType.String, isMobile, SortDirection.Ascend, 95),
-  createColumn("updatedAt", t("TABLE_TITLE.UPDATED_DATE"), DataType.String, isMobile, SortDirection.Ascend, 95),
-  createColumn("customFieldValues", t("FORM.TYPE_OF_COHORT"), DataType.String, isMobile, SortDirection.Ascend, 95),
-  createColumn("actions", t("TABLE_TITLE.ACTIONS"), DataType.String, isMobile, undefined, 125),
-];
+  return generateColumns(t, configs, isMobile);
+};
+
+export const getTLTableColumns = (t: any, isMobile: boolean) => {
+  const configs: ColumnConfig[] = [
+    { key: "name", titleKey: "FORM.NAME", width: 130 },
+    { key: "status", titleKey: "FORM.STATUS", width: 100 },
+    { key: "age", titleKey: "FORM.AGE", width: 100 },
+    { key: "gender", titleKey: "FORM.GENDER", width: 130 },
+    { key: "state", titleKey: "FORM.STATE", width: 130, sortDirection: SortDirection.Ascend },
+    { key: "district", titleKey: "FORM.DISTRICT", width: 130, sortDirection: SortDirection.Ascend },
+    { key: "blocks", titleKey: "FORM.BLOCK", width: 130 },
+    { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130, sortDirection: SortDirection.Ascend },
+    { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130, sortDirection: SortDirection.Ascend },
+    { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 160, sortDirection: SortDirection.Ascend },
+    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 160, sortDirection: SortDirection.Ascend },
+    { key: "actions", titleKey: "FORM.ACTION", width: 130 },
+  ];
+
+  return generateColumns(t, configs, isMobile);
+};
+
+export const getCenterTableData = (t: any, isMobile: boolean) => {
+  const configs: ColumnConfig[] = [
+    { key: "name", titleKey: "TABLE_TITLE.NAME", width: 95, sortDirection: SortDirection.Ascend },
+    { key: "status", titleKey: "TABLE_TITLE.STATUS", width: 95, sortDirection: SortDirection.Ascend },
+    { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 95, sortDirection: SortDirection.Ascend },
+    { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 95, sortDirection: SortDirection.Ascend },
+    { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 95, sortDirection: SortDirection.Ascend },
+    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 95, sortDirection: SortDirection.Ascend },
+    { key: "customFieldValues", titleKey: "FORM.TYPE_OF_COHORT", width: 95, sortDirection: SortDirection.Ascend },
+    { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 },
+  ];
+
+  return generateColumns(t, configs, isMobile);
+};

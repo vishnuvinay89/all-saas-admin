@@ -5,6 +5,7 @@ import {
   getCenterList,
 } from "../services/MasterDataService"; // Update the import path as needed
 import { getCohortList } from "@/services/CohortService/cohortService";
+import { FormContextType } from "./app.constant";
 interface FieldProp {
   value: string;
   label: string;
@@ -13,8 +14,7 @@ interface CenterProp {
   cohortId: string;
   name: string;
 }
-
-export const useLocationState = (open: boolean, onClose: () => void) => {
+export const useLocationState = (open: boolean, onClose: () => void, userType?: any) => {
   const [states, setStates] = useState<FieldProp[]>([]);
   const [districts, setDistricts] = useState<FieldProp[]>([]);
   const [blocks, setBlocks] = useState<FieldProp[]>([]);
@@ -89,22 +89,31 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
       }
       try {
         console.log(selectedStateCode, selectedDistrictCode);
-        const object = {
-          limit: 200,
-          offset: 0,
-          filters: {
-            // "type": "COHORT",
-            status: ["active"],
-            // "states": selectedStateCode,
-            // "districts": selectedDistrictCode,
-            // "blocks": selectedCodes[0]
-            name: selected[0],
-          },
-        };
-        const response2 = await getCenterList(object);
-
-        console.log(selected);
-        const getBlockIdObject = {
+        console.log(userType)
+        if(userType===FormContextType.TEAM_LEADER)
+        {
+          console.log("true")
+          const object = {
+            limit: 200,
+            offset: 0,
+            filters: {
+              // "type": "COHORT",
+              status: ["active"],
+              // "states": selectedStateCode,
+              // "districts": selectedDistrictCode,
+              // "blocks": selectedCodes[0]
+              name: selected[0],
+            },
+          };
+          const response = await getCenterList(object);
+          setSelectedBlockCohortId(
+            response?.result?.results?.cohortDetails[0].cohortId,
+          );
+        }
+      
+       else
+       {
+        const getCentersObject = {
           limit: 200,
           offset: 0,
           filters: {
@@ -116,10 +125,7 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
             // "name": selected[0]
           },
         };
-        const response = await getCenterList(getBlockIdObject);
-        setSelectedBlockCohortId(
-          response?.result?.results?.cohortDetails[0].cohortId,
-        );
+        const response = await getCenterList(getCentersObject);
         console.log(response?.result?.results?.cohortDetails[0].cohortId);
         //   const result = response?.result?.cohortDetails;
         const dataArray = response?.result?.results?.cohortDetails;
@@ -130,6 +136,11 @@ export const useLocationState = (open: boolean, onClose: () => void) => {
         }));
         console.log(dataArray);
         setAllCenters(cohortInfo);
+       }
+        console.log(selected);
+       
+       
+       
       } catch (error) {
         setAllCenters([]);
 

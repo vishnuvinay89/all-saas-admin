@@ -4,11 +4,14 @@ import UserTable from "@/components/UserTable";
 import { useTranslation } from "next-i18next";
 import { Role, FormContextType } from "@/utils/app.constant";
 import CommonUserModal from "@/components/CommonUserModal";
+import useSubmittedButtonStore from "@/utils/useSharedState";
+
 const Faciliator: React.FC = () => {
   const { t } = useTranslation();
   const [openAddFacilitatorModal, setOpenAddFacilitatorModal] =
     React.useState(false);
   const [submitValue, setSubmitValue] = React.useState<boolean>(false);
+  const setSubmittedButtonStatus = useSubmittedButtonStore((state:any) => state.setSubmittedButtonStatus);
 
   const handleOpenAddFacilitatorModal = () => {
     setOpenAddFacilitatorModal(true);
@@ -17,6 +20,7 @@ const Faciliator: React.FC = () => {
     setSubmitValue(true);
   };
   const handleCloseAddFacilitatorModal = () => {
+    setSubmittedButtonStatus(false)
     setOpenAddFacilitatorModal(false);
   };
 

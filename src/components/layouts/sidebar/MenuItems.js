@@ -10,11 +10,11 @@ import coursePannerIcon  from '../../../../public/images/event_available.svg';
 
 
 const Menuitems = [
-  {
-    title: "SIDEBAR.DASHBOARD",
-    icon: dashboardIcon,
-    href: "/dashboard",
-  },
+  // {
+  //   title: "SIDEBAR.DASHBOARD",
+  //   icon: dashboardIcon,
+  //   href: "/dashboard",
+  // },
   {
     title: "SIDEBAR.MANAGE_USERS",
     icon: userIcon,
