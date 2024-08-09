@@ -43,7 +43,11 @@ export const useLocationState = (
 
   const handleStateChangeWrapper = useCallback(
     async (selectedNames: string[], selectedCodes: string[]) => {
+      console.log("true", selectedCodes)
       try {
+        setDistricts([]);
+        setBlocks([]);
+        setAllCenters([]);
         setSelectedStateCode(selectedCodes[0]);
         setSelectedBlockCohortId("");
 
@@ -69,6 +73,8 @@ export const useLocationState = (
         handleBlockChange([], []);
       }
       try {
+        setBlocks([]);
+        setAllCenters([]);
         setSelectedDistrictCode(selectedCodes[0]);
         setSelectedBlockCohortId("");
         const object = {
@@ -94,6 +100,8 @@ export const useLocationState = (
         handleCenterChange([], []);
       }
       try {
+        setAllCenters([]);
+
         console.log(selectedStateCode, selectedDistrictCode);
         console.log(userType);
         if (userType === FormContextType.TEAM_LEADER) {
@@ -245,7 +253,6 @@ export const useLocationState = (
 
     fetchData();
   }, []);
-
   return {
     states,
     districts,
