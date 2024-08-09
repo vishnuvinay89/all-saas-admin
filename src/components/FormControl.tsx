@@ -62,8 +62,13 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
         <Select
           labelId="multiple-checkbox-label"
           id="multiple-checkbox"
-          value={selectedCategories?.length===0  || selectedCategories[0]===""?defaultValue?[defaultValue]:"":selectedCategories}
-          onChange={handleChange}
+          value={
+            selectedCategories?.length === 0 || selectedCategories[0] === ""
+              ? defaultValue
+                ? [defaultValue]
+                : ""
+              : selectedCategories
+          }          onChange={handleChange}
           input={<OutlinedInput label={tagName} />}
           renderValue={(selected) => selected.join(", ")}
           MenuProps={MenuProps}

@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import FeatherIcon from "feather-icons-react";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useTranslation } from "next-i18next";
+
 import { useRouter } from "next/router";
 import {
   Box,
@@ -22,6 +24,11 @@ import { getUserDetails } from "@/services/UserList";
 const Profile = () => {
   const [anchorEl4, setAnchorEl4] = React.useState<null | HTMLElement>(null);
   const [userName, setUserName] = React.useState<string | null>("");
+  const [mobile, setMobile] = React.useState<string | null>("");
+  const [email, setEmail] = React.useState<string | null>("");
+  const { t } = useTranslation();
+
+
   const router = useRouter();
 
   const handleClick4 = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -51,7 +58,15 @@ const Profile = () => {
 
 
     const fetchUserDetail = async () => {
-   
+     let userId;
+      if (typeof window !== "undefined" && window.localStorage) {
+         userId = localStorage.getItem(Storage.USER_ID);
+      }  
+    //  if(userId)   
+    //   {
+    //     const response=await getUserDetails(userId)
+    //      console.log(response)
+    //   } 
     };
     fetchUserDetail();
     
@@ -161,7 +176,7 @@ const Profile = () => {
               onClick={handleLogout}
               sx={{ fontSize: "16px" }}
             >
-              Logout
+             {t("COMMON.LOGOUT")} 
             </Button>
       {/* <IconButton sx={{ marginLeft: '10px' }}>
           <EditIcon />

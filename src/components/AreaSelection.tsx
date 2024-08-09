@@ -99,7 +99,8 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
             selectedCategories={selectedState}
             onCategoryChange={handleStateChangeWrapper}
             overall={inModal ? false : true}
-            defaultValue="All states"
+            defaultValue={t("COMMON.ALL_STATES")}
+
           />
         </Grid>
         <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
@@ -111,7 +112,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
             onCategoryChange={handleDistrictChangeWrapper}
             disabled={selectedState?.length === 0 || (selectedState && selectedState[0] === "")}
             overall={inModal ? false : true}
-            defaultValue="All districts"
+            defaultValue={t("COMMON.ALL_DISTRICTS")}
 
           />
         </Grid>
