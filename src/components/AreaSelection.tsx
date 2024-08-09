@@ -98,7 +98,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
             tagName={t("FACILITATORS.STATE")}
             selectedCategories={selectedState}
             onCategoryChange={handleStateChangeWrapper}
-            overall={inModal ? false : true}
+            overall={!inModal}
             defaultValue={t("COMMON.ALL_STATES")}
 
           />
@@ -111,7 +111,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
             selectedCategories={selectedDistrict}
             onCategoryChange={handleDistrictChangeWrapper}
             disabled={selectedState?.length === 0 || (selectedState && selectedState[0] === "")}
-            overall={inModal ? false : true}
+            overall={!inModal}
             defaultValue={t("COMMON.ALL_DISTRICTS")}
 
           />
@@ -126,7 +126,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
             disabled={
               selectedDistrict?.length === 0 || (selectedDistrict && selectedDistrict[0] === "")
             }
-            overall={inModal ? false : true}
+            overall={!inModal}
             defaultValue={t("COMMON.ALL_BLOCKS")}
           />
         </Grid>
@@ -139,7 +139,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
               selectedCategories={selectedCenter}
               onCategoryChange={handleCenterChangeWrapper}
               disabled={selectedBlock.length === 0 || selectedCenter[0] === ""}
-              overall={inModal ? false : true}
+              overall={!inModal}
               />
           </Grid>
         )}
