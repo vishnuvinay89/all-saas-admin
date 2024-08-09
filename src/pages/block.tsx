@@ -69,7 +69,8 @@ const Block: React.FC = () => {
   const [sortBy, setSortBy] = useState<[string, string]>(["name", "asc"]);
   const [paginationCount, setPaginationCount] = useState<number>(0);
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10, 20, 50]);
-
+  const [initialState, setInitialState] = useState<string>("");
+  const [initialDistrict, setInitialDistrict] = useState<string>("");
   //get state list
   useEffect(() => {
     const fetchStates = async () => {
@@ -79,6 +80,7 @@ const Block: React.FC = () => {
 
         if (data?.result?.values) {
           setStateData(data.result.values);
+          setSelectedState(data.result.values[0].value);
         } else {
           setStateData([]);
         }
@@ -97,14 +99,18 @@ const Block: React.FC = () => {
     const fetchDistricts = async () => {
       setLoading(true);
       try {
+        const limit = pageLimit;
+        const offset = pageOffset * limit;
+
         const data = await getDistrictsForState({
-          limit: 10,
-          offset: 0,
+          limit: limit,
+          offset: offset,
           controllingfieldfk: selectedState,
           fieldName: "districts",
         });
         const districts = data?.result?.values || [];
         setDistrictData(districts);
+        setInitialDistrict(districts[0].value);
       } catch (error) {
         console.error("Error fetching districts", error);
       } finally {
@@ -120,9 +126,12 @@ const Block: React.FC = () => {
     const fetchBlocks = async () => {
       setLoading(true);
       try {
+        const limit = pageLimit;
+        const offset = pageOffset * limit;
+
         const response = await getBlocksForDistricts({
-          limit: pageLimit,
-          offset: pageOffset * pageLimit,
+          limit: limit,
+          offset: offset,
           controllingfieldfk: selectedDistrict,
           fieldName: "blocks",
           sort: sortBy,
@@ -130,7 +139,21 @@ const Block: React.FC = () => {
 
         setBlockData(response?.result?.values || []);
         setBlocksFieldId(response?.result?.fieldId || "");
-        console.log("Fetched fieldId:", blocksFieldId); // Check if this logs correctly
+
+        setPaginationCount(response?.result?.totalCount || 0);
+        // console.log("Fetched fieldId:", blocksFieldId);
+
+        const totalCount = response?.result?.totalCount || 0;
+        const pageCount = Math.ceil(totalCount / limit);
+        setPageCount(pageCount);
+
+        if (totalCount >= 15) {
+          setPageSizeArray([5, 10, 15]);
+        } else if (totalCount >= 10) {
+          setPageSizeArray([5, 10]);
+        } else {
+          setPageSizeArray([5]);
+        }
       } catch (error) {
         console.error("Error fetching blocks", error);
       } finally {
@@ -186,6 +209,13 @@ const Block: React.FC = () => {
     },
   ];
 
+  const handleSortChange = async (event: SelectChangeEvent) => {
+    const sortOrder =
+      event.target.value === "Z-A" ? SORT.DESCENDING : SORT.ASCENDING;
+    setSortBy(["name", sortOrder]);
+    setSelectedSort(event.target.value);
+  };
+
   const handleStateChange = async (event: SelectChangeEvent<string>) => {
     const selectedState = event.target.value;
     setSelectedState(selectedState);
@@ -210,6 +240,8 @@ const Block: React.FC = () => {
     const selectedDistrict = event.target.value;
     setSelectedDistrict(selectedDistrict);
 
+    console.log("selected district", selectedDistrict);
+
     try {
       const data = {
         limit: 10,
@@ -217,6 +249,8 @@ const Block: React.FC = () => {
         controllingfieldfk: selectedDistrict,
         fieldName: "blocks",
       };
+      console.log("on district change", data);
+
       const response = await getBlocksForDistricts(data);
       setBlockData(response.result.values || []);
       console.log("fieldId blocks", response);
@@ -226,9 +260,13 @@ const Block: React.FC = () => {
   };
 
   const handleEdit = (rowData: any) => {
-    console.log(rowData);
     setModalOpen(true);
-    setSelectedStateForEdit(rowData);
+    const updatedRowData = {
+      ...rowData,
+      selectedDistrict: selectedDistrict,
+    };
+
+    setSelectedStateForEdit(updatedRowData);
   };
 
   const handleDelete = (rowData: BlockDetail) => {
@@ -298,6 +336,8 @@ const Block: React.FC = () => {
     userType: t("MASTER.BLOCKS"),
     searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK"),
     showFilter: false,
+    showSort: true,
+    handleSortChange: { handleSortChange },
   };
 
   const handleAddNewBlock = () => {
@@ -332,14 +372,14 @@ const Block: React.FC = () => {
         DistrictId
       );
 
-      if (response && response.success) {
-        showToastMessage("District added successfully", "success");
+      if (response) {
+        showToastMessage(t("COMMON.BLOCK_ADDED_SUCCESS"), "success");
       } else {
-        showToastMessage("Failed to create/update district", "error");
+        showToastMessage(t("COMMON.BLOCK_ADDED_FAILURE"), "error");
       }
     } catch (error) {
       console.error("Error adding district:", error);
-      showToastMessage("Error adding district", "error");
+      showToastMessage(t("COMMON.BLOCK_ADDED_FAILURE"), "error");
     }
 
     setModalOpen(false);
@@ -364,8 +404,8 @@ const Block: React.FC = () => {
         initialValues={
           selectedStateForEdit
             ? {
-                controllingField: selectedStateForEdit.value,
-                name: selectedStateForEdit.label,
+                controllingField: selectedStateForEdit.selectedDistrict,
+                name: selectedStateForEdit.block,
                 value: selectedStateForEdit.value,
               }
             : {}
@@ -464,7 +504,7 @@ const Block: React.FC = () => {
                 }))}
                 limit={pageLimit}
                 offset={pageOffset}
-                paginationEnable={true}
+                paginationEnable={paginationCount >= 5}
                 PagesSelector={PagesSelector}
                 PageSizeSelector={PageSizeSelectorFunction}
                 pageSizes={pageSizeArray}

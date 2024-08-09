@@ -23,6 +23,8 @@ import AddDistrictModal from "@/components/AddDistrictModal";
 import { Pagination } from "@mui/material";
 import PageSizeSelector from "@/components/PageSelector";
 import { Numbers, SORT } from "@/utils/app.constant";
+import { createCohort } from "@/services/CohortService/cohortService";
+import useStore from "@/store/store";
 
 type StateDetail = {
   controllingField: string | undefined;
@@ -43,6 +45,7 @@ type DistrictDetail = {
 
 const District: React.FC = () => {
   const { t } = useTranslation();
+  const store = useStore();
   const [selectedState, setSelectedState] = useState("ALL");
 
   const [stateData, setStateData] = useState<StateDetail[]>([]);
@@ -154,12 +157,10 @@ const District: React.FC = () => {
   };
   const handleEdit = (rowData: DistrictDetail) => {
     setModalOpen(true);
-    // selectedState
     const updatedRowData = {
       ...rowData,
       selectedState: selectedState,
     };
-    console.log("updatedRowData", updatedRowData.value);
 
     setSelectedStateForEdit(updatedRowData);
   };
@@ -212,6 +213,22 @@ const District: React.FC = () => {
       const response = await createOrUpdateOption(fieldId, newDistrict);
 
       console.log("submit response district", response);
+      const queryParameters = {
+        name: name,
+        type: "DISTRICT",
+        status: "active",
+        parentId: store.pid,
+        customFields: [
+          {
+            fieldId: fieldId,
+            value: [value],
+          },
+        ],
+      };
+
+      const cohortList = await createCohort(queryParameters);
+
+      console.log("fetched cohorlist success", cohortList);
 
       if (response) {
         showToastMessage("District updated successfully", "success");
@@ -374,30 +391,40 @@ const District: React.FC = () => {
                   key: "label",
                   title: t("MASTER.DISTRICT_NAMES"),
                   dataType: DataType.String,
-                  width:'130'
+                  width: "130",
                 },
                 {
                   key: "value",
                   title: t("MASTER.DISTRICT_CODE"),
                   dataType: DataType.String,
-                  width:'130'
+                  width: "130",
                 },
-                { key: "createdBy", title: t("MASTER.CREATED_BY"),
-                  width:'130'
-                 },
-                { key: "updatedBy", title: t("MASTER.UPDATED_BY"),
-                  width:'130'
-                 },
+                {
+                  key: "createdBy",
+                  title: t("MASTER.CREATED_BY"),
+                  width: "130",
+                },
+                {
+                  key: "updatedBy",
+                  title: t("MASTER.UPDATED_BY"),
+                  width: "130",
+                },
 
-                  
-                { key: "createdAt", title: t("MASTER.CREATED_AT"),width:'160' },
-                { key: "updatedAt", title: t("MASTER.UPDATED_AT"),width:'160'
-                 },
+                {
+                  key: "createdAt",
+                  title: t("MASTER.CREATED_AT"),
+                  width: "160",
+                },
+                {
+                  key: "updatedAt",
+                  title: t("MASTER.UPDATED_AT"),
+                  width: "160",
+                },
                 {
                   key: "actions",
                   title: t("MASTER.ACTIONS"),
                   dataType: DataType.String,
-                  width:'130'
+                  width: "130",
                 },
               ]}
               data={districtData.map((districtDetail) => ({
@@ -410,7 +437,7 @@ const District: React.FC = () => {
               }))}
               limit={pageLimit}
               offset={pageOffset}
-              paginationEnable={paginationCount >= 5  }
+              paginationEnable={paginationCount >= 5}
               PagesSelector={PagesSelector}
               PageSizeSelector={PageSizeSelectorFunction}
               pageSizes={pageSizeArray}

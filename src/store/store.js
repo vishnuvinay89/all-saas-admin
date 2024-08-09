@@ -4,19 +4,20 @@ import { persist } from "zustand/middleware";
 const useStore = create(
   persist(
     (set) => ({
-      value: "",
-      cohorts: [],
-      userRole: "",
-      pairs: [],
-      setValue: (newValue) => set((state) => ({ value: newValue })),
-      setUserRole: (newRole) => set((state) => ({ userRole: newRole })),
-      setCohorts: (newCohorts) => set(() => ({ cohorts: newCohorts })),
+      pid: "",
+      // state: "",
+      // district: "",
+      // block: "",
+      setPid: (newPid) => set((state) => ({ pid: newPid })),
+      // setPid: (newPid) => set((state) => ({ pid: newPid })),
+      // setPid: (newPid) => set((state) => ({ pid: newPid })),
+      // setPid: (newPid) => set((state) => ({ pid: newPid })),
     }),
     {
-      name: "teacherApp",
+      name: "adminApp",
       getStorage: () => localStorage,
-    },
-  ),
+    }
+  )
 );
 
 export default useStore;

@@ -192,9 +192,8 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           variant="outlined"
           margin="dense"
           error={!!errors.controllingField}
-          disabled={isEditing} // Disable if editing
         >
-          <MenuItem value="" disabled>
+          <MenuItem value="" >
             {t("COMMON.SELECT_DISTRICT")}
           </MenuItem>
           {districts.length > 0 ? (

@@ -19,6 +19,8 @@ import {
   createCohort,
   getCohortList,
 } from "@/services/CohortService/cohortService";
+import { getUserDetails } from "@/services/UserList";
+import useStore from "@/store/store";
 
 export interface StateDetail {
   updatedAt: any;
@@ -62,15 +64,16 @@ const State: React.FC = () => {
   const [filters, setFilters] = useState<cohortFilterDetails>({
     type: "COHORT",
   });
+  const setPid = useStore((state) => state.setPid);
 
   const columns = [
-    { key: "label", title: t("MASTER.STATE_NAMES"),width:'130' },
-    { key: "value", title: t("MASTER.STATE_CODE"),width:'130' },
-    { key: "createdBy", title: t("MASTER.CREATED_BY"),width:'130' },
-    { key: "updatedBy", title: t("MASTER.UPDATED_BY"),width:'130' },
-    { key: "createdAt", title: t("MASTER.CREATED_AT"),width:'160' },
-    { key: "updatedAt", title: t("MASTER.UPDATED_AT"),width:'160' },
-    { key: "actions", title: t("MASTER.ACTIONS"),width:'130' },
+    { key: "label", title: t("MASTER.STATE_NAMES"), width: "130" },
+    { key: "value", title: t("MASTER.STATE_CODE"), width: "130" },
+    { key: "createdBy", title: t("MASTER.CREATED_BY"), width: "130" },
+    { key: "updatedBy", title: t("MASTER.UPDATED_BY"), width: "130" },
+    { key: "createdAt", title: t("MASTER.CREATED_AT"), width: "160" },
+    { key: "updatedAt", title: t("MASTER.UPDATED_AT"), width: "160" },
+    { key: "actions", title: t("MASTER.ACTIONS"), width: "130" },
   ];
 
   const handleEdit = (rowData: StateDetail) => {
@@ -116,25 +119,32 @@ const State: React.FC = () => {
     setSelectedStateForEdit(null);
     setAddStateModalOpen(true);
   };
-  const queryParameters = {
-    name: "selectedState",
-    type: "STATES",
-    status: "active",
 
-    // parentId: "parentId",
-    customFields: [],
-  };
   const handleAddStateSubmit = async (name: string, value: string) => {
     const newState = { options: [{ name, value }] };
     try {
       if (fieldId) {
         const response = await createOrUpdateOption(fieldId, newState);
+
+        const queryParameters = {
+          name: name,
+          type: "STATE",
+          status: "active",
+          parentId: null,
+          customFields: [], 
+        };
+
+        console.log("beforore cohortList");
+
+        const cohortList = await createCohort(queryParameters);
+
+        console.log("cohortList", cohortList?.result);
+        setPid(cohortList?.result?.cohortId);
+
+        console.log("fetched cohorlist success", cohortList);
+
         if (response) {
           await fetchStateData(searchKeyword);
-
-          console.log("beforore cohortList");
-          const cohortList = await createCohort(queryParameters);
-          console.log("fetched cohorlist success", cohortList);
 
           showToastMessage(t("COMMON.STATE_ADDED_SUCCESS"), "success");
         } else {

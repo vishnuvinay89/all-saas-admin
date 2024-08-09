@@ -64,6 +64,11 @@
     "STATE_NAME_REQUIRED": "State Name is Required",
     "DISTRICT_NAME_REQUIRED": "District Name is Required",
     "CREATE":"Create",
+    "BLOCK_ADDED_SUCCESS": "Block Added Successfully!",
+    "BLOCK_ADDED_FAILURE": "Block is not Added!",
+    "BLOCK_UPDATED_SUCCESS": "Block Updated Successfully!",
+    "BLOCK_UPDATED_FAILURE": "Block is not Updated!",
+    
     "ADD":"Add",
     "INACTIVE":"Inactive",
     "SELECT_STATE": "Select State",
