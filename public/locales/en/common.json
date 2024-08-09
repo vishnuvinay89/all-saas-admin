@@ -63,7 +63,7 @@
     "USERS_EMAIL": "Users Email",
     "STATE_NAME_REQUIRED": "State Name is Required",
     "DISTRICT_NAME_REQUIRED": "District Name is Required",
-    
+    "CREATE":"Create",
     "ADD":"Add",
     "INACTIVE":"Inactive",
     "SELECT_STATE": "Select State",
@@ -194,7 +194,7 @@
     "CENTER_DELETE_SUCCESSFULLY": "Center has been Successfully Deleted",
     "CENTER_CREATED_SUCCESSFULLY": "Center Created Successfully",
     "SEARCHBAR_PLACEHOLDER": "Search Center..",
-    "NOT_ABLE_CREATE_CENTER": "Not able to create center for current selected data"
+    "NOT_ABLE_CREATE_CENTER": "*Not able to create center for selected Data"
   },
   "FORM": {
     "FULL_NAME": "Full Name",

@@ -14,7 +14,11 @@ interface CenterProp {
   cohortId: string;
   name: string;
 }
-export const useLocationState = (open: boolean, onClose: () => void, userType?: any) => {
+export const useLocationState = (
+  open: boolean,
+  onClose: () => void,
+  userType?: any
+) => {
   const [states, setStates] = useState<FieldProp[]>([]);
   const [districts, setDistricts] = useState<FieldProp[]>([]);
   const [blocks, setBlocks] = useState<FieldProp[]>([]);
@@ -45,6 +49,7 @@ export const useLocationState = (open: boolean, onClose: () => void, userType?: 
         setBlocks([]);
         setAllCenters([]);
         setSelectedStateCode(selectedCodes[0]);
+        setSelectedBlockCohortId("");
 
         const object = {
           controllingfieldfk: selectedCodes[0],
@@ -59,7 +64,7 @@ export const useLocationState = (open: boolean, onClose: () => void, userType?: 
       }
       handleStateChange(selectedNames, selectedCodes);
     },
-    [selectedStateCode],
+    [selectedStateCode]
   );
 
   const handleDistrictChangeWrapper = useCallback(
@@ -71,6 +76,7 @@ export const useLocationState = (open: boolean, onClose: () => void, userType?: 
         setBlocks([]);
         setAllCenters([]);
         setSelectedDistrictCode(selectedCodes[0]);
+        setSelectedBlockCohortId("");
         const object = {
           controllingfieldfk: selectedCodes[0],
           fieldName: "blocks",
@@ -85,7 +91,7 @@ export const useLocationState = (open: boolean, onClose: () => void, userType?: 
       }
       handleDistrictChange(selected, selectedCodes);
     },
-    [selectedDistrictCode],
+    [selectedDistrictCode]
   );
 
   const handleBlockChangeWrapper = useCallback(
@@ -97,10 +103,9 @@ export const useLocationState = (open: boolean, onClose: () => void, userType?: 
         setAllCenters([]);
 
         console.log(selectedStateCode, selectedDistrictCode);
-        console.log(userType)
-        if(userType===FormContextType.TEAM_LEADER)
-        {
-          console.log("true")
+        console.log(userType);
+        if (userType === FormContextType.TEAM_LEADER) {
+          console.log("true");
           const object = {
             limit: 200,
             offset: 0,
@@ -115,40 +120,43 @@ export const useLocationState = (open: boolean, onClose: () => void, userType?: 
           };
           const response = await getCenterList(object);
           setSelectedBlockCohortId(
-            response?.result?.results?.cohortDetails[0].cohortId,
+            response?.result?.results?.cohortDetails[0].cohortId
           );
-        }
-      
-       else
-       {
-        const getCentersObject = {
-          limit: 200,
-          offset: 0,
-          filters: {
-            // "type":"COHORT",
-            status: ["active"],
-            states: selectedStateCode,
-            districts: selectedDistrictCode,
-            blocks: selectedCodes[0],
-            // "name": selected[0]
-          },
-        };
-        const response = await getCenterList(getCentersObject);
-        console.log(response?.result?.results?.cohortDetails[0].cohortId);
-        //   const result = response?.result?.cohortDetails;
-        const dataArray = response?.result?.results?.cohortDetails;
+          console.log(
+            "response?.result?.results?.cohortDetails[0].cohortId",
+            response?.result?.results?.cohortDetails[0].cohortId
+          );
+        } else {
+          const getCentersObject = {
+            limit: 200,
+            offset: 0,
+            filters: {
+              // "type":"COHORT",
+              status: ["active"],
+              states: selectedStateCode,
+              districts: selectedDistrictCode,
+              blocks: selectedCodes[0],
+              // "name": selected[0]
+            },
+          };
+          const response = await getCenterList(getCentersObject);
+          console.log(response?.result?.results?.cohortDetails[0].cohortId);
+          setSelectedBlockCohortId(
+            response?.result?.results?.cohortDetails[0].cohortId
+          );
+          //   const result = response?.result?.cohortDetails;
+          const dataArray = response?.result?.results?.cohortDetails;
 
-        const cohortInfo = dataArray?.filter((cohort: any) => cohort.type !== 'BLOCK').map((item: any) => ({
-          cohortId: item?.cohortId,
-          name: item?.name,
-        }));
-        console.log(dataArray);
-        setAllCenters(cohortInfo);
-       }
+          const cohortInfo = dataArray
+            ?.filter((cohort: any) => cohort.type !== "BLOCK")
+            .map((item: any) => ({
+              cohortId: item?.cohortId,
+              name: item?.name,
+            }));
+          console.log(dataArray);
+          setAllCenters(cohortInfo);
+        }
         console.log(selected);
-       
-       
-       
       } catch (error) {
         setAllCenters([]);
 
@@ -156,14 +164,14 @@ export const useLocationState = (open: boolean, onClose: () => void, userType?: 
       }
       handleBlockChange(selected, selectedCodes);
     },
-    [selectedBlockCode, selectedDistrictCode, selectedStateCode],
+    [selectedBlockCode, selectedDistrictCode, selectedStateCode]
   );
 
   const handleCenterChangeWrapper = useCallback(
     (selected: string[], selectedCodes: string[]) => {
       handleCenterChange(selected, selectedCodes);
     },
-    [],
+    []
   );
 
   const handleStateChange = useCallback(
@@ -176,7 +184,7 @@ export const useLocationState = (open: boolean, onClose: () => void, userType?: 
       setSelectedStateCode(stateCodes);
       console.log("Selected categories:", typeof code[0]);
     },
-    [],
+    []
   );
 
   const handleDistrictChange = useCallback(
@@ -188,7 +196,7 @@ export const useLocationState = (open: boolean, onClose: () => void, userType?: 
       setSelectedDistrictCode(districts);
       console.log("Selected categories:", districts);
     },
-    [],
+    []
   );
 
   const handleBlockChange = useCallback(
@@ -200,7 +208,7 @@ export const useLocationState = (open: boolean, onClose: () => void, userType?: 
       setdynamicFormForBlock(true);
       console.log("Selected categories:", blocks);
     },
-    [],
+    []
   );
 
   const handleCenterChange = useCallback(
@@ -213,7 +221,7 @@ export const useLocationState = (open: boolean, onClose: () => void, userType?: 
 
       console.log("Selected categories:", selected);
     },
-    [],
+    []
   );
 
   useEffect(() => {
