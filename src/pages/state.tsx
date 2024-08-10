@@ -44,6 +44,7 @@ type cohortFilterDetails = {
 type Option = {
   name: string;
   value: string;
+  controllingfieldfk?: string;
 };
 
 const State: React.FC = () => {
@@ -127,9 +128,12 @@ const State: React.FC = () => {
 
   const handleAddStateSubmit = async (
     name: string,
-    value: string | undefined
+    value: string,
+    selectedState: any
   ) => {
-    const newState = { options: [{ name, value }] as Option[] };
+    const newState = {
+      options: [{ name, value }],
+    };
     try {
       if (fieldId) {
         const response = await createOrUpdateOption(fieldId, newState);

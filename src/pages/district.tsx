@@ -35,7 +35,7 @@ type StateDetail = {
   controllingField: string | undefined;
   value: string;
   label: string;
-  selectedState?: string; 
+  selectedState?: string;
 };
 
 type DistrictDetail = {
@@ -78,33 +78,11 @@ const District: React.FC = () => {
   const [selectedStateDropdown, setSelectedStateDropdown] =
     useState<string>("");
   const [cohortStatus, setCohortStatus] = useState<any>();
-  const [cohortId, setCohortId] = useState<any>(); // [setCohortId]
-  // const [value, setValue] = useState(""); // State for value
-  // const [label, setLabel] = useState(""); // State for label
-
-  // const fetchStateData = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const data = await getStateBlockDistrictList({ fieldName: "states" });
-
-  //     if (data?.result?.values) {
-  //       setStateData(data.result.values);
-  //       setSelectedState("ALL");
-  //       fetchDistrictData("ALL");
-  //     } else {
-  //       setStateData([]);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching state data:", error);
-  //     setStateData([]);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const [cohortId, setCohortId] = useState<any>();
 
   useEffect(() => {
     const fetchUserDetail = async () => {
-      let userId;
+      let userId: any;
       try {
         if (typeof window !== "undefined" && window.localStorage) {
           userId = localStorage.getItem(Storage.USER_ID);
@@ -113,7 +91,7 @@ const District: React.FC = () => {
         console.log("profile api is triggered", response.userData.customFields);
 
         const statesField = response.userData.customFields.find(
-          (field) => field.label === "STATES"
+          (field: { label: string }) => field.label === "STATES"
         );
 
         console.log("stateField", statesField);
@@ -130,12 +108,7 @@ const District: React.FC = () => {
       }
     };
     fetchUserDetail();
-    // return stateValue;
   }, []);
-  
-  // useEffect(() => {
-  //   fetchStateData();
-  // }, [pageOffset, pageLimit]);
 
   const fetchDistrictData = async (stateId: string) => {
     try {
@@ -304,14 +277,6 @@ const District: React.FC = () => {
       event.target.value === "Z-A" ? SORT.DESCENDING : SORT.ASCENDING;
     setSortBy(["name", sortOrder]);
     setSelectedSort(event.target.value);
-
-    // state.value, selectedState
-
-    // {stateData.map((state) => (
-    //   <MenuItem key={state.value} value={state.value}>
-    //     {transformLabel(state.label)}
-    //   </MenuItem>
-    // ))}
 
     const afterFilter = stateData.filter((item) => {
       return item.value === selectedState;
