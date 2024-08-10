@@ -16,16 +16,30 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import CustomModal from "@/components/CustomModal";
-import { Box, TextField, Typography, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import Loader from "@/components/Loader";
 import { getFormRead } from "@/services/CreateUserService";
-import { GenerateSchemaAndUiSchema } from "@/components/GeneratedSchemas";
+import {
+  GenerateSchemaAndUiSchema,
+  customFields,
+} from "@/components/GeneratedSchemas";
 import { CustomField } from "@/utils/Interfaces";
 import { showToastMessage } from "@/components/Toastify";
 import AddNewCenters from "@/components/AddNewCenters";
 import { getCenterTableData } from "@/data/tableColumns";
 import { Theme } from "@mui/system";
 import { firstLetterInUpperCase } from "@/utils/Helper";
+import SimpleModal from "@/components/SimpleModal";
+import { IChangeEvent } from "@rjsf/core";
+import { RJSFSchema } from "@rjsf/utils";
+import DynamicForm from "@/components/DynamicForm";
+import useSubmittedButtonStore from "@/utils/useSharedState";
 
 type cohortFilterDetails = {
   type?: string;
@@ -52,12 +66,93 @@ interface CohortDetails {
   customFields?: CustomField[];
 }
 
+const mapFields = (formFields: any, response: any) => {
+  let initialFormData: any = {};
+  console.log("response", response?.results?.cohortDetails[0]);
+  // Extract the cohort details from the response
+  const cohortDetails = response?.results?.cohortDetails?.[0] || {};
+
+  formFields.fields.forEach((item: any) => {
+    const customFieldValue = cohortDetails?.customFields?.find(
+      (field: any) => field.fieldId === item.fieldId
+    );
+
+    const getValue = (data: any, field: any) => {
+      if (item.default) {
+        return item.default;
+      }
+      if (item?.isMultiSelect) {
+        if (data[item.name] && item?.maxSelections > 1) {
+          return [field?.value];
+        } else if (item?.type === "checkbox") {
+          return String(field?.value).split(",");
+        } else {
+          return field?.value?.toLowerCase();
+        }
+      } else if (item?.type === "radio") {
+        return field?.value || null;
+      } else if (item?.type === "numeric") {
+        return parseInt(String(field?.value));
+      } else if (item?.type === "text") {
+        return String(field?.value);
+      } else {
+        if (field?.value === "FEMALE" || field?.value === "MALE") {
+          return field?.value?.toLowerCase();
+        }
+        return field?.value?.toLowerCase();
+      }
+    };
+
+    if (item.coreField) {
+      if (item?.isMultiSelect) {
+        if (cohortDetails[item.name] && item?.maxSelections > 1) {
+          initialFormData[item.name] = [cohortDetails[item.name]];
+        } else if (item?.type === "checkbox") {
+          initialFormData[item.name] = String(cohortDetails[item.name]).split(
+            ","
+          );
+        } else {
+          initialFormData[item.name] = cohortDetails[item.name];
+        }
+      } else if (item?.type === "radio") {
+        initialFormData[item.name] = cohortDetails[item.name] || null;
+      } else if (item?.type === "numeric") {
+        initialFormData[item.name] = Number(cohortDetails[item.name]);
+      } else if (item?.type === "text" && cohortDetails[item.name]) {
+        initialFormData[item.name] = String(cohortDetails[item.name]);
+      } else {
+        if (cohortDetails[item.name]) {
+          initialFormData[item.name] = cohortDetails[item.name];
+        }
+      }
+    } else {
+      const fieldValue = getValue(cohortDetails, customFieldValue);
+
+      if (fieldValue) {
+        initialFormData[item.name] = fieldValue;
+      }
+    }
+  });
+
+  console.log("initialFormData", initialFormData);
+  return initialFormData;
+};
+
 const Center: React.FC = () => {
   // use hooks
   const { t } = useTranslation();
+  const adminInformation = useSubmittedButtonStore(
+    (state: any) => state.adminInformation
+  );
+  const state = adminInformation?.customFields?.find(
+    (item: any) => item?.label === "STATES"
+  );
+  const getUserStateName = state ? state.value : null;
 
   // handle states
-  const [selectedState, setSelectedState] = React.useState<string[]>([]);
+  const [selectedState, setSelectedState] = React.useState<string[]>([
+    getUserStateName,
+  ]);
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
   const [selectedBlock, setSelectedBlock] = React.useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState("Sort");
@@ -91,6 +186,11 @@ const Center: React.FC = () => {
   const [selectedBlockCode, setSelectedBlockCode] = useState("");
   const [formdata, setFormData] = useState<any>();
   const [totalCount, setTotalCound] = useState<number>(0);
+  const [editFormData, setEditFormData] = useState<any>([]);
+  const [isEditForm, setIsEditForm] = useState(false);
+  const setSubmittedButtonStatus = useSubmittedButtonStore(
+    (state: any) => state.setSubmittedButtonStatus
+  );
   const handleCloseAddLearnerModal = () => {
     setOpenAddNewCohort(false);
   };
@@ -401,16 +501,28 @@ const Center: React.FC = () => {
     }
   };
 
-  const handleEdit = (rowData: any) => {
+  const handleEdit = async (rowData: any) => {
     setLoading(true);
     // Handle edit action here
-    setIsEditModalOpen(true);
+    // setIsEditModalOpen(true);
     if (rowData) {
       const cohortId = rowData?.cohortId;
       setSelectedCohortId(cohortId);
       const cohortName = rowData?.name;
       setInputName(cohortName);
+
+      let data = {
+        filters: {
+          cohortId: cohortId,
+        },
+        limit: 200,
+        offset: 0,
+      };
+      const resp = await getCohortList(data);
+      const formFields = await getFormRead("cohorts", "cohort");
+      setEditFormData(mapFields(formFields, resp));
       setLoading(false);
+      setIsEditForm(true);
     }
     setLoading(false);
     setConfirmButtonDisable(false);
@@ -418,6 +530,8 @@ const Center: React.FC = () => {
 
   const handleDelete = (rowData: any) => {
     setLoading(true);
+    const cohortName = rowData?.name;
+    setInputName(cohortName);
     setConfirmationModalOpen(true);
     if (rowData) {
       const cohortId = rowData?.cohortId;
@@ -437,30 +551,95 @@ const Center: React.FC = () => {
     setIsEditModalOpen(false);
   };
 
+  const onCloseEditForm = () => {
+    setIsEditForm(false);
+  };
   const handleInputName = (event: ChangeEvent<HTMLInputElement>) => {
     const updatedName = event.target.value;
     setInputName(updatedName);
   };
 
-  const handleUpdateAction = async () => {
+  const handleChangeForm = (event: IChangeEvent<any>) => {
+    console.log("Form data changed:", event.formData);
+  };
+  const handleError = () => {
+    console.log("error");
+  };
+
+  const handleUpdateAction = async (
+    data: IChangeEvent<any, RJSFSchema, any>,
+    event: React.FormEvent<any>
+  ) => {
+    setLoading(true);
+    const formData = data?.formData;
+    console.log("formData", formData);
+    const schemaProperties = schema.properties;
+
+    let apiBody: any = {
+      customFields: [],
+    };
+    Object.entries(formData).forEach(([fieldKey, fieldValue]) => {
+      const fieldSchema = schemaProperties[fieldKey];
+      const fieldId = fieldSchema?.fieldId;
+
+      console.log(
+        `FieldID: ${fieldId}, FieldValue: ${JSON.stringify(fieldSchema)}, type: ${typeof fieldValue}`
+      );
+
+      if (fieldId === null || fieldId === "null") {
+        if (typeof fieldValue !== "object") {
+          apiBody[fieldKey] = fieldValue;
+        }
+      } else {
+        if (
+          fieldSchema?.hasOwnProperty("isDropdown") ||
+          fieldSchema?.hasOwnProperty("isCheckbox") ||
+          fieldSchema?.type === "radio"
+        ) {
+          apiBody.customFields.push({
+            fieldId: fieldId,
+            value: Array.isArray(fieldValue) ? fieldValue : [fieldValue],
+          });
+        } else {
+          if (fieldSchema?.checkbox && fieldSchema.type === "array") {
+            if (String(fieldValue).length != 0) {
+              apiBody.customFields.push({
+                fieldId: fieldId,
+                value: String(fieldValue).split(","),
+              });
+            }
+          } else {
+            if (fieldId) {
+              apiBody.customFields.push({
+                fieldId: fieldId,
+                value: String(fieldValue),
+              });
+            }
+          }
+        }
+      }
+    });
+
+    const customFields = apiBody?.customFields;
     try {
       setLoading(true);
       setConfirmButtonDisable(true);
       if (!selectedCohortId) {
-        setLoading(false);
         console.log("No cohort Id Selected");
         showToastMessage(t("CENTERS.NO_COHORT_ID_SELECTED"), "error");
         return;
       }
-
       let cohortDetails = {
-        name: inputName,
+        name: formData?.name,
+        customFields: customFields,
       };
-
       const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
-      console.log("resp:", resp);
-
-      showToastMessage(t("CENTERS.CENTER_UPDATE_SUCCESSFULLY"), "success");
+      if (resp?.responseCode === 200 || resp?.responseCode === 201) {
+        showToastMessage(t("CENTERS.CENTER_UPDATE_SUCCESSFULLY"), "success");
+        setLoading(false);
+      } else {
+        showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
+      }
     } catch (error) {
       console.error("Error updating cohort:", error);
       showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
@@ -469,6 +648,7 @@ const Center: React.FC = () => {
       setConfirmButtonDisable(false);
       onCloseEditMOdel();
       fetchUserList();
+      setIsEditForm(false);
     }
   };
 
@@ -498,29 +678,35 @@ const Center: React.FC = () => {
 
   return (
     <>
-      <CustomModal
+      {/* <CustomModal
         open={editModelOpen}
         handleClose={onCloseEditMOdel}
         title={t("COMMON.EDIT_CENTER_NAME")}
         // subtitle={t("COMMON.NAME")}
         primaryBtnText={t("COMMON.UPDATE_CENTER")}
         secondaryBtnText="Cancel"
-        primaryBtnClick={handleUpdateAction}
+        // primaryBtnClick={handleUpdateAction}
         primaryBtnDisabled={confirmButtonDisable}
         secondaryBtnClick={onCloseEditMOdel}
       >
         <Box>
           <TextField
             id="standard-basic"
-            label="Cohort Name"
+            label="Center Name"
             variant="standard"
             value={inputName}
             onChange={handleInputName}
           />
         </Box>
-      </CustomModal>
+      </CustomModal> */}
       <ConfirmationModal
-        message={t("CENTERS.SURE_DELETE_CENTER")}
+        message={
+          t("CENTERS.SURE_DELETE_CENTER") +
+          inputName +
+          " " +
+          t("CENTERS.CENTER") +
+          "?"
+        }
         handleAction={handleActionForDelete}
         buttonNames={{
           primary: t("COMMON.YES"),
@@ -531,14 +717,22 @@ const Center: React.FC = () => {
       />
       <HeaderComponent {...userProps}>
         {loading ? (
-          <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
+          <Box
+            width={"100%"}
+            id="check"
+            display={"flex"}
+            flexDirection={"column"}
+            alignItems={"center"}
+          >
+            <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
+          </Box>
         ) : cohortData?.length > 0 ? (
           <KaTableComponent
             columns={getCenterTableData(t, isMobile)}
             data={cohortData}
             limit={pageLimit}
             offset={pageOffset}
-            paginationEnable={totalCount > 5}
+            paginationEnable={totalCount > 10}
             PagesSelector={PagesSelector}
             PageSizeSelector={PageSizeSelectorFunction}
             pageSizes={pageSizeArray}
@@ -567,6 +761,65 @@ const Center: React.FC = () => {
           isEditModal={true}
           userId={userId}
         />
+
+        <SimpleModal
+          open={isEditForm}
+          onClose={onCloseEditForm}
+          showFooter={false}
+          modalTitle={t("COMMON.UPDATE_CENTER")}
+        >
+          {schema && uiSchema && (
+            <DynamicForm
+              schema={schema}
+              uiSchema={uiSchema}
+              onSubmit={handleUpdateAction}
+              onChange={handleChangeForm}
+              onError={handleError}
+              widgets={{}}
+              showErrorList={true}
+              customFields={customFields}
+              formData={editFormData}
+              id="xyz"
+            >
+              <Box
+                style={{
+                  display: "flex",
+                  justifyContent: "right", // Centers the button horizontally
+                  marginTop: "20px", // Adjust margin as needed
+                }}
+                gap={2}
+              >
+                <Button
+                  variant="outlined"
+                  type="submit"
+                  form="xyz" // Add this line
+                  sx={{
+                    padding: "12px 24px", // Adjust padding as needed
+                    width: "200px", // Set the desired width
+                  }}
+                  onClick={onCloseEditForm}
+                >
+                  {t("COMMON.CANCEL")}
+                </Button>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  form="xyz" // Add this line
+                  sx={{
+                    padding: "12px 24px", // Adjust padding as needed
+                    width: "200px", // Set the desired width
+                  }}
+                  onClick={() => {
+                    setSubmittedButtonStatus(true);
+                    console.log("update button was clicked");
+                  }}
+                >
+                  {t("COMMON.UPDATE")}
+                </Button>
+              </Box>
+            </DynamicForm>
+          )}
+        </SimpleModal>
       </HeaderComponent>
     </>
   );

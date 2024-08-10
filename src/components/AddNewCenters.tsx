@@ -23,7 +23,7 @@ interface CohortDetails {
   name?: string;
   type?: string;
   parentId?: string | null;
-  customFields?: CustomField[];
+  customFields?: any;
 }
 interface AddLearnerModalProps {
   open: boolean;
@@ -60,11 +60,17 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
     selectedDistrict,
     selectedCenter,
     selectedBlock,
+    blockFieldId,
+    distrctFieldId,
+    stateFieldId,
     handleStateChangeWrapper,
     handleDistrictChangeWrapper,
     handleBlockChangeWrapper,
     handleCenterChangeWrapper,
     selectedBlockCohortId,
+    selectedDistrictCode,
+    selectedStateCode,
+    selectedBlockCode,
     dynamicFormForBlock,
   } = useLocationState(open, onClose);
   const setSubmittedButtonStatus = useSubmittedButtonStore(
@@ -102,7 +108,20 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
         name: formData.name,
         type: CohortTypes.COHORT,
         parentId: parentId,
-        customFields: [],
+        customFields: [
+          {
+            fieldId: stateFieldId,
+            value: [selectedStateCode],
+          },
+          {
+            fieldId: distrctFieldId,
+            value: [selectedDistrictCode],
+          },
+          {
+            fieldId: blockFieldId,
+            value: [selectedBlockCode],
+          },
+        ],
       };
 
       Object.entries(formData).forEach(([fieldKey, fieldValue]) => {
@@ -110,10 +129,10 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
         const fieldId = fieldSchema?.fieldId;
 
         if (fieldId !== null) {
-        cohortDetails?.customFields?.push({
-          fieldId: fieldId,
-          value: formData.cohort_type,
-        });
+          cohortDetails?.customFields?.push({
+            fieldId: fieldId,
+            value: formData.cohort_type,
+          });
         }
       });
       if (
@@ -121,12 +140,12 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
         cohortDetails?.customFields?.length > 0 &&
         cohortDetails?.name
       ) {
-      const cohortData = await createCohort(cohortDetails);
-      if (cohortData) {
-        showToastMessage(t("CENTERS.CENTER_CREATED_SUCCESSFULLY"), "success");
-        setOpenAddNewCohort(false);
-        onClose();
-      }
+        const cohortData = await createCohort(cohortDetails);
+        if (cohortData) {
+          showToastMessage(t("CENTERS.CENTER_CREATED_SUCCESSFULLY"), "success");
+          setOpenAddNewCohort(false);
+          onClose();
+        }
       } else {
         showToastMessage("Please Input Data", "warning");
       }
@@ -228,7 +247,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
         </DynamicForm>
       )}
       {!selectedBlockCohortId && selectedBlockCohortId !== "" && (
-        <Box mt={2} textAlign={"center"}>
+        <Box mt={3} textAlign={"center"}>
           <Typography color={"error"}>
             {t("CENTERS.NOT_ABLE_CREATE_CENTER")}
           </Typography>

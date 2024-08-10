@@ -30,6 +30,9 @@ import { showToastMessage } from "@/components/Toastify";
 import Link from "@mui/material/Link";
 import loginImage from "../../public/loginImage.jpg";
 import { useUserIdStore } from "@/store/useUserIdStore";
+import { getUserDetails } from "@/services/UserList";
+import { Storage } from "@/utils/app.constant";
+import useSubmittedButtonStore from "@/utils/useSharedState";
 
 const LoginPage = () => {
   const { t } = useTranslation();
@@ -47,6 +50,9 @@ const LoginPage = () => {
   const theme = useTheme<any>();
   const router = useRouter();
   const { setUserId } = useUserIdStore();
+  const setAdminInformation = useSubmittedButtonStore(
+    (state: any) => state.setAdminInformation
+  );
 
   // Use useMediaQuery to detect screen size
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -90,10 +96,34 @@ const LoginPage = () => {
   };
 
   const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>,
+    event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
   };
+
+  const fetchUserDetail = async () => {
+    let userId;
+    try {
+      if (typeof window !== "undefined" && window.localStorage) {
+        userId = localStorage.getItem(Storage.USER_ID);
+      }
+      const fieldValue = true;
+      if (userId) {
+        console.log("true");
+        const response = await getUserDetails(userId, fieldValue);
+
+        const userInfo = response?.userData;
+        //set user info in zustand store
+        setAdminInformation(userInfo);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserDetail();
+  }, []);
 
   const handleFormSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -137,6 +167,7 @@ const LoginPage = () => {
         };
         telemetryFactory.interact(telemetryInteract);
         router.push("/centers");
+        fetchUserDetail();
       } catch (error: any) {
         setLoading(false);
         const errorMessage = t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT");

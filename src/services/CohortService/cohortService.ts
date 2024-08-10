@@ -28,16 +28,13 @@ export const getCohortList = async (data: cohortListData): Promise<any> => {
 
 export const updateCohortUpdate = async (
   userId: string,
-  cohortDetails: {
-    name?: string;
-    status?: string;
-  },
+  cohortDetails: any
 ): Promise<any> => {
-  const { name, status } = cohortDetails;
+  // const { name, status, type } = cohortDetails;
   let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/update/${userId}`;
 
   try {
-    const response = await put(apiUrl, { name, status });
+    const response = await put(apiUrl, cohortDetails);
     return response?.data;
   } catch (error) {
     console.error("Error in updating cohort details", error);
@@ -47,14 +44,14 @@ export const updateCohortUpdate = async (
 
 export const getFormRead = async (
   context: string,
-  contextType: string,
+  contextType: string
 ): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/form/read?context=${context}&contextType=${contextType}`;
   try {
     let response = await get(apiUrl);
     const sortedFields = response?.data?.result.fields?.sort(
       (a: { order: string }, b: { order: string }) =>
-        parseInt(a.order) - parseInt(b.order),
+        parseInt(a.order) - parseInt(b.order)
     );
     const formData = {
       formid: response?.data?.result?.formid,

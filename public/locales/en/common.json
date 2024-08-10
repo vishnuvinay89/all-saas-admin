@@ -63,19 +63,18 @@
     "USERS_EMAIL": "Users Email",
     "STATE_NAME_REQUIRED": "State Name is Required",
     "DISTRICT_NAME_REQUIRED": "District Name is Required",
-    "CREATE":"Create",
-    "ADD":"Add",
-    "INACTIVE":"Inactive",
+    "CREATE": "Create",
+    "ADD": "Add",
+    "INACTIVE": "Inactive",
     "SELECT_STATE": "Select State",
     "SELECT_DISTRICT": "Select District",
     "SOMETHING_WENT_WRONG": "Something went wrong",
     "BLOCK_NAME_REQUIRED": "Block Name is Required",
     "BLOCK_CODE_REQUIRED": "Code is Required",
-    "ALL_BLOCKS":"All Blocks",
-    "ALL_DISTRICTS":"All Districts",
-    "ALL_STATES":"All States",
-    "LOGOUT":"Log out"
-    
+    "ALL_BLOCKS": "All Blocks",
+    "ALL_DISTRICTS": "All Districts",
+    "ALL_STATES": "All States",
+    "LOGOUT": "Log out"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -171,6 +170,7 @@
     "BLOCK_CODE": "Block Code"
   },
   "CENTERS": {
+    "CENTER": "center",
     "CENTERS": "Centers",
     "REGULAR_CENTERS": "Regular Centers",
     "REMOTE_CENTERS": "Remote Centers",
@@ -189,12 +189,13 @@
     "RENAME": "Rename",
     "CENTER_RENAMED": "Center Renamed Successfully!",
     "SEND_REQUEST": "Send Request",
-    "SURE_DELETE_CENTER": "Are you sure you want to Delete Center?",
+    "SURE_DELETE_CENTER": "Are you sure you want to Delete ",
     "CENTER_UPDATE_SUCCESSFULLY": "Center has been Successfully Updated",
     "CENTER_DELETE_SUCCESSFULLY": "Center has been Successfully Deleted",
     "CENTER_CREATED_SUCCESSFULLY": "Center Created Successfully",
     "SEARCHBAR_PLACEHOLDER": "Search Center..",
-    "NOT_ABLE_CREATE_CENTER": "*Not able to create center for selected Data"
+    "NOT_ABLE_CREATE_CENTER": "Something went wrong",
+    "CENTER_UPDATE_FAILED": "Something went wrong to update data"
   },
   "FORM": {
     "FULL_NAME": "Full Name",
@@ -275,7 +276,7 @@
     "ENTER_ONLY_DIGITS": "Please enter only digits",
     "MIN_LENGTH_DIGITS_ERROR": "Minimum {{minLength}} Digits required",
     "MAX_LENGTH_DIGITS_ERROR": "Maximum {{maxLength}} Digits allowed",
-     "MIN_LENGTH_CHARACTERS_ERROR": "Minimum {{minLength}} characters required",
+    "MIN_LENGTH_CHARACTERS_ERROR": "Minimum {{minLength}} characters required",
     "MAX_LENGTH_CHARACTERS_ERROR": "Maximum {{maxLength}} characters allowed",
     "NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED": "Numbers and special characters are not allowed",
     "CHARACTERS_AND_SPECIAL_CHARACTERS_NOT_ALLOWED": "Characters and special characters are not allowed",
