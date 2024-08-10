@@ -39,7 +39,7 @@ export const useLocationState = (
   const [selectedBlockCohortId, setSelectedBlockCohortId] = useState("");
   const [blockFieldId, setBlockFieldId] = useState("");
   const [stateFieldId, setStateFieldId] = useState("");
-  const [distrctFieldId, setDistrictFieldId] = useState("");
+  const [districtFieldId, setDistrictFieldId] = useState("");
 
   const handleStateChangeWrapper = useCallback(
     async (selectedNames: string[], selectedCodes: string[]) => {
@@ -270,7 +270,7 @@ export const useLocationState = (
     selectedBlockCode,
     dynamicFormForBlock,
     blockFieldId,
-    distrctFieldId,
+    districtFieldId,
     stateFieldId,
     handleStateChangeWrapper,
     handleDistrictChangeWrapper,

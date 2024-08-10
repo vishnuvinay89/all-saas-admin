@@ -63,5 +63,11 @@ legend.Mui-focused {
   color: inherit !important;
 }
 
+.MuiPagination-ul li button {
+  color: inherit !important;
+}
 
-
+/* To hide the empty menu item */
+ul.MuiList-root li.MuiMenuItem-root[data-value=""] {
+  display: none !important;
+}
