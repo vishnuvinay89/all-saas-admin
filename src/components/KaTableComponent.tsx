@@ -13,8 +13,8 @@ import { firstLetterInUpperCase } from "@/utils/Helper";
 interface KaTableComponentProps {
   columns: ITableProps["columns"];
   data?: ITableProps["data"];
-  offset?: any;
-  limit?: any;
+  offset?: number;
+  limit?: number;
   PagesSelector?: any;
   PageSizeSelector?: any;
   pageSizes?: any;
@@ -108,19 +108,19 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                     />
                   );
                 }
-                if (props.column.key === DataKey?.UPDATEDAT) {
+                if (props.column.key === DataKey?.UPDATED_AT) {
                   return format(
                     props.rowData?.updatedAt,
                     DateFormat.YYYY_MM_DD,
                   );
-                } else if (props.column.key === DataKey?.CREATEDAT) {
+                } else if (props.column.key === DataKey?.CREATED_AT) {
                   return format(
                     props.rowData?.createdAt,
                     DateFormat.YYYY_MM_DD,
                   );
-                } else if (props.column.key === DataKey.CREATEDBY) {
+                } else if (props.column.key === DataKey.CREATED_BY) {
                   return <UserNameCell userId={props.rowData?.createdBy} />;
-                } else if (props.column.key === DataKey.UPDATEDBY) {
+                } else if (props.column.key === DataKey.UPDATED_BY) {
                   return <UserNameCell userId={props.rowData?.updatedBy} />;
                 }
                 if (props.column.key === DataKey.STATUS) {
