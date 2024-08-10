@@ -23,7 +23,8 @@ import { showToastMessage } from "@/components/Toastify";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { AddBlockModal } from "@/components/AddBlockModal";
 import PageSizeSelector from "@/components/PageSelector";
-import { SORT } from "@/utils/app.constant";
+import { SORT, Storage } from "@/utils/app.constant";
+import { getUserDetails } from "@/services/UserList";
 
 type StateDetail = {
   block: string | undefined;
@@ -72,29 +73,36 @@ const Block: React.FC = () => {
   const [sortBy, setSortBy] = useState<[string, string]>(["name", "asc"]);
   const [paginationCount, setPaginationCount] = useState<number>(0);
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10, 20, 50]);
-  const [initialState, setInitialState] = useState<string>("");
   const [initialDistrict, setInitialDistrict] = useState<string>("");
-  //get state list
-  useEffect(() => {
-    const fetchStates = async () => {
-      try {
-        setLoading(true);
-        const data = await getStateBlockDistrictList({ fieldName: "states" });
+  const [stateCode, setStateCode] = useState<any>([]);
+  const [stateValue, setStateValue] = useState<string>("");
 
-        if (data?.result?.values) {
-          setStateData(data.result.values);
-          setSelectedState(data.result.values[0].value);
-        } else {
-          setStateData([]);
+  useEffect(() => {
+    const fetchUserDetail = async () => {
+      let userId: any;
+      try {
+        if (typeof window !== "undefined" && window.localStorage) {
+          userId = localStorage.getItem(Storage.USER_ID);
+        }
+        const response = await getUserDetails(userId);
+
+        console.log("profile api is triggered", response.userData.customFields);
+
+        const statesField = response.userData.customFields.find(
+          (field: { label: string }) => field.label === "STATES"
+        );
+
+        console.log("stateField", statesField);
+
+        if (statesField) {
+          setStateValue(statesField.value);
+          setStateCode(statesField.code);
         }
       } catch (error) {
-        console.error("Error fetching state data:", error);
-        setStateData([]);
-      } finally {
-        setLoading(false);
+        console.log(error);
       }
     };
-    fetchStates();
+    fetchUserDetail();
   }, []);
 
   //get district list upon states
@@ -181,26 +189,26 @@ const Block: React.FC = () => {
       width: "130",
     },
     {
-      key: "createdBy",
+      key: "createdAt",
       title: t("MASTER.CREATED_AT"),
       dataType: DataType.String,
       width: "130",
     },
     {
-      key: "updatedBy",
+      key: "updatedAt",
       title: t("MASTER.UPDATED_AT"),
       dataType: DataType.String,
       width: "130",
     },
     {
       key: "createdAt",
-      title: t("MASTER.CREATED_AT"),
+      title: t("MASTER.CREATED_BY"),
       dataType: DataType.String,
       width: "160",
     },
     {
       key: "updatedAt",
-      title: t("MASTER.UPDATED_AT"),
+      title: t("MASTER.UPDATED_BY"),
       dataType: DataType.String,
       width: "160",
     },
@@ -224,9 +232,12 @@ const Block: React.FC = () => {
     setSelectedState(selectedState);
 
     try {
+      const limit = pageLimit;
+      const offset = pageOffset * limit;
+
       const data = {
-        limit: 10,
-        offset: 0,
+        limit: limit,
+        offset: offset,
         controllingfieldfk: selectedState,
         fieldName: "districts",
       };
@@ -246,9 +257,11 @@ const Block: React.FC = () => {
     console.log("selected district", selectedDistrict);
 
     try {
+      const limit = pageLimit;
+      const offset = pageOffset * limit;
       const data = {
-        limit: 10,
-        offset: 0,
+        limit: limit,
+        offset: offset,
         controllingfieldfk: selectedDistrict,
         fieldName: "blocks",
       };
@@ -278,7 +291,6 @@ const Block: React.FC = () => {
   };
 
   const handleConfirmDelete = async () => {
-    console.log("selected state for delete", selectedStateForDelete);
     if (selectedStateForDelete) {
       try {
         await deleteOption("blocks", selectedStateForDelete.value);
@@ -455,11 +467,9 @@ const Block: React.FC = () => {
                   value={selectedState}
                   onChange={handleStateChange}
                 >
-                  {stateData.map((stateDetail) => (
-                    <MenuItem key={stateDetail.value} value={stateDetail.value}>
-                      {transformLabel(stateDetail.label)}
-                    </MenuItem>
-                  ))}
+                  <MenuItem key={stateCode} value={stateCode}>
+                    {transformLabel(stateValue)}
+                  </MenuItem>
                 </Select>
               </FormControl>
             </Box>
@@ -538,4 +548,3 @@ export default Block;
 function fetchBlocks(blocksFieldId: string) {
   throw new Error("Function not implemented.");
 }
-

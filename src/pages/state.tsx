@@ -67,6 +67,7 @@ const State: React.FC = () => {
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [paginationCount, setPaginationCount] = useState<number>(Numbers.ZERO);
   const [userName, setUserName] = React.useState<string | null>("");
+  const [statesProfilesData, setStatesProfilesData] = useState<any>([]);
 
   const setPid = useStore((state) => state.setPid);
 
@@ -244,31 +245,6 @@ const State: React.FC = () => {
   useEffect(() => {
     fetchStateData(searchKeyword);
   }, [searchKeyword, pageLimit, pageOffset, sortBy]);
-
-  const getUserName = () => {
-    if (typeof window !== "undefined" && window.localStorage) {
-      const name = localStorage.getItem(Storage.NAME);
-      setUserName(name);
-    }
-  };
-
-  useEffect(() => {
-    getUserName();
-    const fetchUserDetail = async () => {
-      let userId;
-      try {
-        if (typeof window !== "undefined" && window.localStorage) {
-          userId = localStorage.getItem(Storage.USER_ID);
-        }
-        const response = await getUserDetails(userId);
-        console.log("profile api is triggered", response);
-        console.log(response.userData);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchUserDetail();
-  }, []);
 
   return (
     <HeaderComponent

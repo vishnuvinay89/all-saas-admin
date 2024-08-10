@@ -22,15 +22,20 @@ import Loader from "@/components/Loader";
 import AddDistrictModal from "@/components/AddDistrictModal";
 import { Pagination } from "@mui/material";
 import PageSizeSelector from "@/components/PageSelector";
-import { Numbers, SORT } from "@/utils/app.constant";
-import { createCohort } from "@/services/CohortService/cohortService";
+import { Numbers, SORT, Storage } from "@/utils/app.constant";
+import {
+  createCohort,
+  getCohortList,
+} from "@/services/CohortService/cohortService";
 import useStore from "@/store/store";
+import { getUserDetails } from "@/services/UserList";
 
 type StateDetail = {
+  selectedStateDropdown: string | undefined;
   controllingField: string | undefined;
   value: string;
   label: string;
-  selectedState?: string; // Add the selectedState property here
+  selectedState?: string; 
 };
 
 type DistrictDetail = {
@@ -40,7 +45,7 @@ type DistrictDetail = {
   createdAt: any;
   value: string;
   label: string;
-  controllingField: string; // Add this line
+  controllingField: string;
 };
 
 const District: React.FC = () => {
@@ -58,7 +63,7 @@ const District: React.FC = () => {
   const [confirmationDialogOpen, setConfirmationDialogOpen] =
     useState<boolean>(false);
   const [districtFieldId, setDistrictFieldId] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [pageCount, setPageCount] = useState<number>(Numbers.ONE);
   const [pageOffset, setPageOffset] = useState<number>(Numbers.ZERO);
@@ -68,30 +73,69 @@ const District: React.FC = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [fieldId, setFieldId] = useState<string>("");
   const [paginationCount, setPaginationCount] = useState<number>(Numbers.ZERO);
+  const [stateCode, setStateCode] = useState<any>([]);
+  const [stateValue, setStateValue] = useState<string>("");
+  const [selectedStateDropdown, setSelectedStateDropdown] =
+    useState<string>("");
+  const [cohortStatus, setCohortStatus] = useState<any>();
+  const [cohortId, setCohortId] = useState<any>(); // [setCohortId]
+  // const [value, setValue] = useState(""); // State for value
+  // const [label, setLabel] = useState(""); // State for label
 
-  const fetchStateData = async () => {
-    try {
-      setLoading(true);
-      const data = await getStateBlockDistrictList({ fieldName: "states" });
+  // const fetchStateData = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const data = await getStateBlockDistrictList({ fieldName: "states" });
 
-      if (data?.result?.values) {
-        setStateData(data.result.values);
-        setSelectedState("ALL");
-        fetchDistrictData("ALL");
-      } else {
-        setStateData([]);
-      }
-    } catch (error) {
-      console.error("Error fetching state data:", error);
-      setStateData([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     if (data?.result?.values) {
+  //       setStateData(data.result.values);
+  //       setSelectedState("ALL");
+  //       fetchDistrictData("ALL");
+  //     } else {
+  //       setStateData([]);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching state data:", error);
+  //     setStateData([]);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
-    fetchStateData();
-  }, [pageOffset, pageLimit]);
+    const fetchUserDetail = async () => {
+      let userId;
+      try {
+        if (typeof window !== "undefined" && window.localStorage) {
+          userId = localStorage.getItem(Storage.USER_ID);
+        }
+        const response = await getUserDetails(userId);
+        console.log("profile api is triggered", response.userData.customFields);
+
+        const statesField = response.userData.customFields.find(
+          (field) => field.label === "STATES"
+        );
+
+        console.log("stateField", statesField);
+
+        if (statesField) {
+          setStateValue(statesField.value);
+          setStateCode(statesField.code);
+        }
+
+        console.log("stateValue", stateValue);
+        console.log("stateCode", stateCode);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchUserDetail();
+    // return stateValue;
+  }, []);
+  
+  // useEffect(() => {
+  //   fetchStateData();
+  // }, [pageOffset, pageLimit]);
 
   const fetchDistrictData = async (stateId: string) => {
     try {
@@ -110,7 +154,7 @@ const District: React.FC = () => {
       setDistrictData(
         districtData.result.values.map((district: any) => ({
           ...district,
-          controllingField: stateId, // Add controllingField to each district
+          controllingField: stateId,
         })) || []
       );
       console.log(stateId);
@@ -121,7 +165,6 @@ const District: React.FC = () => {
       const pageCount = Math.ceil(totalCount / limit);
       setPageCount(pageCount);
 
-      // Update page size options based on total count
       if (totalCount >= 15) {
         setPageSizeArray([5, 10, 15]);
       } else if (totalCount >= 10) {
@@ -136,31 +179,36 @@ const District: React.FC = () => {
   };
 
   const handleStateChange = async (event: SelectChangeEvent<string>) => {
-    const selectedState = event.target.value;
-    console.log("selectedState", selectedState);
+    const selectedStateDropdown = event.target.value;
+    setSelectedStateDropdown(selectedStateDropdown);
+    console.log("selectedStateDropdown", selectedStateDropdown);
 
-    setSelectedState(selectedState);
+    await fetchDistrictData(selectedStateDropdown);
 
-    try {
-      const data = {
-        limit: pageLimit,
-        offset: pageOffset * pageLimit,
-        controllingfieldfk: selectedState === "ALL" ? undefined : selectedState,
-        fieldName: "districts",
+    if (selectedStateDropdown) {
+      const reqParams = {
+        limit: 10,
+        offset: 0,
+        filters: {
+          name: "Maharashtra",
+          type: "STATE",
+        },
       };
-      const districtData = await getDistrictsForState(data);
-      setDistrictData(districtData.result.values || []);
-    } catch (error) {
-      console.error("Error fetching district data", error);
-      setDistrictData([]);
+      const getCohortData = await getCohortList(reqParams);
+      console.log("getCohortData", getCohortData);
+      setCohortStatus(getCohortData?.result?.cohortDetails?.status);
+      setCohortId(getCohortData?.result?.cohortDetails?.cohortId);
     }
   };
   const handleEdit = (rowData: DistrictDetail) => {
     setModalOpen(true);
+
     const updatedRowData = {
+      selectedStateDropdown: selectedStateDropdown,
       ...rowData,
-      selectedState: selectedState,
     };
+
+    console.log("updatedRowData", updatedRowData);
 
     setSelectedStateForEdit(updatedRowData);
   };
@@ -216,8 +264,8 @@ const District: React.FC = () => {
       const queryParameters = {
         name: name,
         type: "DISTRICT",
-        status: "active",
-        parentId: store.pid,
+        status: cohortStatus,
+        parentId: cohortId,
         customFields: [
           {
             fieldId: fieldId,
@@ -232,8 +280,7 @@ const District: React.FC = () => {
 
       if (response) {
         showToastMessage("District updated successfully", "success");
-        // showToastMessage("District added successfully", "success");
-        fetchDistrictData(fieldId); // Pass stateId here
+        fetchDistrictData(fieldId); //
       } else {
         showToastMessage("Failed to create/update district", "error");
       }
@@ -325,7 +372,7 @@ const District: React.FC = () => {
             ? {
                 name: selectedStateForEdit.label,
                 value: selectedStateForEdit.value,
-                controllingField: selectedStateForEdit.selectedState,
+                controllingField: selectedStateForEdit.selectedStateDropdown,
               }
             : {}
         }
@@ -372,16 +419,14 @@ const District: React.FC = () => {
                 <Select
                   labelId="state-select-label"
                   id="state-select"
-                  value={selectedState}
+                  value={selectedStateDropdown}
                   onChange={handleStateChange}
                   label={t("MASTER.STATE")}
                 >
                   <MenuItem value="ALL">{t("ALL")}</MenuItem>
-                  {stateData.map((state) => (
-                    <MenuItem key={state.value} value={state.value}>
-                      {transformLabel(state.label)}
-                    </MenuItem>
-                  ))}
+                  <MenuItem key={stateCode} value={stateCode}>
+                    {transformLabel(stateValue)}
+                  </MenuItem>
                 </Select>
               </FormControl>
             </Box>
