@@ -124,9 +124,11 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           const property = error.property.substring(1);
 
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
-            error.message = t("FORM_ERROR_MESSAGES.MAX_LENGTH_DIGITS_ERROR", {
-              maxLength: schema.properties?.[property]?.maxLength
-            });
+           
+            if (property === 'age') {
+              error.message = t("FORM_ERROR_MESSAGES.MAX_LENGTH_DIGITS_ERROR_AGE", {
+                maxLength: schema.properties?.[property]?.maxLength
+              });            }
           }
           break;
         }
@@ -136,6 +138,13 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             error.message = t("FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR", {
               minLength: schema.properties?.[property]?.minLength
             });
+
+            if (property === 'age') {
+              error.message = t("FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR_AGE", {
+                minLength: schema.properties?.[property]?.minLength
+              });
+            //  error.message = `Age should be greater than or equal to ${error?.params?.limit}`
+            }
           }
           break;
         }

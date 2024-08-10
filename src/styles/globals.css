@@ -57,6 +57,10 @@ input[type="number"]::-webkit-outer-spin-button {
   display: none !important;
 }
 
+/* To show legend in black or inherited color instead of primary color */
 legend.Mui-focused {
   color: inherit !important;
 }
+
+
+
