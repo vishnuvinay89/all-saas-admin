@@ -189,7 +189,8 @@ const Profile = () => {
           setUserId(userId);
 
           console.log("true");
-          const response = await getUserDetailsInfo(userId);
+          const fieldValue=true
+          const response = await getUserDetailsInfo(userId, fieldValue);
           console.log(response.userData);
           // setUserName(response?.userData?.name);
           console.log(userName);
