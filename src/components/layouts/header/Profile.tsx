@@ -19,7 +19,7 @@ import { Storage } from "@/utils/app.constant";
 import EditIcon from '@mui/icons-material/Edit';
 import PhoneIcon from '@mui/icons-material/Phone';
 import MailIcon from '@mui/icons-material/Mail';
-import { getUserDetails } from "@/services/UserList";
+import { getUserDetailsInfo } from "@/services/UserList";
 
 const Profile = () => {
   const [anchorEl4, setAnchorEl4] = React.useState<null | HTMLElement>(null);
@@ -75,7 +75,7 @@ console.log(profileClick)
      if(userId && profileClick)   
       {
         console.log("true")
-        const response=await getUserDetails(userId)
+        const response=await getUserDetailsInfo(userId)
          console.log(response.userData)
          setMobile(response?.userData?.mobile);
          setEmail(response?.userData?.email);
