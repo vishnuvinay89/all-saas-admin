@@ -1,5 +1,5 @@
 import FingerprintJS from "fingerprintjs2";
-import { getUserDetails } from "../services/UserList";
+import { getUserDetailsInfo } from "../services/UserList";
 import { Role, FormContextType } from "./app.constant";
 import { State } from "./Interfaces";
 
@@ -26,7 +26,7 @@ export const getUserName = async (userId: string) => {
   try {
     const id = userId;
     const fieldValue = true;
-    const userDetails = await getUserDetails(id, fieldValue);
+    const userDetails = await getUserDetailsInfo(id, fieldValue);
     console.log("userDetails", userDetails);
     return userDetails?.userData?.name; // Accessing the name property from userData
   } catch (error) {

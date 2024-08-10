@@ -17,7 +17,7 @@ import KaTableComponent from "../components/KaTableComponent";
 import Loader from "../components/Loader";
 import { deleteUser } from "../services/DeleteUser";
 import { getCohortList } from "../services/GetCohortList";
-import { userList, getUserDetails } from "../services/UserList";
+import { userList, getUserDetailsInfo } from "../services/UserList";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import { Role } from "@/utils/app.constant";
 import { getFormRead } from "@/services/CreateUserService";
@@ -390,7 +390,7 @@ const UserTable: React.FC<UserTableProps> = ({
       const userId = rowData.userId;
       setUserId(userId);
       const fieldValue = true;
-      const response = await getUserDetails(userId, fieldValue);
+      const response = await getUserDetailsInfo(userId, fieldValue);
       console.log(role);
 
       let formFields;
@@ -446,7 +446,7 @@ const UserTable: React.FC<UserTableProps> = ({
           offset=0;
         }
         const resp = await userList({ limit, filters, sort, offset, fields });
-
+console.log(resp?.getUserDetails)
         const result = resp?.getUserDetails;
         // console.log(resp?.totalCount)
         if (resp?.totalCount >= 15) {
