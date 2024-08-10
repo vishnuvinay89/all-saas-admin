@@ -203,6 +203,9 @@ export const GenerateSchemaAndUiSchema = (
     if (field?.maxLength) {
       fieldSchema.maxLength = Number(field.maxLength);
     }
+    if (field?.default) {
+      fieldSchema.default = field.default;
+    }
     if (field?.validation) {
       if (field?.validation?.includes('numeric')) {
         // fieldUiSchema['ui:field'] = 'NumberInputField';

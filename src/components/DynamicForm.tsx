@@ -5,8 +5,9 @@ import { RJSFSchema, RegistryFieldsType, WidgetProps } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
 import { useTranslation } from "next-i18next";
 import React, { ReactNode, useEffect, useState } from "react";
-import CustomRadioWidget from "./CustomRadioWidget";
-import MultiSelectCheckboxes from "./MultiSelectCheckboxes";
+import CustomRadioWidget from "./form/CustomRadioWidget";
+import MultiSelectCheckboxes from "./form/MultiSelectCheckboxes";
+import MultiSelectDropdown from "./form/MultiSelectDropdown";
 const FormWithMaterialUI = withTheme(MaterialUITheme);
 
 interface DynamicFormProps {
@@ -15,22 +16,20 @@ interface DynamicFormProps {
   formData?: object;
   onSubmit: (
     data: IChangeEvent<any, RJSFSchema, any>,
-    event: React.FormEvent<any>,
+    event: React.FormEvent<any>
   ) => void | Promise<void>;
   onChange: (event: IChangeEvent<any>) => void;
   onError: (errors: any) => void;
   showErrorList: boolean;
   id?: string; // Optional id prop
 
-
-  widgets: {
+  widgets?: {
     [key: string]: React.FC<WidgetProps<any, RJSFSchema, any>>;
   };
   customFields: {
     [key: string]: React.FC<RegistryFieldsType<any, RJSFSchema, any>>;
   };
   children?: ReactNode;
-  
 }
 
 const DynamicForm: React.FC<DynamicFormProps> = ({
@@ -43,16 +42,20 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   onError,
   customFields,
   children,
-  
 }) => {
   const { t } = useTranslation();
-  const [localFormData, setLocalFormData] = useState(formData || {});
-  const submittedButtonStatus = useSubmittedButtonStore((state: any) => state.submittedButtonStatus);
-  const setSubmittedButtonStatus = useSubmittedButtonStore((state:any) => state.setSubmittedButtonStatus);
+  const [localFormData, setLocalFormData] = useState(formData ?? {});
+  const submittedButtonStatus = useSubmittedButtonStore(
+    (state: any) => state.submittedButtonStatus
+  );
+  const setSubmittedButtonStatus = useSubmittedButtonStore(
+    (state: any) => state.setSubmittedButtonStatus
+  );
 
   const widgets: any = {
+    MultiSelectDropdown: MultiSelectDropdown,
     MultiSelectCheckboxes: MultiSelectCheckboxes,
-    CustomRadioWidget: CustomRadioWidget
+    CustomRadioWidget: CustomRadioWidget,
   };
 
   const handleError = (errors: any) => {
@@ -80,7 +83,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     formEvent: React.FormEvent<any>
   ) => {
     console.log("Submit button clicked");
-   
+
     onSubmit(event, formEvent);
   };
 
@@ -90,9 +93,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         if (Array.isArray(data[key])) {
           data[key] = Array.from(
             new Set(
-              data[key]
-                .filter((item: any) => item !== "")
-                //.map((item: any) => (item === "_lifeskills" ? "life_skills" : item))
+              data[key].filter((item: any) => item !== "")
+              //.map((item: any) => (item === "_lifeskills" ? "life_skills" : item))
             )
           );
         }
@@ -103,7 +105,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     const cleanedFormData = cleanAndReplace(event.formData);
     console.log("Form data changed:", cleanedFormData);
 
-    setLocalFormData(cleanedFormData); 
+    setLocalFormData(cleanedFormData);
     // Update local form data state
     onChange({ ...event, formData: cleanedFormData });
   };
@@ -111,24 +113,27 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   const transformErrors = (errors: any) => {
     console.log("errors", errors);
     console.log("schema", schema);
-    //if (!submitted) return [];
 
     return errors?.map((error: any) => {
       switch (error.name) {
         case "required": {
-         // console.log(submittedButtonStatus);
-          error.message = submittedButtonStatus? t("FORM_ERROR_MESSAGES.THIS_IS_REQUIRED_FIELD") : "";
+          error.message = submittedButtonStatus
+            ? t("FORM_ERROR_MESSAGES.THIS_IS_REQUIRED_FIELD")
+            : "";
           break;
         }
         case "maximum": {
           const property = error.property.substring(1);
 
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
-           
-            if (property === 'age') {
-              error.message = t("FORM_ERROR_MESSAGES.MAX_LENGTH_DIGITS_ERROR_AGE", {
-                maxLength: schema.properties?.[property]?.maxLength
-              });            }
+            if (property === "age") {
+              error.message = t(
+                "FORM_ERROR_MESSAGES.MAX_LENGTH_DIGITS_ERROR_AGE",
+                {
+                  maxLength: schema.properties?.[property]?.maxLength,
+                }
+              );
+            }
           }
           break;
         }
@@ -136,14 +141,17 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           const property = error.property.substring(1);
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
             error.message = t("FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR", {
-              minLength: schema.properties?.[property]?.minLength
+              minLength: schema.properties?.[property]?.minLength,
             });
 
-            if (property === 'age') {
-              error.message = t("FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR_AGE", {
-                minLength: schema.properties?.[property]?.minLength
-              });
-            //  error.message = `Age should be greater than or equal to ${error?.params?.limit}`
+            if (property === "age") {
+              error.message = t(
+                "FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR_AGE",
+                {
+                  minLength: schema.properties?.[property]?.minLength,
+                }
+              );
+              //  error.message = `Age should be greater than or equal to ${error?.params?.limit}`
             }
           }
           break;
@@ -154,9 +162,9 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           const property = error.property.substring(1);
 
           switch (pattern) {
-            case '^[a-zA-Z][a-zA-Z ]*[a-zA-Z]$': {
+            case "^[a-zA-Z][a-zA-Z ]*[a-zA-Z]$": {
               error.message = t(
-                "FORM_ERROR_MESSAGES.NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED",
+                "FORM_ERROR_MESSAGES.NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
               );
               break;
             }
@@ -165,7 +173,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 schema.properties?.[property]?.validation?.includes("mobile")
               ) {
                 error.message = t(
-                  "FORM_ERROR_MESSAGES.ENTER_VALID_MOBILE_NUMBER",
+                  "FORM_ERROR_MESSAGES.ENTER_VALID_MOBILE_NUMBER"
                 );
               } else if (
                 schema.properties?.[property]?.validation?.includes(".age")
@@ -173,14 +181,14 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 error.message = t("age must be valid");
               } else {
                 error.message = t(
-                  "FORM_ERROR_MESSAGES.CHARACTERS_AND_SPECIAL_CHARACTERS_NOT_ALLOWED",
+                  "FORM_ERROR_MESSAGES.CHARACTERS_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
                 );
               }
               break;
             }
             case "^d{10}$": {
               error.message = t(
-                "FORM_ERROR_MESSAGES.CHARACTERS_AND_SPECIAL_CHARACTERS_NOT_ALLOWED",
+                "FORM_ERROR_MESSAGES.CHARACTERS_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
               );
               break;
             }
@@ -219,15 +227,14 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     });
   };
   useEffect(() => {
-    setSubmittedButtonStatus(false)
-
+    setSubmittedButtonStatus(false);
   }, []);
   return (
-    <div >
+    <div>
       <FormWithMaterialUI
         schema={schema}
         uiSchema={uiSchema}
-        formData={localFormData} 
+        formData={localFormData}
         onChange={handleChange}
         onSubmit={handleSubmit}
         validator={validator}
@@ -240,10 +247,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         fields={customFields}
         id={id}
       >
-                <style>{`.rjsf-default-submit { display: none !important; }`}</style>
-
+                        <style>{`.rjsf-default-submit { display: none !important; }`}</style>
         {children}
-        
       </FormWithMaterialUI>
     </div>
   );
