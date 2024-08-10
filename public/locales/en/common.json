@@ -74,8 +74,9 @@
     "ALL_BLOCKS":"All Blocks",
     "ALL_DISTRICTS":"All Districts",
     "ALL_STATES":"All States",
-    "LOGOUT":"Log out"
-    
+    "LOGOUT":"Log out",
+    "HI":"Hi",
+    "MOBILE": "Mobile"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
