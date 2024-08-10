@@ -8,16 +8,10 @@ import React, { useEffect } from "react";
 import { getFormRead } from "@/services/CreateUserService";
 import { getUserDetailsInfo } from "@/services/UserList";
 import { Storage } from "@/utils/app.constant";
-import EditIcon from '@mui/icons-material/Edit';
-import MailIcon from '@mui/icons-material/Mail';
-import PhoneIcon from '@mui/icons-material/Phone';
-import {
-  Box,
-  Button,
-  IconButton,
-  Menu,
-  Typography
-} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import MailIcon from "@mui/icons-material/Mail";
+import PhoneIcon from "@mui/icons-material/Phone";
+import { Box, Button, IconButton, Menu, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
 const Profile = () => {
@@ -37,12 +31,11 @@ const Profile = () => {
   const [email, setEmail] = React.useState<string | null>("");
   const { t } = useTranslation();
 
-
   const router = useRouter();
 
   const handleClick4 = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl4(event.currentTarget);
-    setProfileClick(true)
+    setProfileClick(true);
   };
 
   const handleClose4 = () => {
@@ -50,19 +43,18 @@ const Profile = () => {
   };
 
   const handleLogout = () => {
-    if (typeof window !== "undefined" && window.localStorage) {
-      localStorage.removeItem("token");
-    }
-    router.push("/logout");
+    // if (typeof window !== "undefined" && window.localStorage) {
+    //   localStorage.removeItem("token");
+    // }
+    // router.push("/logout");
   };
 
- 
   const mapFields = (formFields: any, response: any) => {
     let initialFormData: any = {};
     formFields.fields.forEach((item: any) => {
       const userData = response?.userData;
       const customFieldValue = userData?.customFields?.find(
-        (field: any) => field.fieldId === item.fieldId,
+        (field: any) => field.fieldId === item.fieldId
       );
 
       const getValue = (data: any, field: any) => {
@@ -74,8 +66,8 @@ const Profile = () => {
           if (data[item.name] && item?.maxSelections > 1) {
             return [field?.value];
           } else if (item?.type === "checkbox") {
-            console.log(item)
-            console.log(String(field?.value).split(","))
+            console.log(item);
+            console.log(String(field?.value).split(","));
 
             return String(field?.value).split(",");
           } else {
@@ -102,7 +94,7 @@ const Profile = () => {
           if (userData[item.name] && item?.maxSelections > 1) {
             initialFormData[item.name] = [userData[item.name]];
           } else if (item?.type === "checkbox") {
-           // console.log("checkbox")
+            // console.log("checkbox")
 
             initialFormData[item.name] = String(userData[item.name]).split(",");
           } else {
@@ -133,14 +125,12 @@ const Profile = () => {
   };
   const handleEditClick = async (rowData: any) => {
     handleClose4();
-    if(submitValue)
-    {
+    if (submitValue) {
       setSubmitValue(false);
     }
     console.log("Edit row:", rowData);
 
     try {
-   
       const fieldValue = true;
       const response = await getUserDetailsInfo(userId, fieldValue);
       console.log(role);
@@ -182,58 +172,46 @@ const Profile = () => {
   };
   useEffect(() => {
     getUserName();
-
-
-  
-    
   }, [formdata]);
   useEffect(() => {
-    getUserName();
+    // getUserName();
 
-console.log(profileClick)
+    console.log(profileClick);
     const fetchUserDetail = async () => {
-     let userId;
-     try{
-      if (typeof window !== "undefined" && window.localStorage) {
-         userId = localStorage.getItem(Storage.USER_ID);
-      }  
-      console.log(profileClick   , userId)
+      let userId;
+      try {
+        if (typeof window !== "undefined" && window.localStorage) {
+          userId = localStorage.getItem(Storage.USER_ID);
+        }
+        console.log(profileClick, userId);
 
-     if(userId && profileClick)   
-      {
-        setUserId(userId)
+        if (userId && profileClick) {
+          setUserId(userId);
 
-        console.log("true")
-        const response=await getUserDetailsInfo(userId)
-         console.log(response.userData)
-         setUserName(response?.userData?.name);
-          console.log(userName)
-         setMobile(response?.userData?.mobile);
-         setEmail(response?.userData?.email);
-         setRole(response?.userData?.role);
-         const initialLetters = userName?.split(' ').map(word => word[0]) .join('');   
-         console.log(initialLetters)
-         if(initialLetters)
-         setInitials(initialLetters)   
-      } 
-    
-  
-     }
-     
-     catch(error)
-  {
-    console.log(error)
-
-  }
-  }
-  fetchUserDetail();
-
-  
-    
+          console.log("true");
+          const response = await getUserDetailsInfo(userId);
+          console.log(response.userData);
+          // setUserName(response?.userData?.name);
+          console.log(userName);
+          setMobile(response?.userData?.mobile);
+          setEmail(response?.userData?.email);
+          setRole(response?.userData?.role);
+          const initialLetters = userName
+            ?.split(" ")
+            .map((word) => word[0])
+            .join("");
+          console.log(initialLetters);
+          if (initialLetters) setInitials(initialLetters);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchUserDetail();
   }, [profileClick, submitValue]);
 
   const handleModalSubmit = (value: boolean) => {
-   submitValue?setSubmitValue(false):setSubmitValue(true);
+    submitValue ? setSubmitValue(false) : setSubmitValue(true);
   };
   return (
     <>
@@ -293,88 +271,91 @@ console.log(profileClick)
           },
         }}
       >
-     <Box sx={{ 
-  position: 'relative',  
-  padding: '20px', 
-  borderRadius: '10px', 
-  display: 'flex', 
-  flexDirection: 'column', 
-  alignItems: 'center'
-}}>
-  <IconButton 
-    sx={{ 
-      position: 'absolute', 
-      top: 10,   
-      right: 10  
-    }} 
-    onClick={handleEditClick}  
-  >
-    <EditIcon />
-  </IconButton>
-  
-  <Box sx={{ 
-    backgroundColor: '#FFC107', 
-    padding: '10px', 
-    borderRadius: '50%', 
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    marginBottom: '20px' 
-  }}>
-    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-      {initials}
-    </Typography>
-  </Box>
-  
-  <Typography variant="h5" sx={{ marginBottom: '10px' }}>
-    {userName}
-  </Typography>
-  <Typography variant="subtitle1" sx={{ marginBottom: '20px' }}>
-    {role}
-  </Typography>
-  <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-    <PhoneIcon sx={{ marginRight: '10px' }} />
-    <Typography variant="body1">
-      {mobile}
-    </Typography>
-  </Box>
-  <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-    <MailIcon sx={{ marginRight: '10px' }} />
-    <Typography variant="body1">
-      {email}
-    </Typography>
-  </Box>
-  <Button
-    fullWidth
-    variant="contained"
-    color="primary"
-    onClick={handleLogout}
-    sx={{ fontSize: "16px" }}
-  >
-    {t("COMMON.LOGOUT")} 
-  </Button>
-</Box>
+        <Box
+          sx={{
+            position: "relative",
+            padding: "20px",
+            borderRadius: "10px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <IconButton
+            sx={{
+              position: "absolute",
+              top: 10,
+              right: 10,
+            }}
+            onClick={handleEditClick}
+          >
+            <EditIcon />
+          </IconButton>
 
+          <Box
+            sx={{
+              backgroundColor: "#FFC107",
+              padding: "10px",
+              borderRadius: "50%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+              {initials}
+            </Typography>
+          </Box>
+
+          <Typography variant="h5" sx={{ marginBottom: "10px" }}>
+            {userName}
+          </Typography>
+          <Typography variant="subtitle1" sx={{ marginBottom: "20px" }}>
+            {role}
+          </Typography>
+          <Box
+            sx={{ display: "flex", alignItems: "center", marginBottom: "10px" }}
+          >
+            <PhoneIcon sx={{ marginRight: "10px" }} />
+            <Typography variant="body1">{mobile}</Typography>
+          </Box>
+          <Box
+            sx={{ display: "flex", alignItems: "center", marginBottom: "20px" }}
+          >
+            <MailIcon sx={{ marginRight: "10px" }} />
+            <Typography variant="body1">{email}</Typography>
+          </Box>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={handleLogout}
+            sx={{ fontSize: "16px" }}
+          >
+            {t("COMMON.LOGOUT")}
+          </Button>
+        </Box>
       </Menu>
 
-
-      <CommonUserModal
+   { openEditModal && ( <CommonUserModal
         open={openEditModal}
         onClose={handleCloseAddLearnerModal}
         formData={formdata}
         isEditModal={true}
         userId={userId}
         onSubmit={handleModalSubmit}
-        userType={ 
-         // FormContextType.TEACHER
-          role===Role.STUDENT
+        userType={
+          // FormContextType.TEACHER
+          role === Role.STUDENT
             ? FormContextType.STUDENT
             : role === Role.TEACHER
               ? FormContextType.TEACHER
               : FormContextType.TEAM_LEADER
         }
       />
-      
+   )
+}
     </>
   );
 };

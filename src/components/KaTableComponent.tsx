@@ -81,7 +81,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
           {...tableProps}
           childComponents={{
             pagingSizes: {
-              content: (props) => <PageSizeSelector {...props} />,
+              content: (props) =>!isMobile? (<PageSizeSelector {...props} />): (<></>),
             },
             pagingPages: {
               content: (props) => <PagesSelector {...props} />,

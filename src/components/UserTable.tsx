@@ -24,7 +24,7 @@ import { getFormRead } from "@/services/CreateUserService";
 import { showToastMessage } from "./Toastify";
 import { capitalizeFirstLetterOfEachWordInArray } from "../utils/Helper";
 import { getUserTableColumns, getTLTableColumns } from "@/data/tableColumns";
-import { useMediaQuery } from "@mui/material";
+import { TablePagination, useMediaQuery } from "@mui/material";
 import { Theme } from "@mui/system";
 import CommonUserModal from "./CommonUserModal";
 type UserDetails = {
@@ -46,7 +46,7 @@ type FilterDetails = {
   districts?: any;
   states?: any;
   blocks?: any;
-  name?:any
+  name?: any;
 };
 
 interface Cohort {
@@ -95,8 +95,8 @@ const UserTable: React.FC<UserTableProps> = ({
   const [deleteUserState, setDeleteUserState] = useState(false);
 
   const isMobile: boolean = useMediaQuery((theme: Theme) =>
-  theme.breakpoints.down('md'), 
-);
+    theme.breakpoints.down("sm")
+  );
 
   const [confirmButtonDisable, setConfirmButtonDisable] = useState(true);
   const [pagination, setPagination] = useState(true);
@@ -112,8 +112,8 @@ const UserTable: React.FC<UserTableProps> = ({
     setOpenAddLearnerModal(true);
   };
   const handleModalSubmit = (value: boolean) => {
-    console.log("true")
-    submitValue?setSubmitValue(false):setSubmitValue(true);
+    console.log("true");
+    submitValue ? setSubmitValue(false) : setSubmitValue(true);
   };
   const handleCloseAddLearnerModal = () => {
     setOpenAddLearnerModal(false);
@@ -152,19 +152,26 @@ const UserTable: React.FC<UserTableProps> = ({
 
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
-    value: number,
+    value: number
   ) => {
     setPageOffset(value - 1);
   };
 
   const PagesSelector = () => (
-    <Pagination
-      color="primary"
-      count={pageCount}
-      page={pageOffset + 1}
-      onChange={handlePaginationChange}
-      sx={{marginTop:"10px"}}
-    />
+    <>
+      <Box sx={{ display: { xs: "block", md: "none" } }}>
+        <Pagination
+          // size="small"
+          color="primary"
+          count={pageCount}
+          page={pageOffset + 1}
+          onChange={handlePaginationChange}
+          siblingCount={0}
+          boundaryCount={1}
+          sx={{ marginTop: "10px" }}
+        />
+      </Box>
+    </>
   );
 
   const PageSizeSelectorFunction = () => (
@@ -200,7 +207,7 @@ const UserTable: React.FC<UserTableProps> = ({
   const handleFilterChange = async (event: SelectChangeEvent) => {
     console.log(event.target.value as string);
     setSelectedFilter(event.target.value as string);
-    if (event.target.value ===  Status.ACTIVE_LABEL ) {
+    if (event.target.value === Status.ACTIVE_LABEL) {
       console.log(true);
       setFilters((prevFilters) => ({
         ...prevFilters,
@@ -315,7 +322,7 @@ const UserTable: React.FC<UserTableProps> = ({
     formFields.fields.forEach((item: any) => {
       const userData = response?.userData;
       const customFieldValue = userData?.customFields?.find(
-        (field: any) => field.fieldId === item.fieldId,
+        (field: any) => field.fieldId === item.fieldId
       );
 
       const getValue = (data: any, field: any) => {
@@ -380,8 +387,7 @@ const UserTable: React.FC<UserTableProps> = ({
     return initialFormData;
   };
   const handleEdit = async (rowData: any) => {
-    if(submitValue)
-    {
+    if (submitValue) {
       setSubmitValue(false);
     }
     console.log("Edit row:", rowData);
@@ -424,7 +430,7 @@ const UserTable: React.FC<UserTableProps> = ({
     console.log("Delete row:", rowData.userId);
   };
   const handleSearch = (keyword: string) => {
-  //  console.log(filters)
+    //  console.log(filters)
     setFilters((prevFilters) => ({
       ...prevFilters,
       name: keyword,
@@ -441,12 +447,11 @@ const UserTable: React.FC<UserTableProps> = ({
         // const filters = { role: role , status:"active"};
         const sort = sortBy;
         console.log("filters", filters);
-        if(filters.name)
-        {
-          offset=0;
+        if (filters.name) {
+          offset = 0;
         }
         const resp = await userList({ limit, filters, sort, offset, fields });
-console.log(resp?.getUserDetails)
+        console.log(resp?.getUserDetails);
         const result = resp?.getUserDetails;
         // console.log(resp?.totalCount)
         if (resp?.totalCount >= 15) {
@@ -472,19 +477,19 @@ console.log(resp?.getUserDetails)
         console.log(result);
         const finalResult = result?.map((user: any) => {
           const ageField = user.customFields.find(
-            (field: any) => field.label === "AGE",
+            (field: any) => field.label === "AGE"
           );
           const genderField = user.customFields.find(
-            (field: any) => field.label === "GENDER",
+            (field: any) => field.label === "GENDER"
           );
           const blockField = user.customFields.find(
-            (field: any) => field.label === "BLOCKS",
+            (field: any) => field.label === "BLOCKS"
           );
           const districtField = user.customFields.find(
-            (field: any) => field.label === "DISTRICTS",
+            (field: any) => field.label === "DISTRICTS"
           );
           const stateField = user.customFields.find(
-            (field: any) => field.label === "STATES",
+            (field: any) => field.label === "STATES"
           );
 
           return {
@@ -505,32 +510,28 @@ console.log(resp?.getUserDetails)
               ? genderField.value?.charAt(0)?.toUpperCase() +
                 genderField.value.slice(1).toLowerCase()
               : "-",
-              createdAt:user.createdAt,
-              updatedAt:user.updatedAt,
-              createdBy:user.createdBy,
-              updatedBy:user.updatedBy
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+            createdBy: user.createdBy,
+            updatedBy: user.updatedBy,
             // centers: null,
             // Programs: null,
           };
         });
-        if(filters?.name)
-        {
+        if (filters?.name) {
           const prioritizedResult = finalResult.sort((a: any, b: any) => {
             const aStartsWith = a.name.toLowerCase().startsWith(filters?.name);
             const bStartsWith = b.name.toLowerCase().startsWith(filters?.name);
-          
+
             if (aStartsWith && !bStartsWith) return -1;
             if (!aStartsWith && bStartsWith) return 1;
             return 0;
           });
-          
-          setData(prioritizedResult);
-        }
-        
-    else{
-      setData(finalResult);
 
-    }
+          setData(prioritizedResult);
+        } else {
+          setData(finalResult);
+        }
 
         setLoading(false);
         setCohortsFetched(false);
@@ -553,8 +554,7 @@ console.log(resp?.getUserDetails)
     sortBy,
     filters,
     parentState,
-    deleteUserState
-  
+    deleteUserState,
   ]);
 
   useEffect(() => {
@@ -570,10 +570,8 @@ console.log(resp?.getUserDetails)
             //   (cohort: Cohort) => cohort.name,
             // );
             const cohortNames = response?.result?.cohortData
-            ?.filter((cohort: Cohort) => cohort.type !== 'BLOCK') // Filter out cohorts with type 'block'
-            .map((cohort: Cohort) => cohort.name); //
-
-
+              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK") // Filter out cohorts with type 'block'
+              .map((cohort: Cohort) => cohort.name); //
 
             let finalArray;
             if (cohortNames?.length >= 1) {
@@ -583,9 +581,9 @@ console.log(resp?.getUserDetails)
             // console.log(finalArray)
             return {
               ...user,
-              centers: finalArray? finalArray?.join(" , "):"-",
+              centers: finalArray ? finalArray?.join(" , ") : "-",
             };
-          }),
+          })
         );
         setData(newData);
         setCohortsFetched(true);
@@ -614,9 +612,8 @@ console.log(resp?.getUserDetails)
         },
       };
       const response = await deleteUser(userId, userData);
-      if(response)
-      {
-        deleteUserState?setDeleteUserState(false):setDeleteUserState(true)
+      if (response) {
+        deleteUserState ? setDeleteUserState(false) : setDeleteUserState(true);
       }
       handleCloseDeleteModal();
       showToastMessage(t("COMMON.USER_DELETE_SUCCSSFULLY"), "success");
@@ -661,7 +658,15 @@ console.log(resp?.getUserDetails)
   return (
     <HeaderComponent {...userProps}>
       {loading ? (
-        <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
+        <Box
+          width={"100%"}
+          id="check"
+          display={"flex"}
+          flexDirection={"column"}
+          alignItems={"center"}
+        >
+          <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
+        </Box>
       ) : data?.length !== 0 && loading === false ? (
         <KaTableComponent
           columns={
@@ -680,9 +685,7 @@ console.log(resp?.getUserDetails)
           onEdit={handleEdit}
           onDelete={handleDelete}
           pagination={pagination}
-          noDataMessage={
-            data?.length === 0 ? t("COMMON.NO_USER_FOUND") : ""
-          }
+          noDataMessage={data?.length === 0 ? t("COMMON.NO_USER_FOUND") : ""}
         />
       ) : (
         loading === false &&
@@ -695,33 +698,28 @@ console.log(resp?.getUserDetails)
           //   </Typography>
           // </Box>
 
-<KaTableComponent
-          columns={
-            role === Role.TEAM_LEADER
-              ? getTLTableColumns(t, isMobile)
-              : getUserTableColumns(t, isMobile)
-          }
-          data={data}
-          limit={pageLimit}
-          offset={pageOffset}
-          PagesSelector={PagesSelector}
-          PageSizeSelector={PageSizeSelectorFunction}
-          pageSizes={pageSizeArray}
-          extraActions={extraActions}
-          showIcons={true}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          pagination={false}
-          noDataMessage={
-            data.length === 0 ? noUserFoundJSX : ""
-          }
-        />
-
+          <KaTableComponent
+            columns={
+              role === Role.TEAM_LEADER
+                ? getTLTableColumns(t, isMobile)
+                : getUserTableColumns(t, isMobile)
+            }
+            data={data}
+            limit={pageLimit}
+            offset={pageOffset}
+            PagesSelector={PagesSelector}
+            PageSizeSelector={PageSizeSelectorFunction}
+            pageSizes={pageSizeArray}
+            extraActions={extraActions}
+            showIcons={true}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            pagination={false}
+            noDataMessage={data.length === 0 ? noUserFoundJSX : ""}
+          />
         )
-       
       )}
 
-     
       <DeleteUserModal
         open={isDeleteModalOpen}
         onClose={handleCloseDeleteModal}

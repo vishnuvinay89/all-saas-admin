@@ -75,8 +75,8 @@
     "ALL_DISTRICTS":"All Districts",
     "ALL_STATES":"All States",
     "LOGOUT":"Log out",
-    "HI":"Hi"
-    
+    "HI":"Hi",
+    "MOBILE": "Mobile"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
