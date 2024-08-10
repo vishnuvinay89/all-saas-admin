@@ -12,7 +12,7 @@ import Loader from "@/components/Loader";
 import { AddStateModal } from "@/components/AddStateModal";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { showToastMessage } from "@/components/Toastify";
-import { SORT, Numbers } from "@/utils/app.constant";
+import { SORT, Numbers, Storage } from "@/utils/app.constant";
 import { Box, Pagination, SelectChangeEvent } from "@mui/material";
 import PageSizeSelector from "@/components/PageSelector";
 import {
@@ -41,10 +41,15 @@ type cohortFilterDetails = {
   name?: string;
 };
 
+type Option = {
+  name: string;
+  value: string;
+};
+
 const State: React.FC = () => {
   const { t } = useTranslation();
   const [stateData, setStateData] = useState<StateDetail[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] =
     useState<boolean>(false);
   const [addStateModalOpen, setAddStateModalOpen] = useState<boolean>(false);
@@ -61,9 +66,8 @@ const State: React.FC = () => {
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10]);
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [paginationCount, setPaginationCount] = useState<number>(Numbers.ZERO);
-  const [filters, setFilters] = useState<cohortFilterDetails>({
-    type: "COHORT",
-  });
+  const [userName, setUserName] = React.useState<string | null>("");
+
   const setPid = useStore((state) => state.setPid);
 
   const columns = [
@@ -120,8 +124,11 @@ const State: React.FC = () => {
     setAddStateModalOpen(true);
   };
 
-  const handleAddStateSubmit = async (name: string, value: string, value: string | undefined) => {
-    const newState = { options: [{ name, value }] };
+  const handleAddStateSubmit = async (
+    name: string,
+    value: string | undefined
+  ) => {
+    const newState = { options: [{ name, value }] as Option[] };
     try {
       if (fieldId) {
         const response = await createOrUpdateOption(fieldId, newState);
@@ -136,12 +143,7 @@ const State: React.FC = () => {
 
         console.log("before cohortList");
 
-        const cohortList = await createCohort(queryParameters);
-
-        console.log("cohortList", cohortList?.result);
-        setPid(cohortList?.result?.cohortId);
-
-        console.log("fetched cohorlist success", cohortList);
+        await createCohort(queryParameters);
 
         if (response) {
           await fetchStateData(searchKeyword);
@@ -242,6 +244,31 @@ const State: React.FC = () => {
   useEffect(() => {
     fetchStateData(searchKeyword);
   }, [searchKeyword, pageLimit, pageOffset, sortBy]);
+
+  const getUserName = () => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const name = localStorage.getItem(Storage.NAME);
+      setUserName(name);
+    }
+  };
+
+  useEffect(() => {
+    getUserName();
+    const fetchUserDetail = async () => {
+      let userId;
+      try {
+        if (typeof window !== "undefined" && window.localStorage) {
+          userId = localStorage.getItem(Storage.USER_ID);
+        }
+        const response = await getUserDetails(userId);
+        console.log("profile api is triggered", response);
+        console.log(response.userData);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchUserDetail();
+  }, []);
 
   return (
     <HeaderComponent
