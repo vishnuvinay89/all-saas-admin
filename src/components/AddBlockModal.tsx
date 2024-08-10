@@ -67,6 +67,9 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     const fetchDistricts = async () => {
       try {
         const response = await getDistrictsForState({
+          limit: 10,
+          offset: 0,
+          controllingfieldfk: undefined,
           fieldName: "districts",
         });
         if (response.result.values) {
@@ -193,9 +196,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           margin="dense"
           error={!!errors.controllingField}
         >
-          <MenuItem value="" >
-            {t("COMMON.SELECT_DISTRICT")}
-          </MenuItem>
+          <MenuItem value="">{t("COMMON.SELECT_DISTRICT")}</MenuItem>
           {districts.length > 0 ? (
             districts.map((district) => (
               <MenuItem key={district.value} value={district.value}>
