@@ -123,6 +123,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
             setFormValue(formValues);
             setSchema(schema);
             setUiSchema(uiSchema);
+            console.log("teacher2")
           } else if (userType === FormContextType.TEAM_LEADER) {
             const { schema, uiSchema, formValues } = GenerateSchemaAndUiSchema(
               response,
@@ -145,7 +146,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
       }
     };
     getAddUserFormData();
-  }, []);
+  }, [userType]);
 
   const handleSubmit = async (
     data: IChangeEvent<any, RJSFSchema, any>,
@@ -272,6 +273,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           name: apiBody?.name,
           mobile: apiBody?.mobile,
           father_name: apiBody?.father_name,
+          email:apiBody?.email
         };
         const customFields = apiBody?.customFields;
         console.log(customFields);
