@@ -71,10 +71,12 @@
     "SOMETHING_WENT_WRONG": "Something went wrong",
     "BLOCK_NAME_REQUIRED": "Block Name is Required",
     "BLOCK_CODE_REQUIRED": "Code is Required",
-    "ALL_BLOCKS": "All Blocks",
-    "ALL_DISTRICTS": "All Districts",
-    "ALL_STATES": "All States",
-    "LOGOUT": "Log out"
+    "ALL_BLOCKS":"All Blocks",
+    "ALL_DISTRICTS":"All Districts",
+    "ALL_STATES":"All States",
+    "LOGOUT":"Log out",
+    "HI":"Hi",
+    "MOBILE": "Mobile"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -276,7 +278,11 @@
     "ENTER_ONLY_DIGITS": "Please enter only digits",
     "MIN_LENGTH_DIGITS_ERROR": "Minimum {{minLength}} Digits required",
     "MAX_LENGTH_DIGITS_ERROR": "Maximum {{maxLength}} Digits allowed",
-    "MIN_LENGTH_CHARACTERS_ERROR": "Minimum {{minLength}} characters required",
+     "MIN_LENGTH_CHARACTERS_ERROR": "Minimum {{minLength}} characters required",
+     "MAX_LENGTH_DIGITS_ERROR_AGE": "Age should be less than or equal to {{maxLength}}",
+     "MIN_LENGTH_DIGITS_ERROR_AGE": "Age should be greater than or equal to {{minLength}}",
+
+
     "MAX_LENGTH_CHARACTERS_ERROR": "Maximum {{maxLength}} characters allowed",
     "NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED": "Numbers and special characters are not allowed",
     "CHARACTERS_AND_SPECIAL_CHARACTERS_NOT_ALLOWED": "Characters and special characters are not allowed",

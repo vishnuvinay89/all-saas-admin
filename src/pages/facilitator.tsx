@@ -6,43 +6,41 @@ import { Role, FormContextType } from "@/utils/app.constant";
 import CommonUserModal from "@/components/CommonUserModal";
 import useSubmittedButtonStore from "@/utils/useSharedState";
 
-const TeamLeader: React.FC = () => {
+const Facilitator: React.FC = () => {
   const { t } = useTranslation();
-  const handleAddTeamLeaderClick = () => {
-    handleOpenAddTeamLeaderModal();
-  };
+  const [openAddFacilitatorModal, setOpenAddFacilitatorModal] =
+    React.useState(false);
   const [submitValue, setSubmitValue] = React.useState<boolean>(false);
   const setSubmittedButtonStatus = useSubmittedButtonStore((state:any) => state.setSubmittedButtonStatus);
 
-  const [openAddTeamLeaderModal, setOpenAddTeamLeaderModal] =
-    React.useState(false);
-  const handleOpenAddTeamLeaderModal = () => {
-    setOpenAddTeamLeaderModal(true);
+  const handleOpenAddFacilitatorModal = () => {
+    setOpenAddFacilitatorModal(true);
   };
   const handleModalSubmit = (value: boolean) => {
     setSubmitValue(true);
   };
-  const handleCloseAddTeamLeaderModal = () => {
+  const handleCloseAddFacilitatorModal = () => {
     setSubmittedButtonStatus(false)
-
-    setOpenAddTeamLeaderModal(false);
+    setOpenAddFacilitatorModal(false);
   };
 
+  const handleAddFaciliatorClick = () => {
+    handleOpenAddFacilitatorModal();
+  };
   return (
     <>
       <UserTable
-        role={Role.TEAM_LEADER}
-        searchPlaceholder={t("TEAM_LEADERS.SEARCHBAR_PLACEHOLDER")}
-        userType={t("SIDEBAR.TEAM_LEADERS")}
-        handleAddUserClick={handleAddTeamLeaderClick}
+        role={Role.TEACHER}
+        userType={t("SIDEBAR.FACILITATORS")}
+        searchPlaceholder={t("FACILITATORS.SEARCHBAR_PLACEHOLDER")}
+        handleAddUserClick={handleAddFaciliatorClick}
         parentState={submitValue}
       />
-
       <CommonUserModal
-        open={openAddTeamLeaderModal}
-        onClose={handleCloseAddTeamLeaderModal}
+        open={openAddFacilitatorModal}
+        onClose={handleCloseAddFacilitatorModal}
+        userType={FormContextType.TEACHER}
         onSubmit={handleModalSubmit}
-        userType={FormContextType.TEAM_LEADER}
       />
     </>
   );
@@ -56,4 +54,4 @@ export async function getStaticProps({ locale }: any) {
   };
 }
 
-export default TeamLeader;
+export default Facilitator;

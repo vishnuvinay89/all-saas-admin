@@ -1,31 +1,28 @@
-import React, { useEffect } from "react";
-import FeatherIcon from "feather-icons-react";
+import CommonUserModal from "@/components/CommonUserModal";
+import { FormContextType, Role } from "@/utils/app.constant";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import FeatherIcon from "feather-icons-react";
 import { useTranslation } from "next-i18next";
+import React, { useEffect } from "react";
 
-import { useRouter } from "next/router";
-import {
-  Box,
-  Menu,
-  Typography,
-  ListItemButton,
-  List,
-  ListItemText,
-  Button,
-  IconButton,
-  Divider,
-} from "@mui/material";
+import { getFormRead } from "@/services/CreateUserService";
+import { getUserDetailsInfo } from "@/services/UserList";
 import { Storage } from "@/utils/app.constant";
-import EditIcon from '@mui/icons-material/Edit';
-import PhoneIcon from '@mui/icons-material/Phone';
-import MailIcon from '@mui/icons-material/Mail';
-import { getUserDetails } from "@/services/UserList";
+import EditIcon from "@mui/icons-material/Edit";
+import MailIcon from "@mui/icons-material/Mail";
+import PhoneIcon from "@mui/icons-material/Phone";
+import { Box, Button, IconButton, Menu, Typography } from "@mui/material";
+import { useRouter } from "next/router";
 
 const Profile = () => {
   const [anchorEl4, setAnchorEl4] = React.useState<null | HTMLElement>(null);
   const [profileClick, setProfileClick] = React.useState<boolean>(false);
-
+  const [openEditModal, setOpenEditModal] = React.useState(false);
   const [userName, setUserName] = React.useState<string | null>("");
+  const [userId, setUserId] = React.useState<string>("");
+  const [formdata, setFormData] = React.useState<any>();
+  const [submitValue, setSubmitValue] = React.useState<boolean>(false);
+
   const [role, setRole] = React.useState<string | null>("");
 
   const [mobile, setMobile] = React.useState<string | null>("");
@@ -34,12 +31,11 @@ const Profile = () => {
   const [email, setEmail] = React.useState<string | null>("");
   const { t } = useTranslation();
 
-
   const router = useRouter();
 
   const handleClick4 = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl4(event.currentTarget);
-    setProfileClick(true)
+    setProfileClick(true);
   };
 
   const handleClose4 = () => {
@@ -53,53 +49,171 @@ const Profile = () => {
     router.push("/logout");
   };
 
+  const mapFields = (formFields: any, response: any) => {
+    let initialFormData: any = {};
+    formFields.fields.forEach((item: any) => {
+      const userData = response?.userData;
+      const customFieldValue = userData?.customFields?.find(
+        (field: any) => field.fieldId === item.fieldId
+      );
+
+      const getValue = (data: any, field: any) => {
+        console.log(data, field);
+        if (item.default) {
+          return item.default;
+        }
+        if (item?.isMultiSelect) {
+          if (data[item.name] && item?.maxSelections > 1) {
+            return [field?.value];
+          } else if (item?.type === "checkbox") {
+            console.log(item);
+            console.log(String(field?.value).split(","));
+
+            return String(field?.value).split(",");
+          } else {
+            return field?.value?.toLowerCase();
+          }
+        } else {
+          if (item?.type === "numeric") {
+            return parseInt(String(field?.value));
+          } else if (item?.type === "text") {
+            return String(field?.value);
+          } else {
+            if (field?.value === "FEMALE" || field?.value === "MALE") {
+              console.log(true);
+              return field?.value?.toLowerCase();
+            }
+            //  console.log()
+            return field?.value?.toLowerCase();
+          }
+        }
+      };
+
+      if (item.coreField) {
+        if (item?.isMultiSelect) {
+          if (userData[item.name] && item?.maxSelections > 1) {
+            initialFormData[item.name] = [userData[item.name]];
+          } else if (item?.type === "checkbox") {
+            // console.log("checkbox")
+
+            initialFormData[item.name] = String(userData[item.name]).split(",");
+          } else {
+            initialFormData[item.name] = userData[item.name];
+          }
+        } else if (item?.type === "numeric") {
+          console.log(item?.name);
+          initialFormData[item.name] = Number(userData[item.name]);
+        } else if (item?.type === "text" && userData[item.name]) {
+          initialFormData[item.name] = String(userData[item.name]);
+        } else {
+          console.log(item.name);
+          if (userData[item.name]) {
+            initialFormData[item.name] = userData[item.name];
+          }
+        }
+      } else {
+        const fieldValue = getValue(userData, customFieldValue);
+
+        if (fieldValue) {
+          initialFormData[item.name] = fieldValue;
+        }
+      }
+    });
+
+    console.log("initialFormData", initialFormData);
+    return initialFormData;
+  };
+  const handleEditClick = async (rowData: any) => {
+    handleClose4();
+    if (submitValue) {
+      setSubmitValue(false);
+    }
+    console.log("Edit row:", rowData);
+
+    try {
+      const fieldValue = true;
+      const response = await getUserDetailsInfo(userId, fieldValue);
+      console.log(role);
+
+      let formFields;
+      if (Role.STUDENT === role) {
+        formFields = await getFormRead("USERS", "STUDENT");
+        setFormData(mapFields(formFields, response));
+        console.log("mapped formdata", formdata);
+      } else if (Role.TEACHER === role) {
+        console.log("mapped formdata", formdata);
+
+        formFields = await getFormRead("USERS", "TEACHER");
+        setFormData(mapFields(formFields, response));
+      } else if (Role.TEAM_LEADER === role) {
+        formFields = await getFormRead("USERS", "TEAM LEADER");
+        setFormData(mapFields(formFields, response));
+      }
+      handleOpenEditModal();
+
+      console.log("response", response);
+      console.log("formFields", formFields);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getUserName = () => {
     if (typeof window !== "undefined" && window.localStorage) {
       const name = localStorage.getItem(Storage.NAME);
       setUserName(name);
     }
   };
-
+  const handleCloseAddLearnerModal = () => {
+    setOpenEditModal(false);
+  };
+  const handleOpenEditModal = () => {
+    setOpenEditModal(true);
+  };
   useEffect(() => {
     getUserName();
+  }, [formdata]);
+  useEffect(() => {
+    // getUserName();
 
-console.log(profileClick)
+    console.log(profileClick);
     const fetchUserDetail = async () => {
-     let userId;
-     try{
-      if (typeof window !== "undefined" && window.localStorage) {
-         userId = localStorage.getItem(Storage.USER_ID);
-      }  
-      console.log(profileClick   , userId)
+      let userId;
+      try {
+        if (typeof window !== "undefined" && window.localStorage) {
+          userId = localStorage.getItem(Storage.USER_ID);
+        }
+        console.log(profileClick, userId);
 
-     if(userId && profileClick)   
-      {
-        console.log("true")
-        const response=await getUserDetails(userId)
-         console.log(response.userData)
-         setMobile(response?.userData?.mobile);
-         setEmail(response?.userData?.email);
-         setRole(response?.userData?.role);
-         const initialLetters = userName?.split(' ').map(word => word[0]) .join('');   
-         if(initialLetters)
-         setInitials(initialLetters)   
-      } 
-    
-  
-     }
-     
-     catch(error)
-  {
-    console.log(error)
+        if (userId && profileClick) {
+          setUserId(userId);
 
-  }
-  }
-  fetchUserDetail();
+          console.log("true");
+          const fieldValue=true
+          const response = await getUserDetailsInfo(userId, fieldValue);
+          console.log(response.userData);
+          // setUserName(response?.userData?.name);
+          console.log(userName);
+          setMobile(response?.userData?.mobile);
+          setEmail(response?.userData?.email);
+          setRole(response?.userData?.role);
+          const initialLetters = userName
+            ?.split(" ")
+            .map((word) => word[0])
+            .join("");
+          console.log(initialLetters);
+          if (initialLetters) setInitials(initialLetters);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchUserDetail();
+  }, [profileClick, submitValue]);
 
-  
-    
-  }, [profileClick]);
-
+  const handleModalSubmit = (value: boolean) => {
+    submitValue ? setSubmitValue(false) : setSubmitValue(true);
+  };
   return (
     <>
       <Button
@@ -123,7 +237,7 @@ console.log(profileClick)
               fontWeight="400"
               sx={{ fontSize: "16px" }}
             >
-              Hi,
+              {t("COMMON.HI")}
             </Typography>
             <Typography
               variant="body1"
@@ -158,63 +272,91 @@ console.log(profileClick)
           },
         }}
       >
-      <Box sx={{ 
-    //  backgroundColor: 'ivory', 
-      padding: '20px', 
-      borderRadius: '10px', 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center'
-    }}>
-      <Box sx={{ 
-        backgroundColor: '#FFC107', 
-        padding: '10px', 
-        borderRadius: '50%', 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        marginBottom: '20px' 
-      }}>
-        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-          {initials}
-        </Typography>
-      </Box>
-      <Typography variant="h5" sx={{ marginBottom: '10px' }}>
-        {userName}
-      </Typography>
-      <Typography variant="subtitle1" sx={{ marginBottom: '20px' }}>
-        {role}
-      </Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-        <PhoneIcon sx={{ marginRight: '10px' }} />
-        <Typography variant="body1">
-          {mobile}
-        </Typography>
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-        <MailIcon sx={{ marginRight: '10px' }} />
-        <Typography variant="body1">
-          {email}
-        </Typography>
-      </Box>
-      <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              onClick={handleLogout}
-              sx={{ fontSize: "16px" }}
-            >
-             {t("COMMON.LOGOUT")} 
-            </Button>
-      {/* <IconButton sx={{ marginLeft: '10px' }}>
-          <EditIcon />
-        </IconButton> */}
-    </Box>
+        <Box
+          sx={{
+            position: "relative",
+            padding: "20px",
+            borderRadius: "10px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <IconButton
+            sx={{
+              position: "absolute",
+              top: 10,
+              right: 10,
+            }}
+            onClick={handleEditClick}
+          >
+            <EditIcon />
+          </IconButton>
+
+          <Box
+            sx={{
+              backgroundColor: "#FFC107",
+              padding: "10px",
+              borderRadius: "50%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+              {initials}
+            </Typography>
+          </Box>
+
+          <Typography variant="h5" sx={{ marginBottom: "10px" }}>
+            {userName}
+          </Typography>
+          <Typography variant="subtitle1" sx={{ marginBottom: "20px" }}>
+            {role}
+          </Typography>
+          <Box
+            sx={{ display: "flex", alignItems: "center", marginBottom: "10px" }}
+          >
+            <PhoneIcon sx={{ marginRight: "10px" }} />
+            <Typography variant="body1">{mobile}</Typography>
+          </Box>
+          <Box
+            sx={{ display: "flex", alignItems: "center", marginBottom: "20px" }}
+          >
+            <MailIcon sx={{ marginRight: "10px" }} />
+            <Typography variant="body1">{email}</Typography>
+          </Box>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={handleLogout}
+            sx={{ fontSize: "16px" }}
+          >
+            {t("COMMON.LOGOUT")}
+          </Button>
+        </Box>
       </Menu>
 
-
-
-      
+   { openEditModal && ( <CommonUserModal
+        open={openEditModal}
+        onClose={handleCloseAddLearnerModal}
+        formData={formdata}
+        isEditModal={true}
+        userId={userId}
+        onSubmit={handleModalSubmit}
+        userType={
+          // FormContextType.TEACHER
+          role === Role.STUDENT
+            ? FormContextType.STUDENT
+            : role === Role.TEACHER
+              ? FormContextType.TEACHER
+              : FormContextType.TEAM_LEADER
+        }
+      />
+   )
+}
     </>
   );
 };

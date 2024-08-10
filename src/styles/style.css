@@ -15,3 +15,7 @@
 .ka-table {
   font-size: medium;
 }
+
+.ka-cell {
+  line-height: 24px !important;
+}
