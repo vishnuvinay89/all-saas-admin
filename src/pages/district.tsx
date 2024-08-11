@@ -88,7 +88,7 @@ const District: React.FC = () => {
           userId = localStorage.getItem(Storage.USER_ID);
         }
         const response = await getUserDetails(userId);
-        console.log("profile api is triggered", response.userData.customFields);
+        console.log("profile api is triggered", response);
 
         const statesField = response.userData.customFields.find(
           (field: { label: string }) => field.label === "STATES"
@@ -167,10 +167,25 @@ const District: React.FC = () => {
           type: "STATE",
         },
       };
-      const getCohortData = await getCohortList(reqParams);
-      console.log("getCohortData", getCohortData);
-      setCohortStatus(getCohortData?.result?.cohortDetails?.status);
-      setCohortId(getCohortData?.result?.cohortDetails?.cohortId);
+
+      const response = await getCohortList(reqParams);
+      console.log("getCohortData", response);
+
+      const cohortDetails = response?.results?.cohortDetails;
+      if (cohortDetails && cohortDetails.length > 0) {
+        cohortDetails.forEach((cohort: { cohortId: any; status: any }) => {
+          const cohortId = cohort?.cohortId;
+          const cohortStatus = cohort?.status;
+
+          setCohortStatus(cohortStatus);
+          setCohortId(cohortId);
+
+          console.log("cohortStatus", cohortStatus);
+          console.log("cohortId", cohortId);
+        });
+      } else {
+        console.error("No cohort details available.");
+      }
     }
   };
   const handleEdit = (rowData: DistrictDetail) => {
