@@ -139,6 +139,11 @@
     "TEAM_LEADER_UPDATED_SUCCESSFULLY": "Team Leader has been successfully updated!",
     "EDIT_TEAM_LEADER": "Edit Team Leader"
   },
+  "ADMIN" :{
+    "ADMIN_UPDATED_SUCCESSFULLY": "Admin has been successfully updated!"
+
+  },
+
   "COHORTS": {
     "SEARCHBAR_PLACEHOLDER": "Search Center.."
   },

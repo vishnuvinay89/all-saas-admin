@@ -282,7 +282,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                 ? "LEARNERS.LEARNER_CREATED_SUCCESSFULLY"
                 : userType === FormContextType.TEACHER
                   ? "FACILITATORS.FACILITATOR_CREATED_SUCCESSFULLY"
-                  : "TEAM_LEADERS.TEAM_LEADER_CREATED_SUCCESSFULLY";
+                  :userType === FormContextType.TEAM_LEADER ?"TEAM_LEADERS.TEAM_LEADER_CREATED_SUCCESSFULLY": "ADMIN.ADMIN_UPDATED_SUCCESSFULLY";
 
             showToastMessage(t(messageKey), "success");
             // if(userType===FormContextType.STUDENT)

@@ -46,6 +46,7 @@ import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
 import DynamicForm from "@/components/DynamicForm";
 import useSubmittedButtonStore from "@/utils/useSharedState";
+import { getUserDetailsInfo } from "@/services/UserList";
 
 type cohortFilterDetails = {
   type?: string;
@@ -113,6 +114,7 @@ const Center: React.FC = () => {
   const [pageSizeArray, setPageSizeArray] = React.useState<number[]>([]);
   const [filters, setFilters] = useState<cohortFilterDetails>({
     type: "COHORT",
+    states:stateCode
   });
   const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
   const [selectedStateCode, setSelectedStateCode] = useState("");
@@ -125,6 +127,10 @@ const Center: React.FC = () => {
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
   );
+  const setAdminInformation = useSubmittedButtonStore(
+    (state: any) => state.setAdminInformation
+  );
+
   const handleCloseAddLearnerModal = () => {
     setOpenAddNewCohort(false);
   };
@@ -276,15 +282,15 @@ const Center: React.FC = () => {
     setSelectedState(selected);
 
     if (selected[0] === "") {
-      if (filters.status) setFilters({ status: filters.status });
+      if (filters.status) setFilters({    type: "COHORT",status: filters.status });
       // else setFilters({ role: role });
     } else {
       const stateCodes = code?.join(",");
       console.log("stateCodes", stateCodes);
       setSelectedStateCode(stateCodes);
       if (filters.status)
-        setFilters({ status: filters.status, states: stateCodes });
-      else setFilters({ states: stateCodes });
+        setFilters({   type: "COHORT", status: filters.status, states: stateCodes });
+      else setFilters({    type: "COHORT",states: stateCodes });
     }
 
     console.log("Selected categories:", typeof code[0]);
@@ -592,6 +598,29 @@ const Center: React.FC = () => {
   const handleAddUserClick = () => {
     setOpenAddNewCohort(true);
   };
+  const fetchUserDetail = async () => {
+    let userId;
+    try {
+      if (typeof window !== "undefined" && window.localStorage) {
+        userId = localStorage.getItem(Storage.USER_ID);
+      }
+      const fieldValue = true;
+      if (userId) {
+        console.log("true");
+        const response = await getUserDetailsInfo(userId, fieldValue);
+
+        const userInfo = response?.userData;
+        //set user info in zustand store
+        setAdminInformation(userInfo);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserDetail();
+  }, []);
 
   // props to send in header
   const userProps = {
