@@ -71,11 +71,11 @@
     "SOMETHING_WENT_WRONG": "Something went wrong",
     "BLOCK_NAME_REQUIRED": "Block Name is Required",
     "BLOCK_CODE_REQUIRED": "Code is Required",
-    "ALL_BLOCKS":"All Blocks",
-    "ALL_DISTRICTS":"All Districts",
-    "ALL_STATES":"All States",
-    "LOGOUT":"Log out",
-    "HI":"Hi",
+    "ALL_BLOCKS": "All Blocks",
+    "ALL_DISTRICTS": "All Districts",
+    "ALL_STATES": "All States",
+    "LOGOUT": "Log out",
+    "HI": "Hi",
     "MOBILE": "Mobile"
   },
   "LOGIN_PAGE": {
@@ -196,7 +196,7 @@
     "CENTER_DELETE_SUCCESSFULLY": "Center has been Successfully Deleted",
     "CENTER_CREATED_SUCCESSFULLY": "Center Created Successfully",
     "SEARCHBAR_PLACEHOLDER": "Search Center..",
-    "CENTER_UPDATE_FAILED": "Something went wrong to update data"
+    "CENTER_UPDATE_FAILED": "Something went wrong while updating center"
   },
   "FORM": {
     "FULL_NAME": "Full Name",
@@ -277,10 +277,9 @@
     "ENTER_ONLY_DIGITS": "Please enter only digits",
     "MIN_LENGTH_DIGITS_ERROR": "Minimum {{minLength}} Digits required",
     "MAX_LENGTH_DIGITS_ERROR": "Maximum {{maxLength}} Digits allowed",
-     "MIN_LENGTH_CHARACTERS_ERROR": "Minimum {{minLength}} characters required",
-     "MAX_LENGTH_DIGITS_ERROR_AGE": "Age should be less than or equal to {{maxLength}}",
-     "MIN_LENGTH_DIGITS_ERROR_AGE": "Age should be greater than or equal to {{minLength}}",
-
+    "MIN_LENGTH_CHARACTERS_ERROR": "Minimum {{minLength}} characters required",
+    "MAX_LENGTH_DIGITS_ERROR_AGE": "Age should be less than or equal to {{maxLength}}",
+    "MIN_LENGTH_DIGITS_ERROR_AGE": "Age should be greater than or equal to {{minLength}}",
 
     "MAX_LENGTH_CHARACTERS_ERROR": "Maximum {{maxLength}} characters allowed",
     "NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED": "Numbers and special characters are not allowed",

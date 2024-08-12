@@ -210,7 +210,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
           widgets={{}}
           showErrorList={true}
           customFields={customFields}
-          id="form"
+          id="new-center-form"
         >
           <Box
             style={{
@@ -223,7 +223,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
             <Button
               variant="outlined"
               type="submit"
-              form="form" // Add this line
+              form="new-center-form" // Add this line
               sx={{
                 padding: "12px 24px", // Adjust padding as needed
                 width: "200px", // Set the desired width
@@ -235,7 +235,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
             <Button
               variant="contained"
               type="submit"
-              form="form" // Add this line
+              form="new-center-form" // Add this line
               sx={{
                 padding: "12px 24px", // Adjust padding as needed
                 width: "200px", // Set the desired width

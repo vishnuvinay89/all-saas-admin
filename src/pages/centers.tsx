@@ -11,7 +11,13 @@ import {
   getCohortList,
   updateCohortUpdate,
 } from "@/services/CohortService/cohortService";
-import { Numbers, SORT, Status, Storage } from "@/utils/app.constant";
+import {
+  FormValues,
+  Numbers,
+  SORT,
+  Status,
+  Storage,
+} from "@/utils/app.constant";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationModal from "@/components/ConfirmationModal";
@@ -34,7 +40,7 @@ import { showToastMessage } from "@/components/Toastify";
 import AddNewCenters from "@/components/AddNewCenters";
 import { getCenterTableData } from "@/data/tableColumns";
 import { Theme } from "@mui/system";
-import { firstLetterInUpperCase } from "@/utils/Helper";
+import { firstLetterInUpperCase, mapFields } from "@/utils/Helper";
 import SimpleModal from "@/components/SimpleModal";
 import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
@@ -65,78 +71,6 @@ interface CohortDetails {
   parentId?: string | null;
   customFields?: CustomField[];
 }
-
-const mapFields = (formFields: any, response: any) => {
-  let initialFormData: any = {};
-  console.log("response", response?.results?.cohortDetails[0]);
-  // Extract the cohort details from the response
-  const cohortDetails = response?.results?.cohortDetails?.[0] || {};
-
-  formFields.fields.forEach((item: any) => {
-    const customFieldValue = cohortDetails?.customFields?.find(
-      (field: any) => field.fieldId === item.fieldId
-    );
-
-    const getValue = (data: any, field: any) => {
-      if (item.default) {
-        return item.default;
-      }
-      if (item?.isMultiSelect) {
-        if (data[item.name] && item?.maxSelections > 1) {
-          return [field?.value];
-        } else if (item?.type === "checkbox") {
-          return String(field?.value).split(",");
-        } else {
-          return field?.value?.toLowerCase();
-        }
-      } else if (item?.type === "radio") {
-        return field?.value || null;
-      } else if (item?.type === "numeric") {
-        return parseInt(String(field?.value));
-      } else if (item?.type === "text") {
-        return String(field?.value);
-      } else {
-        if (field?.value === "FEMALE" || field?.value === "MALE") {
-          return field?.value?.toLowerCase();
-        }
-        return field?.value?.toLowerCase();
-      }
-    };
-
-    if (item.coreField) {
-      if (item?.isMultiSelect) {
-        if (cohortDetails[item.name] && item?.maxSelections > 1) {
-          initialFormData[item.name] = [cohortDetails[item.name]];
-        } else if (item?.type === "checkbox") {
-          initialFormData[item.name] = String(cohortDetails[item.name]).split(
-            ","
-          );
-        } else {
-          initialFormData[item.name] = cohortDetails[item.name];
-        }
-      } else if (item?.type === "radio") {
-        initialFormData[item.name] = cohortDetails[item.name] || null;
-      } else if (item?.type === "numeric") {
-        initialFormData[item.name] = Number(cohortDetails[item.name]);
-      } else if (item?.type === "text" && cohortDetails[item.name]) {
-        initialFormData[item.name] = String(cohortDetails[item.name]);
-      } else {
-        if (cohortDetails[item.name]) {
-          initialFormData[item.name] = cohortDetails[item.name];
-        }
-      }
-    } else {
-      const fieldValue = getValue(cohortDetails, customFieldValue);
-
-      if (fieldValue) {
-        initialFormData[item.name] = fieldValue;
-      }
-    }
-  });
-
-  console.log("initialFormData", initialFormData);
-  return initialFormData;
-};
 
 const Center: React.FC = () => {
   // use hooks
@@ -514,13 +448,16 @@ const Center: React.FC = () => {
       let data = {
         filters: {
           cohortId: cohortId,
-        }, 
+        },
         limit: Numbers.TWENTY,
         offset: 0,
       };
       const resp = await getCohortList(data);
       const formFields = await getFormRead("cohorts", "cohort");
-      setEditFormData(mapFields(formFields, resp));
+
+      const cohortDetails = resp?.results?.cohortDetails?.[0] || {};
+
+      setEditFormData(mapFields(formFields, cohortDetails));
       setLoading(false);
       setIsEditForm(true);
     }
@@ -779,7 +716,7 @@ const Center: React.FC = () => {
               showErrorList={true}
               customFields={customFields}
               formData={editFormData}
-              id="form"
+              id="update-center-form"
             >
               <Box
                 style={{
@@ -792,7 +729,7 @@ const Center: React.FC = () => {
                 <Button
                   variant="outlined"
                   type="submit"
-                  form="form" // Add this line
+                  form="update-center-form" // Add this line
                   sx={{
                     padding: "12px 24px", // Adjust padding as needed
                     width: "200px", // Set the desired width
@@ -804,7 +741,7 @@ const Center: React.FC = () => {
                 <Button
                   variant="contained"
                   type="submit"
-                  form="form" // Add this line
+                  form="update-center-form" // Add this line
                   sx={{
                     padding: "12px 24px", // Adjust padding as needed
                     width: "200px", // Set the desired width

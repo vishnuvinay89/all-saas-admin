@@ -1,6 +1,6 @@
 import FingerprintJS from "fingerprintjs2";
 import { getUserDetailsInfo } from "../services/UserList";
-import { Role, FormContextType } from "./app.constant";
+import { Role, FormContextType, FormValues, InputTypes } from "./app.constant";
 import { State } from "./Interfaces";
 
 export const generateUUID = () => {
@@ -47,7 +47,7 @@ export const getDeviceId = () => {
 
 export const generateUsernameAndPassword = (
   stateCode: string,
-  role: string,
+  role: string
 ) => {
   const currentYear = new Date().getFullYear().toString().slice(-2); // Last two digits of the current year
   const randomNum = Math.floor(10000 + Math.random() * 90000).toString(); //NOSONAR
@@ -100,14 +100,14 @@ export const firstLetterInUpperCase = (label: string): string | null => {
     ?.join(" ");
 };
 export const capitalizeFirstLetterOfEachWordInArray = (
-  arr: string[],
+  arr: string[]
 ): string[] => {
   if (!arr) {
     return arr;
   }
   console.log(arr);
   return arr.map((str) =>
-    str.replace(/\b[a-z]/g, (char) => char.toUpperCase()),
+    str.replace(/\b[a-z]/g, (char) => char.toUpperCase())
   );
 };
 export const fieldTextValidation = (text: string) => {
@@ -120,4 +120,75 @@ export const fieldTextValidation = (text: string) => {
 export const getCurrentYearPattern = () => {
   const currentYear = new Date().getFullYear();
   return `^(19[0-9][0-9]|20[0-${Math.floor(currentYear / 10) % 10}][0-${currentYear % 10}])$`;
+};
+
+export const mapFields = (formFields: any, Details: any) => {
+  let initialFormData: any = {};
+  console.log("Details", Details);
+
+  formFields.fields.forEach((item: any) => {
+    const customFieldValue = Details?.customFields?.find(
+      (field: any) => field.fieldId === item.fieldId
+    );
+
+    const getValue = (data: any, field: any) => {
+      if (item.default) {
+        return item.default;
+      }
+      if (item?.isMultiSelect) {
+        if (data[item.name] && item?.maxSelections > 1) {
+          return [field?.value];
+        } else if (item?.type === InputTypes.CHECKBOX) {
+          return String(field?.value).split(",");
+        } else {
+          return field?.value?.toLowerCase();
+        }
+      } else if (item?.type === InputTypes.RADIO) {
+        return field?.value || null;
+      } else if (item?.type === InputTypes.NUMERIC) {
+        return parseInt(String(field?.value));
+      } else if (item?.type === InputTypes.TEXT) {
+        return String(field?.value);
+      } else {
+        if (
+          field?.value === FormValues.FEMALE ||
+          field?.value === FormValues.MALE
+        ) {
+          return field?.value?.toLowerCase();
+        }
+        return field?.value?.toLowerCase();
+      }
+    };
+
+    if (item.coreField) {
+      if (item?.isMultiSelect) {
+        if (Details[item.name] && item?.maxSelections > 1) {
+          initialFormData[item.name] = [Details[item.name]];
+        } else if (item?.type === "checkbox") {
+          initialFormData[item.name] = String(Details[item.name]).split(",");
+        } else {
+          initialFormData[item.name] = Details[item.name];
+        }
+      } else if (item?.type === "radio") {
+        initialFormData[item.name] = Details[item.name] || null;
+      } else if (item?.type === "numeric") {
+        initialFormData[item.name] = Number(Details[item.name]);
+      } else if (item?.type === "text" && Details[item.name]) {
+        initialFormData[item.name] = String(Details[item.name]);
+      } else {
+        if (Details[item.name]) {
+          initialFormData[item.name] = Details[item.name];
+        }
+      }
+    } else {
+      const fieldValue = getValue(Details, customFieldValue);
+
+      if (fieldValue) {
+        initialFormData[item.name] = fieldValue;
+      }
+    }
+  });
+
+  console.log("initialFormData", initialFormData);
+  return initialFormData;
 };
