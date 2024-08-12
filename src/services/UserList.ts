@@ -43,7 +43,7 @@ export const getUserDetailsInfo = async (
   userId?: string | string[],
   fieldValue?: boolean,
 ): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/read/${userId}?fieldvalue=${fieldValue}`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/read/${userId}?fieldvalue=true`;
   try {
     const response = await get(apiUrl);
     return response?.data?.result;

@@ -22,12 +22,20 @@ import Loader from "@/components/Loader";
 import AddDistrictModal from "@/components/AddDistrictModal";
 import { Pagination } from "@mui/material";
 import PageSizeSelector from "@/components/PageSelector";
-import { Numbers, SORT } from "@/utils/app.constant";
+import { Numbers, SORT, Storage } from "@/utils/app.constant";
+import {
+  createCohort,
+  getCohortList,
+} from "@/services/CohortService/cohortService";
+import useStore from "@/store/store";
+import { getUserDetailsInfo } from "@/services/UserList";
 
 type StateDetail = {
+  selectedStateDropdown: string | undefined;
   controllingField: string | undefined;
   value: string;
   label: string;
+  selectedState?: string;
 };
 
 type DistrictDetail = {
@@ -37,12 +45,14 @@ type DistrictDetail = {
   createdAt: any;
   value: string;
   label: string;
-  controllingField: string; // Add this line
+  controllingField: string;
 };
 
 const District: React.FC = () => {
   const { t } = useTranslation();
+  const store = useStore();
   const [selectedState, setSelectedState] = useState("ALL");
+
   const [stateData, setStateData] = useState<StateDetail[]>([]);
   const [districtData, setDistrictData] = useState<DistrictDetail[]>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -53,7 +63,7 @@ const District: React.FC = () => {
   const [confirmationDialogOpen, setConfirmationDialogOpen] =
     useState<boolean>(false);
   const [districtFieldId, setDistrictFieldId] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [pageCount, setPageCount] = useState<number>(Numbers.ONE);
   const [pageOffset, setPageOffset] = useState<number>(Numbers.ZERO);
@@ -63,30 +73,38 @@ const District: React.FC = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [fieldId, setFieldId] = useState<string>("");
   const [paginationCount, setPaginationCount] = useState<number>(Numbers.ZERO);
-
-  const fetchStateData = async () => {
-    try {
-      setLoading(true);
-      const data = await getStateBlockDistrictList({ fieldName: "states" });
-
-      if (data?.result?.values) {
-        setStateData(data.result.values);
-        setSelectedState("ALL");
-        fetchDistrictData("ALL");
-      } else {
-        setStateData([]);
-      }
-    } catch (error) {
-      console.error("Error fetching state data:", error);
-      setStateData([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [stateCode, setStateCode] = useState<any>([]);
+  const [stateValue, setStateValue] = useState<string>("");
+  const [selectedStateDropdown, setSelectedStateDropdown] =
+    useState<string>("");
+  const [cohortStatus, setCohortStatus] = useState<any>();
+  const [cohortId, setCohortId] = useState<any>();
+  const [stateFieldId, setStateFieldId] = useState<string>("");
 
   useEffect(() => {
-    fetchStateData();
-  }, [sortBy, pageOffset, pageLimit]);
+    const fetchUserDetail = async () => {
+      let userId: any;
+      try {
+        if (typeof window !== "undefined" && window.localStorage) {
+          userId = localStorage.getItem(Storage.USER_ID);
+        }
+        const response = await getUserDetailsInfo(userId);
+        console.log("profile api is triggered", response);
+
+        const statesField = response.userData.customFields.find(
+          (field: { label: string }) => field.label === "STATES"
+        );
+        if (statesField) {
+          setStateValue(statesField.value);
+          setStateCode(statesField.code);
+          setStateFieldId(statesField?.fieldId);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchUserDetail();
+  }, []);
 
   const fetchDistrictData = async (stateId: string) => {
     try {
@@ -105,17 +123,19 @@ const District: React.FC = () => {
       setDistrictData(
         districtData.result.values.map((district: any) => ({
           ...district,
-          controllingField: stateId, // Add controllingField to each district
+          controllingField: stateId,
         })) || []
       );
-      setFieldId(districtData.result.fieldId);
+
+      const districtFieldID = districtData?.result?.fieldId || "";
+      setDistrictFieldId(districtFieldID);
+
       setPaginationCount(districtData?.result?.totalCount || 0);
 
       const totalCount = districtData?.result?.totalCount || 0;
       const pageCount = Math.ceil(totalCount / limit);
       setPageCount(pageCount);
 
-      // Update page size options based on total count
       if (totalCount >= 15) {
         setPageSizeArray([5, 10, 15]);
       } else if (totalCount >= 10) {
@@ -130,27 +150,62 @@ const District: React.FC = () => {
   };
 
   const handleStateChange = async (event: SelectChangeEvent<string>) => {
-    const selectedState = event.target.value;
-    setSelectedState(selectedState);
+    const selectedStateDropdown = event.target.value;
+    setSelectedStateDropdown(selectedStateDropdown);
+    console.log("selectedStateDropdown", selectedStateDropdown);
 
-    try {
-      const data = {
-        limit: pageLimit,
-        offset: pageOffset * pageLimit,
-        controllingfieldfk: selectedState === "ALL" ? undefined : selectedState,
-        fieldName: "districts",
+    await fetchDistrictData(selectedStateDropdown);
+
+    if (selectedStateDropdown) {
+      const limit = pageLimit;
+      const offset = pageOffset * limit;
+
+      const reqParams = {
+        limit: limit,
+        offset: offset,
+        filters: {
+          name: stateValue,
+          type: "STATE",
+        },
       };
-      const districtData = await getDistrictsForState(data);
-      setDistrictData(districtData.result.values || []);
-    } catch (error) {
-      console.error("Error fetching district data", error);
-      setDistrictData([]);
+
+      const response = await getCohortList(reqParams);
+      console.log("getCohortData", response);
+
+      const cohortDetails = response?.results?.cohortDetails;
+      console.log("cohortDetails", cohortDetails);
+      if (cohortDetails && cohortDetails.length > 0) {
+        cohortDetails.forEach(
+          (cohort: { customFields: any; cohortId: any; status: any }) => {
+            const cohortId = cohort?.cohortId;
+            const cohortStatus = cohort?.status;
+
+            setCohortStatus(cohortStatus);
+            setCohortId(cohortId);
+
+            const addCustomFieldsState = {
+              fieldId: stateFieldId,
+              value: selectedStateDropdown,
+            };
+            cohort.customFields.push(addCustomFieldsState);
+          }
+        );
+      } else {
+        console.error("No cohort details available.");
+      }
     }
   };
   const handleEdit = (rowData: DistrictDetail) => {
     setModalOpen(true);
-    setSelectedStateForEdit(rowData);
-    console.log("RowData", rowData);
+
+    const updatedRowData = {
+      selectedStateDropdown: selectedStateDropdown,
+      ...rowData,
+    };
+
+    console.log("updatedRowData", updatedRowData);
+
+    setSelectedStateForEdit(updatedRowData);
   };
 
   const handleDelete = (rowData: DistrictDetail) => {
@@ -170,9 +225,9 @@ const District: React.FC = () => {
             (district) => district.value !== selectedStateForDelete.value
           )
         );
-        showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
+        showToastMessage(t("COMMON.DISTRICT_DELETED_SUCCESS"), "success");
       } catch (error) {
-        showToastMessage(t("COMMON.STATE_DELETED_FAILURE"), "error");
+        showToastMessage(t("COMMON.DISTRICT_DELETED_FAILURE"), "error");
       }
     }
     setConfirmationDialogOpen(false);
@@ -194,23 +249,41 @@ const District: React.FC = () => {
         },
       ],
     };
-    console.log("field Id district", fieldId);
+
+    console.log("Submitting newDistrict:", newDistrict);
+
     try {
-      const response = await createOrUpdateOption(
-        fieldId,
-        newDistrict,
-        DistrictId
-      );
+      const response = await createOrUpdateOption(districtFieldId, newDistrict);
 
       console.log("submit response district", response);
-      if (response && response.success) {
-        showToastMessage("District added successfully", "success");
+      const queryParameters = {
+        name: name,
+        type: "DISTRICT",
+        status: cohortStatus,
+        parentId: cohortId,
+        customFields: [
+          {
+            fieldId: stateFieldId, // state fieldId
+            value: [selectedStateDropdown], // state code
+          },
+        ],
+      };
+
+      console.log("query params district", queryParameters);
+
+      const cohortCreate = await createCohort(queryParameters);
+
+      console.log("fetched cohorlist success", cohortCreate);
+
+      if (response) {
+        fetchDistrictData(districtFieldId);
+        showToastMessage(t("COMMON.DISTRICT_ADDED_SUCCESS"), "success");
       } else {
-        showToastMessage("Failed to create/update district", "error");
+        showToastMessage(t("COMMON.DISTRICT_ADDED_FAILURE"), "error");
       }
     } catch (error) {
       console.error("Error adding district:", error);
-      showToastMessage("Error adding district", "error");
+      showToastMessage(t("COMMON.DISTRICT_ADDED_FAILURE"), "error");
     }
 
     setModalOpen(false);
@@ -228,6 +301,16 @@ const District: React.FC = () => {
       event.target.value === "Z-A" ? SORT.DESCENDING : SORT.ASCENDING;
     setSortBy(["name", sortOrder]);
     setSelectedSort(event.target.value);
+
+    const afterFilter = stateData.filter((item) => {
+      return item.value === selectedState;
+    });
+    const setSort =
+      afterFilter[0]?.label === undefined ? "ALL" : afterFilter[0]?.label;
+
+    console.log(setSort);
+
+    fetchDistrictData(setSort);
   };
 
   const handlePaginationChange = (
@@ -276,9 +359,9 @@ const District: React.FC = () => {
         initialValues={
           selectedStateForEdit
             ? {
-                controllingField: selectedStateForEdit.controllingField, // Use controllingField here
                 name: selectedStateForEdit.label,
                 value: selectedStateForEdit.value,
+                controllingField: selectedStateForEdit.selectedStateDropdown,
               }
             : {}
         }
@@ -325,16 +408,14 @@ const District: React.FC = () => {
                 <Select
                   labelId="state-select-label"
                   id="state-select"
-                  value={selectedState}
+                  value={selectedStateDropdown}
                   onChange={handleStateChange}
                   label={t("MASTER.STATE")}
                 >
                   <MenuItem value="ALL">{t("ALL")}</MenuItem>
-                  {stateData.map((state) => (
-                    <MenuItem key={state.value} value={state.value}>
-                      {transformLabel(state.label)}
-                    </MenuItem>
-                  ))}
+                  <MenuItem key={stateCode} value={stateCode}>
+                    {transformLabel(stateValue)}
+                  </MenuItem>
                 </Select>
               </FormControl>
             </Box>
@@ -344,30 +425,40 @@ const District: React.FC = () => {
                   key: "label",
                   title: t("MASTER.DISTRICT_NAMES"),
                   dataType: DataType.String,
-                  width:'130'
+                  width: "130",
                 },
                 {
                   key: "value",
                   title: t("MASTER.DISTRICT_CODE"),
                   dataType: DataType.String,
-                  width:'130'
+                  width: "130",
                 },
-                { key: "createdBy", title: t("MASTER.CREATED_BY"),
-                  width:'130'
-                 },
-                { key: "updatedBy", title: t("MASTER.UPDATED_BY"),
-                  width:'130'
-                 },
+                {
+                  key: "createdBy",
+                  title: t("MASTER.CREATED_BY"),
+                  width: "130",
+                },
+                {
+                  key: "updatedBy",
+                  title: t("MASTER.UPDATED_BY"),
+                  width: "130",
+                },
 
-                  
-                { key: "createdAt", title: t("MASTER.CREATED_AT"),width:'160' },
-                { key: "updatedAt", title: t("MASTER.UPDATED_AT"),width:'160'
-                 },
+                {
+                  key: "createdAt",
+                  title: t("MASTER.CREATED_AT"),
+                  width: "160",
+                },
+                {
+                  key: "updatedAt",
+                  title: t("MASTER.UPDATED_AT"),
+                  width: "160",
+                },
                 {
                   key: "actions",
                   title: t("MASTER.ACTIONS"),
                   dataType: DataType.String,
-                  width:'130'
+                  width: "130",
                 },
               ]}
               data={districtData.map((districtDetail) => ({
@@ -380,7 +471,7 @@ const District: React.FC = () => {
               }))}
               limit={pageLimit}
               offset={pageOffset}
-              paginationEnable={true}
+              paginationEnable={paginationCount >= 5}
               PagesSelector={PagesSelector}
               PageSizeSelector={PageSizeSelectorFunction}
               pageSizes={pageSizeArray}

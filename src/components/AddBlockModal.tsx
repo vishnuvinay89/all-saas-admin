@@ -52,7 +52,6 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   const [districts, setDistricts] = useState<
     { value: string; label: string }[]
   >([]);
-  const [selectedState, setSelectedState] = useState<string>("");
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -70,11 +69,10 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
         const response = await getDistrictsForState({
           limit: 10,
           offset: 0,
-          controllingfieldfk: selectedState,
+          controllingfieldfk: undefined,
           fieldName: "districts",
         });
-
-        if (response && response.result && response.result.values) {
+        if (response.result.values) {
           setDistricts(response.result.values);
         } else {
           console.error("Unexpected response format:", response);
@@ -87,7 +85,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     };
 
     if (open) fetchDistricts();
-  }, [open, districtId]);
+  }, [open, formData.controllingField]);
 
   const validateField = (
     field: keyof typeof formData,
@@ -198,14 +196,16 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           margin="dense"
           error={!!errors.controllingField}
         >
-          <MenuItem value="" disabled>
-            {t("COMMON.SELECT_DISTRICT")}
-          </MenuItem>
-          {districts.map((district) => (
-            <MenuItem key={district.value} value={district.value}>
-              {district.label}
-            </MenuItem>
-          ))}
+          <MenuItem value="">{t("COMMON.SELECT_DISTRICT")}</MenuItem>
+          {districts.length > 0 ? (
+            districts.map((district) => (
+              <MenuItem key={district.value} value={district.value}>
+                {district.label}
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem disabled>{t("COMMON.NO_DISTRICTS")}</MenuItem>
+          )}
         </Select>
         {errors.controllingField && (
           <Typography variant="caption" color="error">

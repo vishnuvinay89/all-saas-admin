@@ -50,7 +50,7 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
       value: initialValues.value || "",
     });
     setErrors({});
-  }, [initialValues]);
+  }, [open, initialValues]);
 
   const isAlphabetic = (input: string) =>
     input === "" || /^[a-zA-Z\s]+$/.test(input);
@@ -97,7 +97,6 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
   const handleSubmit = () => {
     if (validateForm()) {
       onSubmit(formData.name, formData.value, fieldId, stateId);
-      onClose();
     }
   };
 

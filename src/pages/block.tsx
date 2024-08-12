@@ -23,8 +23,16 @@ import { showToastMessage } from "@/components/Toastify";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { AddBlockModal } from "@/components/AddBlockModal";
 import PageSizeSelector from "@/components/PageSelector";
+import { SORT, Storage } from "@/utils/app.constant";
+import { getUserDetailsInfo } from "@/services/UserList";
+import {
+  createCohort,
+  getCohortList,
+} from "@/services/CohortService/cohortService";
 
 type StateDetail = {
+  block: string | undefined;
+  selectedDistrict: string | undefined;
   value: string;
   label: string;
 };
@@ -57,7 +65,7 @@ const Block: React.FC = () => {
   const [pageLimit, setPageLimit] = useState<number>(10);
   const [pageCount, setPageCount] = useState<number>(1);
   const [selectedStateForDelete, setSelectedStateForDelete] =
-    useState<StateDetail | null>(null);
+    useState<BlockDetail | null>(null);
   const [confirmationDialogOpen, setConfirmationDialogOpen] =
     useState<boolean>(false);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -69,27 +77,40 @@ const Block: React.FC = () => {
   const [sortBy, setSortBy] = useState<[string, string]>(["name", "asc"]);
   const [paginationCount, setPaginationCount] = useState<number>(0);
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10, 20, 50]);
+  const [initialDistrict, setInitialDistrict] = useState<string>("");
+  const [stateCode, setStateCode] = useState<any>([]);
+  const [stateValue, setStateValue] = useState<string>("");
+  const [cohortStatus, setCohortStatus] = useState<any>();
+  const [cohortId, setCohortId] = useState<any>();
+  const [stateFieldId, setStateFieldId] = useState<string>("");
 
-  //get state list
   useEffect(() => {
-    const fetchStates = async () => {
+    const fetchUserDetail = async () => {
+      let userId: any;
       try {
-        setLoading(true);
-        const data = await getStateBlockDistrictList({ fieldName: "states" });
+        if (typeof window !== "undefined" && window.localStorage) {
+          userId = localStorage.getItem(Storage.USER_ID);
+        }
+        const response = await getUserDetailsInfo(userId);
 
-        if (data?.result?.values) {
-          setStateData(data.result.values);
-        } else {
-          setStateData([]);
+        console.log("profile api is triggered", response.userData.customFields);
+
+        const statesField = response.userData.customFields.find(
+          (field: { label: string }) => field.label === "STATES"
+        );
+
+        console.log("stateField", statesField);
+
+        if (statesField) {
+          setStateValue(statesField.value);
+          setStateCode(statesField.code);
+          setStateFieldId(statesField?.fieldId);
         }
       } catch (error) {
-        console.error("Error fetching state data:", error);
-        setStateData([]);
-      } finally {
-        setLoading(false);
+        console.log(error);
       }
     };
-    fetchStates();
+    fetchUserDetail();
   }, []);
 
   //get district list upon states
@@ -97,14 +118,18 @@ const Block: React.FC = () => {
     const fetchDistricts = async () => {
       setLoading(true);
       try {
+        const limit = pageLimit;
+        const offset = pageOffset * limit;
+
         const data = await getDistrictsForState({
-          limit: 10,
-          offset: 0,
+          limit: limit,
+          offset: offset,
           controllingfieldfk: selectedState,
           fieldName: "districts",
         });
         const districts = data?.result?.values || [];
         setDistrictData(districts);
+        setInitialDistrict(districts[0].value);
       } catch (error) {
         console.error("Error fetching districts", error);
       } finally {
@@ -116,29 +141,46 @@ const Block: React.FC = () => {
   }, [selectedState]);
 
   //get block list upon district
-  useEffect(() => {
-    const fetchBlocks = async () => {
-      setLoading(true);
-      try {
-        const response = await getBlocksForDistricts({
-          limit: pageLimit,
-          offset: pageOffset * pageLimit,
-          controllingfieldfk: selectedDistrict,
-          fieldName: "blocks",
-          sort: sortBy,
-        });
+  const fetchBlocks = async (DistrictId: string) => {
+    console.log("districtId", DistrictId);
+    setLoading(true);
+    try {
+      const limit = pageLimit;
+      const offset = pageOffset * limit;
 
-        setBlockData(response?.result?.values || []);
-        setBlocksFieldId(response?.result?.fieldId || "");
-        console.log("Fetched fieldId:", blocksFieldId); // Check if this logs correctly
-      } catch (error) {
-        console.error("Error fetching blocks", error);
-      } finally {
-        setLoading(false);
+      const response = await getBlocksForDistricts({
+        limit: limit,
+        offset: offset,
+        controllingfieldfk: DistrictId,
+        fieldName: "blocks",
+        sort: sortBy,
+      });
+
+      setBlockData(response?.result?.values || []);
+      setBlocksFieldId(response?.result?.fieldId || "");
+
+      setPaginationCount(response?.result?.totalCount || 0);
+
+      const totalCount = response?.result?.totalCount || 0;
+      const pageCount = Math.ceil(totalCount / limit);
+      setPageCount(pageCount);
+
+      if (totalCount >= 15) {
+        setPageSizeArray([5, 10, 15]);
+      } else if (totalCount >= 10) {
+        setPageSizeArray([5, 10]);
+      } else {
+        setPageSizeArray([5]);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching blocks", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchBlocks();
+  useEffect(() => {
+    fetchBlocks(selectedDistrict);
   }, [selectedDistrict, sortBy, pageOffset, pageLimit]);
 
   const columns = [
@@ -146,54 +188,64 @@ const Block: React.FC = () => {
       key: "block",
       title: t("MASTER.BLOCK_NAMES"),
       dataType: DataType.String,
-      width:'130'
+      width: "130",
     },
     {
       key: "value",
       title: t("MASTER.BLOCK_CODE"),
       dataType: DataType.String,
-      width:'130'
-    },
-    {
-      key: "createdBy",
-      title: t("MASTER.CREATED_AT"),
-      dataType: DataType.String,
-      width:'130'
-    },
-    {
-      key: "updatedBy",
-      title: t("MASTER.UPDATED_AT"),
-      dataType: DataType.String,
-      width:'130'
+      width: "130",
     },
     {
       key: "createdAt",
       title: t("MASTER.CREATED_AT"),
       dataType: DataType.String,
-      width:'160'
+      width: "130",
     },
     {
       key: "updatedAt",
       title: t("MASTER.UPDATED_AT"),
       dataType: DataType.String,
-      width:'160'
+      width: "130",
+    },
+    {
+      key: "createdAt",
+      title: t("MASTER.CREATED_BY"),
+      dataType: DataType.String,
+      width: "160",
+    },
+    {
+      key: "updatedAt",
+      title: t("MASTER.UPDATED_BY"),
+      dataType: DataType.String,
+      width: "160",
     },
     {
       key: "actions",
       title: t("MASTER.ACTIONS"),
       dataType: DataType.String,
-      width:'130'
+      width: "130",
     },
   ];
+
+  const handleSortChange = async (event: SelectChangeEvent) => {
+    const sortOrder =
+      event.target.value === "Z-A" ? SORT.DESCENDING : SORT.ASCENDING;
+    setSortBy(["name", sortOrder]);
+    setSelectedSort(event.target.value);
+  };
 
   const handleStateChange = async (event: SelectChangeEvent<string>) => {
     const selectedState = event.target.value;
     setSelectedState(selectedState);
 
     try {
+      const limit = pageLimit;
+      const offset = pageOffset * limit;
+
       const data = {
-        limit: 10,
-        offset: 0,
+        limit: limit,
+        offset: offset,
         controllingfieldfk: selectedState,
         fieldName: "districts",
       };
@@ -210,35 +262,73 @@ const Block: React.FC = () => {
     const selectedDistrict = event.target.value;
     setSelectedDistrict(selectedDistrict);
 
-    try {
-      const data = {
-        limit: 10,
-        offset: 0,
-        controllingfieldfk: selectedDistrict,
-        fieldName: "blocks",
+    console.log("selected district", selectedDistrict);
+    fetchBlocks(selectedDistrict);
+
+    if (selectedDistrict) {
+      const limit = pageLimit;
+      const offset = pageOffset * limit;
+
+      const reqParams = {
+        limit: limit,
+        offset: offset,
+        filters: {
+          name: selectedDistrict,
+          type: "DISTRICT",
+        },
       };
-      const response = await getBlocksForDistricts(data);
-      setBlockData(response.result.values || []);
-      console.log("fieldId blocks", response);
-    } catch (error) {
-      console.error("Error fetching district data", error);
+
+      const response = await getCohortList(reqParams);
+      console.log("getCohortData", response);
+
+      const cohortDetails = response?.results?.cohortDetails;
+      if (cohortDetails && cohortDetails.length > 0) {
+        cohortDetails.forEach(
+          (cohort: { customFields: any; cohortId: any; status: any }) => {
+            const cohortId = cohort?.cohortId;
+            const cohortStatus = cohort?.status;
+
+            setCohortStatus(cohortStatus);
+            setCohortId(cohortId);
+
+            const addCustomFieldsState = {
+              fieldId: stateFieldId,
+              value: selectedState,
+            };
+            cohort.customFields.push(addCustomFieldsState);
+
+            const addCustomFieldsDistrict = {
+              fieldId: districtFieldId,
+              value: selectedDistrict,
+            };
+            cohort.customFields.push(
+              addCustomFieldsState,
+              addCustomFieldsDistrict
+            );
+          }
+        );
+      } else {
+        console.error("No cohort details available.");
+      }
     }
   };
 
   const handleEdit = (rowData: any) => {
-    console.log(rowData);
     setModalOpen(true);
-    setSelectedStateForEdit(rowData);
+    const updatedRowData = {
+      ...rowData,
+      selectedDistrict: selectedDistrict,
+    };
+
+    setSelectedStateForEdit(updatedRowData);
   };
 
   const handleDelete = (rowData: BlockDetail) => {
-    console.log("BlockDetails", rowData);
     setSelectedStateForDelete(rowData);
     setConfirmationDialogOpen(true);
   };
 
   const handleConfirmDelete = async () => {
-    console.log("selected state for delete", selectedStateForDelete);
     if (selectedStateForDelete) {
       try {
         await deleteOption("blocks", selectedStateForDelete.value);
@@ -247,10 +337,10 @@ const Block: React.FC = () => {
             (state) => state.value !== selectedStateForDelete.value
           )
         );
-        showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
+        showToastMessage(t("COMMON.BLOCK_DELETED_SUCCESS"), "success");
       } catch (error) {
         console.error("Error deleting state", error);
-        showToastMessage(t("COMMON.STATE_DELETED_FAILURE"), "error");
+        showToastMessage(t("COMMON.BLOCK_DELETED_FAILURE"), "error");
       }
     }
     setConfirmationDialogOpen(false);
@@ -298,6 +388,8 @@ const Block: React.FC = () => {
     userType: t("MASTER.BLOCKS"),
     searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK"),
     showFilter: false,
+    showSort: true,
+    handleSortChange: { handleSortChange },
   };
 
   const handleAddNewBlock = () => {
@@ -311,8 +403,7 @@ const Block: React.FC = () => {
     name: string,
     value: string,
     controllingField: string,
-    blocksFieldId: string,
-    DistrictId?: string
+    blocksFieldId: string
   ) => {
     const newDistrict = {
       options: [
@@ -326,20 +417,35 @@ const Block: React.FC = () => {
     console.log("Submitting newDistrict:", newDistrict);
 
     try {
-      const response = await createOrUpdateOption(
-        blocksFieldId, // Verify this is being passed correctly
-        newDistrict,
-        DistrictId
-      );
+      const response = await createOrUpdateOption(blocksFieldId, newDistrict);
 
-      if (response && response.success) {
-        showToastMessage("District added successfully", "success");
+      console.log("submit response district", response);
+      const queryParameters = {
+        name: name,
+        type: "BLOCK",
+        status: cohortStatus,
+        parentId: cohortId, //cohortId of district
+        customFields: [
+          {
+            fieldId: blocksFieldId, // district fieldId
+            value: [selectedDistrict], // district code
+          },
+        ],
+      };
+
+      const cohortList = await createCohort(queryParameters);
+
+      console.log("fetched cohorlist in block success", cohortList);
+
+      if (response) {
+        fetchBlocks(blocksFieldId);
+        showToastMessage(t("COMMON.BLOCK_ADDED_SUCCESS"), "success");
       } else {
-        showToastMessage("Failed to create/update district", "error");
+        showToastMessage(t("COMMON.BLOCK_ADDED_FAILURE"), "success");
       }
     } catch (error) {
-      console.error("Error adding district:", error);
-      showToastMessage("Error adding district", "error");
+      console.error("Error adding block:", error);
+      showToastMessage(t("COMMON.BLOCK_UPDATED_FAILURE"), "error");
     }
 
     setModalOpen(false);
@@ -352,20 +458,14 @@ const Block: React.FC = () => {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onSubmit={(name: string, value: string, controllingField: string) =>
-          handleAddDistrictSubmit(
-            name,
-            value,
-            controllingField,
-            blocksFieldId, // This should be checked
-            selectedStateForEdit?.value
-          )
+          handleAddDistrictSubmit(name, value, controllingField, blocksFieldId)
         }
         fieldId={blocksFieldId}
         initialValues={
           selectedStateForEdit
             ? {
-                controllingField: selectedStateForEdit.value,
-                name: selectedStateForEdit.label,
+                controllingField: selectedStateForEdit.selectedDistrict,
+                name: selectedStateForEdit.block,
                 value: selectedStateForEdit.value,
               }
             : {}
@@ -412,11 +512,9 @@ const Block: React.FC = () => {
                   value={selectedState}
                   onChange={handleStateChange}
                 >
-                  {stateData.map((stateDetail) => (
-                    <MenuItem key={stateDetail.value} value={stateDetail.value}>
-                      {transformLabel(stateDetail.label)}
-                    </MenuItem>
-                  ))}
+                  <MenuItem key={stateCode} value={stateCode}>
+                    {transformLabel(stateValue)}
+                  </MenuItem>
                 </Select>
               </FormControl>
             </Box>
@@ -464,7 +562,7 @@ const Block: React.FC = () => {
                 }))}
                 limit={pageLimit}
                 offset={pageOffset}
-                paginationEnable={true}
+                paginationEnable={paginationCount >= 5}
                 PagesSelector={PagesSelector}
                 PageSizeSelector={PageSizeSelectorFunction}
                 pageSizes={pageSizeArray}

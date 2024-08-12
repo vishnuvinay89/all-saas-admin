@@ -14,6 +14,8 @@ import {
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
 import { getStateBlockDistrictList } from "@/services/MasterDataService";
+import { getUserDetailsInfo } from "@/services/UserList";
+import { Storage } from "@/utils/app.constant";
 
 interface AddDistrictBlockModalProps {
   open: boolean;
@@ -42,6 +44,7 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
   initialValues = {},
   districtId,
 }) => {
+  // State for form data, initialized with initialValues
   const [formData, setFormData] = useState({
     name: initialValues?.name ?? "",
     value: initialValues?.value ?? "",
@@ -50,28 +53,41 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [states, setStates] = useState<{ value: string; label: string }[]>([]);
+  const [stateCode, setStateCode] = useState<any>([]);
+  const [stateValue, setStateValue] = useState<string>("");
+
   const { t } = useTranslation();
 
+  // Effect to fetch user details when modal opens
   useEffect(() => {
-    const fetchStates = async () => {
+    const fetchUserDetail = async () => {
+      let userId: any;
       try {
-        const response = await getStateBlockDistrictList({
-          fieldName: "states",
-        });
-        if (response) {
-          setStates(response.result.values);
-        } else {
-          console.error("Unexpected response format:", response);
-          setStates([]);
+        if (typeof window !== "undefined" && window.localStorage) {
+          userId = localStorage.getItem(Storage.USER_ID);
         }
+        const response = await getUserDetailsInfo(userId);
+        console.log("profile api is triggered", response.userData.customFields);
+
+        const statesField = response.userData.customFields.find(
+          (field: { label: string }) => field.label === "STATES"
+        );
+
+        console.log("stateField", statesField);
+
+        if (statesField) {
+          setStateValue(statesField.value);
+          setStateCode(statesField.code);
+        }
+
+        console.log("stateValue", stateValue);
+        console.log("stateCode", stateCode);
       } catch (error) {
-        console.error("Error fetching states:", error);
-        setStates([]);
+        console.log(error);
       }
     };
-
     if (open) {
-      fetchStates();
+      fetchUserDetail();
     }
   }, [open]);
 
@@ -82,11 +98,12 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
       controllingField: initialValues.controllingField ?? "",
     });
     setErrors({});
-  }, [initialValues, states]);
+  }, [initialValues]);
 
   const isAlphabetic = (input: string) =>
     input === "" || /^[a-zA-Z\s]+$/.test(input);
 
+  // Handle input change and validation
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
@@ -112,6 +129,7 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
     }
   };
 
+  // Validate form before submitting
   const validateForm = () => {
     const newErrors = {
       name: !formData.name
@@ -133,6 +151,7 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
     return !Object.values(newErrors).some((error) => error !== null);
   };
 
+  // Handle form submission
   const handleSubmit = () => {
     if (validateForm()) {
       onSubmit(
@@ -173,11 +192,9 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
           <MenuItem value="" disabled>
             {t("COMMON.SELECT_STATE")}
           </MenuItem>
-          {states.map((state) => (
-            <MenuItem key={state.value} value={state.value}>
-              {state.label}
-            </MenuItem>
-          ))}
+          <MenuItem key={stateCode} value={stateCode}>
+            {stateValue}
+          </MenuItem>
         </Select>
         {errors.controllingField && (
           <Typography variant="caption" color="error">

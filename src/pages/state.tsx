@@ -12,9 +12,15 @@ import Loader from "@/components/Loader";
 import { AddStateModal } from "@/components/AddStateModal";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { showToastMessage } from "@/components/Toastify";
-import { SORT, Numbers } from "@/utils/app.constant";
+import { SORT, Numbers, Storage } from "@/utils/app.constant";
 import { Box, Pagination, SelectChangeEvent } from "@mui/material";
 import PageSizeSelector from "@/components/PageSelector";
+import {
+  createCohort,
+  getCohortList,
+} from "@/services/CohortService/cohortService";
+import { getUserDetailsInfo } from "@/services/UserList";
+import useStore from "@/store/store";
 
 export interface StateDetail {
   updatedAt: any;
@@ -26,10 +32,25 @@ export interface StateDetail {
   value: string;
 }
 
+type cohortFilterDetails = {
+  type?: string;
+  status?: any;
+  states?: string;
+  districts?: string;
+  blocks?: string;
+  name?: string;
+};
+
+type Option = {
+  name: string;
+  value: string;
+  controllingfieldfk?: string;
+};
+
 const State: React.FC = () => {
   const { t } = useTranslation();
   const [stateData, setStateData] = useState<StateDetail[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] =
     useState<boolean>(false);
   const [addStateModalOpen, setAddStateModalOpen] = useState<boolean>(false);
@@ -46,15 +67,19 @@ const State: React.FC = () => {
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10]);
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [paginationCount, setPaginationCount] = useState<number>(Numbers.ZERO);
+  const [userName, setUserName] = React.useState<string | null>("");
+  const [statesProfilesData, setStatesProfilesData] = useState<any>([]);
+
+  const setPid = useStore((state) => state.setPid);
 
   const columns = [
-    { key: "label", title: t("MASTER.STATE_NAMES"),width:'130' },
-    { key: "value", title: t("MASTER.STATE_CODE"),width:'130' },
-    { key: "createdBy", title: t("MASTER.CREATED_BY"),width:'130' },
-    { key: "updatedBy", title: t("MASTER.UPDATED_BY"),width:'130' },
-    { key: "createdAt", title: t("MASTER.CREATED_AT"),width:'160' },
-    { key: "updatedAt", title: t("MASTER.UPDATED_AT"),width:'160' },
-    { key: "actions", title: t("MASTER.ACTIONS"),width:'130' },
+    { key: "label", title: t("MASTER.STATE_NAMES"), width: "130" },
+    { key: "value", title: t("MASTER.STATE_CODE"), width: "130" },
+    { key: "createdBy", title: t("MASTER.CREATED_BY"), width: "130" },
+    { key: "updatedBy", title: t("MASTER.UPDATED_BY"), width: "130" },
+    { key: "createdAt", title: t("MASTER.CREATED_AT"), width: "160" },
+    { key: "updatedAt", title: t("MASTER.UPDATED_AT"), width: "160" },
+    { key: "actions", title: t("MASTER.ACTIONS"), width: "130" },
   ];
 
   const handleEdit = (rowData: StateDetail) => {
@@ -104,15 +129,30 @@ const State: React.FC = () => {
   const handleAddStateSubmit = async (
     name: string,
     value: string,
-    stateId?: string
+    selectedState: any
   ) => {
-    const newState = { options: [{ name, value, controllingfieldfk: "" }] };
+    const newState = {
+      options: [{ name, value }],
+    };
     try {
-      console.log("fieldId state", fieldId);
       if (fieldId) {
-        const response = await createOrUpdateOption(fieldId, newState, stateId);
+        const response = await createOrUpdateOption(fieldId, newState);
+
+        const queryParameters = {
+          name: name,
+          type: "STATE",
+          status: "active",
+          parentId: null,
+          customFields: [],
+        };
+
+        console.log("before cohortList");
+
+        await createCohort(queryParameters);
+
         if (response) {
           await fetchStateData(searchKeyword);
+
           showToastMessage(t("COMMON.STATE_ADDED_SUCCESS"), "success");
         } else {
           console.error("Failed to create/update state:", response);
@@ -124,7 +164,6 @@ const State: React.FC = () => {
     }
     setAddStateModalOpen(false);
   };
-
   const handleChangePageSize = (event: SelectChangeEvent<number>) => {
     const newSize = Number(event.target.value);
     setPageSizeArray((prev) =>
@@ -266,7 +305,6 @@ const State: React.FC = () => {
                   }
                 : {}
             }
-            stateId={selectedStateForEdit?.value}
           />
           <ConfirmationModal
             modalOpen={confirmationDialogOpen}
