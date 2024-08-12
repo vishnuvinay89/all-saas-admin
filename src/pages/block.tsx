@@ -82,6 +82,7 @@ const Block: React.FC = () => {
   const [stateValue, setStateValue] = useState<string>("");
   const [cohortStatus, setCohortStatus] = useState<any>();
   const [cohortId, setCohortId] = useState<any>();
+  const [stateFieldId, setStateFieldId] = useState<string>("");
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -103,6 +104,7 @@ const Block: React.FC = () => {
         if (statesField) {
           setStateValue(statesField.value);
           setStateCode(statesField.code);
+          setStateFieldId(statesField?.fieldId);
         }
       } catch (error) {
         console.log(error);
@@ -281,16 +283,30 @@ const Block: React.FC = () => {
 
       const cohortDetails = response?.results?.cohortDetails;
       if (cohortDetails && cohortDetails.length > 0) {
-        cohortDetails.forEach((cohort: { cohortId: any; status: any }) => {
-          const cohortId = cohort?.cohortId;
-          const cohortStatus = cohort?.status;
+        cohortDetails.forEach(
+          (cohort: { customFields: any; cohortId: any; status: any }) => {
+            const cohortId = cohort?.cohortId;
+            const cohortStatus = cohort?.status;
 
-          setCohortStatus(cohortStatus);
-          setCohortId(cohortId);
+            setCohortStatus(cohortStatus);
+            setCohortId(cohortId);
 
-          console.log("cohortStatus", cohortStatus);
-          console.log("cohortId", cohortId);
-        });
+            const addCustomFieldsState = {
+              fieldId: stateFieldId,
+              value: selectedState,
+            };
+            cohort.customFields.push(addCustomFieldsState);
+
+            const addCustomFieldsDistrict = {
+              fieldId: districtFieldId,
+              value: selectedDistrict,
+            };
+            cohort.customFields.push(
+              addCustomFieldsState,
+              addCustomFieldsDistrict
+            );
+          }
+        );
       } else {
         console.error("No cohort details available.");
       }

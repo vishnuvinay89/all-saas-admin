@@ -157,9 +157,12 @@ const District: React.FC = () => {
     await fetchDistrictData(selectedStateDropdown);
 
     if (selectedStateDropdown) {
+      const limit = pageLimit;
+      const offset = pageOffset * limit;
+
       const reqParams = {
-        limit: 10,
-        offset: 0,
+        limit: limit,
+        offset: offset,
         filters: {
           name: stateValue,
           type: "STATE",
@@ -170,17 +173,23 @@ const District: React.FC = () => {
       console.log("getCohortData", response);
 
       const cohortDetails = response?.results?.cohortDetails;
+      console.log("cohortDetails", cohortDetails);
       if (cohortDetails && cohortDetails.length > 0) {
-        cohortDetails.forEach((cohort: { cohortId: any; status: any }) => {
-          const cohortId = cohort?.cohortId;
-          const cohortStatus = cohort?.status;
+        cohortDetails.forEach(
+          (cohort: { customFields: any; cohortId: any; status: any }) => {
+            const cohortId = cohort?.cohortId;
+            const cohortStatus = cohort?.status;
 
-          setCohortStatus(cohortStatus);
-          setCohortId(cohortId);
+            setCohortStatus(cohortStatus);
+            setCohortId(cohortId);
 
-          console.log("cohortStatus", cohortStatus);
-          console.log("cohortId", cohortId);
-        });
+            const addCustomFieldsState = {
+              fieldId: stateFieldId,
+              value: selectedStateDropdown,
+            };
+            cohort.customFields.push(addCustomFieldsState);
+          }
+        );
       } else {
         console.error("No cohort details available.");
       }
