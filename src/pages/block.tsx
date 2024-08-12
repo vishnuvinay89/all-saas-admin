@@ -130,6 +130,8 @@ const Block: React.FC = () => {
         const districts = data?.result?.values || [];
         setDistrictData(districts);
         setInitialDistrict(districts[0].value);
+        const districtFieldID = data?.result?.fieldId || "";
+        setDistrictFieldId(districtFieldID);
       } catch (error) {
         console.error("Error fetching districts", error);
       } finally {
@@ -151,13 +153,20 @@ const Block: React.FC = () => {
       const response = await getBlocksForDistricts({
         limit: limit,
         offset: offset,
-        controllingfieldfk: DistrictId,
+        controllingfieldfk: selectedDistrict,
         fieldName: "blocks",
         sort: sortBy,
       });
 
+      console.log("block response", response);
       setBlockData(response?.result?.values || []);
-      setBlocksFieldId(response?.result?.fieldId || "");
+
+      const blockFieldID = response?.result?.fieldId || "";
+
+      console.log("blockFieldID", blockFieldID);
+      setBlocksFieldId(blockFieldID);
+
+      console.log("new blockFeldId", blocksFieldId);
 
       setPaginationCount(response?.result?.totalCount || 0);
 
@@ -278,10 +287,14 @@ const Block: React.FC = () => {
         },
       };
 
+      console.log("reqParams block", reqParams);
+
       const response = await getCohortList(reqParams);
       console.log("getCohortData", response);
 
       const cohortDetails = response?.results?.cohortDetails;
+      console.log("cohort detail at block", cohortDetails);
+
       if (cohortDetails && cohortDetails.length > 0) {
         cohortDetails.forEach(
           (cohort: { customFields: any; cohortId: any; status: any }) => {
@@ -427,7 +440,7 @@ const Block: React.FC = () => {
         parentId: cohortId, //cohortId of district
         customFields: [
           {
-            fieldId: blocksFieldId, // district fieldId
+            fieldId: districtFieldId, // district fieldId
             value: [selectedDistrict], // district code
           },
         ],
