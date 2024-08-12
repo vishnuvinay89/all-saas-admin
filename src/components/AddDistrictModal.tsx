@@ -61,7 +61,7 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
   // Effect to fetch user details when modal opens
   useEffect(() => {
     const fetchUserDetail = async () => {
-      let userId;
+      let userId: any;
       try {
         if (typeof window !== "undefined" && window.localStorage) {
           userId = localStorage.getItem(Storage.USER_ID);
@@ -70,7 +70,7 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
         console.log("profile api is triggered", response.userData.customFields);
 
         const statesField = response.userData.customFields.find(
-          (field) => field.label === "STATES"
+          (field: { label: string }) => field.label === "STATES"
         );
 
         console.log("stateField", statesField);
