@@ -39,7 +39,7 @@ export const userList = async ({
   }
 };
 
-export const getUserDetails = async (
+export const getUserDetailsInfo = async (
   userId?: string | string[],
   fieldValue?: boolean,
 ): Promise<any> => {

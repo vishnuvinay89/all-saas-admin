@@ -39,17 +39,20 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder }) => {
   };
 
   useEffect(() => {
-    if (keyword.trim().length >= 3 && validateKeyword(keyword)) {
-      onSearch(keyword);
-    }
+    const delayDebounceFn = setTimeout(() => {
+      if (keyword.trim().length >= 3 && validateKeyword(keyword)) {
+        onSearch(keyword);
+      }
+    }, 500); // Debounce delay of 500ms
+
+    return () => clearTimeout(delayDebounceFn);
   }, [keyword]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-     // Replace multiple spaces with a single space
-     const normalizedValue = value.replace(/\s{2,}/g, ' ').trimStart();
-     setKeyword(normalizedValue);
-  //  setKeyword(value.trimStart());
+    // Replace multiple spaces with a single space
+    const normalizedValue = value.replace(/\s{2,}/g, " ").trimStart();
+    setKeyword(normalizedValue);
 
     if (value === "") {
       onSearch("");

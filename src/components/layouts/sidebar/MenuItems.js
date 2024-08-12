@@ -1,8 +1,8 @@
-import masterIcon  from '../../../../public/images/database.svg';
-import centerIcon  from '../../../../public/images/centers.svg';
-import dashboardIcon  from '../../../../public/images/dashboard.svg';
-import userIcon  from '../../../../public/images/group.svg';
-import coursePannerIcon  from '../../../../public/images/event_available.svg';
+import masterIcon from '../../../../public/images/database.svg';
+import centerIcon from '../../../../public/images/centers.svg';
+import dashboardIcon from '../../../../public/images/dashboard.svg';
+import userIcon from '../../../../public/images/group.svg';
+import coursePannerIcon from '../../../../public/images/event_available.svg';
 
 
 
@@ -15,6 +15,11 @@ const Menuitems = [
   //   icon: dashboardIcon,
   //   href: "/dashboard",
   // },
+  {
+    title: "SIDEBAR.CENTERS",
+    icon: centerIcon,
+    href: "/centers",
+  },
   {
     title: "SIDEBAR.MANAGE_USERS",
     icon: userIcon,
@@ -35,11 +40,7 @@ const Menuitems = [
     ],
   },
 
-  {
-    title: "SIDEBAR.CENTERS",
-    icon: centerIcon,
-    href: "/centers",
-  },
+
 
   {
     title: "Master ",

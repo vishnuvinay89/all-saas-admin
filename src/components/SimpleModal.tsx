@@ -1,6 +1,14 @@
-import { useMediaQuery, useTheme, Box, Button, Divider, Modal, Typography } from "@mui/material";
-import React, { ReactNode } from "react";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
+import {
+  Box,
+  Button,
+  Divider,
+  Modal,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+import React, { ReactNode } from "react";
 
 interface SimpleModalProps {
   secondaryActionHandler?: () => void;
@@ -8,7 +16,7 @@ interface SimpleModalProps {
   secondaryText?: string;
   primaryText?: string;
   showFooter?: boolean;
-  footer?: ReactNode; 
+  footer?: ReactNode;
   children: ReactNode;
   open: boolean;
   onClose: () => void;
@@ -23,7 +31,7 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
   showFooter = true,
   primaryActionHandler,
   secondaryActionHandler,
-  footer, 
+  footer,
   children,
   modalTitle,
 }) => {
@@ -41,9 +49,8 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
     width: isSmallScreen ? "90%" : isLargeScreen ? "65%" : "85%",
     maxHeight: "80vh",
     backgroundColor: "#fff",
-    borderRadius: theme.shape.borderRadius,
+    borderRadius: '8px',
     boxShadow: theme.shadows[5],
-
   };
 
   const titleStyle = {
@@ -53,7 +60,8 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
     padding: theme.spacing(2),
     zIndex: 9999,
     borderBottom: `1px solid ${theme.palette.divider}`,
-    borderRadius: theme.shape.borderRadius,
+    borderTopLeftRadius: '8px',
+    borderTopRightRadius: '8px',
   };
 
   const contentStyle = {
@@ -92,8 +100,8 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
         <Divider />
         <Box sx={contentStyle}>{children}</Box>
         <Divider />
-        {showFooter && (
-          footer ? (
+        {showFooter &&
+          (footer ? (
             <Box sx={footerStyle}>{footer}</Box> // Render the custom footer content if provided
           ) : (
             <Box
@@ -138,8 +146,7 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
                 </Button>
               )}
             </Box>
-          )
-        )}
+          ))}
       </Box>
     </Modal>
   );

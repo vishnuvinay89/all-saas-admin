@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { ITableProps, Table } from "ka-table";
-import { SortingMode, PagingPosition } from "ka-table/enums";
-import { Paper, Checkbox, Chip, useMediaQuery, Theme } from "@mui/material";
-import "ka-table/style.css";
-import ActionIcon from "./ActionIcon";
-import { format } from "date-fns";
-import { DataKey, DateFormat, Status } from "@/utils/app.constant";
-import { useTranslation } from "react-i18next";
-import UserNameCell from "./UserNameCell";
 import { firstLetterInUpperCase } from "@/utils/Helper";
+import { DataKey, DateFormat, Status } from "@/utils/app.constant";
+import { Checkbox, Chip, Paper, Theme, useMediaQuery } from "@mui/material";
+import { format } from "date-fns";
+import { ITableProps, Table } from "ka-table";
+import { PagingPosition, SortingMode } from "ka-table/enums";
+import "ka-table/style.css";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import ActionIcon from "./ActionIcon";
+import UserNameCell from "./UserNameCell";
 
 interface KaTableComponentProps {
   columns: ITableProps["columns"];
   data?: ITableProps["data"];
-  offset?: any;
-  limit?: any;
+  offset?: number;
+  limit?: number;
   PagesSelector?: any;
   PageSizeSelector?: any;
   pageSizes?: any;
@@ -35,15 +35,12 @@ interface KaTableComponentProps {
 const KaTableComponent: React.FC<KaTableComponentProps> = ({
   columns,
   data,
-  offset,
   limit,
   PagesSelector,
   PageSizeSelector,
   paginationEnable = true,
-  extraActions,
   onEdit,
   onDelete,
-  showIcons,
   pageSizes,
   noDataMessage,
   pagination = true,
@@ -51,14 +48,14 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
   const { t } = useTranslation();
   const isMobile = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm"),
+    theme.breakpoints.down("sm")
   );
 
   const handleCheckboxChange = (rowId: number) => {
     setSelectedRowIds((prevSelected) =>
       prevSelected.includes(rowId)
         ? prevSelected.filter((id) => id !== rowId)
-        : [...prevSelected, rowId],
+        : [...prevSelected, rowId]
     );
   };
   const tableProps: ITableProps = {
@@ -82,16 +79,9 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
       <div className="ka-table-wrapper">
         <Table
           {...tableProps}
-          // paging={{
-          //   enabled: paginationEnable,
-          //   pageIndex: offset,
-          //   pageSize: limit,
-          //   pageSizes: pageSizes,
-          //   position: PagingPosition.Bottom,
-          // }}
           childComponents={{
             pagingSizes: {
-              content: (props) => <PageSizeSelector {...props} />,
+              content: (props) =>!isMobile? (<PageSizeSelector {...props} />): (<></>),
             },
             pagingPages: {
               content: (props) => <PagesSelector {...props} />,
@@ -108,20 +98,20 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                     />
                   );
                 }
-                if (props.column.key === DataKey?.UPDATEDAT) {
+                if (props.column.key === DataKey?.UPDATED_AT) {
                   return format(
                     props.rowData?.updatedAt,
-                    DateFormat.YYYY_MM_DD,
+                    DateFormat.YYYY_MM_DD
                   );
-                } else if (props.column.key === DataKey?.CREATEDAT) {
+                } else if (props.column.key === DataKey?.CREATED_AT) {
                   return format(
                     props.rowData?.createdAt,
-                    DateFormat.YYYY_MM_DD,
+                    DateFormat.YYYY_MM_DD
                   );
-                } else if (props.column.key === DataKey.CREATEDBY) {
+                } else if (props.column.key === DataKey.CREATED_BY) {
                   return <UserNameCell userId={props.rowData?.createdBy} />;
-                } else if (props.column.key === DataKey.UPDATEDBY) {
-                  return <UserNameCell userId={props.rowData?.updatedBy} />;
+                } else if (props.column.key === DataKey.UPDATED_BY) {
+                  return <UserNameCell userId={props?.rowData?.updatedBy} />;
                 }
                 if (props.column.key === DataKey.STATUS) {
                   if (props.rowData?.status === Status.ARCHIVED) {
@@ -137,7 +127,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                   } else {
                     return (
                       <Chip
-                        label={firstLetterInUpperCase(props.rowData?.status)}
+                        label={firstLetterInUpperCase(props?.rowData?.status)}
                         color="success"
                         variant="outlined"
                         size={isMobile ? "small" : "medium"}
@@ -147,23 +137,23 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                   }
                 }
                 if (props.column.key === DataKey.NAME) {
-                  return firstLetterInUpperCase(props.rowData?.name);
+                  return firstLetterInUpperCase(props?.rowData?.name);
                 }
                 if (props.column.key === "selection-cell") {
                   return (
                     <Checkbox
-                      checked={selectedRowIds.includes(props.rowData.id)}
-                      onChange={() => handleCheckboxChange(props.rowData.id)}
+                      checked={selectedRowIds.includes(props?.rowData?.id)}
+                      onChange={() => handleCheckboxChange(props?.rowData?.id)}
                     />
                   );
                 }
 
-                return <div className="table-cell">{props.value}</div>;
+                return <div className="table-cell">{props?.value}</div>;
               },
             },
             headCell: {
               content: (props) => {
-                return <div className="table-header">{props.column.title}</div>;
+                return <div className="table-header">{props?.column?.title}</div>;
               },
             },
           }}

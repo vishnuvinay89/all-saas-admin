@@ -4,15 +4,12 @@ import UserTable from "@/components/UserTable";
 import { useTranslation } from "next-i18next";
 import { Role, FormContextType } from "@/utils/app.constant";
 import CommonUserModal from "@/components/CommonUserModal";
-import useSubmittedButtonStore from "@/utils/useSharedState";
-
 const TeamLeader: React.FC = () => {
   const { t } = useTranslation();
   const handleAddTeamLeaderClick = () => {
     handleOpenAddTeamLeaderModal();
   };
   const [submitValue, setSubmitValue] = React.useState<boolean>(false);
-  const setSubmittedButtonStatus = useSubmittedButtonStore((state:any) => state.setSubmittedButtonStatus);
 
   const [openAddTeamLeaderModal, setOpenAddTeamLeaderModal] =
     React.useState(false);
@@ -23,8 +20,6 @@ const TeamLeader: React.FC = () => {
     setSubmitValue(true);
   };
   const handleCloseAddTeamLeaderModal = () => {
-    setSubmittedButtonStatus(false)
-
     setOpenAddTeamLeaderModal(false);
   };
 
