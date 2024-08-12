@@ -79,6 +79,7 @@ const District: React.FC = () => {
     useState<string>("");
   const [cohortStatus, setCohortStatus] = useState<any>();
   const [cohortId, setCohortId] = useState<any>();
+  const [stateFieldId, setStateFieldId] = useState<string>("");
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -93,16 +94,11 @@ const District: React.FC = () => {
         const statesField = response.userData.customFields.find(
           (field: { label: string }) => field.label === "STATES"
         );
-
-        console.log("stateField", statesField);
-
         if (statesField) {
           setStateValue(statesField.value);
           setStateCode(statesField.code);
+          setStateFieldId(statesField?.fieldId);
         }
-
-        console.log("stateValue", stateValue);
-        console.log("stateCode", stateCode);
       } catch (error) {
         console.log(error);
       }
@@ -130,8 +126,10 @@ const District: React.FC = () => {
           controllingField: stateId,
         })) || []
       );
-      console.log(stateId);
-      setFieldId(districtData.result.fieldId);
+
+      const districtFieldID = districtData?.result?.fieldId || "";
+      setDistrictFieldId(districtFieldID);
+
       setPaginationCount(districtData?.result?.totalCount || 0);
 
       const totalCount = districtData?.result?.totalCount || 0;
@@ -218,9 +216,9 @@ const District: React.FC = () => {
             (district) => district.value !== selectedStateForDelete.value
           )
         );
-        showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
+        showToastMessage(t("COMMON.DISTRICT_DELETED_SUCCESS"), "success");
       } catch (error) {
-        showToastMessage(t("COMMON.STATE_DELETED_FAILURE"), "error");
+        showToastMessage(t("COMMON.DISTRICT_DELETED_FAILURE"), "error");
       }
     }
     setConfirmationDialogOpen(false);
@@ -243,10 +241,10 @@ const District: React.FC = () => {
       ],
     };
 
-    console.log("field Id district", fieldId);
+    console.log("Submitting newDistrict:", newDistrict);
 
     try {
-      const response = await createOrUpdateOption(fieldId, newDistrict);
+      const response = await createOrUpdateOption(districtFieldId, newDistrict);
 
       console.log("submit response district", response);
       const queryParameters = {
@@ -256,25 +254,27 @@ const District: React.FC = () => {
         parentId: cohortId,
         customFields: [
           {
-            fieldId: fieldId, // state fieldId
-            value: [stateCode], // state code
+            fieldId: stateFieldId, // state fieldId
+            value: [selectedStateDropdown], // state code
           },
         ],
       };
 
-      const cohortList = await createCohort(queryParameters);
+      console.log("query params district", queryParameters);
 
-      console.log("fetched cohorlist success", cohortList);
+      const cohortCreate = await createCohort(queryParameters);
+
+      console.log("fetched cohorlist success", cohortCreate);
 
       if (response) {
-        showToastMessage("District updated successfully", "success");
-        fetchDistrictData(fieldId); //
+        fetchDistrictData(districtFieldId);
+        showToastMessage(t("COMMON.DISTRICT_ADDED_SUCCESS"), "success");
       } else {
-        showToastMessage("Failed to create/update district", "error");
+        showToastMessage(t("COMMON.DISTRICT_ADDED_FAILURE"), "error");
       }
     } catch (error) {
       console.error("Error adding district:", error);
-      showToastMessage("Error adding district", "error");
+      showToastMessage(t("COMMON.DISTRICT_ADDED_FAILURE"), "error");
     }
 
     setModalOpen(false);

@@ -321,10 +321,10 @@ const Block: React.FC = () => {
             (state) => state.value !== selectedStateForDelete.value
           )
         );
-        showToastMessage(t("COMMON.STATE_DELETED_SUCCESS"), "success");
+        showToastMessage(t("COMMON.BLOCK_DELETED_SUCCESS"), "success");
       } catch (error) {
         console.error("Error deleting state", error);
-        showToastMessage(t("COMMON.STATE_DELETED_FAILURE"), "error");
+        showToastMessage(t("COMMON.BLOCK_DELETED_FAILURE"), "error");
       }
     }
     setConfirmationDialogOpen(false);
@@ -425,11 +425,11 @@ const Block: React.FC = () => {
         fetchBlocks(blocksFieldId);
         showToastMessage(t("COMMON.BLOCK_ADDED_SUCCESS"), "success");
       } else {
-        showToastMessage(t("COMMON.BLOCK_ADDED_SUCCESS"), "success");
+        showToastMessage(t("COMMON.BLOCK_ADDED_FAILURE"), "success");
       }
     } catch (error) {
-      console.error("Error adding district:", error);
-      showToastMessage(t("COMMON.BLOCK_UPDATED_SUCCESS"), "success");
+      console.error("Error adding block:", error);
+      showToastMessage(t("COMMON.BLOCK_UPDATED_FAILURE"), "error");
     }
 
     setModalOpen(false);
