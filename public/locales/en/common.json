@@ -196,7 +196,6 @@
     "CENTER_DELETE_SUCCESSFULLY": "Center has been Successfully Deleted",
     "CENTER_CREATED_SUCCESSFULLY": "Center Created Successfully",
     "SEARCHBAR_PLACEHOLDER": "Search Center..",
-    "NOT_ABLE_CREATE_CENTER": "Something went wrong",
     "CENTER_UPDATE_FAILED": "Something went wrong to update data"
   },
   "FORM": {

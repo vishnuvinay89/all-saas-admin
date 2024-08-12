@@ -5,7 +5,6 @@ import {
 } from "@/components/GeneratedSchemas";
 import SimpleModal from "@/components/SimpleModal";
 import { getFormRead } from "@/services/CreateUserService";
-import { CustomField } from "@/utils/Interfaces";
 import { CohortTypes } from "@/utils/app.constant";
 import { useLocationState } from "@/utils/useLocationState";
 import { Box, Button, Typography } from "@mui/material";
@@ -19,11 +18,16 @@ import { showToastMessage } from "./Toastify";
 import { createCohort } from "@/services/CohortService/cohortService";
 import useSubmittedButtonStore from "@/utils/useSharedState";
 
+interface CustomField {
+  fieldId: string;
+  value: string[];
+}
+
 interface CohortDetails {
   name?: string;
   type?: string;
   parentId?: string | null;
-  customFields?: any;
+  customFields?: CustomField[];
 }
 interface AddLearnerModalProps {
   open: boolean;
@@ -61,7 +65,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
     selectedCenter,
     selectedBlock,
     blockFieldId,
-    distrctFieldId,
+    districtFieldId,
     stateFieldId,
     handleStateChangeWrapper,
     handleDistrictChangeWrapper,
@@ -114,7 +118,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
             value: [selectedStateCode],
           },
           {
-            fieldId: distrctFieldId,
+            fieldId: districtFieldId,
             value: [selectedDistrictCode],
           },
           {
@@ -206,7 +210,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
           widgets={{}}
           showErrorList={true}
           customFields={customFields}
-          id="xyz"
+          id="form"
         >
           <Box
             style={{
@@ -219,7 +223,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
             <Button
               variant="outlined"
               type="submit"
-              form="xyz" // Add this line
+              form="form" // Add this line
               sx={{
                 padding: "12px 24px", // Adjust padding as needed
                 width: "200px", // Set the desired width
@@ -231,7 +235,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
             <Button
               variant="contained"
               type="submit"
-              form="xyz" // Add this line
+              form="form" // Add this line
               sx={{
                 padding: "12px 24px", // Adjust padding as needed
                 width: "200px", // Set the desired width
@@ -249,7 +253,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
       {!selectedBlockCohortId && selectedBlockCohortId !== "" && (
         <Box mt={3} textAlign={"center"}>
           <Typography color={"error"}>
-            {t("CENTERS.NOT_ABLE_CREATE_CENTER")}
+            {t("COMMON.SOMETHING_WENT_WRONG")}
           </Typography>
         </Box>
       )}

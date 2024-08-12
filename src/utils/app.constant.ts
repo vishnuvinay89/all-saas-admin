@@ -59,7 +59,8 @@ export enum Numbers {
   ZERO = 0,
   ONE = 1,
   FIVE = 5,
-  TEN = 10
+  TEN = 10,
+  TWENTY = 20,
 }
 
 export enum CohortTypes {

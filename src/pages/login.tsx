@@ -30,7 +30,7 @@ import { showToastMessage } from "@/components/Toastify";
 import Link from "@mui/material/Link";
 import loginImage from "../../public/loginImage.jpg";
 import { useUserIdStore } from "@/store/useUserIdStore";
-import { getUserDetails } from "@/services/UserList";
+import { getUserDetailsInfo } from "@/services/UserList";
 import { Storage } from "@/utils/app.constant";
 import useSubmittedButtonStore from "@/utils/useSharedState";
 
@@ -110,7 +110,7 @@ const LoginPage = () => {
       const fieldValue = true;
       if (userId) {
         console.log("true");
-        const response = await getUserDetails(userId, fieldValue);
+        const response = await getUserDetailsInfo(userId, fieldValue);
 
         const userInfo = response?.userData;
         //set user info in zustand store

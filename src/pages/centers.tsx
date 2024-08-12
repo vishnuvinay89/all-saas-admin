@@ -148,7 +148,7 @@ const Center: React.FC = () => {
     (item: any) => item?.label === "STATES"
   );
   const getUserStateName = state ? state.value : null;
-
+  const stateCode = state ? state?.code : null;
   // handle states
   const [selectedState, setSelectedState] = React.useState<string[]>([
     getUserStateName,
@@ -514,8 +514,8 @@ const Center: React.FC = () => {
       let data = {
         filters: {
           cohortId: cohortId,
-        },
-        limit: 200,
+        }, 
+        limit: Numbers.TWENTY,
         offset: 0,
       };
       const resp = await getCohortList(data);
@@ -732,7 +732,7 @@ const Center: React.FC = () => {
             data={cohortData}
             limit={pageLimit}
             offset={pageOffset}
-            paginationEnable={totalCount > 10}
+            paginationEnable={totalCount > Numbers.TEN}
             PagesSelector={PagesSelector}
             PageSizeSelector={PageSizeSelectorFunction}
             pageSizes={pageSizeArray}
@@ -779,7 +779,7 @@ const Center: React.FC = () => {
               showErrorList={true}
               customFields={customFields}
               formData={editFormData}
-              id="xyz"
+              id="form"
             >
               <Box
                 style={{
@@ -792,7 +792,7 @@ const Center: React.FC = () => {
                 <Button
                   variant="outlined"
                   type="submit"
-                  form="xyz" // Add this line
+                  form="form" // Add this line
                   sx={{
                     padding: "12px 24px", // Adjust padding as needed
                     width: "200px", // Set the desired width
@@ -804,7 +804,7 @@ const Center: React.FC = () => {
                 <Button
                   variant="contained"
                   type="submit"
-                  form="xyz" // Add this line
+                  form="form" // Add this line
                   sx={{
                     padding: "12px 24px", // Adjust padding as needed
                     width: "200px", // Set the desired width
