@@ -24,7 +24,7 @@ import ConfirmationModal from "@/components/ConfirmationModal";
 import { AddBlockModal } from "@/components/AddBlockModal";
 import PageSizeSelector from "@/components/PageSelector";
 import { SORT, Storage } from "@/utils/app.constant";
-import { getUserDetails } from "@/services/UserList";
+import { getUserDetailsInfo } from "@/services/UserList";
 import {
   createCohort,
   getCohortList,
@@ -90,7 +90,7 @@ const Block: React.FC = () => {
         if (typeof window !== "undefined" && window.localStorage) {
           userId = localStorage.getItem(Storage.USER_ID);
         }
-        const response = await getUserDetails(userId);
+        const response = await getUserDetailsInfo(userId);
 
         console.log("profile api is triggered", response.userData.customFields);
 

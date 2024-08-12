@@ -19,7 +19,7 @@ import {
   createCohort,
   getCohortList,
 } from "@/services/CohortService/cohortService";
-import { getUserDetails } from "@/services/UserList";
+import { getUserDetailsInfo } from "@/services/UserList";
 import useStore from "@/store/store";
 
 export interface StateDetail {

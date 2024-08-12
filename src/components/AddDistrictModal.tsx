@@ -14,7 +14,7 @@ import {
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
 import { getStateBlockDistrictList } from "@/services/MasterDataService";
-import { getUserDetails } from "@/services/UserList";
+import { getUserDetailsInfo } from "@/services/UserList";
 import { Storage } from "@/utils/app.constant";
 
 interface AddDistrictBlockModalProps {
@@ -66,7 +66,7 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
         if (typeof window !== "undefined" && window.localStorage) {
           userId = localStorage.getItem(Storage.USER_ID);
         }
-        const response = await getUserDetails(userId);
+        const response = await getUserDetailsInfo(userId);
         console.log("profile api is triggered", response.userData.customFields);
 
         const statesField = response.userData.customFields.find(

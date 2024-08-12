@@ -28,7 +28,7 @@ import {
   getCohortList,
 } from "@/services/CohortService/cohortService";
 import useStore from "@/store/store";
-import { getUserDetails } from "@/services/UserList";
+import { getUserDetailsInfo } from "@/services/UserList";
 
 type StateDetail = {
   selectedStateDropdown: string | undefined;
@@ -87,7 +87,7 @@ const District: React.FC = () => {
         if (typeof window !== "undefined" && window.localStorage) {
           userId = localStorage.getItem(Storage.USER_ID);
         }
-        const response = await getUserDetails(userId);
+        const response = await getUserDetailsInfo(userId);
         console.log("profile api is triggered", response);
 
         const statesField = response.userData.customFields.find(
