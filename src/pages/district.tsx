@@ -163,7 +163,7 @@ const District: React.FC = () => {
         limit: 10,
         offset: 0,
         filters: {
-          name: "Maharashtra",
+          name: stateValue,
           type: "STATE",
         },
       };
@@ -256,8 +256,8 @@ const District: React.FC = () => {
         parentId: cohortId,
         customFields: [
           {
-            fieldId: fieldId,
-            value: [value],
+            fieldId: fieldId, // state fieldId
+            value: [stateCode], // state code
           },
         ],
       };
