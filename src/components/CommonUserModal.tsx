@@ -23,6 +23,9 @@ import { tenantId } from "../../app.config";
 import { transformArray } from "../utils/Helper";
 import AreaSelection from "./AreaSelection";
 import { showToastMessage } from "./Toastify";
+import SendCredentialModal from './SendCredentialModal';
+import { sendCredentialService } from "@/services/NotificationService";
+
 interface UserModalProps {
   open: boolean;
   onClose: () => void;
@@ -45,13 +48,22 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   console.log(userType);
   const [schema, setSchema] = React.useState<any>();
   const [uiSchema, setUiSchema] = React.useState<any>();
+  const [openModal, setOpenModal] = React.useState(false);
   const [submitButtonEnable, setSubmitButtonEnable] =
     React.useState<boolean>(false);
   const roleType = userType;
   const { t } = useTranslation();
   const [formValue, setFormValue] = useState<any>();
+  const adminInformation = useSubmittedButtonStore(
+    (state: any) => state?.adminInformation
+  );
+
+  const [createFacilitator, setCreateFacilitator] = React.useState(false);
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
+  );
+  const  userEnteredEmail = useSubmittedButtonStore(
+    (state: any) => state.userEnteredEmail
   );
 
   const modalTitle = !isEditModal
@@ -243,6 +255,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
             name: apiBody?.name,
             mobile: apiBody?.mobile,
             father_name: apiBody?.father_name,
+            email:apiBody?.email
           };
           const customFields = apiBody?.customFields;
           console.log(customFields);
@@ -260,6 +273,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
 
           showToastMessage(t(messageKey), "success");
         } else {
+          
           const response = await createUser(apiBody);
           console.log(response);
           if (response) {
@@ -271,13 +285,94 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                   : "TEAM_LEADERS.TEAM_LEADER_CREATED_SUCCESSFULLY";
 
             showToastMessage(t(messageKey), "success");
+            // if(userType===FormContextType.STUDENT)
+            // setOpenModal(true);
           } else {
             showToastMessage(t("COMMON.SOMETHING_WENT_WRONG"), "error");
           }
+        
         }
-
         onSubmit(true);
         onClose();
+        onCloseModal();
+
+
+
+       if(!isEditModal)
+       {
+      //  setOpenModal(true);
+
+        const isQueue = false;
+        const context = 'USER';
+        let createrName;
+        const key = userType === FormContextType.STUDENT
+        ? 'onLearnerCreated'
+        : userType === FormContextType.TEACHER
+        ? 'onFacilitatorCreated'
+        : 'onTeamLeaderCreated';
+
+       if (typeof window !== 'undefined' && window.localStorage) {
+          createrName = localStorage.getItem('name');
+        }
+        let replacements;
+        if (createrName) {
+          if(userType===FormContextType.STUDENT)
+          {
+            replacements = [createrName, apiBody['name'], username, password];
+
+          }
+          else{
+             replacements = [apiBody['name'], username, password];
+
+          }
+          
+        }
+        const sendTo = {
+        //  receipients: [userEmail],
+          receipients: userType === FormContextType.STUDENT?[adminInformation?.email]: [formData?.email],
+
+        };
+        if (replacements && sendTo) {
+         
+          const response = await sendCredentialService({
+            isQueue,
+            context,
+            key,
+            replacements,
+            email: sendTo,
+          });
+          if(userType!==FormContextType.STUDENT)
+          {
+            if (response?.result[0]?.data[0]?.status === 'success') {
+              showToastMessage(
+                t('COMMON.USER_CREDENTIAL_SEND_SUCCESSFULLY'),
+                'success'
+              );
+            } else {
+              showToastMessage(
+                t('COMMON.USER_CREDENTIALS_WILL_BE_SEND_SOON'),
+                'success'
+              );
+            }
+          }
+        
+          if(userType===FormContextType.STUDENT && response?.result[0]?.data[0]?.status === 'success' && !isEditModal)
+          {
+            setOpenModal(true);
+
+          }
+          else{
+            showToastMessage(
+              t('COMMON.USER_CREDENTIALS_WILL_BE_SEND_SOON'),
+              'success'
+            );
+          }
+          
+
+        } else {
+          showToastMessage(t('COMMON.SOMETHING_WENT_WRONG'), 'error');
+        }
+      }
       } catch (error) {
         onClose();
         console.log(error);
@@ -292,7 +387,20 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   const handleError = (errors: any) => {
     console.log("Form errors:", errors);
   };
+  const handleBackAction = () => {
+    setCreateFacilitator(false);
+    setOpenModal(false);
+  };
 
+  const handleAction = () => {
+    setTimeout(() => {
+      setCreateFacilitator(true);
+    });
+    setOpenModal(false);
+  };
+  const onCloseModal = () => {
+    setOpenModal(false);
+  };
   useEffect(() => {
     if (!open) {
       setSubmitButtonEnable(false);
@@ -311,6 +419,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
     }
   }, [dynamicForm, dynamicFormForBlock, open]);
   return (
+    <>
     <SimpleModal
       open={open}
       onClose={onClose}
@@ -332,7 +441,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           <Button
             variant="contained"
             type="submit"
-            form="dynamic-form" // Add this line
+            form= { userType===FormContextType.STUDENT && !isEditModal ?"dynamic-form" : isEditModal?"dynamic-form": ""}// Add this line
             sx={{
               fontSize: "14px",
               fontWeight: "500",
@@ -342,7 +451,9 @@ const CommonUserModal: React.FC<UserModalProps> = ({
             }}
             color="primary"
             disabled={!submitButtonEnable}
-            onClick={() => {  
+            onClick={() => { 
+              if(userType!==FormContextType.STUDENT && !isEditModal)
+                     setOpenModal(true)
               setSubmittedButtonStatus(true);
               console.log("Submit button was clicked");
             }}
@@ -437,6 +548,14 @@ const CommonUserModal: React.FC<UserModalProps> = ({
               </DynamicForm>
             )}
     </SimpleModal>
+     <SendCredentialModal
+     handleBackAction={handleBackAction}
+     open={openModal}
+     onClose={onCloseModal}
+     email={(userType!==FormContextType.STUDENT)?userEnteredEmail: adminInformation?.email}
+     userType={userType}
+   />
+   </>
   );
 };
 

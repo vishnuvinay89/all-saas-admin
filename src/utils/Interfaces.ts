@@ -57,3 +57,12 @@ export interface createUserParam {
   tenantCohortRoleMapping: TenantCohortRoleMapping[];
   customFields: CustomField[];
 }
+export interface SendCredentialsRequest {
+  isQueue: boolean;
+  context: string;
+  key: string;
+  replacements: any[];
+  email: {
+    receipients: any[];
+  };
+}

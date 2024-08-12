@@ -32,6 +32,7 @@ export enum FormContextType {
   STUDENT = "STUDENT",
   TEACHER = "TEACHER",
   TEAM_LEADER = "TEAM LEADER",
+  ADMIN="ADMIN"
 }
 
 export enum RoleId {

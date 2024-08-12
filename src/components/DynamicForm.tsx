@@ -51,6 +51,9 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
   );
+  const setUserEnteredEmail = useSubmittedButtonStore(
+    (state: any) => state.setUserEnteredEmail
+  );
 
   const widgets: any = {
     MultiSelectDropdown: MultiSelectDropdown,
@@ -106,7 +109,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     console.log("Form data changed:", cleanedFormData);
 
     setLocalFormData(cleanedFormData);
-    // Update local form data state
+    setUserEnteredEmail(cleanedFormData?.email)
     onChange({ ...event, formData: cleanedFormData });
   };
 
