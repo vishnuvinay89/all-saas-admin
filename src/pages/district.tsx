@@ -260,7 +260,7 @@ const District: React.FC = () => {
         name: name,
         type: "DISTRICT",
         status: cohortStatus,
-        parentId: cohortId,
+        parentId: cohortId, //cohortId of state
         customFields: [
           {
             fieldId: stateFieldId, // state fieldId
