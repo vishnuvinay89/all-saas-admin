@@ -21,6 +21,10 @@ function Logout() {
     };
     userLogout();
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("name");
+    localStorage.removeItem("tenantId");
+
 
     router.replace("/login");
   }, []);

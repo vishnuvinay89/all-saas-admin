@@ -159,7 +159,7 @@ const UserTable: React.FC<UserTableProps> = ({
 
   const PagesSelector = () => (
     <>
-      <Box sx={{ display: { xs: "block", md: "none" } }}>
+      <Box sx={{ display: { xs: "block"} }}>
         <Pagination
           // size="small"
           color="primary"

@@ -13,6 +13,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import PhoneIcon from "@mui/icons-material/Phone";
 import { Box, Button, IconButton, Menu, Typography } from "@mui/material";
 import { useRouter } from "next/router";
+import useSubmittedButtonStore from "@/utils/useSharedState";
 
 const Profile = () => {
   const [anchorEl4, setAnchorEl4] = React.useState<null | HTMLElement>(null);
@@ -21,6 +22,10 @@ const Profile = () => {
   const [userName, setUserName] = React.useState<string | null>("");
   const [userId, setUserId] = React.useState<string>("");
   const [formdata, setFormData] = React.useState<any>();
+  const adminInformation = useSubmittedButtonStore(
+    (state: any) => state?.adminInformation
+  );
+  console.log(adminInformation)
   const [submitValue, setSubmitValue] = React.useState<boolean>(false);
 
   const [role, setRole] = React.useState<string | null>("");
@@ -30,9 +35,11 @@ const Profile = () => {
 
   const [email, setEmail] = React.useState<string | null>("");
   const { t } = useTranslation();
-
+  const setAdminInformation = useSubmittedButtonStore(
+    (state: any) => state.setAdminInformation
+  );
   const router = useRouter();
-
+  
   const handleClick4 = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl4(event.currentTarget);
     setProfileClick(true);
@@ -132,21 +139,26 @@ const Profile = () => {
 
     try {
       const fieldValue = true;
-      const response = await getUserDetailsInfo(userId, fieldValue);
-      console.log(role);
+      const response = await getUserDetailsInfo(adminInformation?.userId, fieldValue);
+     // console.log(role);
 
       let formFields;
-      if (Role.STUDENT === role) {
+      if (Role.STUDENT === adminInformation?.role) {
         formFields = await getFormRead("USERS", "STUDENT");
         setFormData(mapFields(formFields, response));
         console.log("mapped formdata", formdata);
-      } else if (Role.TEACHER === role) {
+      } else if (Role.TEACHER ===  adminInformation?.role) {
         console.log("mapped formdata", formdata);
 
         formFields = await getFormRead("USERS", "TEACHER");
         setFormData(mapFields(formFields, response));
-      } else if (Role.TEAM_LEADER === role) {
+      } else if (Role.TEAM_LEADER ===  adminInformation?.role) {
         formFields = await getFormRead("USERS", "TEAM LEADER");
+        setFormData(mapFields(formFields, response));
+      }
+      else
+      {
+        formFields = await getFormRead("USERS", "ADMIN");
         setFormData(mapFields(formFields, response));
       }
       handleOpenEditModal();
@@ -173,43 +185,45 @@ const Profile = () => {
   useEffect(() => {
     getUserName();
   }, [formdata]);
-  useEffect(() => {
-    // getUserName();
+  // useEffect(() => {
+  //   // getUserName();
 
-    console.log(profileClick);
-    const fetchUserDetail = async () => {
-      let userId;
-      try {
-        if (typeof window !== "undefined" && window.localStorage) {
-          userId = localStorage.getItem(Storage.USER_ID);
-        }
-        console.log(profileClick, userId);
+  //   console.log(profileClick);
+  //   const fetchUserDetail = async () => {
+  //     let userId;
+  //     try {
+  //       if (typeof window !== "undefined" && window.localStorage) {
+  //         userId = localStorage.getItem(Storage.USER_ID);
+  //       }
+  //       console.log(profileClick, userId);
 
-        if (userId && profileClick) {
-          setUserId(userId);
+  //       if (userId && profileClick) {
+  //         setUserId(userId);
 
-          console.log("true");
-          const fieldValue=true
-          const response = await getUserDetailsInfo(userId, fieldValue);
-          console.log(response.userData);
-          // setUserName(response?.userData?.name);
-          console.log(userName);
-          setMobile(response?.userData?.mobile);
-          setEmail(response?.userData?.email);
-          setRole(response?.userData?.role);
-          const initialLetters = userName
-            ?.split(" ")
-            .map((word) => word[0])
-            .join("");
-          console.log(initialLetters);
-          if (initialLetters) setInitials(initialLetters);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchUserDetail();
-  }, [profileClick, submitValue]);
+  //         console.log("true");
+  //         const fieldValue=true
+  //         const response = await getUserDetailsInfo(userId, fieldValue);
+  //         console.log(response.userData);
+  //         // setUserName(response?.userData?.name);
+  //         console.log(userName);
+  //         setMobile(response?.userData?.mobile);
+  //         setEmail(response?.userData?.email);
+  //         setRole(response?.userData?.role);
+  //         console.log(userName, mobile, email);
+
+          // const initialLetters = userName
+          //   ?.split(" ")
+          //   .map((word) => word[0])
+          //   .join("");
+          // console.log(initialLetters);
+  //         if (initialLetters) setInitials(initialLetters);
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   fetchUserDetail();
+  // }, [profileClick, submitValue]);
 
   const handleModalSubmit = (value: boolean) => {
     submitValue ? setSubmitValue(false) : setSubmitValue(true);
@@ -268,7 +282,7 @@ const Profile = () => {
         onClose={handleClose4}
         PaperProps={{
           sx: {
-            width: "385px",
+            width: "500px",
           },
         }}
       >
@@ -305,27 +319,30 @@ const Profile = () => {
             }}
           >
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-              {initials}
+              {adminInformation?.name
+            ?.split(" ")
+            .map((word: any) => word[0])
+            .join("")}
             </Typography>
           </Box>
 
           <Typography variant="h5" sx={{ marginBottom: "10px" }}>
-            {userName}
+            {adminInformation?.name}
           </Typography>
           <Typography variant="subtitle1" sx={{ marginBottom: "20px" }}>
-            {role}
+            {adminInformation?.role}
           </Typography>
           <Box
             sx={{ display: "flex", alignItems: "center", marginBottom: "10px" }}
           >
             <PhoneIcon sx={{ marginRight: "10px" }} />
-            <Typography variant="body1">{mobile}</Typography>
+            <Typography variant="body1">{adminInformation?.mobile}</Typography>
           </Box>
           <Box
             sx={{ display: "flex", alignItems: "center", marginBottom: "20px" }}
           >
             <MailIcon sx={{ marginRight: "10px" }} />
-            <Typography variant="body1">{email}</Typography>
+            <Typography variant="body1">{adminInformation?.email}</Typography>
           </Box>
           <Button
             fullWidth
@@ -338,7 +355,7 @@ const Profile = () => {
           </Button>
         </Box>
       </Menu>
-
+{console.log(adminInformation?.role)}
    { openEditModal && ( <CommonUserModal
         open={openEditModal}
         onClose={handleCloseAddLearnerModal}
@@ -348,11 +365,11 @@ const Profile = () => {
         onSubmit={handleModalSubmit}
         userType={
           // FormContextType.TEACHER
-          role === Role.STUDENT
+          adminInformation?.role === Role.STUDENT
             ? FormContextType.STUDENT
-            : role === Role.TEACHER
+            : adminInformation?.role === Role.TEACHER
               ? FormContextType.TEACHER
-              : FormContextType.TEAM_LEADER
+              : adminInformation?.role === Role.ADMIN? FormContextType.ADMIN :FormContextType.TEAM_LEADER
         }
       />
    )
