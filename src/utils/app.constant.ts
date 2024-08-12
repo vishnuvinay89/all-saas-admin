@@ -3,8 +3,8 @@ export enum Role {
   TEACHER = "Teacher",
   TEAM_LEADER = "Team Leader",
   ADMIN = "Admin",
-  LEARNERS="Learners",
-  FACILITATORS="Facilitators"
+  LEARNERS = "Learners",
+  FACILITATORS = "Facilitators",
 }
 
 export enum Status {
@@ -13,7 +13,7 @@ export enum Status {
   ACTIVE = "active",
   ACTIVE_LABEL = "Active",
   ALL_LABEL = "All",
-  INACTIVE="InActive"
+  INACTIVE = "InActive",
 }
 export enum SORT {
   ASCENDING = "asc",
@@ -38,7 +38,7 @@ export enum RoleId {
   STUDENT = "493c04e2-a9db-47f2-b304-503da358d5f4",
   TEACHER = "3bde0028-6900-4900-9d05-eeb608843718",
   TEAM_LEADER = "9dd9328f-1bc7-444f-96e3-c5e1daa3514a",
-  ADMIN = "ee482faf-8a41-45fe-9656-5533dd6a787c"
+  ADMIN = "ee482faf-8a41-45fe-9656-5533dd6a787c",
 }
 
 export enum DataKey {
@@ -59,10 +59,23 @@ export enum Numbers {
   ZERO = 0,
   ONE = 1,
   FIVE = 5,
-  TEN = 10
+  TEN = 10,
+  TWENTY = 20,
 }
 
 export enum CohortTypes {
   COHORT = "COHORT",
   BLOCK = "BLOCK",
+}
+
+export enum FormValues {
+  FEMALE = "FEMALE",
+  MALE = "MALE",
+}
+
+export enum InputTypes {
+  CHECKBOX = "checkbox",
+  RADIO = "radio",
+  NUMERIC = "numeric",
+  TEXT = "text",
 }
