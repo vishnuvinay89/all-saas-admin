@@ -24,6 +24,8 @@ function Logout() {
     localStorage.removeItem("userId");
     localStorage.removeItem("name");
     localStorage.removeItem("tenantId");
+    localStorage.removeItem("adminInfo");
+
 
 
     router.replace("/login");
