@@ -94,7 +94,7 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
       newErrors.name = t("COMMON.STATE_NAME_REQUIRED");
     } else if (!isValidName(formData.name.trim())) {
       newErrors.name = t("COMMON.INVALID_TEXT");
-    }
+    } 
 
     if (!formData.value) {
       newErrors.value = t("COMMON.CODE_REQUIRED");

@@ -121,7 +121,7 @@ const District: React.FC = () => {
       };
 
       const districtData = await getDistrictsForState(data);
-      setDistrictData(districtData.result.values);
+      setDistrictData(districtData.result.values || []);
 
       const districtFieldID = districtData?.result?.fieldId || "";
       setDistrictFieldId(districtFieldID);

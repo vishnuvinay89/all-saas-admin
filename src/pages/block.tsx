@@ -257,9 +257,8 @@ const Block: React.FC = () => {
     setSelectedState(selectedState);
 
     try {
-      const limit = "";
-      const offset = "" ;
-
+      const limit = pageLimit;
+      const offset = pageOffset * limit;
       const data = {
         limit: limit,
         offset: offset,
@@ -280,9 +279,8 @@ const Block: React.FC = () => {
     setSelectedDistrict(selectedDistrict);
 
     if (selectedDistrict) {
-      const limit = "";
-      const offset = "";
-
+      const limit = pageLimit;
+      const offset = pageOffset * limit;
       const reqParams = {
         limit: limit,
         offset: offset,
