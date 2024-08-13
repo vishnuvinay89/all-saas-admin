@@ -33,6 +33,7 @@ import { useUserIdStore } from "@/store/useUserIdStore";
 import { getUserDetailsInfo } from "@/services/UserList";
 import { Storage } from "@/utils/app.constant";
 import useSubmittedButtonStore from "@/utils/useSharedState";
+import { Role } from "@/utils/app.constant";
 
 const LoginPage = () => {
   const { t } = useTranslation();
@@ -140,7 +141,20 @@ const LoginPage = () => {
         if (typeof window !== 'undefined' && window.localStorage) {
           localStorage.setItem('adminInfo', JSON.stringify(userInfo))
         }
-        setAdminInformation(userInfo);
+        if(userInfo.role!==Role.ADMIN)
+        {
+          const errorMessage = t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT");
+          showToastMessage(errorMessage, "error");
+  
+        }
+        else
+        {
+          setAdminInformation(userInfo);
+
+          router.push("/centers");
+
+        }
+
       }
     } catch (error) {
       console.log(error);
@@ -191,7 +205,6 @@ const LoginPage = () => {
           },
         };
         telemetryFactory.interact(telemetryInteract);
-        router.push("/centers");
         fetchUserDetail();
       } catch (error: any) {
         setLoading(false);
