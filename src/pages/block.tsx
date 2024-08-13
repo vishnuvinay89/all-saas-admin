@@ -214,6 +214,19 @@ const Block: React.FC = () => {
       width: "130",
     },
     {
+      key: "createdBy",
+      title: t("MASTER.CREATED_BY"),
+      dataType: DataType.String,
+      width: "160",
+    },
+    {
+      key: "updatedBy",
+      title: t("MASTER.UPDATED_BY"),
+      dataType: DataType.String,
+      width: "160",
+    },
+
+    {
       key: "createdAt",
       title: t("MASTER.CREATED_AT"),
       dataType: DataType.String,
@@ -224,18 +237,6 @@ const Block: React.FC = () => {
       title: t("MASTER.UPDATED_AT"),
       dataType: DataType.String,
       width: "130",
-    },
-    {
-      key: "createdAt",
-      title: t("MASTER.CREATED_BY"),
-      dataType: DataType.String,
-      width: "160",
-    },
-    {
-      key: "updatedAt",
-      title: t("MASTER.UPDATED_BY"),
-      dataType: DataType.String,
-      width: "160",
     },
     {
       key: "actions",
@@ -402,14 +403,12 @@ const Block: React.FC = () => {
   );
 
   const userProps = {
-    selectedSort,
     selectedFilter,
     showStateDropdown: false,
     userType: t("MASTER.BLOCKS"),
     searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK"),
     showFilter: false,
     showSort: true,
-    handleSortChange: { handleSortChange },
   };
 
   const handleAddNewBlock = () => {
@@ -507,6 +506,9 @@ const Block: React.FC = () => {
         {...userProps}
         handleAddUserClick={handleAddNewBlock}
         handleSearch={handleSearch}
+        selectedSort={selectedSort}
+        handleSortChange={handleSortChange}
+        showSort={true}
       >
         <>
           <Box
