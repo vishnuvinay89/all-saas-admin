@@ -100,11 +100,21 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
     setErrors({});
   }, [initialValues]);
 
-  const isAlphabetic = (input: string) =>
-    input === "" || /^[a-zA-Z\s]+$/.test(input);
+  const isValidName = (input: string) =>
+    /^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/.test(input);
+
+  const isValidCode = (input: string) => /^[A-Z]{1,3}$/.test(input);
 
   // Handle input change and validation
   const handleChange = (field: string, value: string) => {
+    if (field === "name") {
+      value = value.replace(/[^a-zA-Z\s]/g, "");
+    }
+
+    if (field === "value" && value.length > 3) {
+      return;
+    }
+
     setFormData((prev) => ({ ...prev, [field]: value }));
 
     if (value === "") {
@@ -118,37 +128,33 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
               : "COMMON.CODE_REQUIRED"
         ),
       }));
-    } else if (field !== "controllingField" && !isAlphabetic(value)) {
-      setErrors((prev: Record<string, string | null>) => {
-        const newErrors: Record<string, string | null> = {
-          ...prev,
-          [field]: field === "controllingField" ? value : null,
-        };
-        return newErrors;
-      });
+    } else if (field === "name" && !isValidName(value.trim())) {
+      setErrors((prev) => ({ ...prev, [field]: t("COMMON.INVALID_INPUT") }));
+    } else if (field === "value" && !isValidCode(value)) {
+      setErrors((prev) => ({ ...prev, [field]: t("COMMON.INVALID_TEXT") }));
+    } else {
+      setErrors((prev) => ({ ...prev, [field]: null }));
     }
   };
 
   // Validate form before submitting
   const validateForm = () => {
-    const newErrors = {
-      name: !formData.name
-        ? t("COMMON.DISTRICT_NAME_REQUIRED")
-        : !isAlphabetic(formData.name)
-          ? t("COMMON.INVALID_TEXT")
-          : null,
-      value: !formData.value
-        ? t("COMMON.CODE_REQUIRED")
-        : !isAlphabetic(formData.value)
-          ? t("COMMON.INVALID_TEXT")
-          : null,
-      controllingField: !formData.controllingField
-        ? t("COMMON.STATE_NAME_REQUIRED")
-        : null,
-    };
+    const newErrors: { name?: string; value?: string } = {};
+
+    if (!formData.name) {
+      newErrors.name = t("COMMON.STATE_NAME_REQUIRED");
+    } else if (!isValidName(formData.name.trim())) {
+      newErrors.name = t("COMMON.INVALID_TEXT");
+    }
+
+    if (!formData.value) {
+      newErrors.value = t("COMMON.CODE_REQUIRED");
+    } else if (!isValidCode(formData.value)) {
+      newErrors.value = t("COMMON.INVALID_TEXT");
+    }
 
     setErrors(newErrors);
-    return !Object.values(newErrors).some((error) => error !== null);
+    return Object.keys(newErrors).length === 0;
   };
 
   // Handle form submission
