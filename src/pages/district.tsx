@@ -116,38 +116,42 @@ const District: React.FC = () => {
         offset: offset,
         controllingfieldfk: stateId === "ALL" ? undefined : stateId,
         fieldName: "districts",
+        optionName: searchKeyword || "",
         sort: sortBy,
       };
 
       const districtData = await getDistrictsForState(data);
-      setDistrictData(
-        districtData.result.values.map((district: any) => ({
-          ...district,
-          controllingField: stateId,
-        })) || []
-      );
+      setDistrictData(districtData.result.values || []);
 
       const districtFieldID = districtData?.result?.fieldId || "";
       setDistrictFieldId(districtFieldID);
 
-      setPaginationCount(districtData?.result?.totalCount || 0);
-
       const totalCount = districtData?.result?.totalCount || 0;
+      setPaginationCount(totalCount);
+
+      if (paginationCount >= Numbers.FIFTEEN) {
+        setPageSizeArray([
+          Numbers.FIVE,
+          Numbers.TEN,
+          Numbers.FIFTEEN,
+          Numbers.TWENTY,
+        ]);
+      } else if (paginationCount >= Numbers.TEN) {
+        setPageSizeArray([Numbers.FIVE, Numbers.TEN]);
+      } else {
+        setPageSizeArray([Numbers.FIVE]);
+      }
       const pageCount = Math.ceil(totalCount / limit);
       setPageCount(pageCount);
-
-      if (totalCount >= 15) {
-        setPageSizeArray([5, 10, 15]);
-      } else if (totalCount >= 10) {
-        setPageSizeArray([5, 10]);
-      } else {
-        setPageSizeArray([5]);
-      }
     } catch (error) {
       console.error("Error fetching district data:", error);
       setDistrictData([]);
     }
   };
+
+  useEffect(() => {
+    fetchDistrictData(selectedStateDropdown);
+  }, [searchKeyword, selectedStateDropdown, sortBy, pageLimit, pageOffset]);
 
   const handleStateChange = async (event: SelectChangeEvent<string>) => {
     const selectedStateDropdown = event.target.value;
@@ -471,7 +475,7 @@ const District: React.FC = () => {
               }))}
               limit={pageLimit}
               offset={pageOffset}
-              paginationEnable={paginationCount >= 5}
+              paginationEnable={paginationCount >= Numbers.FIVE}
               PagesSelector={PagesSelector}
               PageSizeSelector={PageSizeSelectorFunction}
               pageSizes={pageSizeArray}

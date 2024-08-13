@@ -70,10 +70,10 @@ const Menuitems = [
         title: "SIDEBAR.FOUNDATION_COURSE",
         href: "/course-planner/foundation",
       },
-      {
-        title: "SIDEBAR.MAIN_COURSE",
-        href: "/mainCourse",
-      },
+      // {
+      //   title: "SIDEBAR.MAIN_COURSE",
+      //   href: "/mainCourse",
+      // },
     ],
   },
 ];
