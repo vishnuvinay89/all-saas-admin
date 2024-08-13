@@ -305,16 +305,6 @@ const District: React.FC = () => {
       event.target.value === "Z-A" ? SORT.DESCENDING : SORT.ASCENDING;
     setSortBy(["name", sortOrder]);
     setSelectedSort(event.target.value);
-
-    const afterFilter = stateData.filter((item) => {
-      return item.value === selectedState;
-    });
-    const setSort =
-      afterFilter[0]?.label === undefined ? "ALL" : afterFilter[0]?.label;
-
-    console.log(setSort);
-
-    fetchDistrictData(setSort);
   };
 
   const handlePaginationChange = (
@@ -383,8 +373,8 @@ const District: React.FC = () => {
       <HeaderComponent
         userType={t("MASTER.DISTRICTS")}
         searchPlaceHolder={t("MASTER.SEARCHBAR_PLACEHOLDER_DISTRICT")}
-        states={stateData.map((state) => state.value)}
-        districts={districtData.map((district) => district.label)}
+        // states={stateData.map((state) => state.value)}
+        // districts={districtData.map((district) => district.label)}
         selectedState={selectedState}
         showStateDropdown={false}
         handleSortChange={handleSortChange}
