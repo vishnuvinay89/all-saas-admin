@@ -403,14 +403,12 @@ const Block: React.FC = () => {
   );
 
   const userProps = {
-    selectedSort,
     selectedFilter,
     showStateDropdown: false,
     userType: t("MASTER.BLOCKS"),
     searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK"),
     showFilter: false,
     showSort: true,
-    handleSortChange: { handleSortChange },
   };
 
   const handleAddNewBlock = () => {
@@ -508,6 +506,9 @@ const Block: React.FC = () => {
         {...userProps}
         handleAddUserClick={handleAddNewBlock}
         handleSearch={handleSearch}
+        selectedSort={selectedSort}
+        handleSortChange={handleSortChange}
+        showSort={true}
       >
         <>
           <Box
