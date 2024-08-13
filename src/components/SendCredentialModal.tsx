@@ -69,7 +69,7 @@ const SendCredentialModal: React.FC<SendCredentialModalProps> = ({
               }}
               component="h2"
             >
-              {t('COMMON.NEW', { role: 'Learner' })}
+              {t('COMMON.NEW', { role: userType })}
             </Typography>
           </Box>
           <CloseIcon
@@ -104,21 +104,10 @@ const SendCredentialModal: React.FC<SendCredentialModalProps> = ({
             >
               {userType===FormContextType.STUDENT
                 ? t('COMMON.CREDENTIALS_EMAILED_OF_LEARNER')
-                : userType===FormContextType.TEAM_LEADER?t('COMMON.CREDENTIALS_EMAILED_OF_TEAM_LEADER'): t('COMMON.CREDENTIALS_EMAILED_OF_FACILITATOR')}
+                : userType===FormContextType.TEAM_LEADER?t('COMMON.CREDENTIALS_EMAILED_OF_TEAM_LEADER', {email}): t('COMMON.CREDENTIALS_EMAILED_OF_FACILITATOR', {email})}
             </Typography>
           </Box>
-          <Box sx={{ padding: '0 1rem' }}>
-            <Typography
-              variant="h2"
-              sx={{
-                color: theme.palette.warning['400'],
-                fontSize: '14px',
-              }}
-              component="h2"
-            >
-              {email}
-            </Typography>
-          </Box>
+          
         </Box>
 
         <>

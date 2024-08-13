@@ -25,6 +25,7 @@ import AreaSelection from "./AreaSelection";
 import { showToastMessage } from "./Toastify";
 import SendCredentialModal from './SendCredentialModal';
 import { sendCredentialService } from "@/services/NotificationService";
+import { useQuery } from "@tanstack/react-query";
 
 interface UserModalProps {
   open: boolean;
@@ -57,7 +58,9 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   const adminInformation = useSubmittedButtonStore(
     (state: any) => state?.adminInformation
   );
-
+  const submittedButtonStatus = useSubmittedButtonStore(
+    (state: any) => state.submittedButtonStatus
+  );
   const [createFacilitator, setCreateFacilitator] = React.useState(false);
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
@@ -452,9 +455,13 @@ const CommonUserModal: React.FC<UserModalProps> = ({
             color="primary"
             disabled={!submitButtonEnable}
             onClick={() => { 
-              if(userType!==FormContextType.STUDENT && !isEditModal)
-                     setOpenModal(true)
+              
               setSubmittedButtonStatus(true);
+              if(userType!==FormContextType.STUDENT && !isEditModal && submittedButtonStatus)
+              {
+                setOpenModal(true)
+
+              }
               console.log("Submit button was clicked");
             }}
           >
