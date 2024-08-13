@@ -4,7 +4,7 @@ const options = {
   position: "bottom-center",
   hideProgressBar: true,
   closeButton: false,
-  autoClose: 3000,
+  autoClose: 2000,
 };
 
 export const showToastMessage = (message, type = "success") => {

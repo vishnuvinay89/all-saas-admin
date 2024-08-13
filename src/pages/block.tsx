@@ -83,6 +83,7 @@ const Block: React.FC = () => {
   const [cohortStatus, setCohortStatus] = useState<any>();
   const [cohortId, setCohortId] = useState<any>();
   const [stateFieldId, setStateFieldId] = useState<string>("");
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -153,8 +154,9 @@ const Block: React.FC = () => {
       const response = await getBlocksForDistricts({
         limit: limit,
         offset: offset,
-        controllingfieldfk: selectedDistrict,
+        controllingfieldfk: selectedDistrict || "",
         fieldName: "blocks",
+        optionName: searchKeyword || "",
         sort: sortBy,
       });
 
@@ -190,7 +192,7 @@ const Block: React.FC = () => {
 
   useEffect(() => {
     fetchBlocks(selectedDistrict);
-  }, [selectedDistrict, sortBy, pageOffset, pageLimit]);
+  }, [searchKeyword, selectedDistrict, sortBy, pageOffset, pageLimit]);
 
   const columns = [
     {
@@ -339,6 +341,10 @@ const Block: React.FC = () => {
   const handleDelete = (rowData: BlockDetail) => {
     setSelectedStateForDelete(rowData);
     setConfirmationDialogOpen(true);
+  };
+
+  const handleSearch = (keyword: string) => {
+    setSearchKeyword(keyword);
   };
 
   const handleConfirmDelete = async () => {
@@ -496,67 +502,79 @@ const Block: React.FC = () => {
         handleCloseModal={() => setConfirmationDialogOpen(false)}
       />
 
-      <HeaderComponent {...userProps} handleAddUserClick={handleAddNewBlock}>
+      <HeaderComponent
+        {...userProps}
+        handleAddUserClick={handleAddNewBlock}
+        handleSearch={handleSearch}
+      >
         <>
           <Box
             sx={{
               display: "flex",
-              justifyContent: "center",
-              gap: 5,
+              gap: 3,
               marginTop: 2,
               "@media (max-width: 580px)": {
-                marginTop: 10,
+                width: "100%",
                 flexDirection: "column",
-                alignItems: "center",
               },
             }}
           >
-            <Box sx={{ width: "100%" }}>
-              <FormControl sx={{ width: "100%" }}>
-                <InputLabel
-                  sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
-                  id="state-select-label"
-                >
-                  {t("MASTER.STATE")}
-                </InputLabel>
-                <Select
-                  labelId="state-select-label"
-                  id="state-select"
-                  value={selectedState}
-                  onChange={handleStateChange}
-                >
-                  <MenuItem key={stateCode} value={stateCode}>
-                    {transformLabel(stateValue)}
-                  </MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
+            <FormControl
+              sx={{
+                width: "25%", 
+                "@media (max-width: 580px)": {
+                  width: "100%", 
+                },
+              }}
+            >
+              <InputLabel
+                sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
+                id="state-select-label"
+              >
+                {t("MASTER.STATE")}
+              </InputLabel>
+              <Select
+                labelId="state-select-label"
+                id="state-select"
+                value={selectedState}
+                onChange={handleStateChange}
+              >
+                <MenuItem key={stateCode} value={stateCode}>
+                  {transformLabel(stateValue)}
+                </MenuItem>
+              </Select>
+            </FormControl>
 
-            <Box sx={{ width: "100%" }}>
-              <FormControl sx={{ width: "100%" }}>
-                <InputLabel
-                  sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
-                  id="district-select-label"
-                >
-                  {t("MASTER.DISTRICTS")}
-                </InputLabel>
-                <Select
-                  labelId="district-select-label"
-                  id="district-select"
-                  value={selectedDistrict}
-                  onChange={handleDistrictChange}
-                >
-                  {districtData.map((districtDetail) => (
-                    <MenuItem
-                      key={districtDetail.value}
-                      value={districtDetail.value}
-                    >
-                      {transformLabel(districtDetail.label)}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
+            <FormControl
+              sx={{
+                width: "25%", // Default width for larger screens
+                "@media (max-width: 580px)": {
+                  width: "100%", // Full width for small screens
+                },
+              }}
+            >
+              <InputLabel
+                sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
+                id="district-select-label"
+              >
+                {t("MASTER.DISTRICTS")}
+              </InputLabel>
+              <Select
+                labelId="district-select-label"
+                id="district-select"
+                value={selectedDistrict}
+                onChange={handleDistrictChange}
+              >
+                {districtData.map((districtDetail) => (
+                  <MenuItem
+                    key={districtDetail.value}
+                    value={districtDetail.value}
+                  >
+                    {transformLabel(districtDetail.label)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
 
           <Box sx={{ marginTop: 2 }}>

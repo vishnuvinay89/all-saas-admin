@@ -80,6 +80,7 @@ export const getBlocksForDistricts = async ({
   offset,
   controllingfieldfk,
   fieldName,
+  optionName,
   sort,
 }: {
   limit: number;
@@ -90,18 +91,36 @@ export const getBlocksForDistricts = async ({
   sort?: [string, string];
 }): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/options/read`;
+
+  const requestBody: {
+    limit: number;
+    offset: number;
+    controllingfieldfk?: string;
+    fieldName: string;
+    optionName?: string;
+    sort?: [string, string];
+  } = {
+    limit,
+    offset,
+    fieldName,
+  };
+
+  if (controllingfieldfk) {
+    requestBody.controllingfieldfk = controllingfieldfk;
+  }
+  if (optionName) {
+    requestBody.optionName = optionName;
+  }
+  if (sort) {
+    requestBody.sort = sort;
+  }
+
   try {
-    const response = await post(apiUrl, {
-      limit,
-      offset,
-      controllingfieldfk,
-      fieldName,
-      sort,
-    });
+    const response = await post(apiUrl, requestBody);
     return response?.data;
   } catch (error) {
-    console.error("Error fetching district data", error);
-    return error;
+    console.error("Error fetching blocks for districts", error);
+    throw error;
   }
 };
 
@@ -145,7 +164,7 @@ export const createOrUpdateOption = async (
   fieldId: string,
   fieldParams: {
     options: { name: string; value: string; controllingfieldfk?: string }[];
-  },
+  }
   // stateId?: string
 ): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/update/${fieldId}`;
