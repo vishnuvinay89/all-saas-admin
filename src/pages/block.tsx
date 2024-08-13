@@ -511,15 +511,22 @@ const Block: React.FC = () => {
           <Box
             sx={{
               display: "flex",
-              gap: 5,
+              gap: 3,
               marginTop: 2,
               "@media (max-width: 580px)": {
-                marginTop: 10,
+                width: "100%",
                 flexDirection: "column",
               },
             }}
           >
-            <FormControl sx={{ width: "25%" }}>
+            <FormControl
+              sx={{
+                width: "25%", 
+                "@media (max-width: 580px)": {
+                  width: "100%", 
+                },
+              }}
+            >
               <InputLabel
                 sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
                 id="state-select-label"
@@ -538,7 +545,14 @@ const Block: React.FC = () => {
               </Select>
             </FormControl>
 
-            <FormControl sx={{ width: "25%" }}>
+            <FormControl
+              sx={{
+                width: "25%", // Default width for larger screens
+                "@media (max-width: 580px)": {
+                  width: "100%", // Full width for small screens
+                },
+              }}
+            >
               <InputLabel
                 sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
                 id="district-select-label"
