@@ -174,19 +174,11 @@ const Block: React.FC = () => {
       const totalCount = response?.result?.totalCount || 0;
       setPaginationCount(totalCount);
 
-      const pageSizeOptions = [
-        Numbers.FIVE,
-        Numbers.TEN,
-        Numbers.FIFTEEN,
-        Numbers.TWENTY,
-      ];
-      const pageSizeArray = pageSizeOptions.filter(
-        (size) => paginationCount >= size
+      setPageSizeArray(
+        totalCount >= 15 ? [5, 10, 15, 20] : totalCount >= 10 ? [5, 10] : [5]
       );
 
-      setPageSizeArray(pageSizeArray);
-      const pageCount = Math.ceil(totalCount / limit);
-      setPageCount(pageCount);
+      setPageCount(Math.ceil(totalCount / limit));
     } catch (error) {
       console.error("Error fetching blocks", error);
       setBlockData([]);
