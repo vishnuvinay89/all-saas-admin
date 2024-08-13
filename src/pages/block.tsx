@@ -29,6 +29,7 @@ import {
   createCohort,
   getCohortList,
 } from "@/services/CohortService/cohortService";
+import { Numbers } from "@/utils/app.constant";
 
 type StateDetail = {
   block: string | undefined;
@@ -170,21 +171,26 @@ const Block: React.FC = () => {
 
       console.log("new blockFeldId", blocksFieldId);
 
-      setPaginationCount(response?.result?.totalCount || 0);
-
       const totalCount = response?.result?.totalCount || 0;
+      setPaginationCount(totalCount);
+
+      if (paginationCount >= Numbers.FIFTEEN) {
+        setPageSizeArray([
+          Numbers.FIVE,
+          Numbers.TEN,
+          Numbers.FIFTEEN,
+          Numbers.TWENTY,
+        ]);
+      } else if (paginationCount >= Numbers.TEN) {
+        setPageSizeArray([Numbers.FIVE, Numbers.TEN]);
+      } else {
+        setPageSizeArray([Numbers.FIVE]);
+      }
       const pageCount = Math.ceil(totalCount / limit);
       setPageCount(pageCount);
-
-      if (totalCount >= 15) {
-        setPageSizeArray([5, 10, 15]);
-      } else if (totalCount >= 10) {
-        setPageSizeArray([5, 10]);
-      } else {
-        setPageSizeArray([5]);
-      }
     } catch (error) {
       console.error("Error fetching blocks", error);
+      setBlockData([]);
     } finally {
       setLoading(false);
     }
@@ -272,9 +278,6 @@ const Block: React.FC = () => {
   const handleDistrictChange = async (event: SelectChangeEvent<string>) => {
     const selectedDistrict = event.target.value;
     setSelectedDistrict(selectedDistrict);
-
-    console.log("selected district", selectedDistrict);
-    fetchBlocks(selectedDistrict);
 
     if (selectedDistrict) {
       const limit = pageLimit;
@@ -521,9 +524,9 @@ const Block: React.FC = () => {
           >
             <FormControl
               sx={{
-                width: "25%", 
+                width: "25%",
                 "@media (max-width: 580px)": {
-                  width: "100%", 
+                  width: "100%",
                 },
               }}
             >
@@ -593,7 +596,7 @@ const Block: React.FC = () => {
                 }))}
                 limit={pageLimit}
                 offset={pageOffset}
-                paginationEnable={paginationCount >= 5}
+                paginationEnable={paginationCount >= Numbers.FIVE}
                 PagesSelector={PagesSelector}
                 PageSizeSelector={PageSizeSelectorFunction}
                 pageSizes={pageSizeArray}

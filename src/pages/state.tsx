@@ -73,8 +73,8 @@ const State: React.FC = () => {
   const setPid = useStore((state) => state.setPid);
 
   const columns = [
-    { key: "label", title: t("MASTER.STATE_NAMES"), width: "130" },
-    { key: "value", title: t("MASTER.STATE_CODE"), width: "130" },
+    { key: "label", title: t("MASTER.STATE"), width: "130" },
+    { key: "value", title: t("MASTER.CODE"), width: "130" },
     { key: "createdBy", title: t("MASTER.CREATED_BY"), width: "130" },
     { key: "updatedBy", title: t("MASTER.UPDATED_BY"), width: "130" },
     { key: "createdAt", title: t("MASTER.CREATED_AT"), width: "160" },
@@ -221,17 +221,24 @@ const State: React.FC = () => {
       if (resp?.result?.fieldId) {
         setFieldId(resp.result.fieldId);
         setStateData(resp.result.values);
-        setPaginationCount(resp?.result?.totalCount || 0);
 
         const totalCount = resp?.result?.totalCount || 0;
+
+        setPaginationCount(totalCount);
+
         console.log("totalCount", totalCount);
 
-        if (totalCount >= 15) {
-          setPageSizeArray([5, 10, 15]);
-        } else if (totalCount >= 10) {
-          setPageSizeArray([5, 10]);
+        if (paginationCount >= Numbers.FIFTEEN) {
+          setPageSizeArray([
+            Numbers.FIVE,
+            Numbers.TEN,
+            Numbers.FIFTEEN,
+            Numbers.TWENTY,
+          ]);
+        } else if (paginationCount >= Numbers.TEN) {
+          setPageSizeArray([Numbers.FIVE, Numbers.TEN]);
         } else {
-          setPageSizeArray([5]);
+          setPageSizeArray([Numbers.FIVE]);
         }
 
         const pageCount = Math.ceil(totalCount / limit);

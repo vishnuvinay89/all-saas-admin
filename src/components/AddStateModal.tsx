@@ -8,6 +8,7 @@ import {
   Button,
   Typography,
   Box,
+  Divider,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
@@ -80,9 +81,9 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
     if (!formData.name) {
       newErrors.name = t("COMMON.STATE_NAME_REQUIRED");
     }
-    // if (!isAlphabetic(formData.name)) {
-    //   newErrors.name = t("COMMON.INVALID_TEXT");
-    // }
+    if (!isAlphabetic(formData.name)) {
+      newErrors.name = t("COMMON.INVALID_TEXT");
+    }
     if (!formData.value) {
       newErrors.value = t("COMMON.CODE_REQUIRED");
     }
@@ -105,6 +106,7 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
       <DialogTitle sx={{ fontSize: "14px" }}>
         {stateId ? t("COMMON.UPDATE_STATE") : t("COMMON.ADD_STATE")}
       </DialogTitle>
+      <Divider />
       <DialogContent>
         <TextField
           autoFocus
@@ -136,6 +138,8 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
           </Typography>
         </Box>
       </DialogContent>
+      <Divider />
+
       <DialogActions>
         <Button
           onClick={onClose}
