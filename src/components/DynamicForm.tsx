@@ -62,7 +62,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   };
 
   const handleError = (errors: any) => {
-    console.log("handle error1", errors);
+    console.log("handle error1");
     if (errors.length > 0) {
       const property = errors[0].property?.replace(/^root\./, "");
       const errorField = document.querySelector(
@@ -120,6 +120,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     return errors?.map((error: any) => {
       switch (error.name) {
         case "required": {
+          console.log(submittedButtonStatus)
           error.message = submittedButtonStatus
             ? t("FORM_ERROR_MESSAGES.THIS_IS_REQUIRED_FIELD")
             : "";
