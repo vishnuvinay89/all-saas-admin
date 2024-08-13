@@ -214,6 +214,19 @@ const Block: React.FC = () => {
       width: "130",
     },
     {
+      key: "createdBy",
+      title: t("MASTER.CREATED_BY"),
+      dataType: DataType.String,
+      width: "160",
+    },
+    {
+      key: "updatedBy",
+      title: t("MASTER.UPDATED_BY"),
+      dataType: DataType.String,
+      width: "160",
+    },
+
+    {
       key: "createdAt",
       title: t("MASTER.CREATED_AT"),
       dataType: DataType.String,
@@ -224,18 +237,6 @@ const Block: React.FC = () => {
       title: t("MASTER.UPDATED_AT"),
       dataType: DataType.String,
       width: "130",
-    },
-    {
-      key: "createdAt",
-      title: t("MASTER.CREATED_BY"),
-      dataType: DataType.String,
-      width: "160",
-    },
-    {
-      key: "updatedAt",
-      title: t("MASTER.UPDATED_BY"),
-      dataType: DataType.String,
-      width: "160",
     },
     {
       key: "actions",
