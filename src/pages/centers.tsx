@@ -150,8 +150,9 @@ const Center: React.FC = () => {
     setLoading(true);
     try {
       const limit = pageLimit;
-      const offset = pageOffset * limit;
+      const offset = filters?.name ? 0 : pageOffset * limit;
       const sort = sortBy;
+
       const data = {
         limit: limit,
         offset: offset,
@@ -647,8 +648,6 @@ const Center: React.FC = () => {
     showAddNew: true,
     handleAddUserClick: handleAddUserClick,
   };
-
-
 
   return (
     <>
