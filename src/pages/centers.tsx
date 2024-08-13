@@ -85,9 +85,7 @@ const Center: React.FC = () => {
   const getUserStateName = state ? state.value : null;
   const stateCode = state ? state?.code : null;
   // handle states
-  const [selectedState, setSelectedState] = React.useState<string[]>([
-    getUserStateName,
-  ]);
+  const [selectedState, setSelectedState] = React.useState<string[]>([]);
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
   const [selectedBlock, setSelectedBlock] = React.useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState("Sort");
@@ -114,7 +112,7 @@ const Center: React.FC = () => {
   const [pageSizeArray, setPageSizeArray] = React.useState<number[]>([]);
   const [filters, setFilters] = useState<cohortFilterDetails>({
     type: "COHORT",
-    states:stateCode
+    // states: stateCode,
   });
   const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
   const [selectedStateCode, setSelectedStateCode] = useState("");
@@ -282,15 +280,20 @@ const Center: React.FC = () => {
     setSelectedState(selected);
 
     if (selected[0] === "") {
-      if (filters.status) setFilters({    type: "COHORT",status: filters.status });
+      if (filters.status)
+        setFilters({ type: "COHORT", status: filters.status });
       // else setFilters({ role: role });
     } else {
       const stateCodes = code?.join(",");
       console.log("stateCodes", stateCodes);
       setSelectedStateCode(stateCodes);
       if (filters.status)
-        setFilters({   type: "COHORT", status: filters.status, states: stateCodes });
-      else setFilters({    type: "COHORT",states: stateCodes });
+        setFilters({
+          type: "COHORT",
+          status: filters.status,
+          states: stateCodes,
+        });
+      else setFilters({ type: "COHORT", states: stateCodes });
     }
 
     console.log("Selected categories:", typeof code[0]);
@@ -598,29 +601,32 @@ const Center: React.FC = () => {
   const handleAddUserClick = () => {
     setOpenAddNewCohort(true);
   };
-  const fetchUserDetail = async () => {
-    let userId;
-    try {
-      if (typeof window !== "undefined" && window.localStorage) {
-        userId = localStorage.getItem(Storage.USER_ID);
-      }
-      const fieldValue = true;
-      if (userId) {
-        console.log("true");
-        const response = await getUserDetailsInfo(userId, fieldValue);
+  // const fetchUserDetail = async () => {
+  //   let userId;
+  //   try {
+  //     if (typeof window !== "undefined" && window.localStorage) {
+  //       userId = localStorage.getItem(Storage.USER_ID);
+  //     }
+  //     const fieldValue = true;
+  //     if (userId) {
+  //       console.log("true");
+  //       const response = await getUserDetailsInfo(userId, fieldValue);
 
-        const userInfo = response?.userData;
-        //set user info in zustand store
-        setAdminInformation(userInfo);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //       const userInfo = response?.userData;
+  //       //set user info in zustand store
+  //       if (typeof window !== 'undefined' && window.localStorage) {
+  //         localStorage.setItem('adminInfo', JSON.stringify(userInfo))
+  //       }
+  //       setAdminInformation(userInfo);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchUserDetail();
-  }, []);
+  // useEffect(() => {
+  //   fetchUserDetail();
+  // }, []);
 
   // props to send in header
   const userProps = {
@@ -641,6 +647,8 @@ const Center: React.FC = () => {
     showAddNew: true,
     handleAddUserClick: handleAddUserClick,
   };
+
+
 
   return (
     <>
@@ -760,8 +768,11 @@ const Center: React.FC = () => {
                   type="submit"
                   form="update-center-form" // Add this line
                   sx={{
-                    padding: "12px 24px", // Adjust padding as needed
-                    width: "200px", // Set the desired width
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    width: "auto",
+                    height: "40px",
+                    marginLeft: "10px",
                   }}
                   onClick={onCloseEditForm}
                 >
@@ -772,8 +783,11 @@ const Center: React.FC = () => {
                   type="submit"
                   form="update-center-form" // Add this line
                   sx={{
-                    padding: "12px 24px", // Adjust padding as needed
-                    width: "200px", // Set the desired width
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    width: "auto",
+                    height: "40px",
+                    marginLeft: "10px",
                   }}
                   onClick={() => {
                     setSubmittedButtonStatus(true);

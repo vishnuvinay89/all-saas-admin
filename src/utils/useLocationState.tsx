@@ -236,6 +236,7 @@ export const useLocationState = (
   }, [onClose, open]);
 
   useEffect(() => {
+    
     const fetchData = async () => {
       try {
         const object = {
@@ -243,8 +244,28 @@ export const useLocationState = (
         };
         const response = await getStateBlockDistrictList(object);
         setStateFieldId(response?.result?.fieldId);
-        const result = response?.result?.values;
-        setStates(result);
+
+
+
+        if (typeof window !== "undefined" && window.localStorage) {
+          const admin = localStorage.getItem("adminInfo");
+          if(admin)
+          {
+            const stateField = JSON.parse(admin).customFields.find((field: any) => field.label === "STATES");
+              console.log(stateField.value, stateField.code)
+              const object=[{
+                value:stateField.code,
+                label:stateField.value
+              }]
+             setStates(object);
+
+          }
+          //console.log(JSON.parse(admin)?.customFields)
+       //  setAdminInfo(JSON.parse(admin))
+        }
+       // const result = response?.result?.values;
+        //console.log(result)
+       // setStates(result);
         console.log(typeof states);
       } catch (error) {
         console.log(error);

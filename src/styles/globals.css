@@ -75,3 +75,7 @@ ul.MuiList-root li.MuiMenuItem-root[data-value=""] {
 .Toastify__toast-icon svg {
   fill: #fff !important;
 }
+
+.ka-thead-cell {
+  font-weight: 600;
+}

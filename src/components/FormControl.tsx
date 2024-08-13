@@ -26,7 +26,7 @@ interface MultipleSelectCheckmarksProps {
   onCategoryChange: (selectedNames: string[], selectedCodes: string[]) => void;
   disabled?: boolean;
   overall?: boolean;
-  defaultValue?:string
+  defaultValue?: string;
 }
 
 const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
@@ -36,22 +36,29 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
   selectedCategories,
   onCategoryChange,
   disabled = false,
-  overall = true,
-  defaultValue
+  overall = false,
+  defaultValue,
 }) => {
-  console.log(selectedCategories.length, selectedCategories[0])
   const { t } = useTranslation();
+
   const handleChange = (
     event: SelectChangeEvent<typeof selectedCategories>,
   ) => {
-   // console.log(value)
     const {
       target: { value },
     } = event;
-    const selectedNames = typeof value === "string" ? value.split(",") : value;
+
+    let selectedNames =
+      typeof value === "string" ? value.split(",") : value;
+
+    if (selectedNames.includes("all")) {
+      selectedNames = defaultValue ? [defaultValue] : [];
+    }
+
     const selectedCodes = selectedNames?.map(
       (name) => codes[names.indexOf(name)],
     );
+
     onCategoryChange(selectedNames, selectedCodes);
   };
 
@@ -68,19 +75,20 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
                 ? [defaultValue]
                 : ""
               : selectedCategories
-          }          onChange={handleChange}
+          }
+          onChange={handleChange}
           input={<OutlinedInput label={tagName} />}
           renderValue={(selected) => selected.join(", ")}
           MenuProps={MenuProps}
         >
           {overall && (
-            <MenuItem value="">
-              <em> {t("COMMON.ALL")}</em>
+            <MenuItem value="all">
+              <em>{t("COMMON.ALL")}</em>
             </MenuItem>
           )}
+
           {names?.map((name) => (
             <MenuItem key={name} value={name}>
-              {/* <Checkbox checked={selectedCategories.indexOf(name) > -1} /> */}
               <ListItemText primary={name} />
             </MenuItem>
           ))}

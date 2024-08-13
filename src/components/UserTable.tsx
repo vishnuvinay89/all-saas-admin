@@ -186,8 +186,8 @@ const UserTable: React.FC<UserTableProps> = ({
     setSelectedBlock([]);
 
     setSelectedState(selected);
-
-    if (selected[0] === "") {
+    console.log(selected[0])
+    if (selected[0] === "" || selected[0] === t("COMMON.ALL_STATES")) {
       if (filters.status) setFilters({ status: [filters.status], role: role });
       else setFilters({ role: role });
     } else {
@@ -233,7 +233,8 @@ const UserTable: React.FC<UserTableProps> = ({
     setSelectedBlock([]);
     setSelectedDistrict(selected);
 
-    if (selected[0] === "") {
+
+    if (selected[0] === "" || selected[0] === t("COMMON.ALL_DISTRICTS")) {
       if (filters.status) {
         setFilters({
           status: [filters.status],
@@ -268,7 +269,7 @@ const UserTable: React.FC<UserTableProps> = ({
   };
   const handleBlockChange = (selected: string[], code: string[]) => {
     setSelectedBlock(selected);
-    if (selected[0] === "") {
+    if (selected[0] === "" || selected[0] === t("COMMON.ALL_BLOCKS")) {
       if (filters.status) {
         setFilters({
           status: [filters.status],
@@ -690,33 +691,33 @@ const UserTable: React.FC<UserTableProps> = ({
       ) : (
         loading === false &&
         data.length === 0 && (
-          // <Box display="flex" marginLeft="40%" gap="20px">
-          //   {/* <Image src={glass} alt="" /> */}
-          //   <PersonSearchIcon fontSize="large" />
-          //   <Typography marginTop="10px" variant="h2">
-          //     {t("COMMON.NO_USER_FOUND")}
-          //   </Typography>
-          // </Box>
+          <Box display="flex" marginLeft="40%" gap="20px">
+            {/* <Image src={glass} alt="" /> */}
+            <PersonSearchIcon fontSize="large" />
+            <Typography marginTop="10px" variant="h2">
+              {t("COMMON.NO_USER_FOUND")}
+            </Typography>
+          </Box>
 
-          <KaTableComponent
-            columns={
-              role === Role.TEAM_LEADER
-                ? getTLTableColumns(t, isMobile)
-                : getUserTableColumns(t, isMobile)
-            }
-            data={data}
-            limit={pageLimit}
-            offset={pageOffset}
-            PagesSelector={PagesSelector}
-            PageSizeSelector={PageSizeSelectorFunction}
-            pageSizes={pageSizeArray}
-            extraActions={extraActions}
-            showIcons={true}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            pagination={false}
-            noDataMessage={data.length === 0 ? noUserFoundJSX : ""}
-          />
+          // <KaTableComponent
+          //   columns={
+          //     role === Role.TEAM_LEADER
+          //       ? getTLTableColumns(t, isMobile)
+          //       : getUserTableColumns(t, isMobile)
+          //   }
+          //   data={data}
+          //   limit={pageLimit}
+          //   offset={pageOffset}
+          //   PagesSelector={PagesSelector}
+          //   PageSizeSelector={PageSizeSelectorFunction}
+          //   pageSizes={pageSizeArray}
+          //   extraActions={extraActions}
+          //   showIcons={true}
+          //   onEdit={handleEdit}
+          //   onDelete={handleDelete}
+          //   pagination={false}
+          //   noDataMessage={data.length === 0 ? noUserFoundJSX : ""}
+          // />
         )
       )}
 
