@@ -71,3 +71,7 @@ legend.Mui-focused {
 ul.MuiList-root li.MuiMenuItem-root[data-value=""] {
   display: none !important;
 }
+
+.Toastify__toast-icon svg {
+  fill: #fff !important;
+}
