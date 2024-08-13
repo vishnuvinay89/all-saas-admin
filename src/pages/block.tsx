@@ -437,6 +437,11 @@ const Block: React.FC = () => {
         parentId: cohortId, //cohortId of district
         customFields: [
           {
+            fieldId: stateFieldId, // district fieldId
+            value: [selectedState], // district code
+          },
+
+          {
             fieldId: districtFieldId, // district fieldId
             value: [selectedDistrict], // district code
           },
