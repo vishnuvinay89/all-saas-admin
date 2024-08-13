@@ -108,6 +108,7 @@ const District: React.FC = () => {
 
   const fetchDistrictData = async (stateId: string) => {
     try {
+      setLoading(true);
       const limit = pageLimit;
       const offset = pageOffset * limit;
 
@@ -129,24 +130,24 @@ const District: React.FC = () => {
       const totalCount = districtData?.result?.totalCount || 0;
       setPaginationCount(totalCount);
 
-      if (paginationCount >= Numbers.FIFTEEN) {
-        setPageSizeArray([
-          Numbers.FIVE,
-          Numbers.TEN,
-          Numbers.FIFTEEN,
-          Numbers.TWENTY,
-        ]);
-      } else if (paginationCount >= Numbers.TEN) {
-        setPageSizeArray([Numbers.FIVE, Numbers.TEN]);
-      } else {
-        setPageSizeArray([Numbers.FIVE]);
-      }
+      const pageSizeOptions = [
+        Numbers.FIVE,
+        Numbers.TEN,
+        Numbers.FIFTEEN,
+        Numbers.TWENTY,
+      ];
+      const pageSizeArray = pageSizeOptions.filter(
+        (size) => paginationCount >= size
+      );
+
+      setPageSizeArray(pageSizeArray);
       const pageCount = Math.ceil(totalCount / limit);
       setPageCount(pageCount);
     } catch (error) {
       console.error("Error fetching district data:", error);
       setDistrictData([]);
     }
+    setLoading(false);
   };
 
   useEffect(() => {

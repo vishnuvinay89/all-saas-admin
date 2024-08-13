@@ -174,18 +174,17 @@ const Block: React.FC = () => {
       const totalCount = response?.result?.totalCount || 0;
       setPaginationCount(totalCount);
 
-      if (paginationCount >= Numbers.FIFTEEN) {
-        setPageSizeArray([
-          Numbers.FIVE,
-          Numbers.TEN,
-          Numbers.FIFTEEN,
-          Numbers.TWENTY,
-        ]);
-      } else if (paginationCount >= Numbers.TEN) {
-        setPageSizeArray([Numbers.FIVE, Numbers.TEN]);
-      } else {
-        setPageSizeArray([Numbers.FIVE]);
-      }
+      const pageSizeOptions = [
+        Numbers.FIVE,
+        Numbers.TEN,
+        Numbers.FIFTEEN,
+        Numbers.TWENTY,
+      ];
+      const pageSizeArray = pageSizeOptions.filter(
+        (size) => paginationCount >= size
+      );
+
+      setPageSizeArray(pageSizeArray);
       const pageCount = Math.ceil(totalCount / limit);
       setPageCount(pageCount);
     } catch (error) {
