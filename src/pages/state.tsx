@@ -73,8 +73,8 @@ const State: React.FC = () => {
   const setPid = useStore((state) => state.setPid);
 
   const columns = [
-    { key: "label", title: t("MASTER.STATE_NAMES"), width: "130" },
-    { key: "value", title: t("MASTER.STATE_CODE"), width: "130" },
+    { key: "label", title: t("MASTER.STATE"), width: "130" },
+    { key: "value", title: t("MASTER.CODE"), width: "130" },
     { key: "createdBy", title: t("MASTER.CREATED_BY"), width: "130" },
     { key: "updatedBy", title: t("MASTER.UPDATED_BY"), width: "130" },
     { key: "createdAt", title: t("MASTER.CREATED_AT"), width: "160" },
@@ -136,6 +136,7 @@ const State: React.FC = () => {
     };
     try {
       if (fieldId) {
+        const isUpdating = selectedState !== null;
         const response = await createOrUpdateOption(fieldId, newState);
 
         const queryParameters = {
@@ -148,19 +149,26 @@ const State: React.FC = () => {
 
         console.log("before cohortList");
 
-        await createCohort(queryParameters);
+        if (!isUpdating) {
+          await createCohort(queryParameters);
+        }
 
         if (response) {
           await fetchStateData(searchKeyword);
 
-          showToastMessage(t("COMMON.STATE_ADDED_SUCCESS"), "success");
+          const successMessage = isUpdating
+            ? t("COMMON.STATE_UPDATED_SUCCESS")
+            : t("COMMON.STATE_ADDED_SUCCESS");
+
+          showToastMessage(successMessage, "success");
         } else {
           console.error("Failed to create/update state:", response);
+          showToastMessage(t("COMMON.STATE_OPERATION_FAILURE"), "error");
         }
       }
     } catch (error) {
       console.error("Error creating/updating state:", error);
-      showToastMessage(t("COMMON.STATE_ADDED_FAILURE"), "error");
+      showToastMessage(t("COMMON.STATE_OPERATION_FAILURE"), "error");
     }
     setAddStateModalOpen(false);
   };
@@ -221,27 +229,34 @@ const State: React.FC = () => {
       if (resp?.result?.fieldId) {
         setFieldId(resp.result.fieldId);
         setStateData(resp.result.values);
-        setPaginationCount(resp?.result?.totalCount || 0);
 
         const totalCount = resp?.result?.totalCount || 0;
+
+        setPaginationCount(totalCount);
+
         console.log("totalCount", totalCount);
 
-        if (totalCount >= 15) {
-          setPageSizeArray([5, 10, 15]);
-        } else if (totalCount >= 10) {
-          setPageSizeArray([5, 10]);
+        if (paginationCount >= Numbers.FIFTEEN) {
+          setPageSizeArray([
+            Numbers.FIVE,
+            Numbers.TEN,
+            Numbers.FIFTEEN,
+            Numbers.TWENTY,
+          ]);
+        } else if (paginationCount >= Numbers.TEN) {
+          setPageSizeArray([Numbers.FIVE, Numbers.TEN]);
         } else {
-          setPageSizeArray([5]);
+          setPageSizeArray([Numbers.FIVE]);
         }
 
         const pageCount = Math.ceil(totalCount / limit);
         setPageCount(pageCount);
       } else {
         console.error("Unexpected fieldId:", resp?.result?.fieldId);
-        setStateData([]);
       }
     } catch (error) {
       console.error("Error fetching state data", error);
+      setStateData([]);
     } finally {
       setLoading(false);
     }
@@ -279,7 +294,7 @@ const State: React.FC = () => {
             }))}
             limit={pageLimit}
             offset={pageOffset}
-            paginationEnable={paginationCount >= 5}
+            paginationEnable={paginationCount >= Numbers.FIVE}
             PagesSelector={PagesSelector}
             PageSizeSelector={PageSizeSelectorFunction}
             pageSizes={pageSizeArray}

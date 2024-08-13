@@ -95,6 +95,22 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     if (!value) return requiredMessage;
     if (field !== "controllingField" && !/^[a-zA-Z\s]+$/.test(value))
       return t("COMMON.INVALID_TEXT");
+
+    // Example function to check uniqueness, you need to replace this with your logic
+    const isUnique = (fieldName: string, value: string) => {
+      // Perform uniqueness check (e.g., API call)
+      // Return true if unique, false otherwise
+      return true; // Placeholder, replace with actual uniqueness logic
+    };
+
+    if (field === "name" && !isUnique("name", value)) {
+      return t("COMMON.BLOCK_NAME_NOT_UNIQUE");
+    }
+
+    if (field === "value" && !isUnique("value", value)) {
+      return t("COMMON.BLOCK_CODE_NOT_UNIQUE");
+    }
+
     return null;
   };
 
