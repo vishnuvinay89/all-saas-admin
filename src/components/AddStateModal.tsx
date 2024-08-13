@@ -53,10 +53,20 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
     setErrors({});
   }, [open, initialValues]);
 
-  const isAlphabetic = (input: string) =>
-    input === "" || /^[a-zA-Z\s]+$/.test(input);
+  const isValidName = (input: string) =>
+    /^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/.test(input);
+
+  const isValidCode = (input: string) => /^[A-Z]{1,3}$/.test(input);
 
   const handleChange = (field: string, value: string) => {
+    if (field === "name") {
+      value = value.replace(/[^a-zA-Z\s]/g, "");
+    }
+
+    if (field === "value" && value.length > 3) {
+      return;
+    }
+
     setFormData((prev) => ({ ...prev, [field]: value }));
 
     if (value === "") {
@@ -68,7 +78,9 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
             : "COMMON.CODE_REQUIRED"
         ),
       }));
-    } else if (!isAlphabetic(value)) {
+    } else if (field === "name" && !isValidName(value.trim())) {
+      setErrors((prev) => ({ ...prev, [field]: t("COMMON.INVALID_INPUT") }));
+    } else if (field === "value" && !isValidCode(value)) {
       setErrors((prev) => ({ ...prev, [field]: t("COMMON.INVALID_TEXT") }));
     } else {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
@@ -80,14 +92,13 @@ export const AddStateModal: React.FC<AddStateModalProps> = ({
 
     if (!formData.name) {
       newErrors.name = t("COMMON.STATE_NAME_REQUIRED");
-    }
-    if (!isAlphabetic(formData.name)) {
+    } else if (!isValidName(formData.name.trim())) {
       newErrors.name = t("COMMON.INVALID_TEXT");
     }
+
     if (!formData.value) {
       newErrors.value = t("COMMON.CODE_REQUIRED");
-    }
-    if (!isAlphabetic(formData.value)) {
+    } else if (!isValidCode(formData.value)) {
       newErrors.value = t("COMMON.INVALID_TEXT");
     }
 

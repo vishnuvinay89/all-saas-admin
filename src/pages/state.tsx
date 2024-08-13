@@ -245,10 +245,10 @@ const State: React.FC = () => {
         setPageCount(pageCount);
       } else {
         console.error("Unexpected fieldId:", resp?.result?.fieldId);
-        setStateData([]);
       }
     } catch (error) {
       console.error("Error fetching state data", error);
+      setStateData([]);
     } finally {
       setLoading(false);
     }
