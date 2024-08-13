@@ -598,29 +598,32 @@ const Center: React.FC = () => {
   const handleAddUserClick = () => {
     setOpenAddNewCohort(true);
   };
-  const fetchUserDetail = async () => {
-    let userId;
-    try {
-      if (typeof window !== "undefined" && window.localStorage) {
-        userId = localStorage.getItem(Storage.USER_ID);
-      }
-      const fieldValue = true;
-      if (userId) {
-        console.log("true");
-        const response = await getUserDetailsInfo(userId, fieldValue);
+  // const fetchUserDetail = async () => {
+  //   let userId;
+  //   try {
+  //     if (typeof window !== "undefined" && window.localStorage) {
+  //       userId = localStorage.getItem(Storage.USER_ID);
+  //     }
+  //     const fieldValue = true;
+  //     if (userId) {
+  //       console.log("true");
+  //       const response = await getUserDetailsInfo(userId, fieldValue);
 
-        const userInfo = response?.userData;
-        //set user info in zustand store
-        setAdminInformation(userInfo);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //       const userInfo = response?.userData;
+  //       //set user info in zustand store
+  //       if (typeof window !== 'undefined' && window.localStorage) {
+  //         localStorage.setItem('adminInfo', JSON.stringify(userInfo))
+  //       }
+  //       setAdminInformation(userInfo);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchUserDetail();
-  }, []);
+  // useEffect(() => {
+  //   fetchUserDetail();
+  // }, []);
 
   // props to send in header
   const userProps = {

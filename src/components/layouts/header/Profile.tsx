@@ -21,6 +21,8 @@ const Profile = () => {
   const [openEditModal, setOpenEditModal] = React.useState(false);
   const [userName, setUserName] = React.useState<string | null>("");
   const [userId, setUserId] = React.useState<string>("");
+  const [adminInfo, setAdminInfo] = React.useState<any>();
+
   const [formdata, setFormData] = React.useState<any>();
   const adminInformation = useSubmittedButtonStore(
     (state: any) => state?.adminInformation
@@ -185,49 +187,31 @@ const Profile = () => {
   useEffect(() => {
     getUserName();
   }, [formdata]);
-  // useEffect(() => {
-  //   // getUserName();
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+     const admin = localStorage.getItem("adminInfo");
+     if(admin)
+    setAdminInfo(JSON.parse(admin))
 
-  //   console.log(profileClick);
-  //   const fetchUserDetail = async () => {
-  //     let userId;
-  //     try {
-  //       if (typeof window !== "undefined" && window.localStorage) {
-  //         userId = localStorage.getItem(Storage.USER_ID);
-  //       }
-  //       console.log(profileClick, userId);
-
-  //       if (userId && profileClick) {
-  //         setUserId(userId);
-
-  //         console.log("true");
-  //         const fieldValue=true
-  //         const response = await getUserDetailsInfo(userId, fieldValue);
-  //         console.log(response.userData);
-  //         // setUserName(response?.userData?.name);
-  //         console.log(userName);
-  //         setMobile(response?.userData?.mobile);
-  //         setEmail(response?.userData?.email);
-  //         setRole(response?.userData?.role);
-  //         console.log(userName, mobile, email);
-
-          // const initialLetters = userName
-          //   ?.split(" ")
-          //   .map((word) => word[0])
-          //   .join("");
-          // console.log(initialLetters);
-  //         if (initialLetters) setInitials(initialLetters);
-  //       }
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   fetchUserDetail();
-  // }, [profileClick, submitValue]);
+    }
+  }, []);
 
   const handleModalSubmit = (value: boolean) => {
     submitValue ? setSubmitValue(false) : setSubmitValue(true);
   };
+  const userType = (() => {
+    switch (adminInfo?.role) {
+      case Role.STUDENT:
+        return FormContextType.STUDENT;
+      case Role.TEACHER:
+        return FormContextType.TEACHER;
+      case Role.ADMIN:
+        return FormContextType.ADMIN;
+      default:
+        return FormContextType.TEAM_LEADER;
+    }
+  })();
+  
   return (
     <>
       <Button
@@ -319,7 +303,7 @@ const Profile = () => {
             }}
           >
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-              {adminInformation?.name
+              {adminInfo?.name
             ?.split(" ")
             .map((word: any) => word[0])
             .join("")}
@@ -327,22 +311,22 @@ const Profile = () => {
           </Box>
 
           <Typography variant="h5" sx={{ marginBottom: "10px" }}>
-            {adminInformation?.name}
+            {adminInfo?.name}
           </Typography>
           <Typography variant="subtitle1" sx={{ marginBottom: "20px" }}>
-            {adminInformation?.role}
+            {adminInfo?.role}
           </Typography>
           <Box
             sx={{ display: "flex", alignItems: "center", marginBottom: "10px" }}
           >
             <PhoneIcon sx={{ marginRight: "10px" }} />
-            <Typography variant="body1">{adminInformation?.mobile}</Typography>
+            <Typography variant="body1">{adminInfo?.mobile}</Typography>
           </Box>
           <Box
             sx={{ display: "flex", alignItems: "center", marginBottom: "20px" }}
           >
             <MailIcon sx={{ marginRight: "10px" }} />
-            <Typography variant="body1">{adminInformation?.email}</Typography>
+            <Typography variant="body1">{adminInfo?.email}</Typography>
           </Box>
           <Button
             fullWidth
@@ -355,7 +339,7 @@ const Profile = () => {
           </Button>
         </Box>
       </Menu>
-{console.log(adminInformation?.role)}
+{console.log(adminInfo?.role)}
    { openEditModal && ( <CommonUserModal
         open={openEditModal}
         onClose={handleCloseAddLearnerModal}
@@ -364,12 +348,7 @@ const Profile = () => {
         userId={userId}
         onSubmit={handleModalSubmit}
         userType={
-          // FormContextType.TEACHER
-          adminInformation?.role === Role.STUDENT
-            ? FormContextType.STUDENT
-            : adminInformation?.role === Role.TEACHER
-              ? FormContextType.TEACHER
-              : adminInformation?.role === Role.ADMIN? FormContextType.ADMIN :FormContextType.TEAM_LEADER
+         userType
         }
       />
    )

@@ -124,7 +124,32 @@ const LoginPage = () => {
   // useEffect(() => {
   //   fetchUserDetail();
   // }, []);
+  const fetchUserDetail = async () => {
+    let userId;
+    try {
+      if (typeof window !== "undefined" && window.localStorage) {
+        userId = localStorage.getItem(Storage.USER_ID);
+      }
+      const fieldValue = true;
+      if (userId) {
+        console.log("true");
+        const response = await getUserDetailsInfo(userId, fieldValue);
 
+        const userInfo = response?.userData;
+        //set user info in zustand store
+        if (typeof window !== 'undefined' && window.localStorage) {
+          localStorage.setItem('adminInfo', JSON.stringify(userInfo))
+        }
+        setAdminInformation(userInfo);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserDetail();
+  }, []);
   const handleFormSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     logEvent({
@@ -167,7 +192,7 @@ const LoginPage = () => {
         };
         telemetryFactory.interact(telemetryInteract);
         router.push("/centers");
-       // fetchUserDetail();
+        fetchUserDetail();
       } catch (error: any) {
         setLoading(false);
         const errorMessage = t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT");
