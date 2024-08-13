@@ -66,6 +66,7 @@
     "STATE_ADDED_FAILURE": "Unable to add state",
     "STATE_UPDATED_SUCCESS": "State Updated Successfully!",
     "STATE_UPDATED_FAILURE": "Unable to update state",
+    "STATE_OPERATION_FAILURE": "State Operation Failed",
     "DISTRICT_DELETED_SUCCESS": "District Deleted Successfully!",
     "DISTRICT_DELETED_FAILURE": "Unable to delete district",
     "DISTRICT_ADDED_SUCCESS": "District Added Successfully!",

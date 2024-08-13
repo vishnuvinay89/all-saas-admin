@@ -136,6 +136,7 @@ const State: React.FC = () => {
     };
     try {
       if (fieldId) {
+        const isUpdating = selectedState !== null;
         const response = await createOrUpdateOption(fieldId, newState);
 
         const queryParameters = {
@@ -148,19 +149,26 @@ const State: React.FC = () => {
 
         console.log("before cohortList");
 
-        await createCohort(queryParameters);
+        if (!isUpdating) {
+          await createCohort(queryParameters);
+        }
 
         if (response) {
           await fetchStateData(searchKeyword);
 
-          showToastMessage(t("COMMON.STATE_ADDED_SUCCESS"), "success");
+          const successMessage = isUpdating
+            ? t("COMMON.STATE_UPDATED_SUCCESS")
+            : t("COMMON.STATE_ADDED_SUCCESS");
+
+          showToastMessage(successMessage, "success");
         } else {
           console.error("Failed to create/update state:", response);
+          showToastMessage(t("COMMON.STATE_OPERATION_FAILURE"), "error");
         }
       }
     } catch (error) {
       console.error("Error creating/updating state:", error);
-      showToastMessage(t("COMMON.STATE_ADDED_FAILURE"), "error");
+      showToastMessage(t("COMMON.STATE_OPERATION_FAILURE"), "error");
     }
     setAddStateModalOpen(false);
   };
@@ -286,7 +294,7 @@ const State: React.FC = () => {
             }))}
             limit={pageLimit}
             offset={pageOffset}
-            paginationEnable={paginationCount >= 5}
+            paginationEnable={paginationCount >= Numbers.FIVE}
             PagesSelector={PagesSelector}
             PageSizeSelector={PageSizeSelectorFunction}
             pageSizes={pageSizeArray}
