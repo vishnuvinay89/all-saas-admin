@@ -199,6 +199,19 @@ const Profile = () => {
   const handleModalSubmit = (value: boolean) => {
     submitValue ? setSubmitValue(false) : setSubmitValue(true);
   };
+  const userType = (() => {
+    switch (adminInfo?.role) {
+      case Role.STUDENT:
+        return FormContextType.STUDENT;
+      case Role.TEACHER:
+        return FormContextType.TEACHER;
+      case Role.ADMIN:
+        return FormContextType.ADMIN;
+      default:
+        return FormContextType.TEAM_LEADER;
+    }
+  })();
+  
   return (
     <>
       <Button
@@ -335,12 +348,7 @@ const Profile = () => {
         userId={userId}
         onSubmit={handleModalSubmit}
         userType={
-          // FormContextType.TEACHER
-          adminInfo?.role === Role.STUDENT
-            ? FormContextType.STUDENT
-            : adminInfo?.role === Role.TEACHER
-              ? FormContextType.TEACHER
-              : adminInfo?.role === Role.ADMIN? FormContextType.ADMIN :FormContextType.TEAM_LEADER
+         userType
         }
       />
    )
