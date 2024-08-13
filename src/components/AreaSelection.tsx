@@ -110,7 +110,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
             tagName={t("FACILITATORS.DISTRICT")}
             selectedCategories={selectedDistrict}
             onCategoryChange={handleDistrictChangeWrapper}
-            disabled={selectedState?.length === 0 || (selectedState && selectedState[0] === "")}
+            disabled={selectedState?.length === 0 || (selectedState && selectedState[0] === "" ||selectedState[0] === t("COMMON.ALL_STATES"))}
             overall={!inModal}
             defaultValue={t("COMMON.ALL_DISTRICTS")}
 
@@ -124,7 +124,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
             selectedCategories={selectedBlock}
             onCategoryChange={handleBlockChangeWrapper}
             disabled={
-              selectedDistrict?.length === 0 || (selectedDistrict && selectedDistrict[0] === "")
+              selectedDistrict?.length === 0 || (selectedDistrict && selectedDistrict[0] === "" || selectedDistrict[0] === t("COMMON.ALL_DISTRICTS"))
             }
             overall={!inModal}
             defaultValue={t("COMMON.ALL_BLOCKS")}

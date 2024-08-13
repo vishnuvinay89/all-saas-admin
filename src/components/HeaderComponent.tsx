@@ -70,6 +70,7 @@ const HeaderComponent = ({
     selectedNames: string[],
     selectedCodes: string[],
   ) => {
+    
     if (selectedNames[0] === "") {
       // if(districts.length!==0)
       // {
@@ -130,9 +131,23 @@ const HeaderComponent = ({
           // "offset": 0,
           fieldName: "states",
         };
-        const response = await getStateBlockDistrictList(object);
-        const result = response?.result?.values;
-        setStates(result);
+       // const response = await getStateBlockDistrictList(object);
+       // const result = response?.result?.values;
+        if (typeof window !== "undefined" && window.localStorage) {
+          const admin = localStorage.getItem("adminInfo");
+          if(admin)
+          {
+            const stateField = JSON.parse(admin).customFields.find((field: any) => field.label === "STATES");
+              console.log(stateField.value, stateField.code)
+              const object=[{
+                value:stateField.code,
+                label:stateField.value
+              }]
+             setStates(object);
+
+          }
+        }
+      //  setStates(result);
         console.log(typeof states);
       } catch (error) {
         console.log(error);
@@ -166,6 +181,7 @@ const HeaderComponent = ({
           handleBlockChangeWrapper={handleBlockChangeWrapper}
           isMobile={isMobile}
           isMediumScreen={isMediumScreen}
+          inModal={false}
         />
       )}
       <Typography variant="h1" sx={{ mt: isMobile ? "12px" : "20px" }}>
