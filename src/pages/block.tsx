@@ -50,6 +50,7 @@ type BlockDetail = {
   createdAt: any;
   value: string;
   label: string;
+  block: string;
 };
 
 const Block: React.FC = () => {
@@ -306,8 +307,8 @@ const Block: React.FC = () => {
   const handleEdit = (rowData: any) => {
     setModalOpen(true);
     const updatedRowData = {
-      ...rowData,
       selectedDistrict: selectedDistrict,
+      ...rowData,
     };
 
     console.log("updatedRowData", updatedRowData);
@@ -316,6 +317,7 @@ const Block: React.FC = () => {
   };
 
   const handleDelete = (rowData: BlockDetail) => {
+    console.log("deleted data for row", rowData);
     setSelectedStateForDelete(rowData);
     setConfirmationDialogOpen(true);
   };
@@ -473,7 +475,9 @@ const Block: React.FC = () => {
 
       <ConfirmationModal
         modalOpen={confirmationDialogOpen}
-        message={t("COMMON.ARE_YOU_SURE_DELETE")}
+        message={t("COMMON.ARE_YOU_SURE_DELETE", {
+          state: `${selectedStateForDelete?.block} Block`,
+        })}
         handleAction={handleConfirmDelete}
         buttonNames={{
           primary: t("COMMON.DELETE"),

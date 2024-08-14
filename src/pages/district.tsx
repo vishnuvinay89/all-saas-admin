@@ -339,7 +339,9 @@ const District: React.FC = () => {
       />
       <ConfirmationModal
         modalOpen={confirmationDialogOpen}
-        message={t("COMMON.ARE_YOU_SURE_DELETE")}
+        message={t("COMMON.ARE_YOU_SURE_DELETE", {
+          state: `${selectedStateForDelete?.label} District`,
+        })}
         handleAction={handleConfirmDelete}
         buttonNames={{
           primary: t("COMMON.DELETE"),
