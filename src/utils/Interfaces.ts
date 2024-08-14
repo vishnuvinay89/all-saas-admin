@@ -45,9 +45,9 @@ export interface CustomField {
 
 }
 export interface FormData {
-  formid: string;
-  title: string;
-  fields: Field[];
+  formid?: string;
+  title?: string;
+  fields?: Field[];
 }
 export interface createUserParam {
   username: string;

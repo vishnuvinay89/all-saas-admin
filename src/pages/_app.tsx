@@ -4,7 +4,7 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { appWithTranslation } from "next-i18next";
 import { initGA } from "../utils/googleAnalytics";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AuthProvider } from "../context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -13,7 +13,10 @@ import FullLayout from "@/components/layouts/FullLayout";
 import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material/styles";
 import customTheme from "../styles/customTheme";
 import "./../styles/style.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+
 import "react-circular-progressbar/dist/styles.css";
 
 function App({ Component, pageProps }: AppProps) {
@@ -39,13 +42,16 @@ function App({ Component, pageProps }: AppProps) {
     }
   };
 
-  const queryClient = new QueryClient();
+  const [client] = useState(new QueryClient())
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+    <QueryClientProvider client={client}>
+
+    <AuthProvider>
         <CssVarsProvider theme={customTheme}>
+
           {renderComponent()}
+
           <ToastContainer
             position="bottom-left"
             autoClose={3000}
@@ -53,6 +59,8 @@ function App({ Component, pageProps }: AppProps) {
           />
         </CssVarsProvider>
       </AuthProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+
     </QueryClientProvider>
   );
 }

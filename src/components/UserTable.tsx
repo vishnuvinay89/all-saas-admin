@@ -27,6 +27,7 @@ import { getUserTableColumns, getTLTableColumns } from "@/data/tableColumns";
 import { TablePagination, useMediaQuery } from "@mui/material";
 import { Theme } from "@mui/system";
 import CommonUserModal from "./CommonUserModal";
+import { useQuery } from "@tanstack/react-query";
 type UserDetails = {
   userId: any;
   username: any;
@@ -107,7 +108,24 @@ const UserTable: React.FC<UserTableProps> = ({
   const [openAddLearnerModal, setOpenAddLearnerModal] = React.useState(false);
   const [userId, setUserId] = useState();
   const [submitValue, setSubmitValue] = useState<boolean>(false);
-
+  const { data:teacherFormData ,isLoading: teacherFormDataLoading, error :teacherFormDataErrror } = useQuery<any[]>({
+    queryKey: ["teacherFormData"],  
+    queryFn: () => Promise.resolve([]), 
+    staleTime: 700000,
+    enabled: false, 
+  });
+  const {data:studentFormData ,isLoading: studentFormDataLoading, error :studentFormDataErrror} = useQuery<any[]>({
+    queryKey: ["studentFormData"],  
+    queryFn: () => Promise.resolve([]), 
+    staleTime: 700000,
+    enabled: false, 
+  });
+  const { data:teamLeaderFormData ,isLoading: teamLeaderFormDataLoading, error :teamLeaderFormDataErrror } = useQuery<any[]>({
+    queryKey: ["teamLeaderFormData"],  
+    queryFn: () => Promise.resolve([]), 
+    staleTime: 700000,
+    enabled: false, 
+  });
   const handleOpenAddLearnerModal = () => {
     setOpenAddLearnerModal(true);
   };
@@ -402,16 +420,17 @@ const UserTable: React.FC<UserTableProps> = ({
 
       let formFields;
       if (Role.STUDENT === role) {
-        formFields = await getFormRead("USERS", "STUDENT");
-        setFormData(mapFields(formFields, response));
+      //  formFields = await getFormRead("USERS", "STUDENT");
+        setFormData(mapFields(studentFormData, response));
         console.log("mapped formdata", formdata);
       } else if (Role.TEACHER === role) {
-        formFields = await getFormRead("USERS", "TEACHER");
-        setFormData(mapFields(formFields, response));
+       // formFields = await getFormRead("USERS", "TEACHER");
+
+        setFormData(mapFields(teacherFormData, response));
         //  handleOpenAddFacilitatorModal();
       } else if (Role.TEAM_LEADER === role) {
         formFields = await getFormRead("USERS", "TEAM LEADER");
-        setFormData(mapFields(formFields, response));
+        setFormData(mapFields(teamLeaderFormData, response));
         // handleOpenAddTeamLeaderModal();
       }
       handleOpenAddLearnerModal();

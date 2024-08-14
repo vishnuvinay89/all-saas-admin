@@ -11,7 +11,7 @@ import {
 } from "@/services/CreateUserService";
 import { generateUsernameAndPassword } from "@/utils/Helper";
 import { FormData } from "@/utils/Interfaces";
-import { FormContext, FormContextType, RoleId } from "@/utils/app.constant";
+import { FormContext, FormContextType, RoleId , apiCatchingDuration} from "@/utils/app.constant";
 import { useLocationState } from "@/utils/useLocationState";
 import useSubmittedButtonStore from "@/utils/useSharedState";
 import { Box, Button, useTheme } from "@mui/material";
@@ -71,7 +71,38 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   const  userEnteredEmail = useSubmittedButtonStore(
     (state: any) => state.userEnteredEmail
   );
-
+  const { data:teacherFormData ,isLoading: teacherFormDataLoading, error :teacherFormDataErrror} = useQuery<any>({
+    queryKey: ["teacherFormData"],
+    queryFn: () => getFormRead(
+      FormContext.USERS,
+      FormContextType.TEACHER
+      ),
+    staleTime: apiCatchingDuration.GETREADFORM,
+  })
+  const { data:studentFormData ,isLoading: studentFormDataLoading, error :studentFormDataErrror} = useQuery<any>({
+    queryKey: ["studentFormData"],
+    queryFn: () => getFormRead(
+      FormContext.USERS,
+      FormContextType.STUDENT
+      ),
+      staleTime: apiCatchingDuration.GETREADFORM,
+    })
+  const { data:teamLeaderFormData ,isLoading: teamLeaderFormDataLoading, error :teamLeaderFormDataErrror} = useQuery<any>({
+    queryKey: ["teamLeaderFormData"],
+    queryFn: () => getFormRead(
+       FormContext.USERS,
+      FormContextType.TEAM_LEADER
+      ),
+      staleTime: apiCatchingDuration.GETREADFORM,
+    })
+  const { data:adminFormData ,isLoading: adminFormDataLoading, error :adminFormDataErrror} = useQuery<FormData>({
+    queryKey: ["adminFormData"],
+    queryFn: () => getFormRead(
+      FormContext.USERS,
+      FormContextType.ADMIN
+      ),
+    staleTime: 700000,
+  })
   const modalTitle = !isEditModal
     ? userType === FormContextType.STUDENT
       ? t("LEARNERS.NEW_LEARNER")
@@ -112,21 +143,29 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   } = useLocationState(open, onClose, roleType);
 
   useEffect(() => {
-    const getAddUserFormData = async () => {
+    const getAddUserFormData =  () => {
       try {
-        const response: FormData = await getFormRead(
-          FormContext.USERS,
-          userType
-        );
-
-        console.log("sortedFields", response);
+        // const response: FormData = await getFormRead(
+        //   FormContext.USERS,
+        //   userType
+        // );
+        // const response2= await getFormRead(
+        //   FormContext.USERS,
+        //   userType
+        // );
+        // console.log("sortedFields", response);
+        console.log(userType)
+        
+       const response : FormData = userType===FormContextType.TEACHER? teacherFormData: userType===FormContextType.STUDENT? studentFormData : userType===FormContextType.TEAM_LEADER?teamLeaderFormData: adminFormData?adminFormData:{}
+       //    console.log(studentFormData)
+           console.log(response)
 
         if (response) {
           if (userType === FormContextType.TEACHER) {
             const newResponse = {
               ...response,
-              fields: response.fields.filter(
-                (field) => field.name !== "no_of_clusters"
+              fields: response?.fields?.filter(
+                (field: any) => field.name !== "no_of_clusters"
               ),
             };
             const { schema, uiSchema, formValues } = GenerateSchemaAndUiSchema(
@@ -154,12 +193,13 @@ const CommonUserModal: React.FC<UserModalProps> = ({
             setUiSchema(uiSchema);
           }
         }
+      
       } catch (error) {
         console.error("Error fetching form data:", error);
       }
     };
     getAddUserFormData();
-  }, [userType]);
+  }, [userType, teacherFormData, studentFormData, teamLeaderFormData]);
 
   const handleSubmit = async (
     data: IChangeEvent<any, RJSFSchema, any>,
