@@ -244,13 +244,13 @@ const Block: React.FC = () => {
   const columns = [
     {
       key: "block",
-      title: t("MASTER.BLOCKS"),
+      title: t("MASTER.BLOCK_NAMES"),
       dataType: DataType.String,
       width: "130",
     },
     {
       key: "value",
-      title: t("MASTER.CODE"),
+      title: t("MASTER.BLOCK_CODE"),
       dataType: DataType.String,
       width: "130",
     },
@@ -307,8 +307,8 @@ const Block: React.FC = () => {
   const handleEdit = (rowData: any) => {
     setModalOpen(true);
     const updatedRowData = {
-      selectedDistrict: selectedDistrict,
       ...rowData,
+      selectedDistrict: selectedDistrict,
     };
 
     console.log("updatedRowData", updatedRowData);
@@ -547,9 +547,6 @@ const Block: React.FC = () => {
                 value={selectedDistrict}
                 onChange={handleDistrictChange}
               >
-                {/* <MenuItem key={"All"} value={"All"}>
-                  {t("ALL")}
-                </MenuItem> */}
                 {districtData.map((districtDetail) => (
                   <MenuItem
                     key={districtDetail.value}
