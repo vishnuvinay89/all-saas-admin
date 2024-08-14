@@ -10,6 +10,7 @@ import {
   Box,
   Select,
   MenuItem,
+  Divider,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
@@ -177,6 +178,7 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle sx={{ fontSize: "14px" }}>{dialogTitle}</DialogTitle>
+      <Divider />
       <DialogContent>
         <Select
           value={formData.controllingField || stateCode}
@@ -226,7 +228,8 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
           </Typography>
         </Box>
       </DialogContent>
-      <DialogActions>
+      <Divider />
+      <DialogActions sx={{ p: 2 }}>
         <Button
           onClick={onClose}
           sx={{
@@ -245,13 +248,8 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
         </Button>
         <Button
           onClick={handleSubmit}
-          sx={{
-            fontSize: "14px",
-            fontWeight: "500",
-            width: "auto",
-            height: "40px",
-          }}
           variant="contained"
+          sx={{ fontSize: "14px" }}
           color="primary"
         >
           {buttonText}

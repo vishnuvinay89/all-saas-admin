@@ -10,6 +10,7 @@ import {
   Box,
   Select,
   MenuItem,
+  Divider,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
@@ -66,14 +67,10 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   useEffect(() => {
     const fetchDistricts = async () => {
       try {
-        const response = await getDistrictsForState({
-          limit: 10,
-          offset: 0,
-          controllingfieldfk: undefined,
-          fieldName: "districts",
-        });
+        const response = await getDistrictsForState({ fieldName: "districts" });
         if (response.result.values) {
           setDistricts(response.result.values);
+          console.log("modal all districts", response.result.values);
         } else {
           console.error("Unexpected response format:", response);
           setDistricts([]);
@@ -87,6 +84,10 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     if (open) fetchDistricts();
   }, [open, formData.controllingField]);
 
+  useEffect(() => {
+    console.log("Selected District:", formData.controllingField);
+  }, [formData.controllingField]);
+
   const validateField = (
     field: keyof typeof formData,
     value: string,
@@ -96,11 +97,8 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     if (field !== "controllingField" && !/^[a-zA-Z\s]+$/.test(value))
       return t("COMMON.INVALID_TEXT");
 
-    // Example function to check uniqueness, you need to replace this with your logic
     const isUnique = (fieldName: string, value: string) => {
-      // Perform uniqueness check (e.g., API call)
-      // Return true if unique, false otherwise
-      return true; // Placeholder, replace with actual uniqueness logic
+      return true;
     };
 
     if (field === "name" && !isUnique("name", value)) {
@@ -117,7 +115,11 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   const handleChange =
     (field: keyof typeof formData) =>
     (e: React.ChangeEvent<HTMLInputElement | { value: unknown }>) => {
-      const value = typeof e.target.value === "string" ? e.target.value : "";
+      let value = typeof e.target.value === "string" ? e.target.value : "";
+
+      if (field === "value") {
+        value = value.toUpperCase().slice(0, 3);
+      }
       setFormData((prev) => ({ ...prev, [field]: value }));
 
       let errorMessage: string | null = null;
@@ -198,6 +200,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle sx={{ fontSize: "14px" }}>{dialogTitle}</DialogTitle>
+      <Divider />
       <DialogContent>
         <Select
           value={formData.controllingField}
@@ -257,12 +260,21 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           </Typography>
         </Box>
       </DialogContent>
-      <DialogActions>
+      <Divider />
+      <DialogActions sx={{ p: 2 }}>
         <Button
           onClick={onClose}
+          sx={{
+            border: "none",
+            color: "secondary",
+            fontSize: "14px",
+            fontWeight: "500",
+            "&:hover": {
+              border: "none",
+              backgroundColor: "transparent",
+            },
+          }}
           variant="outlined"
-          sx={{ fontSize: "14px" }}
-          color="primary"
         >
           {t("COMMON.CANCEL")}
         </Button>

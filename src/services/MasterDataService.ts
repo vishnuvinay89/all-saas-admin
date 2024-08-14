@@ -63,9 +63,9 @@ export const getDistrictsForState = async ({
   optionName,
   sort,
 }: {
-  limit: number;
-  offset: number;
-  controllingfieldfk: string | undefined;
+  limit?: number;
+  offset?: number;
+  controllingfieldfk?: string | undefined;
   fieldName: string;
   optionName?: string;
   sort?: [string, string];
@@ -73,16 +73,16 @@ export const getDistrictsForState = async ({
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/options/read`;
 
   const requestBody: {
-    limit: number;
-    offset: number;
+    limit?: number;
+    offset?: number;
     controllingfieldfk?: string;
     fieldName: string;
     optionName?: string;
     sort?: [string, string];
   } = {
+    fieldName,
     limit,
     offset,
-    fieldName,
   };
 
   if (controllingfieldfk) {
