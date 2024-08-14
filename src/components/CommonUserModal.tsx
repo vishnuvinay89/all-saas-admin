@@ -65,6 +65,9 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
   );
+  const noError = useSubmittedButtonStore(
+    (state: any) => state.noError);
+
   const  userEnteredEmail = useSubmittedButtonStore(
     (state: any) => state.userEnteredEmail
   );
@@ -457,11 +460,16 @@ const CommonUserModal: React.FC<UserModalProps> = ({
             onClick={() => { 
               
               setSubmittedButtonStatus(true);
-              if(userType!==FormContextType.STUDENT && !isEditModal && submittedButtonStatus)
-              {
-                setOpenModal(true)
-
-              }
+              // if (userType !== FormContextType.STUDENT && !isEditModal && noError) {
+              //   setOpenModal(true);
+              // }
+              // console.log(submittedButtonStatus)
+              setTimeout(() => {
+                console.log(noError)
+                if (userType !== FormContextType.STUDENT && !isEditModal && noError) {
+                  setOpenModal(true);
+                }
+              }, 100); 
               console.log("Submit button was clicked");
             }}
           >
