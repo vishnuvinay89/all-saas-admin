@@ -8,7 +8,11 @@ const useSubmittedButtonStore = create((set) => ({
   setAdminInformation: (data: any) => set({ adminInformation: data }),
 //  setSubmittedButtonStatus: (status: boolean) => set({ submittedButtonStatus: status }),
   userEnteredEmail:"",
+  noError:false,
+  setNoError:(data: boolean) => set({ noError: data }),
   setUserEnteredEmail: (status: string) => set({ userEnteredEmail: status }),
+  shouldFetch:true,
+   setShouldFetch:(data: boolean) => set({ shouldFetch: data }),
 
 }));
 

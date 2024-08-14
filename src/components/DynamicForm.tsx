@@ -54,6 +54,9 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   const setUserEnteredEmail = useSubmittedButtonStore(
     (state: any) => state.setUserEnteredEmail
   );
+  const setNoError= useSubmittedButtonStore(
+    (state: any) => state.setNoError
+  );
 
   const widgets: any = {
     MultiSelectDropdown: MultiSelectDropdown,
@@ -62,6 +65,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   };
 
   const handleError = (errors: any) => {
+    if (errors.length === 0) {
+    console.log("No errors");
+    // You can perform any additional action here when there are no errors
+  }
     console.log("handle error1");
     if (errors.length > 0) {
       const property = errors[0].property?.replace(/^root\./, "");
@@ -115,6 +122,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
   const transformErrors = (errors: any) => {
     console.log("errors", errors);
+    errors.length===0? setNoError(true):  setNoError(false)
+   
     console.log("schema", schema);
 
     return errors?.map((error: any) => {
@@ -231,7 +240,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     });
   };
   useEffect(() => {
-    setSubmittedButtonStatus(false);
+   // setSubmittedButtonStatus(false);
   }, []);
   return (
     <div>
