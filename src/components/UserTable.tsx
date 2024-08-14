@@ -19,7 +19,7 @@ import { deleteUser } from "../services/DeleteUser";
 import { getCohortList } from "../services/GetCohortList";
 import { userList, getUserDetailsInfo } from "../services/UserList";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
-import { Role } from "@/utils/app.constant";
+import { Role, apiCatchingDuration } from "@/utils/app.constant";
 import { getFormRead } from "@/services/CreateUserService";
 import { showToastMessage } from "./Toastify";
 import { capitalizeFirstLetterOfEachWordInArray } from "../utils/Helper";
@@ -111,19 +111,19 @@ const UserTable: React.FC<UserTableProps> = ({
   const { data:teacherFormData ,isLoading: teacherFormDataLoading, error :teacherFormDataErrror } = useQuery<any[]>({
     queryKey: ["teacherFormData"],  
     queryFn: () => Promise.resolve([]), 
-    staleTime: 700000,
+    staleTime: apiCatchingDuration.GETREADFORM,
     enabled: false, 
   });
   const {data:studentFormData ,isLoading: studentFormDataLoading, error :studentFormDataErrror} = useQuery<any[]>({
     queryKey: ["studentFormData"],  
     queryFn: () => Promise.resolve([]), 
-    staleTime: 700000,
+    staleTime: apiCatchingDuration.GETREADFORM,
     enabled: false, 
   });
   const { data:teamLeaderFormData ,isLoading: teamLeaderFormDataLoading, error :teamLeaderFormDataErrror } = useQuery<any[]>({
     queryKey: ["teamLeaderFormData"],  
     queryFn: () => Promise.resolve([]), 
-    staleTime: 700000,
+    staleTime: apiCatchingDuration.GETREADFORM,
     enabled: false, 
   });
   const handleOpenAddLearnerModal = () => {

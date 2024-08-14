@@ -95,14 +95,14 @@ const CommonUserModal: React.FC<UserModalProps> = ({
       ),
       staleTime: apiCatchingDuration.GETREADFORM,
     })
-  const { data:adminFormData ,isLoading: adminFormDataLoading, error :adminFormDataErrror} = useQuery<FormData>({
-    queryKey: ["adminFormData"],
-    queryFn: () => getFormRead(
-      FormContext.USERS,
-      FormContextType.ADMIN
-      ),
-    staleTime: 700000,
-  })
+  // const { data:adminFormData ,isLoading: adminFormDataLoading, error :adminFormDataErrror} = useQuery<FormData>({
+  //   queryKey: ["adminFormData"],
+  //   queryFn: () => getFormRead(
+  //     FormContext.USERS,
+  //     FormContextType.ADMIN
+  //     ),
+  //   staleTime: apiCatchingDuration.GETREADFORM,
+  // })
   const modalTitle = !isEditModal
     ? userType === FormContextType.STUDENT
       ? t("LEARNERS.NEW_LEARNER")
@@ -156,7 +156,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
         // console.log("sortedFields", response);
         console.log(userType)
         
-       const response : FormData = userType===FormContextType.TEACHER? teacherFormData: userType===FormContextType.STUDENT? studentFormData : userType===FormContextType.TEAM_LEADER?teamLeaderFormData: adminFormData?adminFormData:{}
+       const response : FormData = userType===FormContextType.TEACHER? teacherFormData: userType===FormContextType.STUDENT? studentFormData : teamLeaderFormData;
        //    console.log(studentFormData)
            console.log(response)
 
