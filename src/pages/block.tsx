@@ -578,7 +578,7 @@ const Block: React.FC = () => {
                     <Chip
                       label={block.value}
                       size="medium"
-                      // variant="outlined"
+                      variant="outlined"
                     />
                   ),
                 }))}

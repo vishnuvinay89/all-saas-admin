@@ -280,7 +280,7 @@ const State: React.FC = () => {
                 <Chip
                   label={stateDetail.value}
                   size="medium"
-                  // variant="outlined"
+                  variant="outlined"
                 />
               ),
               createdAt: stateDetail.createdAt,

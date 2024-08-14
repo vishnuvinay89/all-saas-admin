@@ -443,7 +443,7 @@ const District: React.FC = () => {
                   <Chip
                     label={districtDetail.value}
                     size="medium"
-                    // variant="outlined"
+                    variant="outlined"
                   />
                 ),
               }))}
