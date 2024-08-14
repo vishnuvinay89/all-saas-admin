@@ -10,10 +10,10 @@ import {
   Box,
   Select,
   MenuItem,
+  Divider,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
-import { getStateBlockDistrictList } from "@/services/MasterDataService";
 import { getUserDetailsInfo } from "@/services/UserList";
 import { Storage } from "@/utils/app.constant";
 
@@ -44,7 +44,6 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
   initialValues = {},
   districtId,
 }) => {
-  // State for form data, initialized with initialValues
   const [formData, setFormData] = useState({
     name: initialValues?.name ?? "",
     value: initialValues?.value ?? "",
@@ -52,13 +51,11 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
   });
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
-  const [states, setStates] = useState<{ value: string; label: string }[]>([]);
-  const [stateCode, setStateCode] = useState<any>([]);
+  const [stateCode, setStateCode] = useState<string>("");
   const [stateValue, setStateValue] = useState<string>("");
 
   const { t } = useTranslation();
 
-  // Effect to fetch user details when modal opens
   useEffect(() => {
     const fetchUserDetail = async () => {
       let userId: any;
@@ -73,15 +70,14 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
           (field: { label: string }) => field.label === "STATES"
         );
 
-        console.log("stateField", statesField);
-
         if (statesField) {
           setStateValue(statesField.value);
           setStateCode(statesField.code);
+          setFormData((prev) => ({
+            ...prev,
+            controllingField: statesField.code,
+          }));
         }
-
-        console.log("stateValue", stateValue);
-        console.log("stateCode", stateCode);
       } catch (error) {
         console.log(error);
       }
@@ -95,16 +91,25 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
     setFormData({
       name: initialValues.name ?? "",
       value: initialValues.value ?? "",
-      controllingField: initialValues.controllingField ?? "",
+      controllingField: initialValues.controllingField ?? stateCode,
     });
     setErrors({});
-  }, [initialValues]);
+  }, [initialValues, stateCode]);
 
-  const isAlphabetic = (input: string) =>
-    input === "" || /^[a-zA-Z\s]+$/.test(input);
+  const isValidName = (input: string) =>
+    /^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/.test(input);
 
-  // Handle input change and validation
+  const isValidCode = (input: string) => /^[A-Z]{1,3}$/.test(input);
+
   const handleChange = (field: string, value: string) => {
+    if (field === "name") {
+      value = value.replace(/[^a-zA-Z\s]/g, "");
+    }
+
+    if (field === "value" && value.length > 3) {
+      return;
+    }
+
     setFormData((prev) => ({ ...prev, [field]: value }));
 
     if (value === "") {
@@ -118,46 +123,40 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
               : "COMMON.CODE_REQUIRED"
         ),
       }));
-    } else if (field !== "controllingField" && !isAlphabetic(value)) {
-      setErrors((prev: Record<string, string | null>) => {
-        const newErrors: Record<string, string | null> = {
-          ...prev,
-          [field]: field === "controllingField" ? value : null,
-        };
-        return newErrors;
-      });
+    } else if (field === "name" && !isValidName(value.trim())) {
+      setErrors((prev) => ({ ...prev, [field]: t("COMMON.INVALID_INPUT") }));
+    } else if (field === "value" && !isValidCode(value)) {
+      setErrors((prev) => ({ ...prev, [field]: t("COMMON.INVALID_TEXT") }));
+    } else {
+      setErrors((prev) => ({ ...prev, [field]: null }));
     }
   };
 
-  // Validate form before submitting
   const validateForm = () => {
-    const newErrors = {
-      name: !formData.name
-        ? t("COMMON.DISTRICT_NAME_REQUIRED")
-        : !isAlphabetic(formData.name)
-          ? t("COMMON.INVALID_TEXT")
-          : null,
-      value: !formData.value
-        ? t("COMMON.CODE_REQUIRED")
-        : !isAlphabetic(formData.value)
-          ? t("COMMON.INVALID_TEXT")
-          : null,
-      controllingField: !formData.controllingField
-        ? t("COMMON.STATE_NAME_REQUIRED")
-        : null,
-    };
+    const newErrors: { name?: string; value?: string } = {};
+
+    if (!formData.name) {
+      newErrors.name = t("COMMON.STATE_NAME_REQUIRED");
+    } else if (!isValidName(formData.name.trim())) {
+      newErrors.name = t("COMMON.INVALID_TEXT");
+    }
+
+    if (!formData.value) {
+      newErrors.value = t("COMMON.CODE_REQUIRED");
+    } else if (!isValidCode(formData.value)) {
+      newErrors.value = t("COMMON.INVALID_TEXT");
+    }
 
     setErrors(newErrors);
-    return !Object.values(newErrors).some((error) => error !== null);
+    return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submission
   const handleSubmit = () => {
     if (validateForm()) {
       onSubmit(
         formData.name,
         formData.value,
-        formData.controllingField,
+        formData.controllingField || stateCode,
         fieldId,
         districtId
       );
@@ -179,19 +178,18 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle sx={{ fontSize: "14px" }}>{dialogTitle}</DialogTitle>
+      <Divider />
       <DialogContent>
         <Select
-          value={formData.controllingField}
+          value={formData.controllingField || stateCode}
           onChange={(e) => handleChange("controllingField", e.target.value)}
           fullWidth
           displayEmpty
           variant="outlined"
           margin="dense"
           error={!!errors.controllingField}
+          disabled={isEditing}
         >
-          <MenuItem value="" disabled>
-            {t("COMMON.SELECT_STATE")}
-          </MenuItem>
           <MenuItem key={stateCode} value={stateCode}>
             {stateValue}
           </MenuItem>
@@ -230,7 +228,8 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
           </Typography>
         </Box>
       </DialogContent>
-      <DialogActions>
+      <Divider />
+      <DialogActions sx={{ p: 2 }}>
         <Button
           onClick={onClose}
           sx={{
@@ -249,13 +248,8 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
         </Button>
         <Button
           onClick={handleSubmit}
-          sx={{
-            fontSize: "14px",
-            fontWeight: "500",
-            width: "auto",
-            height: "40px",
-          }}
           variant="contained"
+          sx={{ fontSize: "14px" }}
           color="primary"
         >
           {buttonText}

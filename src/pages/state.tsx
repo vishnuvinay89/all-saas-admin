@@ -236,21 +236,11 @@ const State: React.FC = () => {
 
         console.log("totalCount", totalCount);
 
-        if (paginationCount >= Numbers.FIFTEEN) {
-          setPageSizeArray([
-            Numbers.FIVE,
-            Numbers.TEN,
-            Numbers.FIFTEEN,
-            Numbers.TWENTY,
-          ]);
-        } else if (paginationCount >= Numbers.TEN) {
-          setPageSizeArray([Numbers.FIVE, Numbers.TEN]);
-        } else {
-          setPageSizeArray([Numbers.FIVE]);
-        }
+        setPageSizeArray(
+          totalCount >= 15 ? [5, 10, 15, 20] : totalCount >= 10 ? [5, 10] : [5]
+        );
 
-        const pageCount = Math.ceil(totalCount / limit);
-        setPageCount(pageCount);
+        setPageCount(Math.ceil(totalCount / limit));
       } else {
         console.error("Unexpected fieldId:", resp?.result?.fieldId);
       }
