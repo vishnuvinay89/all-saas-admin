@@ -78,7 +78,6 @@ const Block: React.FC = () => {
   const [sortBy, setSortBy] = useState<[string, string]>(["name", "asc"]);
   const [paginationCount, setPaginationCount] = useState<number>(0);
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10, 20, 50]);
-  const [initialDistrict, setInitialDistrict] = useState<string>("");
   const [stateCode, setStateCode] = useState<any>([]);
   const [stateValue, setStateValue] = useState<string>("");
   const [cohortStatus, setCohortStatus] = useState<any>();
@@ -115,23 +114,20 @@ const Block: React.FC = () => {
     fetchUserDetail();
   }, []);
 
-  //get district list upon states
   useEffect(() => {
     const fetchDistricts = async () => {
       setLoading(true);
       try {
-        const limit = pageLimit;
-        const offset = pageOffset * limit;
-
         const data = await getDistrictsForState({
-          limit: limit,
-          offset: offset,
-          controllingfieldfk: selectedState,
+          controllingfieldfk: stateCode || "",
           fieldName: "districts",
         });
+
         const districts = data?.result?.values || [];
         setDistrictData(districts);
-        setInitialDistrict(districts[0].value);
+
+        console.log("districts", districts);
+
         const districtFieldID = data?.result?.fieldId || "";
         setDistrictFieldId(districtFieldID);
       } catch (error) {
@@ -142,9 +138,62 @@ const Block: React.FC = () => {
     };
 
     fetchDistricts();
-  }, [selectedState]);
+  }, [stateCode]);
 
-  //get block list upon district
+  const getCohortSearchBlock = async () => {
+    const limit = pageLimit;
+    const offset = pageOffset * limit;
+    const reqParams = {
+      limit: limit,
+      offset: offset,
+      filters: {
+        name: selectedDistrict,
+        type: "DISTRICT",
+      },
+    };
+
+    console.log("reqParams block", reqParams);
+
+    const response = await getCohortList(reqParams);
+    console.log("getCohortData", response);
+
+    const cohortDetails = response?.results?.cohortDetails;
+    console.log("cohort detail at block", cohortDetails);
+
+    if (cohortDetails && cohortDetails.length > 0) {
+      cohortDetails.forEach(
+        (cohort: { customFields: any; cohortId: any; status: any }) => {
+          const cohortId = cohort?.cohortId;
+          const cohortStatus = cohort?.status;
+
+          setCohortStatus(cohortStatus);
+          setCohortId(cohortId);
+
+          const addCustomFieldsState = {
+            fieldId: stateFieldId,
+            value: stateCode,
+          };
+          cohort.customFields.push(addCustomFieldsState);
+
+          const addCustomFieldsDistrict = {
+            fieldId: districtFieldId,
+            value: selectedDistrict,
+          };
+          cohort.customFields.push(
+            addCustomFieldsState,
+            addCustomFieldsDistrict
+          );
+        }
+      );
+    } else {
+      console.error("No cohort details available.");
+    }
+  };
+
+  useEffect(() => {
+    getCohortSearchBlock();
+  }, [selectedDistrict]);
+
   const fetchBlocks = async (DistrictId: string) => {
     console.log("districtId", DistrictId);
     setLoading(true);
@@ -174,20 +223,11 @@ const Block: React.FC = () => {
       const totalCount = response?.result?.totalCount || 0;
       setPaginationCount(totalCount);
 
-      if (paginationCount >= Numbers.FIFTEEN) {
-        setPageSizeArray([
-          Numbers.FIVE,
-          Numbers.TEN,
-          Numbers.FIFTEEN,
-          Numbers.TWENTY,
-        ]);
-      } else if (paginationCount >= Numbers.TEN) {
-        setPageSizeArray([Numbers.FIVE, Numbers.TEN]);
-      } else {
-        setPageSizeArray([Numbers.FIVE]);
-      }
-      const pageCount = Math.ceil(totalCount / limit);
-      setPageCount(pageCount);
+      setPageSizeArray(
+        totalCount >= 15 ? [5, 10, 15, 20] : totalCount >= 10 ? [5, 10] : [5]
+      );
+
+      setPageCount(Math.ceil(totalCount / limit));
     } catch (error) {
       console.error("Error fetching blocks", error);
       setBlockData([]);
@@ -214,6 +254,19 @@ const Block: React.FC = () => {
       width: "130",
     },
     {
+      key: "createdBy",
+      title: t("MASTER.CREATED_BY"),
+      dataType: DataType.String,
+      width: "160",
+    },
+    {
+      key: "updatedBy",
+      title: t("MASTER.UPDATED_BY"),
+      dataType: DataType.String,
+      width: "160",
+    },
+
+    {
       key: "createdAt",
       title: t("MASTER.CREATED_AT"),
       dataType: DataType.String,
@@ -224,18 +277,6 @@ const Block: React.FC = () => {
       title: t("MASTER.UPDATED_AT"),
       dataType: DataType.String,
       width: "130",
-    },
-    {
-      key: "createdAt",
-      title: t("MASTER.CREATED_BY"),
-      dataType: DataType.String,
-      width: "160",
-    },
-    {
-      key: "updatedAt",
-      title: t("MASTER.UPDATED_BY"),
-      dataType: DataType.String,
-      width: "160",
     },
     {
       key: "actions",
@@ -255,78 +296,11 @@ const Block: React.FC = () => {
   const handleStateChange = async (event: SelectChangeEvent<string>) => {
     const selectedState = event.target.value;
     setSelectedState(selectedState);
-
-    try {
-      const limit = pageLimit;
-      const offset = pageOffset * limit;
-      const data = {
-        limit: limit,
-        offset: offset,
-        controllingfieldfk: selectedState,
-        fieldName: "districts",
-      };
-      const response = await getDistrictsForState(data);
-      setDistrictData(response.result.values || []);
-
-      console.log("selected state", response);
-    } catch (error) {
-      console.error("Error fetching district data", error);
-    }
   };
 
   const handleDistrictChange = async (event: SelectChangeEvent<string>) => {
     const selectedDistrict = event.target.value;
     setSelectedDistrict(selectedDistrict);
-
-    if (selectedDistrict) {
-      const limit = pageLimit;
-      const offset = pageOffset * limit;
-      const reqParams = {
-        limit: limit,
-        offset: offset,
-        filters: {
-          name: selectedDistrict,
-          type: "DISTRICT",
-        },
-      };
-
-      console.log("reqParams block", reqParams);
-
-      const response = await getCohortList(reqParams);
-      console.log("getCohortData", response);
-
-      const cohortDetails = response?.results?.cohortDetails;
-      console.log("cohort detail at block", cohortDetails);
-
-      if (cohortDetails && cohortDetails.length > 0) {
-        cohortDetails.forEach(
-          (cohort: { customFields: any; cohortId: any; status: any }) => {
-            const cohortId = cohort?.cohortId;
-            const cohortStatus = cohort?.status;
-
-            setCohortStatus(cohortStatus);
-            setCohortId(cohortId);
-
-            const addCustomFieldsState = {
-              fieldId: stateFieldId,
-              value: selectedState,
-            };
-            cohort.customFields.push(addCustomFieldsState);
-
-            const addCustomFieldsDistrict = {
-              fieldId: districtFieldId,
-              value: selectedDistrict,
-            };
-            cohort.customFields.push(
-              addCustomFieldsState,
-              addCustomFieldsDistrict
-            );
-          }
-        );
-      } else {
-        console.error("No cohort details available.");
-      }
-    }
   };
 
   const handleEdit = (rowData: any) => {
@@ -335,6 +309,8 @@ const Block: React.FC = () => {
       ...rowData,
       selectedDistrict: selectedDistrict,
     };
+
+    console.log("updatedRowData", updatedRowData);
 
     setSelectedStateForEdit(updatedRowData);
   };
@@ -402,14 +378,12 @@ const Block: React.FC = () => {
   );
 
   const userProps = {
-    selectedSort,
     selectedFilter,
     showStateDropdown: false,
     userType: t("MASTER.BLOCKS"),
     searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK"),
     showFilter: false,
     showSort: true,
-    handleSortChange: { handleSortChange },
   };
 
   const handleAddNewBlock = () => {
@@ -447,8 +421,13 @@ const Block: React.FC = () => {
         parentId: cohortId, //cohortId of district
         customFields: [
           {
+            fieldId: stateFieldId, // state fieldId
+            value: [stateCode], // state code
+          },
+
+          {
             fieldId: districtFieldId, // district fieldId
-            value: [selectedDistrict], // district code
+            value: [controllingField], // district code
           },
         ],
       };
@@ -507,6 +486,9 @@ const Block: React.FC = () => {
         {...userProps}
         handleAddUserClick={handleAddNewBlock}
         handleSearch={handleSearch}
+        selectedSort={selectedSort}
+        handleSortChange={handleSortChange}
+        showSort={true}
       >
         <>
           <Box
@@ -528,17 +510,12 @@ const Block: React.FC = () => {
                 },
               }}
             >
-              <InputLabel
-                sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
-                id="state-select-label"
-              >
-                {t("MASTER.STATE")}
-              </InputLabel>
               <Select
                 labelId="state-select-label"
                 id="state-select"
-                value={selectedState}
+                value={stateCode}
                 onChange={handleStateChange}
+                disabled
               >
                 <MenuItem key={stateCode} value={stateCode}>
                   {transformLabel(stateValue)}
@@ -548,9 +525,9 @@ const Block: React.FC = () => {
 
             <FormControl
               sx={{
-                width: "25%", // Default width for larger screens
+                width: "25%",
                 "@media (max-width: 580px)": {
-                  width: "100%", // Full width for small screens
+                  width: "100%",
                 },
               }}
             >
@@ -566,6 +543,9 @@ const Block: React.FC = () => {
                 value={selectedDistrict}
                 onChange={handleDistrictChange}
               >
+                {/* <MenuItem key={"All"} value={"All"}>
+                  {t("ALL")}
+                </MenuItem> */}
                 {districtData.map((districtDetail) => (
                   <MenuItem
                     key={districtDetail.value}

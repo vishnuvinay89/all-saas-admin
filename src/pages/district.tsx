@@ -31,11 +31,10 @@ import useStore from "@/store/store";
 import { getUserDetailsInfo } from "@/services/UserList";
 
 type StateDetail = {
-  selectedStateDropdown: string | undefined;
+  stateCode: string | undefined;
   controllingField: string | undefined;
   value: string;
   label: string;
-  selectedState?: string;
 };
 
 type DistrictDetail = {
@@ -50,10 +49,6 @@ type DistrictDetail = {
 
 const District: React.FC = () => {
   const { t } = useTranslation();
-  const store = useStore();
-  const [selectedState, setSelectedState] = useState("ALL");
-
-  const [stateData, setStateData] = useState<StateDetail[]>([]);
   const [districtData, setDistrictData] = useState<DistrictDetail[]>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [selectedStateForEdit, setSelectedStateForEdit] =
@@ -71,12 +66,10 @@ const District: React.FC = () => {
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10, 20, 50]);
   const [sortBy, setSortBy] = useState<[string, string]>(["name", "asc"]);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [fieldId, setFieldId] = useState<string>("");
   const [paginationCount, setPaginationCount] = useState<number>(Numbers.ZERO);
   const [stateCode, setStateCode] = useState<any>([]);
   const [stateValue, setStateValue] = useState<string>("");
-  const [selectedStateDropdown, setSelectedStateDropdown] =
-    useState<string>("");
+  useState<string>("");
   const [cohortStatus, setCohortStatus] = useState<any>();
   const [cohortId, setCohortId] = useState<any>();
   const [stateFieldId, setStateFieldId] = useState<string>("");
@@ -89,15 +82,13 @@ const District: React.FC = () => {
           userId = localStorage.getItem(Storage.USER_ID);
         }
         const response = await getUserDetailsInfo(userId);
-        console.log("profile api is triggered", response);
-
         const statesField = response.userData.customFields.find(
           (field: { label: string }) => field.label === "STATES"
         );
         if (statesField) {
-          setStateValue(statesField.value);
-          setStateCode(statesField.code);
-          setStateFieldId(statesField?.fieldId);
+          setStateValue(statesField.value); // state name
+          setStateCode(statesField.code); // state code
+          setStateFieldId(statesField?.fieldId); // field id of state
         }
       } catch (error) {
         console.log(error);
@@ -106,15 +97,59 @@ const District: React.FC = () => {
     fetchUserDetail();
   }, []);
 
-  const fetchDistrictData = async (stateId: string) => {
+  const fetchCohortSearch = async () => {
+    const limit = pageLimit;
+    const offset = pageOffset * limit;
+
+    const reqParams = {
+      limit: limit,
+      offset: offset,
+      filters: {
+        name: stateValue,
+        type: "STATE",
+      },
+    };
+
+    const response = await getCohortList(reqParams);
+    console.log("getCohortData", response);
+
+    const cohortDetails = response?.results?.cohortDetails;
+    console.log("cohortDetails", cohortDetails);
+    if (cohortDetails && cohortDetails.length > 0) {
+      cohortDetails.forEach(
+        (cohort: { customFields: any; cohortId: any; status: any }) => {
+          const cohortId = cohort?.cohortId;
+          const cohortStatus = cohort?.status;
+
+          setCohortStatus(cohortStatus);
+          setCohortId(cohortId);
+
+          const addCustomFieldsState = {
+            fieldId: stateFieldId,
+            value: stateCode,
+          };
+          cohort.customFields.push(addCustomFieldsState);
+        }
+      );
+    } else {
+      console.error("No cohort details available.");
+    }
+  };
+
+  useEffect(() => {
+    fetchCohortSearch();
+  }, [stateCode]);
+
+  const fetchDistrictData = async (searchKeyword: string) => {
     try {
+      setLoading(true);
       const limit = pageLimit;
       const offset = pageOffset * limit;
 
       const data = {
         limit: limit,
         offset: offset,
-        controllingfieldfk: stateId === "ALL" ? undefined : stateId,
+        controllingfieldfk: stateCode,
         fieldName: "districts",
         optionName: searchKeyword || "",
         sort: sortBy,
@@ -129,89 +164,31 @@ const District: React.FC = () => {
       const totalCount = districtData?.result?.totalCount || 0;
       setPaginationCount(totalCount);
 
-      if (paginationCount >= Numbers.FIFTEEN) {
-        setPageSizeArray([
-          Numbers.FIVE,
-          Numbers.TEN,
-          Numbers.FIFTEEN,
-          Numbers.TWENTY,
-        ]);
-      } else if (paginationCount >= Numbers.TEN) {
-        setPageSizeArray([Numbers.FIVE, Numbers.TEN]);
-      } else {
-        setPageSizeArray([Numbers.FIVE]);
-      }
-      const pageCount = Math.ceil(totalCount / limit);
-      setPageCount(pageCount);
+      setPageSizeArray(
+        totalCount >= 15 ? [5, 10, 15, 20] : totalCount >= 10 ? [5, 10] : [5]
+      );
+
+      setPageCount(Math.ceil(totalCount / limit));
     } catch (error) {
       console.error("Error fetching district data:", error);
       setDistrictData([]);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
-    fetchDistrictData(selectedStateDropdown);
-  }, [searchKeyword, selectedStateDropdown, sortBy, pageLimit, pageOffset]);
+    fetchDistrictData(searchKeyword);
+  }, [searchKeyword, stateCode, sortBy, pageLimit, pageOffset]);
 
-  const handleStateChange = async (event: SelectChangeEvent<string>) => {
-    const selectedStateDropdown = event.target.value;
-    setSelectedStateDropdown(selectedStateDropdown);
-    console.log("selectedStateDropdown", selectedStateDropdown);
-
-    await fetchDistrictData(selectedStateDropdown);
-
-    if (selectedStateDropdown) {
-      const limit = pageLimit;
-      const offset = pageOffset * limit;
-
-      const reqParams = {
-        limit: limit,
-        offset: offset,
-        filters: {
-          name: stateValue,
-          type: "STATE",
-        },
-      };
-
-      const response = await getCohortList(reqParams);
-      console.log("getCohortData", response);
-
-      const cohortDetails = response?.results?.cohortDetails;
-      console.log("cohortDetails", cohortDetails);
-      if (cohortDetails && cohortDetails.length > 0) {
-        cohortDetails.forEach(
-          (cohort: { customFields: any; cohortId: any; status: any }) => {
-            const cohortId = cohort?.cohortId;
-            const cohortStatus = cohort?.status;
-
-            setCohortStatus(cohortStatus);
-            setCohortId(cohortId);
-
-            const addCustomFieldsState = {
-              fieldId: stateFieldId,
-              value: selectedStateDropdown,
-            };
-            cohort.customFields.push(addCustomFieldsState);
-          }
-        );
-      } else {
-        console.error("No cohort details available.");
-      }
-    }
-  };
   const handleEdit = (rowData: DistrictDetail) => {
     setModalOpen(true);
 
     const updatedRowData = {
-      selectedStateDropdown: selectedStateDropdown,
       ...rowData,
+      stateCode: stateCode,
     };
-
-    console.log("updatedRowData", updatedRowData);
-
     setSelectedStateForEdit(updatedRowData);
   };
-
   const handleDelete = (rowData: DistrictDetail) => {
     setSelectedStateForDelete(rowData);
     setConfirmationDialogOpen(true);
@@ -253,43 +230,43 @@ const District: React.FC = () => {
         },
       ],
     };
-
-    console.log("Submitting newDistrict:", newDistrict);
-
     try {
       const response = await createOrUpdateOption(districtFieldId, newDistrict);
 
-      console.log("submit response district", response);
-      const queryParameters = {
-        name: name,
-        type: "DISTRICT",
-        status: cohortStatus,
-        parentId: cohortId, //cohortId of state
-        customFields: [
-          {
-            fieldId: stateFieldId, // state fieldId
-            value: [selectedStateDropdown], // state code
-          },
-        ],
-      };
-
-      console.log("query params district", queryParameters);
-
-      const cohortCreate = await createCohort(queryParameters);
-
-      console.log("fetched cohorlist success", cohortCreate);
-
       if (response) {
-        fetchDistrictData(districtFieldId);
-        showToastMessage(t("COMMON.DISTRICT_ADDED_SUCCESS"), "success");
+        await fetchDistrictData(searchKeyword);
+        // showToastMessage(t("COMMON.DISTRICT_ADDED_SUCCESS"), "success");
       } else {
-        showToastMessage(t("COMMON.DISTRICT_ADDED_FAILURE"), "error");
+        // showToastMessage(t("COMMON.DISTRICT_ADDED_FAILURE"), "error");
       }
     } catch (error) {
       console.error("Error adding district:", error);
-      showToastMessage(t("COMMON.DISTRICT_ADDED_FAILURE"), "error");
     }
 
+    const queryParameters = {
+      name: name,
+      type: "DISTRICT",
+      status: cohortStatus,
+      parentId: cohortId, //cohortId of state
+      customFields: [
+        {
+          fieldId: stateFieldId, // state fieldId
+          value: [stateCode], // state code
+        },
+      ],
+    };
+
+    try {
+      const cohortCreateResponse = await createCohort(queryParameters);
+      if (cohortCreateResponse) {
+        showToastMessage(t("COMMON.DISTRICT_UPDATED_SUCCESS"), "success");
+      } else if (cohortCreateResponse.responseCode === 409) {
+        showToastMessage(t("COMMON.DISTRICT_DUPLICATION_FAILURE"), "error");
+      }
+    } catch (error) {
+      console.error("Error creating cohort:", error);
+      showToastMessage(t("COMMON.DISTRICT_DUPLICATION_FAILURE"), "error");
+    }
     setModalOpen(false);
     setSelectedStateForEdit(null);
   };
@@ -305,16 +282,6 @@ const District: React.FC = () => {
       event.target.value === "Z-A" ? SORT.DESCENDING : SORT.ASCENDING;
     setSortBy(["name", sortOrder]);
     setSelectedSort(event.target.value);
-
-    const afterFilter = stateData.filter((item) => {
-      return item.value === selectedState;
-    });
-    const setSort =
-      afterFilter[0]?.label === undefined ? "ALL" : afterFilter[0]?.label;
-
-    console.log(setSort);
-
-    fetchDistrictData(setSort);
   };
 
   const handlePaginationChange = (
@@ -365,7 +332,7 @@ const District: React.FC = () => {
             ? {
                 name: selectedStateForEdit.label,
                 value: selectedStateForEdit.value,
-                controllingField: selectedStateForEdit.selectedStateDropdown,
+                controllingField: selectedStateForEdit.stateCode,
               }
             : {}
         }
@@ -383,9 +350,9 @@ const District: React.FC = () => {
       <HeaderComponent
         userType={t("MASTER.DISTRICTS")}
         searchPlaceHolder={t("MASTER.SEARCHBAR_PLACEHOLDER_DISTRICT")}
-        states={stateData.map((state) => state.value)}
-        districts={districtData.map((district) => district.label)}
-        selectedState={selectedState}
+        // states={stateData.map((state) => state.value)}
+        // districts={districtData.map((district) => district.label)}
+        // selectedState={selectedState}
         showStateDropdown={false}
         handleSortChange={handleSortChange}
         showSort={true}
@@ -406,17 +373,16 @@ const District: React.FC = () => {
                 variant="outlined"
                 sx={{ minWidth: 220, marginTop: 2 }}
               >
-                <InputLabel id="state-select-label">
-                  {t("MASTER.STATE")}
-                </InputLabel>
+                <InputLabel id="state-select-label">{stateValue}</InputLabel>
                 <Select
                   labelId="state-select-label"
                   id="state-select"
-                  value={selectedStateDropdown}
-                  onChange={handleStateChange}
-                  label={t("MASTER.STATE")}
+                  // value={stateCode}
+                  // onChange={""}
+                  // label={stateValue}
+                  disabled
                 >
-                  <MenuItem value="ALL">{t("ALL")}</MenuItem>
+                  {/* <MenuItem value="ALL">{t("ALL")}</MenuItem> */}
                   <MenuItem key={stateCode} value={stateCode}>
                     {transformLabel(stateValue)}
                   </MenuItem>
