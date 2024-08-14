@@ -81,3 +81,7 @@ export enum InputTypes {
   NUMERIC = "numeric",
   TEXT = "text",
 }
+export enum apiCatchingDuration
+{
+  GETREADFORM= 36000000 
+}

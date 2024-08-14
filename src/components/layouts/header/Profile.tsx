@@ -280,7 +280,7 @@ const Profile = () => {
             alignItems: "center",
           }}
         >
-          <IconButton
+          {/* <IconButton
             sx={{
               position: "absolute",
               top: 10,
@@ -289,7 +289,7 @@ const Profile = () => {
             onClick={handleEditClick}
           >
             <EditIcon />
-          </IconButton>
+          </IconButton> */}
 
           <Box
             sx={{
