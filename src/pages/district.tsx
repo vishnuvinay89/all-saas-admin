@@ -20,7 +20,7 @@ import { showToastMessage } from "@/components/Toastify";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import Loader from "@/components/Loader";
 import AddDistrictModal from "@/components/AddDistrictModal";
-import { Pagination } from "@mui/material";
+import { Chip, Pagination } from "@mui/material";
 import PageSizeSelector from "@/components/PageSelector";
 import { Numbers, SORT, Storage } from "@/utils/app.constant";
 import {
@@ -395,13 +395,13 @@ const District: React.FC = () => {
               columns={[
                 {
                   key: "label",
-                  title: t("MASTER.DISTRICT_NAMES"),
+                  title: t("MASTER.DISTRICTS"),
                   dataType: DataType.String,
                   width: "130",
                 },
                 {
                   key: "value",
-                  title: t("MASTER.DISTRICT_CODE"),
+                  title: t("MASTER.CODE"),
                   dataType: DataType.String,
                   width: "130",
                 },
@@ -439,7 +439,13 @@ const District: React.FC = () => {
                 updatedAt: districtDetail.updatedAt,
                 createdBy: districtDetail.createdBy,
                 updatedBy: districtDetail.updatedBy,
-                value: districtDetail.value,
+                value: (
+                  <Chip
+                    label={districtDetail.value}
+                    size="medium"
+                    // variant="outlined"
+                  />
+                ),
               }))}
               limit={pageLimit}
               offset={pageOffset}

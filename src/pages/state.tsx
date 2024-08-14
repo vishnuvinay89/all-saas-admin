@@ -13,7 +13,7 @@ import { AddStateModal } from "@/components/AddStateModal";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { showToastMessage } from "@/components/Toastify";
 import { SORT, Numbers, Storage } from "@/utils/app.constant";
-import { Box, Pagination, SelectChangeEvent } from "@mui/material";
+import { Box, Chip, Pagination, SelectChangeEvent } from "@mui/material";
 import PageSizeSelector from "@/components/PageSelector";
 import {
   createCohort,
@@ -276,7 +276,13 @@ const State: React.FC = () => {
             columns={columns}
             data={stateData.map((stateDetail) => ({
               label: stateDetail.label ?? "",
-              value: stateDetail.value,
+              value: (
+                <Chip
+                  label={stateDetail.value}
+                  size="medium"
+                  // variant="outlined"
+                />
+              ),
               createdAt: stateDetail.createdAt,
               updatedAt: stateDetail.updatedAt,
               createdBy: stateDetail.createdBy,
@@ -314,7 +320,7 @@ const State: React.FC = () => {
           <ConfirmationModal
             modalOpen={confirmationDialogOpen}
             message={t("COMMON.ARE_YOU_SURE_DELETE", {
-              state: `${selectedStateForDelete?.label} State`,
+              state: `${selectedStateForDelete?.label} Block`,
             })}
             handleAction={handleConfirmDelete}
             buttonNames={{

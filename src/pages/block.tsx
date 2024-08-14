@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import HeaderComponent from "@/components/HeaderComponent";
-import { Pagination } from "@mui/material";
+import { Chip, Pagination } from "@mui/material";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -244,13 +244,13 @@ const Block: React.FC = () => {
   const columns = [
     {
       key: "block",
-      title: t("MASTER.BLOCK_NAMES"),
+      title: t("MASTER.BLOCKS"),
       dataType: DataType.String,
       width: "130",
     },
     {
       key: "value",
-      title: t("MASTER.BLOCK_CODE"),
+      title: t("MASTER.CODE"),
       dataType: DataType.String,
       width: "130",
     },
@@ -574,7 +574,13 @@ const Block: React.FC = () => {
                   updatedAt: block.updatedAt,
                   createdBy: block.createdBy,
                   updatedBy: block.updatedBy,
-                  value: block.value,
+                  value: (
+                    <Chip
+                      label={block.value}
+                      size="medium"
+                      // variant="outlined"
+                    />
+                  ),
                 }))}
                 limit={pageLimit}
                 offset={pageOffset}
