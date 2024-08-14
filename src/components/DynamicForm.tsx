@@ -122,15 +122,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
   const transformErrors = (errors: any) => {
     console.log("errors", errors);
-    if(errors.length===0)
-    {
-      setNoError(true);
-    }
-    else
-    {
-      setNoError(false);
-
-    }
+    errors.length===0? setNoError(true):  setNoError(false)
+   
     console.log("schema", schema);
 
     return errors?.map((error: any) => {
