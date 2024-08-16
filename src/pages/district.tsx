@@ -395,13 +395,13 @@ const District: React.FC = () => {
               columns={[
                 {
                   key: "label",
-                  title: t("MASTER.DISTRICTS"),
+                  title: t("MASTER.DISTRICT_NAMES"),
                   dataType: DataType.String,
                   width: "130",
                 },
                 {
                   key: "value",
-                  title: t("MASTER.CODE"),
+                  title: t("MASTER.DISTRICT_CODE"),
                   dataType: DataType.String,
                   width: "130",
                 },
