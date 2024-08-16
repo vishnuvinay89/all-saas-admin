@@ -276,13 +276,7 @@ const State: React.FC = () => {
             columns={columns}
             data={stateData.map((stateDetail) => ({
               label: stateDetail.label ?? "",
-              value: (
-                <Chip
-                  label={stateDetail.value}
-                  size="medium"
-                  variant="outlined"
-                />
-              ),
+              value: stateDetail.value ?? "",
               createdAt: stateDetail.createdAt,
               updatedAt: stateDetail.updatedAt,
               createdBy: stateDetail.createdBy,
@@ -320,7 +314,7 @@ const State: React.FC = () => {
           <ConfirmationModal
             modalOpen={confirmationDialogOpen}
             message={t("COMMON.ARE_YOU_SURE_DELETE", {
-              state: `${selectedStateForDelete?.label} Block`,
+              state: `${selectedStateForDelete?.label} ${t("MASTER.STATE")}`,
             })}
             handleAction={handleConfirmDelete}
             buttonNames={{

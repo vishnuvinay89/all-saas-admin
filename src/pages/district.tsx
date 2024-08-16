@@ -340,7 +340,7 @@ const District: React.FC = () => {
       <ConfirmationModal
         modalOpen={confirmationDialogOpen}
         message={t("COMMON.ARE_YOU_SURE_DELETE", {
-          state: `${selectedStateForDelete?.label} District`,
+          state: `${selectedStateForDelete?.label} ${t("MASTER.DISTRICTS")}`,
         })}
         handleAction={handleConfirmDelete}
         buttonNames={{
@@ -439,13 +439,7 @@ const District: React.FC = () => {
                 updatedAt: districtDetail.updatedAt,
                 createdBy: districtDetail.createdBy,
                 updatedBy: districtDetail.updatedBy,
-                value: (
-                  <Chip
-                    label={districtDetail.value}
-                    size="medium"
-                    variant="outlined"
-                  />
-                ),
+                value: districtDetail.value,
               }))}
               limit={pageLimit}
               offset={pageOffset}

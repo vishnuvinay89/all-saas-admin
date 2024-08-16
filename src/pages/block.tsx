@@ -571,13 +571,7 @@ const Block: React.FC = () => {
                   updatedAt: block.updatedAt,
                   createdBy: block.createdBy,
                   updatedBy: block.updatedBy,
-                  value: (
-                    <Chip
-                      label={block.value}
-                      size="medium"
-                      variant="outlined"
-                    />
-                  ),
+                  value: block.value,
                 }))}
                 limit={pageLimit}
                 offset={pageOffset}
