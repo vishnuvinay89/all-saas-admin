@@ -62,7 +62,7 @@ const Block: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>("All");
   const [districtData, setDistrictData] = useState<DistrictDetail[]>([]);
   const [blockData, setBlockData] = useState<BlockDetail[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [pageOffset, setPageOffset] = useState<number>(0);
   const [pageLimit, setPageLimit] = useState<number>(10);
   const [pageCount, setPageCount] = useState<number>(1);
@@ -117,7 +117,6 @@ const Block: React.FC = () => {
 
   useEffect(() => {
     const fetchDistricts = async () => {
-      setLoading(true);
       try {
         const data = await getDistrictsForState({
           controllingfieldfk: stateCode || "",
@@ -133,8 +132,6 @@ const Block: React.FC = () => {
         setDistrictFieldId(districtFieldID);
       } catch (error) {
         console.error("Error fetching districts", error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -494,75 +491,75 @@ const Block: React.FC = () => {
         handleSortChange={handleSortChange}
         showSort={true}
       >
-        <>
-          <Box
-            sx={{
-              display: "flex",
-              gap: 3,
-              marginTop: 2,
-              "@media (max-width: 580px)": {
-                width: "100%",
-                flexDirection: "column",
-              },
-            }}
-          >
-            <FormControl
+        {loading ? (
+          <Loader showBackdrop={true} loadingText="Loading..." />
+        ) : (
+          <>
+            <Box
               sx={{
-                width: "25%",
+                display: "flex",
+                gap: 3,
+                marginTop: 2,
                 "@media (max-width: 580px)": {
                   width: "100%",
+                  flexDirection: "column",
                 },
               }}
             >
-              <Select
-                labelId="state-select-label"
-                id="state-select"
-                value={stateCode}
-                onChange={handleStateChange}
-                disabled
+              <FormControl
+                sx={{
+                  width: "25%",
+                  "@media (max-width: 580px)": {
+                    width: "100%",
+                  },
+                }}
               >
-                <MenuItem key={stateCode} value={stateCode}>
-                  {transformLabel(stateValue)}
-                </MenuItem>
-              </Select>
-            </FormControl>
-
-            <FormControl
-              sx={{
-                width: "25%",
-                "@media (max-width: 580px)": {
-                  width: "100%",
-                },
-              }}
-            >
-              <InputLabel
-                sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
-                id="district-select-label"
-              >
-                {t("MASTER.DISTRICTS")}
-              </InputLabel>
-              <Select
-                labelId="district-select-label"
-                id="district-select"
-                value={selectedDistrict}
-                onChange={handleDistrictChange}
-              >
-                {districtData.map((districtDetail) => (
-                  <MenuItem
-                    key={districtDetail.value}
-                    value={districtDetail.value}
-                  >
-                    {transformLabel(districtDetail.label)}
+                <Select
+                  labelId="state-select-label"
+                  id="state-select"
+                  value={stateCode}
+                  onChange={handleStateChange}
+                  disabled
+                >
+                  <MenuItem key={stateCode} value={stateCode}>
+                    {transformLabel(stateValue)}
                   </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
+                </Select>
+              </FormControl>
 
-          <Box sx={{ marginTop: 2 }}>
-            {loading ? (
-              <Loader showBackdrop={true} loadingText="Loading..." />
-            ) : (
+              <FormControl
+                sx={{
+                  width: "25%",
+                  "@media (max-width: 580px)": {
+                    width: "100%",
+                  },
+                }}
+              >
+                <InputLabel
+                  sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
+                  id="district-select-label"
+                >
+                  {t("MASTER.DISTRICTS")}
+                </InputLabel>
+                <Select
+                  labelId="district-select-label"
+                  id="district-select"
+                  value={selectedDistrict}
+                  onChange={handleDistrictChange}
+                >
+                  {districtData.map((districtDetail) => (
+                    <MenuItem
+                      key={districtDetail.value}
+                      value={districtDetail.value}
+                    >
+                      {transformLabel(districtDetail.label)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+
+            <Box sx={{ marginTop: 2 }}>
               <KaTableComponent
                 columns={columns}
                 data={blockData.map((block) => ({
@@ -586,9 +583,9 @@ const Block: React.FC = () => {
                   blockData.length === 0 ? t("COMMON.BLOCKS_NOT_FOUND") : ""
                 }
               />
-            )}
-          </Box>
-        </>
+            </Box>
+          </>
+        )}
       </HeaderComponent>
     </React.Fragment>
   );
