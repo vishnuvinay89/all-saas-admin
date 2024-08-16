@@ -20,7 +20,7 @@ import { showToastMessage } from "@/components/Toastify";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import Loader from "@/components/Loader";
 import AddDistrictModal from "@/components/AddDistrictModal";
-import { Pagination } from "@mui/material";
+import { Chip, Pagination } from "@mui/material";
 import PageSizeSelector from "@/components/PageSelector";
 import { Numbers, SORT, Storage } from "@/utils/app.constant";
 import {
@@ -339,7 +339,9 @@ const District: React.FC = () => {
       />
       <ConfirmationModal
         modalOpen={confirmationDialogOpen}
-        message={t("COMMON.ARE_YOU_SURE_DELETE")}
+        message={t("COMMON.ARE_YOU_SURE_DELETE", {
+          state: `${selectedStateForDelete?.label} ${t("COMMON.DISTRICT")}`,
+        })}
         handleAction={handleConfirmDelete}
         buttonNames={{
           primary: t("COMMON.DELETE"),
