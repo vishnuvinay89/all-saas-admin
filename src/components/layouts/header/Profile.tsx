@@ -291,24 +291,26 @@ const Profile = () => {
             <EditIcon />
           </IconButton> */}
 
-          <Box
-            sx={{
-              backgroundColor: "#FFC107",
-              padding: "10px",
-              borderRadius: "50%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "20px",
-            }}
-          >
-            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-              {adminInfo?.name
-            ?.split(" ")
-            .map((word: any) => word[0])
-            .join("")}
-            </Typography>
-          </Box>
+<Box
+  sx={{
+    backgroundColor: "#FFC107",
+    width: "50px", // Set the width and height to be equal for a perfect circle
+    height: "50px",
+    borderRadius: "50%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: "20px",
+  }}
+>
+  <Typography variant="h6" sx={{ fontWeight: "bold", fontSize: "18px" }}>
+    {adminInfo?.name
+      ?.split(" ")
+      .map((word: any) => word[0])
+      .join("")}
+  </Typography>
+</Box>
+
 
           <Typography variant="h5" sx={{ marginBottom: "10px" }}>
             {adminInfo?.name}
