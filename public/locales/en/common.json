@@ -297,7 +297,14 @@
     "STATUS": "Status",
     "NAME": "Name",
     "MOBILE_NUMBER": "Mobile Number",
-    "CENTER": "Center"
+    "CENTER": "Center",
+    "ENGLISH": "English",
+    "HOME_SCIENCE": "Home Science",
+    "MATH": "Math",
+    "LANGUAGE": "Language",
+    "SCIENCE": "Science",
+    "SOCIAL_SCIENCE": "Social Science",
+    "LIFE_SKILLS": "Life Skills"
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",
