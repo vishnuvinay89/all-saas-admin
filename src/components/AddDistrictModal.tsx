@@ -188,7 +188,7 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
           variant="outlined"
           margin="dense"
           error={!!errors.controllingField}
-          disabled={isEditing}
+          disabled
         >
           <MenuItem key={stateCode} value={stateCode}>
             {stateValue}
