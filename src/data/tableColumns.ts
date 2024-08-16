@@ -72,7 +72,8 @@ export const getCenterTableData = (t: any, isMobile: boolean) => {
     { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 95 },
     { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 95 },
     { key: "customFieldValues", titleKey: "FORM.TYPE_OF_COHORT", width: 95 },
-    { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 , isSortable: false},
+    { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 , isSortable: false}
+   
   ];
 
   return generateColumns(t, configs, isMobile);

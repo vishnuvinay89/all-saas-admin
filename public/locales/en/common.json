@@ -29,7 +29,7 @@
     "SUBMIT": "Submit",
     "BACK": "Back",
     "CANCEL": "Cancel",
-    "ARE_YOU_SURE_DELETE": "Do you want to delete?",
+    "ARE_YOU_SURE_DELETE": "Do you want to delete {{state}}?",
     "CONFIRM_DELETE": "Confirm Delete",
     "ADD_STATE": "Add New State",
     "ADD_STATE_CODE": "Code",
@@ -82,6 +82,8 @@
     "BLOCK_UPDATED_FAILURE": "Unable to update block",
     "ADD": "Add",
     "INACTIVE": "Inactive",
+    "DISTRICT":"District",
+    "BLOCK":"Block",
     "SELECT_STATE": "Select State",
     "SELECT_DISTRICT": "Select District",
     "SOMETHING_WENT_WRONG": "Something went wrong",
@@ -297,7 +299,14 @@
     "STATUS": "Status",
     "NAME": "Name",
     "MOBILE_NUMBER": "Mobile Number",
-    "CENTER": "Center"
+    "CENTER": "Center",
+    "ENGLISH": "English",
+    "HOME_SCIENCE": "Home Science",
+    "MATH": "Math",
+    "LANGUAGE": "Language",
+    "SCIENCE": "Science",
+    "SOCIAL_SCIENCE": "Social Science",
+    "LIFE_SKILLS": "Life Skills"
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",
@@ -325,6 +334,7 @@
     "UPDATED_DATE": "Updated Date",
     "CREATED_BY": "Created By",
     "UPDATED_BY": "Updated By",
-    "ACTIONS": "Actions"
+    "ACTIONS": "Actions",
+    "TYPE": "Type"
   }
 }
