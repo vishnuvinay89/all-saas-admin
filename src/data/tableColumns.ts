@@ -69,7 +69,7 @@ export const getCenterTableData = (t: any, isMobile: boolean) => {
     { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 95 },
     { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 95 },
     { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 95 },
-    { key: "customFieldValues", titleKey: "FORM.TYPE_OF_COHORT", width: 95 },
+    { key: "customFieldValues", titleKey: "TABLE_TITLE.TYPE", width: 95 },
     { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 },
   ];
 

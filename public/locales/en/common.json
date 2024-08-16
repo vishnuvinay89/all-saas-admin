@@ -325,6 +325,7 @@
     "UPDATED_DATE": "Updated Date",
     "CREATED_BY": "Created By",
     "UPDATED_BY": "Updated By",
-    "ACTIONS": "Actions"
+    "ACTIONS": "Actions",
+    "TYPE": "Type"
   }
 }
