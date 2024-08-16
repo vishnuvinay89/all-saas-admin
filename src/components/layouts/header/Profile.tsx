@@ -294,7 +294,7 @@ const Profile = () => {
 <Box
   sx={{
     backgroundColor: "#FFC107",
-    width: "50px", // Set the width and height to be equal for a perfect circle
+    width: "50px", 
     height: "50px",
     borderRadius: "50%",
     display: "flex",
