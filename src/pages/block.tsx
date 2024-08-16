@@ -476,7 +476,7 @@ const Block: React.FC = () => {
       <ConfirmationModal
         modalOpen={confirmationDialogOpen}
         message={t("COMMON.ARE_YOU_SURE_DELETE", {
-          state: `${selectedStateForDelete?.block} ${t("MASTER.BLOCKS")}`,
+          state: `${selectedStateForDelete?.block} ${t("COMMON.BLOCK")}`,
         })}
         handleAction={handleConfirmDelete}
         buttonNames={{

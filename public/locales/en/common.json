@@ -82,6 +82,8 @@
     "BLOCK_UPDATED_FAILURE": "Unable to update block",
     "ADD": "Add",
     "INACTIVE": "Inactive",
+    "DISTRICT":"District",
+    "BLOCK":"Block",
     "SELECT_STATE": "Select State",
     "SELECT_DISTRICT": "Select District",
     "SOMETHING_WENT_WRONG": "Something went wrong",
