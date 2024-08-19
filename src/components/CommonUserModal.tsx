@@ -140,7 +140,10 @@ const CommonUserModal: React.FC<UserModalProps> = ({
     districtFieldId,
     stateFieldId,
     dynamicFormForBlock,
+    stateDefaultValue
   } = useLocationState(open, onClose, roleType);
+
+
 
   useEffect(() => {
     const getAddUserFormData =  () => {
@@ -544,6 +547,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
             selectedCenter={selectedCenter}
             handleCenterChangeWrapper={handleCenterChangeWrapper}
             inModal={true}
+            stateDefaultValue={stateDefaultValue}
           />
         </Box>
       )}
