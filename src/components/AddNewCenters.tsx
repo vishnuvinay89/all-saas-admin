@@ -5,7 +5,7 @@ import {
 } from "@/components/GeneratedSchemas";
 import SimpleModal from "@/components/SimpleModal";
 import { getFormRead } from "@/services/CreateUserService";
-import { CohortTypes } from "@/utils/app.constant";
+import { CohortTypes, FormContextType } from "@/utils/app.constant";
 import { useLocationState } from "@/utils/useLocationState";
 import { Box, Button, Typography } from "@mui/material";
 import { IChangeEvent } from "@rjsf/core";
@@ -53,6 +53,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
     React.useState<boolean>(false);
 
   const { t } = useTranslation();
+  const roleType = FormContextType.ADMIN_CENTER;
   const {
     states,
     districts,
@@ -76,7 +77,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
     selectedStateCode,
     selectedBlockCode,
     dynamicFormForBlock,
-  } = useLocationState(open, onClose);
+  } = useLocationState(open, onClose, roleType);
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
   );
@@ -106,6 +107,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
   ) => {
     const formData = data?.formData;
     console.log("selectedBlockCohortId", selectedBlockCohortId);
+
     if (selectedBlockCohortId) {
       const parentId = selectedBlockCohortId;
       const cohortDetails: CohortDetails = {
@@ -231,7 +233,6 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
                 height: "40px",
                 marginLeft: "10px",
               }}
-              
               onClick={onClose}
             >
               {t("COMMON.CANCEL")}

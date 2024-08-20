@@ -32,7 +32,8 @@ export enum FormContextType {
   STUDENT = "STUDENT",
   TEACHER = "TEACHER",
   TEAM_LEADER = "TEAM LEADER",
-  ADMIN="ADMIN"
+  ADMIN = "ADMIN",
+  ADMIN_CENTER = "ADMIN_CENTER",
 }
 
 export enum RoleId {
@@ -50,6 +51,8 @@ export enum DataKey {
   UPDATED_BY = "updatedBy",
   STATUS = "status",
   NAME = "name",
+  ACTIVE_MEMBER = "totalActiveMembers",
+  ARCHIVED_MEMBERS = "totalArchivedMembers",
 }
 
 export enum DateFormat {
@@ -61,7 +64,7 @@ export enum Numbers {
   ONE = 1,
   FIVE = 5,
   TEN = 10,
-  FIFTEEN=15,
+  FIFTEEN = 15,
   TWENTY = 20,
 }
 
@@ -81,7 +84,6 @@ export enum InputTypes {
   NUMERIC = "numeric",
   TEXT = "text",
 }
-export enum apiCatchingDuration
-{
-  GETREADFORM= 36000000 
+export enum apiCatchingDuration {
+  GETREADFORM = 36000000,
 }

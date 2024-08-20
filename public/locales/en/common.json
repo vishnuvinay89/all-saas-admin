@@ -225,7 +225,9 @@
     "CENTER_DELETE_SUCCESSFULLY": "Center has been Successfully Deleted",
     "CENTER_CREATED_SUCCESSFULLY": "Center Created Successfully",
     "SEARCHBAR_PLACEHOLDER": "Search Center..",
-    "CENTER_UPDATE_FAILED": "Something went wrong while updating center"
+    "CENTER_UPDATE_FAILED": "Something went wrong while updating center",
+    "ARCHIVED_MEMBERS": "Archived Members:",
+    "ACTIVE_MEMBERS": "Active Members"
   },
   "FORM": {
     "FULL_NAME": "Full Name",
