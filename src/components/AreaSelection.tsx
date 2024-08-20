@@ -1,7 +1,7 @@
 import { Box, Grid } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MultipleSelectCheckmarks from "./FormControl";
 import { capitalizeFirstLetterOfEachWordInArray} from "@/utils/Helper";
 interface State {
@@ -52,6 +52,7 @@ interface DropdownBoxProps {
   isMobile: boolean;
   isMediumScreen: boolean;
   isCenterSelection?: boolean;
+  stateDefaultValue?:string
 }
 
 const AreaSelection: React.FC<DropdownBoxProps> = ({
@@ -71,9 +72,16 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
   isCenterSelection = false,
   inModal=false,
   handleCenterChangeWrapper = () => {},
+  stateDefaultValue
 }) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
+console.log("rama", selectedState)
+const [singleState, setSingleState] = useState <boolean>(true);
+const [stateValue, setStateValue] = useState <string>("");
+const [stateCode, setStateCode] = useState <string>("");
+
+
 
   return (
     <Box
@@ -98,8 +106,9 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
             tagName={t("FACILITATORS.STATE")}
             selectedCategories={selectedState}
             onCategoryChange={handleStateChangeWrapper}
+            disabled={stateDefaultValue=== t("COMMON.ALL_STATES")? false: true}
             overall={!inModal}
-            defaultValue={t("COMMON.ALL_STATES")}
+            defaultValue={ stateDefaultValue}
 
           />
         </Grid>
@@ -110,7 +119,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
             tagName={t("FACILITATORS.DISTRICT")}
             selectedCategories={selectedDistrict}
             onCategoryChange={handleDistrictChangeWrapper}
-            disabled={selectedState?.length === 0 || (selectedState && selectedState[0] === "" ||selectedState[0] === t("COMMON.ALL_STATES"))}
+            disabled={selectedState.length===0 &&  stateDefaultValue=== t("COMMON.ALL_STATES")}
             overall={!inModal}
             defaultValue={t("COMMON.ALL_DISTRICTS")}
 
