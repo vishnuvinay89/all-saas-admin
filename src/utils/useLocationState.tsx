@@ -106,7 +106,8 @@ export const useLocationState = (
 
         console.log(selectedStateCode, selectedDistrictCode);
         console.log(userType);
-        if (userType === FormContextType.TEAM_LEADER) {
+        if (userType === FormContextType.TEAM_LEADER  ||
+          userType === FormContextType.ADMIN_CENTER) {
           console.log("true");
           const object = {
             limit: 200,

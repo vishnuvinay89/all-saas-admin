@@ -31,7 +31,6 @@ export interface Field {
   required?: boolean;
   default: string | number;
   isRequired?: boolean;
-
 }
 export interface TenantCohortRoleMapping {
   tenantId: string;
@@ -42,7 +41,6 @@ export interface CustomField {
   fieldId: string;
   value: string;
   isRequired?: boolean;
-
 }
 export interface FormData {
   formid?: string;
@@ -65,4 +63,15 @@ export interface SendCredentialsRequest {
   email: {
     receipients: any[];
   };
+}
+
+export interface CohortMemberList {
+  limit: number;
+  page: number;
+  filters: {
+    cohortId: string;
+    role?: string;
+    status?: string[];
+  };
+  sort?: string[];
 }

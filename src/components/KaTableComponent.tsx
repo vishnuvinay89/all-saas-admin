@@ -1,6 +1,13 @@
 import { firstLetterInUpperCase } from "@/utils/Helper";
 import { DataKey, DateFormat, Status } from "@/utils/app.constant";
-import { Checkbox, Chip, Paper, Theme, useMediaQuery } from "@mui/material";
+import {
+  Checkbox,
+  Chip,
+  Paper,
+  Theme,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import { format } from "date-fns";
 import { ITableProps, Table } from "ka-table";
 import { PagingPosition, SortDirection, SortingMode } from "ka-table/enums";
@@ -81,7 +88,8 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
           {...tableProps}
           childComponents={{
             pagingSizes: {
-              content: (props) =>!isMobile? (<PageSizeSelector {...props} />): (<></>),
+              content: (props) =>
+                !isMobile ? <PageSizeSelector {...props} /> : <></>,
             },
 
             sortIcon: {
@@ -120,6 +128,22 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                   return <UserNameCell userId={props.rowData?.createdBy} />;
                 } else if (props.column.key === DataKey.UPDATED_BY) {
                   return <UserNameCell userId={props?.rowData?.updatedBy} />;
+                } else if (props.column.key === DataKey.ACTIVE_MEMBER) {
+                  return (
+                    <Typography color={"green"}>
+                      {props.rowData?.totalActiveMembers
+                        ? props.rowData?.totalActiveMembers
+                        : "-"}
+                    </Typography>
+                  );
+                } else if (props.column.key === DataKey.ARCHIVED_MEMBERS) {
+                  return (
+                    <Typography color={"error"}>
+                      {props.rowData?.totalArchivedMembers
+                        ? props.rowData?.totalArchivedMembers
+                        : "-"}
+                    </Typography>
+                  );
                 }
                 if (props.column.key === DataKey.STATUS) {
                   if (props.rowData?.status === Status.ARCHIVED) {

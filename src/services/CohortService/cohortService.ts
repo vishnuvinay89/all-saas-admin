@@ -1,3 +1,4 @@
+import { CohortMemberList } from "@/utils/Interfaces";
 import { get, post, put } from "../RestClient";
 
 export interface cohortListFilter {
@@ -82,6 +83,27 @@ export const createCohort = async (userData: any): Promise<any> => {
     return response?.data;
   } catch (error) {
     console.error("error in getting cohort list", error);
+    // throw error;
+  }
+};
+
+export const fetchCohortMemberList = async ({
+  limit,
+  page,
+  filters,
+}: CohortMemberList): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohortmember/list`;
+  try {
+    const response = await post(apiUrl, {
+      limit,
+      page,
+      filters,
+      // sort: ["username", "asc"],
+    });
+    console.log("data", response?.data);
+    return response?.data;
+  } catch (error) {
+    console.error("error in cohort member list API ", error);
     // throw error;
   }
 };

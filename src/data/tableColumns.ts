@@ -65,15 +65,21 @@ export const getTLTableColumns = (t: any, isMobile: boolean) => {
 
 export const getCenterTableData = (t: any, isMobile: boolean) => {
   const configs: ColumnConfig[] = [
-    { key: "name", titleKey: "TABLE_TITLE.NAME", width: 95 },
-    { key: "status", titleKey: "TABLE_TITLE.STATUS", width: 95},
-    { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 95 },
-    { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 95 },
-    { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 95 },
-    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 95 },
-    { key: "customFieldValues", titleKey: "FORM.TYPE_OF_COHORT", width: 95 },
-    { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 , isSortable: false}
-   
+    { key: "name", titleKey: "TABLE_TITLE.NAME", width: 130 },
+    { key: "customFieldValues", titleKey: "TABLE_TITLE.TYPE", width: 130 },
+    { key: "status", titleKey: "TABLE_TITLE.STATUS", width: 130 },
+    { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130 },
+    { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130 },
+    { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 130 },
+    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 130 },
+
+    { key: "totalActiveMembers", titleKey: "Active Members", width: 130 },
+    {
+      key: "totalArchivedMembers",
+      titleKey: "Archived Members",
+      width: 130,
+    },
+    { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 },
   ];
 
   return generateColumns(t, configs, isMobile);
