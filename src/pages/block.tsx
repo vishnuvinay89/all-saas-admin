@@ -505,7 +505,14 @@ const Block: React.FC = () => {
         showSort={true}
       >
         {loading ? (
-          <Loader showBackdrop={true} loadingText="Loading..." />
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="20vh" // Adjust height as needed
+          >
+            <Loader showBackdrop={false} loadingText="Loading..." />
+          </Box>
         ) : (
           <>
             <Box
@@ -573,7 +580,16 @@ const Block: React.FC = () => {
             </Box>
 
             <Box sx={{ marginTop: 2 }}>
-              {blockData.length > 0 ? (
+              {loading ? (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="20vh" // Adjust height as needed
+                >
+                  <Loader showBackdrop={false} loadingText="Loading..." />
+                </Box>
+              ) : blockData.length > 0 ? (
                 <KaTableComponent
                   columns={columns}
                   data={blockData.map((block) => ({
@@ -594,13 +610,16 @@ const Block: React.FC = () => {
                   pagination={pagination}
                   onDelete={handleDelete}
                   extraActions={[]}
+                  noDataMessage={
+                    blockData.length === 0 ? t("COMMON.BLOCKS_NOT_FOUND") : ""
+                  }
                 />
               ) : (
                 <Box
                   display="flex"
                   justifyContent="center"
                   alignItems="center"
-                  height="20vh"
+                  height="20vh" // Adjust height as needed
                 >
                   <Typography marginTop="10px" textAlign="center">
                     {t("COMMON.BLOCKS_NOT_FOUND")}

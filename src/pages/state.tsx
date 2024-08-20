@@ -288,9 +288,8 @@ const State: React.FC = () => {
       handleSearch={handleSearch}
       handleAddUserClick={handleAddStateClick}
     >
-      {loading ? (
-        <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
-      ) : stateData.length === 0 ? (
+      {/* Check if stateData is empty */}
+      {stateData.length === 0 && !loading ? (
         <Box display="flex" marginLeft="40%" gap="20px">
           <Typography marginTop="10px" variant="h2">
             {t("COMMON.STATE_NOT_FOUND")}
@@ -298,30 +297,38 @@ const State: React.FC = () => {
         </Box>
       ) : (
         <div>
-          <KaTableComponent
-            columns={columns}
-            data={stateData.map((stateDetail) => ({
-              label: stateDetail.label ?? "",
-              value: stateDetail.value ?? "",
-              createdAt: stateDetail.createdAt,
-              updatedAt: stateDetail.updatedAt,
-              createdBy: stateDetail.createdBy,
-              updatedBy: stateDetail.updatedBy,
-            }))}
-            limit={pageLimit}
-            offset={pageOffset}
-            paginationEnable={paginationCount >= Numbers.FIVE}
-            PagesSelector={PagesSelector}
-            pagination={pagination}
-            PageSizeSelector={PageSizeSelectorFunction}
-            pageSizes={pageSizeArray}
-            onEdit={handleEdit}
-            // onDelete={handleDelete}
-            noDataMessage={
-              stateData.length === 0 ? t("COMMON.STATE_NOT_FOUND") : ""
-            }
-            extraActions={[]}
-          />
+          {/* Show loader only for the table when loading */}
+          {loading ? (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              height="100%"
+            >
+              <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
+            </Box>
+          ) : (
+            <KaTableComponent
+              columns={columns}
+              data={stateData.map((stateDetail) => ({
+                label: stateDetail.label ?? "",
+                value: stateDetail.value ?? "",
+                createdAt: stateDetail.createdAt,
+                updatedAt: stateDetail.updatedAt,
+                createdBy: stateDetail.createdBy,
+                updatedBy: stateDetail.updatedBy,
+              }))}
+              limit={pageLimit}
+              offset={pageOffset}
+              paginationEnable={paginationCount >= Numbers.FIVE}
+              PagesSelector={PagesSelector}
+              pagination={pagination}
+              PageSizeSelector={PageSizeSelectorFunction}
+              pageSizes={pageSizeArray}
+              onEdit={handleEdit}
+              extraActions={[]}
+            />
+          )}
         </div>
       )}
     </HeaderComponent>

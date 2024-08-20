@@ -141,9 +141,9 @@ const District: React.FC = () => {
     fetchCohortSearch();
   }, [stateCode]);
 
-  const fetchDistrictData = async (searchKeyword: string) => {
+  const fetchDistrictData = async (stateCode: string) => {
+    setLoading(true);
     try {
-      setLoading(true);
       const limit = pageLimit;
       const offset = pageOffset * limit;
 
@@ -180,12 +180,13 @@ const District: React.FC = () => {
     } catch (error) {
       console.error("Error fetching district data:", error);
       setDistrictData([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
-    fetchDistrictData(searchKeyword);
+    fetchDistrictData(stateCode);
   }, [searchKeyword, stateCode, sortBy, pageLimit, pageOffset]);
 
   const handleEdit = (rowData: DistrictDetail) => {
@@ -376,8 +377,16 @@ const District: React.FC = () => {
           setSelectedStateForEdit(null);
         }}
       >
+        {/* Show loader if loading is true */}
         {loading ? (
-          <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="20vh" // Adjust height as needed
+          >
+            <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
+          </Box>
         ) : (
           <>
             <Box display="flex" gap={2}>
@@ -393,6 +402,7 @@ const District: React.FC = () => {
                 </Select>
               </FormControl>
             </Box>
+
             {districtData.length > 0 ? (
               <KaTableComponent
                 columns={[
@@ -453,18 +463,21 @@ const District: React.FC = () => {
                 onEdit={handleEdit}
                 onDelete={handleDelete}
                 extraActions={[]}
+                noDataMessage={t("COMMON.DISTRICT_NOT_FOUND")}
               />
             ) : (
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                height="20vh"
-              >
-                <Typography marginTop="10px" textAlign={"center"}>
-                  {t("COMMON.DISTRICT_NOT_FOUND")}
-                </Typography>
-              </Box>
+              !loading && (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="20vh" // Adjust height as needed
+                >
+                  <Typography marginTop="10px" textAlign="center">
+                    {t("COMMON.DISTRICT_NOT_FOUND")}
+                  </Typography>
+                </Box>
+              )
             )}
           </>
         )}
