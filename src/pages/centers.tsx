@@ -115,7 +115,7 @@ const Center: React.FC = () => {
   const [pageOffset, setPageOffset] = useState(Numbers.ZERO);
   const [pageLimit, setPageLimit] = useState(Numbers.TEN);
   const [pageSizeArray, setPageSizeArray] = React.useState<number[]>([]);
-
+  const [pagination, setPagination] = useState(true);
   const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
@@ -235,15 +235,17 @@ const Center: React.FC = () => {
         setCohortData(resultData);
         const totalCount = resp?.count;
         setTotalCound(totalCount);
-        if (totalCount >= 20) {
-          setPageSizeArray([5, 10, 15, 20]);
-        } else if (totalCount >= 15) {
-          setPageSizeArray([5, 10, 15]);
-        } else if (totalCount >= 10) {
-          setPageSizeArray([5, 10]);
-        } else if (totalCount >= 5 || totalCount < 5) {
-          setPageSizeArray([5]);
-        }
+
+        setPagination(totalCount > 10);
+        setPageSizeArray(
+          totalCount > 15
+            ? [5, 10, 15]
+            : totalCount > 10
+              ? [5, 10]
+              : totalCount > 5
+                ? [5]
+                : []
+        );
         const pageCount = Math.ceil(totalCount / pageLimit);
         setPageCount(pageCount);
         setLoading(false);
@@ -341,12 +343,16 @@ const Center: React.FC = () => {
   };
 
   const PagesSelector = () => (
-    <Box mt={3}>
+    <Box sx={{ display: { xs: "block" } }}>
       <Pagination
+        // size="small"
         color="primary"
         count={pageCount}
         page={pageOffset + 1}
         onChange={handlePaginationChange}
+        siblingCount={0}
+        boundaryCount={1}
+        sx={{ marginTop: "10px" }}
       />
     </Box>
   );
@@ -837,6 +843,7 @@ const Center: React.FC = () => {
             offset={pageOffset}
             paginationEnable={totalCount > Numbers.TEN}
             PagesSelector={PagesSelector}
+            pagination={pagination}
             PageSizeSelector={PageSizeSelectorFunction}
             pageSizes={pageSizeArray}
             extraActions={extraActions}
