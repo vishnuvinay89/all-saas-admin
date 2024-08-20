@@ -79,7 +79,7 @@ const State: React.FC = () => {
     { key: "updatedBy", title: t("MASTER.UPDATED_BY"), width: "130" },
     { key: "createdAt", title: t("MASTER.CREATED_AT"), width: "160" },
     { key: "updatedAt", title: t("MASTER.UPDATED_AT"), width: "160" },
-    { key: "actions", title: t("MASTER.ACTIONS"), width: "130" },
+    // { key: "actions", title: t("MASTER.ACTIONS"), width: "130" },
   ];
 
   const handleEdit = (rowData: StateDetail) => {
@@ -289,7 +289,7 @@ const State: React.FC = () => {
             PageSizeSelector={PageSizeSelectorFunction}
             pageSizes={pageSizeArray}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            // onDelete={handleDelete}
             noDataMessage={
               stateData.length === 0 ? t("COMMON.STATE_NOT_FOUND") : ""
             }
