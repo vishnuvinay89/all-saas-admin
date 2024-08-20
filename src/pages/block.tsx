@@ -249,7 +249,7 @@ const Block: React.FC = () => {
   const columns = [
     {
       key: "block",
-      title: t("MASTER.BLOCK"),
+      title: t("COMMON.BLOCK"),
       dataType: DataType.String,
       width: "130",
     },

@@ -81,7 +81,7 @@ const State: React.FC = () => {
 
   const columns = [
     { key: "label", title: t("MASTER.STATE"), width: "130" },
-    { key: "value", title: t("MASTER.CODE"), width: "130" },
+    { key: "value", title: t("MASTER.STATE_CODE"), width: "130" },
     { key: "createdBy", title: t("MASTER.CREATED_BY"), width: "130" },
     { key: "updatedBy", title: t("MASTER.UPDATED_BY"), width: "130" },
     { key: "createdAt", title: t("MASTER.CREATED_AT"), width: "160" },
