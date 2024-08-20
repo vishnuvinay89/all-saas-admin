@@ -408,7 +408,7 @@ const District: React.FC = () => {
                 columns={[
                   {
                     key: "label",
-                    title: t("MASTER.DISTRICT_NAMES"),
+                    title: t("COMMON.DISTRICT"),
                     dataType: DataType.String,
                     width: "130",
                   },
