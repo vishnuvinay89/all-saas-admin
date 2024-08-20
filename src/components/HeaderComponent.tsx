@@ -64,6 +64,8 @@ const HeaderComponent = ({
   const isMediumScreen = useMediaQuery("(max-width:986px)");
   const [states, setStates] = useState<State[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
+  const [stateDefaultValue, setStateDefaultValue] = useState<string>("");
+
   const [blocks, setBlocks] = useState<Block[]>([]);
 
   const handleStateChangeWrapper = async (
@@ -139,6 +141,27 @@ const HeaderComponent = ({
           {
             const stateField = JSON.parse(admin).customFields.find((field: any) => field.label === "STATES");
               console.log(stateField.value, stateField.code)
+              if (stateField.value.includes(',')) {
+                console.log('The value contains more than one item.');
+                setStateDefaultValue(t("COMMON.ALL_STATES"))
+              }
+              else{
+                setStateDefaultValue(stateField.value);
+
+
+
+                const object = {
+                  controllingfieldfk: stateField.code,
+          
+                  fieldName: "districts",
+                };
+                console.log(object);
+                const response = await getStateBlockDistrictList(object);
+                const result = response?.result?.values;
+                setDistricts(result);
+              }
+              
+              
               const object=[{
                 value:stateField.code,
                 label:stateField.value
@@ -156,6 +179,7 @@ const HeaderComponent = ({
 
     fetchData();
   }, []);
+  console.log(selectedState)
 
   return (
     <Box
@@ -182,6 +206,7 @@ const HeaderComponent = ({
           isMobile={isMobile}
           isMediumScreen={isMediumScreen}
           inModal={false}
+          stateDefaultValue={stateDefaultValue}
         />
       )}
       <Typography variant="h1" sx={{ mt: isMobile ? "12px" : "20px" }}>

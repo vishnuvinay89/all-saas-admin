@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import HeaderComponent from "@/components/HeaderComponent";
-import { Pagination } from "@mui/material";
+import { Chip, Pagination, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -50,6 +50,7 @@ type BlockDetail = {
   createdAt: any;
   value: string;
   label: string;
+  block: string;
 };
 
 const Block: React.FC = () => {
@@ -61,7 +62,7 @@ const Block: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>("All");
   const [districtData, setDistrictData] = useState<DistrictDetail[]>([]);
   const [blockData, setBlockData] = useState<BlockDetail[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [pageOffset, setPageOffset] = useState<number>(0);
   const [pageLimit, setPageLimit] = useState<number>(10);
   const [pageCount, setPageCount] = useState<number>(1);
@@ -84,6 +85,7 @@ const Block: React.FC = () => {
   const [cohortId, setCohortId] = useState<any>();
   const [stateFieldId, setStateFieldId] = useState<string>("");
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [pagination, setPagination] = useState(true);
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -116,7 +118,6 @@ const Block: React.FC = () => {
 
   useEffect(() => {
     const fetchDistricts = async () => {
-      setLoading(true);
       try {
         const data = await getDistrictsForState({
           controllingfieldfk: stateCode || "",
@@ -132,8 +133,6 @@ const Block: React.FC = () => {
         setDistrictFieldId(districtFieldID);
       } catch (error) {
         console.error("Error fetching districts", error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -223,8 +222,15 @@ const Block: React.FC = () => {
       const totalCount = response?.result?.totalCount || 0;
       setPaginationCount(totalCount);
 
+      setPagination(totalCount > 10);
       setPageSizeArray(
-        totalCount >= 15 ? [5, 10, 15, 20] : totalCount >= 10 ? [5, 10] : [5]
+        totalCount > 15
+          ? [5, 10, 15]
+          : totalCount > 10
+            ? [5, 10]
+            : totalCount > 5
+              ? [5]
+              : []
       );
 
       setPageCount(Math.ceil(totalCount / limit));
@@ -316,6 +322,7 @@ const Block: React.FC = () => {
   };
 
   const handleDelete = (rowData: BlockDetail) => {
+    console.log("deleted data for row", rowData);
     setSelectedStateForDelete(rowData);
     setConfirmationDialogOpen(true);
   };
@@ -357,14 +364,19 @@ const Block: React.FC = () => {
     setPageOffset(value - 1);
   };
   const PagesSelector = () => (
-    <Box mt={3}>
-      <Pagination
-        color="primary"
-        count={pageCount}
-        page={pageOffset + 1}
-        onChange={handlePaginationChange}
-      />
-    </Box>
+    <>
+      <Box sx={{ display: { xs: "block" } }}>
+        <Pagination
+          color="primary"
+          count={pageCount}
+          page={pageOffset + 1}
+          onChange={handlePaginationChange}
+          siblingCount={0}
+          boundaryCount={1}
+          sx={{ marginTop: "10px" }}
+        />
+      </Box>
+    </>
   );
 
   const PageSizeSelectorFunction = () => (
@@ -473,7 +485,9 @@ const Block: React.FC = () => {
 
       <ConfirmationModal
         modalOpen={confirmationDialogOpen}
-        message={t("COMMON.ARE_YOU_SURE_DELETE")}
+        message={t("COMMON.ARE_YOU_SURE_DELETE", {
+          state: `${selectedStateForDelete?.block} ${t("COMMON.BLOCK")}`,
+        })}
         handleAction={handleConfirmDelete}
         buttonNames={{
           primary: t("COMMON.DELETE"),
@@ -490,104 +504,131 @@ const Block: React.FC = () => {
         handleSortChange={handleSortChange}
         showSort={true}
       >
-        <>
+        {loading ? (
           <Box
-            sx={{
-              display: "flex",
-              gap: 3,
-              marginTop: 2,
-              "@media (max-width: 580px)": {
-                width: "100%",
-                flexDirection: "column",
-              },
-            }}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="20vh" // Adjust height as needed
           >
-            <FormControl
+            <Loader showBackdrop={false} loadingText="Loading..." />
+          </Box>
+        ) : (
+          <>
+            <Box
               sx={{
-                width: "25%",
+                display: "flex",
+                gap: 3,
+                marginTop: 2,
                 "@media (max-width: 580px)": {
                   width: "100%",
+                  flexDirection: "column",
                 },
               }}
             >
-              <Select
-                labelId="state-select-label"
-                id="state-select"
-                value={stateCode}
-                onChange={handleStateChange}
-                disabled
+              <FormControl
+                sx={{
+                  width: "25%",
+                  "@media (max-width: 580px)": {
+                    width: "100%",
+                  },
+                }}
               >
-                <MenuItem key={stateCode} value={stateCode}>
-                  {transformLabel(stateValue)}
-                </MenuItem>
-              </Select>
-            </FormControl>
-
-            <FormControl
-              sx={{
-                width: "25%",
-                "@media (max-width: 580px)": {
-                  width: "100%",
-                },
-              }}
-            >
-              <InputLabel
-                sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
-                id="district-select-label"
-              >
-                {t("MASTER.DISTRICTS")}
-              </InputLabel>
-              <Select
-                labelId="district-select-label"
-                id="district-select"
-                value={selectedDistrict}
-                onChange={handleDistrictChange}
-              >
-                {/* <MenuItem key={"All"} value={"All"}>
-                  {t("ALL")}
-                </MenuItem> */}
-                {districtData.map((districtDetail) => (
-                  <MenuItem
-                    key={districtDetail.value}
-                    value={districtDetail.value}
-                  >
-                    {transformLabel(districtDetail.label)}
+                <Select
+                  labelId="state-select-label"
+                  id="state-select"
+                  value={stateCode}
+                  onChange={handleStateChange}
+                  disabled
+                >
+                  <MenuItem key={stateCode} value={stateCode}>
+                    {transformLabel(stateValue)}
                   </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
+                </Select>
+              </FormControl>
 
-          <Box sx={{ marginTop: 2 }}>
-            {loading ? (
-              <Loader showBackdrop={true} loadingText="Loading..." />
-            ) : (
-              <KaTableComponent
-                columns={columns}
-                data={blockData.map((block) => ({
-                  block: transformLabel(block.label),
-                  createdAt: block.createdAt,
-                  updatedAt: block.updatedAt,
-                  createdBy: block.createdBy,
-                  updatedBy: block.updatedBy,
-                  value: block.value,
-                }))}
-                limit={pageLimit}
-                offset={pageOffset}
-                paginationEnable={paginationCount >= Numbers.FIVE}
-                PagesSelector={PagesSelector}
-                PageSizeSelector={PageSizeSelectorFunction}
-                pageSizes={pageSizeArray}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                extraActions={[]}
-                noDataMessage={
-                  blockData.length === 0 ? t("COMMON.BLOCKS_NOT_FOUND") : ""
-                }
-              />
-            )}
-          </Box>
-        </>
+              <FormControl
+                sx={{
+                  width: "25%",
+                  "@media (max-width: 580px)": {
+                    width: "100%",
+                  },
+                }}
+              >
+                <InputLabel
+                  sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
+                  id="district-select-label"
+                >
+                  {t("MASTER.DISTRICTS")}
+                </InputLabel>
+                <Select
+                  labelId="district-select-label"
+                  id="district-select"
+                  value={selectedDistrict}
+                  onChange={handleDistrictChange}
+                >
+                  {districtData.map((districtDetail) => (
+                    <MenuItem
+                      key={districtDetail.value}
+                      value={districtDetail.value}
+                    >
+                      {transformLabel(districtDetail.label)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+
+            <Box sx={{ marginTop: 2 }}>
+              {loading ? (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="20vh" // Adjust height as needed
+                >
+                  <Loader showBackdrop={false} loadingText="Loading..." />
+                </Box>
+              ) : blockData.length > 0 ? (
+                <KaTableComponent
+                  columns={columns}
+                  data={blockData.map((block) => ({
+                    block: transformLabel(block.label),
+                    createdAt: block.createdAt,
+                    updatedAt: block.updatedAt,
+                    createdBy: block.createdBy,
+                    updatedBy: block.updatedBy,
+                    value: block.value,
+                  }))}
+                  limit={pageLimit}
+                  offset={pageOffset}
+                  paginationEnable={paginationCount >= Numbers.FIVE}
+                  PagesSelector={PagesSelector}
+                  PageSizeSelector={PageSizeSelectorFunction}
+                  pageSizes={pageSizeArray}
+                  onEdit={handleEdit}
+                  pagination={pagination}
+                  onDelete={handleDelete}
+                  extraActions={[]}
+                  noDataMessage={
+                    blockData.length === 0 ? t("COMMON.BLOCKS_NOT_FOUND") : ""
+                  }
+                />
+              ) : (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="20vh" // Adjust height as needed
+                >
+                  <Typography marginTop="10px" textAlign="center">
+                    {t("COMMON.BLOCKS_NOT_FOUND")}
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+          </>
+        )}
       </HeaderComponent>
     </React.Fragment>
   );

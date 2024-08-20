@@ -6,6 +6,7 @@ import {
 } from "../services/MasterDataService"; // Update the import path as needed
 import { getCohortList } from "@/services/CohortService/cohortService";
 import { FormContextType } from "./app.constant";
+import { useTranslation } from "react-i18next";
 interface FieldProp {
   value: string;
   label: string;
@@ -40,7 +41,8 @@ export const useLocationState = (
   const [blockFieldId, setBlockFieldId] = useState("");
   const [stateFieldId, setStateFieldId] = useState("");
   const [districtFieldId, setDistrictFieldId] = useState("");
-
+  const [stateDefaultValue, setStateDefaultValue] = useState<string>("");
+  const { t } = useTranslation();
   const handleStateChangeWrapper = useCallback(
     async (selectedNames: string[], selectedCodes: string[]) => {
       console.log("true", selectedCodes)
@@ -83,7 +85,7 @@ export const useLocationState = (
         };
         const response = await getStateBlockDistrictList(object);
         setBlockFieldId(response?.result?.fieldId);
-
+           //console.log(blockFieldId)
         const result = response?.result?.values;
         setBlocks(result);
       } catch (error) {
@@ -245,20 +247,50 @@ export const useLocationState = (
         };
         const response = await getStateBlockDistrictList(object);
         setStateFieldId(response?.result?.fieldId);
+      
 
-
-
+ 
         if (typeof window !== "undefined" && window.localStorage) {
           const admin = localStorage.getItem("adminInfo");
           if(admin)
           {
+
             const stateField = JSON.parse(admin).customFields.find((field: any) => field.label === "STATES");
               console.log(stateField.value, stateField.code)
-              const object=[{
+             if (!stateField.value.includes(',')) {
+              const object2 = {
+                controllingfieldfk: stateField.code,
+                fieldName: "districts",
+              };
+              const response2 = await getStateBlockDistrictList(object2);
+              setDistrictFieldId(response2?.result?.fieldId);
+              //setStateDefaultValue(t("COMMON.ALL_STATES"))
+
+                setStateDefaultValue(stateField.value);
+
+                setSelectedState([stateField.value]);
+                setSelectedStateCode(stateField.code)
+                const object = {
+                  controllingfieldfk: stateField.code,
+          
+                  fieldName: "districts",
+                };
+                console.log(object);
+                const response = await getStateBlockDistrictList(object);
+                const result = response?.result?.values;
+                console.log(result)
+                setDistricts(result);
+
+              }
+              else{
+                setStateDefaultValue(t("COMMON.ALL_STATES"))
+
+              }
+              const object2=[{
                 value:stateField.code,
                 label:stateField.value
               }]
-             setStates(object);
+             setStates(object2);
 
           }
           //console.log(JSON.parse(admin)?.customFields)
@@ -275,6 +307,7 @@ export const useLocationState = (
 
     fetchData();
   }, []);
+  console.log(stateDefaultValue)
   return {
     states,
     districts,
@@ -300,5 +333,6 @@ export const useLocationState = (
     handleCenterChangeWrapper,
     selectedCenterCode,
     selectedBlockCohortId,
+    stateDefaultValue
   };
 };

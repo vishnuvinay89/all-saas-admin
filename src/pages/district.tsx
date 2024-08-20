@@ -20,7 +20,7 @@ import { showToastMessage } from "@/components/Toastify";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import Loader from "@/components/Loader";
 import AddDistrictModal from "@/components/AddDistrictModal";
-import { Pagination } from "@mui/material";
+import { Chip, Pagination, Typography } from "@mui/material";
 import PageSizeSelector from "@/components/PageSelector";
 import { Numbers, SORT, Storage } from "@/utils/app.constant";
 import {
@@ -73,6 +73,7 @@ const District: React.FC = () => {
   const [cohortStatus, setCohortStatus] = useState<any>();
   const [cohortId, setCohortId] = useState<any>();
   const [stateFieldId, setStateFieldId] = useState<string>("");
+  const [pagination, setPagination] = useState(true);
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -140,9 +141,9 @@ const District: React.FC = () => {
     fetchCohortSearch();
   }, [stateCode]);
 
-  const fetchDistrictData = async (searchKeyword: string) => {
+  const fetchDistrictData = async (stateCode: string) => {
+    setLoading(true);
     try {
-      setLoading(true);
       const limit = pageLimit;
       const offset = pageOffset * limit;
 
@@ -164,20 +165,28 @@ const District: React.FC = () => {
       const totalCount = districtData?.result?.totalCount || 0;
       setPaginationCount(totalCount);
 
+      setPagination(totalCount > 10);
       setPageSizeArray(
-        totalCount >= 15 ? [5, 10, 15, 20] : totalCount >= 10 ? [5, 10] : [5]
+        totalCount > 15
+          ? [5, 10, 15]
+          : totalCount > 10
+            ? [5, 10]
+            : totalCount > 5
+              ? [5]
+              : []
       );
 
       setPageCount(Math.ceil(totalCount / limit));
     } catch (error) {
       console.error("Error fetching district data:", error);
       setDistrictData([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
-    fetchDistrictData(searchKeyword);
+    fetchDistrictData(stateCode);
   }, [searchKeyword, stateCode, sortBy, pageLimit, pageOffset]);
 
   const handleEdit = (rowData: DistrictDetail) => {
@@ -292,14 +301,19 @@ const District: React.FC = () => {
   };
 
   const PagesSelector = () => (
-    <Box mt={3}>
-      <Pagination
-        color="primary"
-        count={pageCount}
-        page={pageOffset + 1}
-        onChange={handlePaginationChange}
-      />
-    </Box>
+    <>
+      <Box sx={{ display: { xs: "block" } }}>
+        <Pagination
+          color="primary"
+          count={pageCount}
+          page={pageOffset + 1}
+          onChange={handlePaginationChange}
+          siblingCount={0}
+          boundaryCount={1}
+          sx={{ marginTop: "10px" }}
+        />
+      </Box>
+    </>
   );
 
   const PageSizeSelectorFunction = () => (
@@ -339,7 +353,9 @@ const District: React.FC = () => {
       />
       <ConfirmationModal
         modalOpen={confirmationDialogOpen}
-        message={t("COMMON.ARE_YOU_SURE_DELETE")}
+        message={t("COMMON.ARE_YOU_SURE_DELETE", {
+          state: `${selectedStateForDelete?.label} ${t("COMMON.DISTRICT")}`,
+        })}
         handleAction={handleConfirmDelete}
         buttonNames={{
           primary: t("COMMON.DELETE"),
@@ -350,9 +366,6 @@ const District: React.FC = () => {
       <HeaderComponent
         userType={t("MASTER.DISTRICTS")}
         searchPlaceHolder={t("MASTER.SEARCHBAR_PLACEHOLDER_DISTRICT")}
-        // states={stateData.map((state) => state.value)}
-        // districts={districtData.map((district) => district.label)}
-        // selectedState={selectedState}
         showStateDropdown={false}
         handleSortChange={handleSortChange}
         showSort={true}
@@ -364,8 +377,16 @@ const District: React.FC = () => {
           setSelectedStateForEdit(null);
         }}
       >
+        {/* Show loader if loading is true */}
         {loading ? (
-          <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="20vh" // Adjust height as needed
+          >
+            <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
+          </Box>
         ) : (
           <>
             <Box display="flex" gap={2}>
@@ -374,84 +395,90 @@ const District: React.FC = () => {
                 sx={{ minWidth: 220, marginTop: 2 }}
               >
                 <InputLabel id="state-select-label">{stateValue}</InputLabel>
-                <Select
-                  labelId="state-select-label"
-                  id="state-select"
-                  // value={stateCode}
-                  // onChange={""}
-                  // label={stateValue}
-                  disabled
-                >
-                  {/* <MenuItem value="ALL">{t("ALL")}</MenuItem> */}
+                <Select labelId="state-select-label" id="state-select" disabled>
                   <MenuItem key={stateCode} value={stateCode}>
                     {transformLabel(stateValue)}
                   </MenuItem>
                 </Select>
               </FormControl>
             </Box>
-            <KaTableComponent
-              columns={[
-                {
-                  key: "label",
-                  title: t("MASTER.DISTRICT_NAMES"),
-                  dataType: DataType.String,
-                  width: "130",
-                },
-                {
-                  key: "value",
-                  title: t("MASTER.DISTRICT_CODE"),
-                  dataType: DataType.String,
-                  width: "130",
-                },
-                {
-                  key: "createdBy",
-                  title: t("MASTER.CREATED_BY"),
-                  width: "130",
-                },
-                {
-                  key: "updatedBy",
-                  title: t("MASTER.UPDATED_BY"),
-                  width: "130",
-                },
 
-                {
-                  key: "createdAt",
-                  title: t("MASTER.CREATED_AT"),
-                  width: "160",
-                },
-                {
-                  key: "updatedAt",
-                  title: t("MASTER.UPDATED_AT"),
-                  width: "160",
-                },
-                {
-                  key: "actions",
-                  title: t("MASTER.ACTIONS"),
-                  dataType: DataType.String,
-                  width: "130",
-                },
-              ]}
-              data={districtData.map((districtDetail) => ({
-                label: transformLabel(districtDetail.label),
-                createdAt: districtDetail.createdAt,
-                updatedAt: districtDetail.updatedAt,
-                createdBy: districtDetail.createdBy,
-                updatedBy: districtDetail.updatedBy,
-                value: districtDetail.value,
-              }))}
-              limit={pageLimit}
-              offset={pageOffset}
-              paginationEnable={paginationCount >= Numbers.FIVE}
-              PagesSelector={PagesSelector}
-              PageSizeSelector={PageSizeSelectorFunction}
-              pageSizes={pageSizeArray}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              noDataMessage={
-                !districtData.length ? t("COMMON.DISTRICT_NOT_FOUND") : ""
-              }
-              extraActions={[]}
-            />
+            {districtData.length > 0 ? (
+              <KaTableComponent
+                columns={[
+                  {
+                    key: "label",
+                    title: t("MASTER.DISTRICT_NAMES"),
+                    dataType: DataType.String,
+                    width: "130",
+                  },
+                  {
+                    key: "value",
+                    title: t("MASTER.DISTRICT_CODE"),
+                    dataType: DataType.String,
+                    width: "130",
+                  },
+                  {
+                    key: "createdBy",
+                    title: t("MASTER.CREATED_BY"),
+                    width: "130",
+                  },
+                  {
+                    key: "updatedBy",
+                    title: t("MASTER.UPDATED_BY"),
+                    width: "130",
+                  },
+                  {
+                    key: "createdAt",
+                    title: t("MASTER.CREATED_AT"),
+                    width: "160",
+                  },
+                  {
+                    key: "updatedAt",
+                    title: t("MASTER.UPDATED_AT"),
+                    width: "160",
+                  },
+                  {
+                    key: "actions",
+                    title: t("MASTER.ACTIONS"),
+                    dataType: DataType.String,
+                    width: "130",
+                  },
+                ]}
+                data={districtData.map((districtDetail) => ({
+                  label: transformLabel(districtDetail.label),
+                  createdAt: districtDetail.createdAt,
+                  updatedAt: districtDetail.updatedAt,
+                  createdBy: districtDetail.createdBy,
+                  updatedBy: districtDetail.updatedBy,
+                  value: districtDetail.value,
+                }))}
+                limit={pageLimit}
+                offset={pageOffset}
+                paginationEnable={paginationCount >= Numbers.FIVE}
+                PagesSelector={PagesSelector}
+                PageSizeSelector={PageSizeSelectorFunction}
+                pageSizes={pageSizeArray}
+                pagination={pagination}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                extraActions={[]}
+                noDataMessage={t("COMMON.DISTRICT_NOT_FOUND")}
+              />
+            ) : (
+              !loading && (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="20vh" // Adjust height as needed
+                >
+                  <Typography marginTop="10px" textAlign="center">
+                    {t("COMMON.DISTRICT_NOT_FOUND")}
+                  </Typography>
+                </Box>
+              )
+            )}
           </>
         )}
       </HeaderComponent>

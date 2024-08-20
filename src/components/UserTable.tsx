@@ -64,7 +64,6 @@ interface UserTableProps {
   handleAddUserClick: any;
   parentState?: boolean;
 }
-
 const UserTable: React.FC<UserTableProps> = ({
   role,
   userType,
@@ -614,6 +613,59 @@ const UserTable: React.FC<UserTableProps> = ({
 
     fetchData();
   }, [data, cohortsFetched]);
+
+
+  useEffect(() => {
+    const fetchData =  () => {
+      try {
+        const object = {
+          // "limit": 20,
+          // "offset": 0,
+          fieldName: "states",
+        };
+       // const response = await getStateBlockDistrictList(object);
+       // const result = response?.result?.values;
+        if (typeof window !== "undefined" && window.localStorage) {
+          const admin = localStorage.getItem("adminInfo");
+          if(admin)
+          {
+            const stateField = JSON.parse(admin).customFields.find((field: any) => field.label === "STATES");
+              console.log(stateField.value, stateField.code)
+              if (!stateField.value.includes(',')) {
+              setSelectedState([stateField.value]);
+              setSelectedStateCode(stateField.code)
+              setFilters({
+                states: stateField.code,
+
+                role: role,}
+            
+              )
+              }
+              
+              const object=[{
+                value:stateField.code,
+                label:stateField.value
+              }]
+            // setStates(object);
+  
+          }
+        }
+      //  setStates(result);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+
+
+
+
+
+
+
+
   const handleCloseDeleteModal = () => {
     setSelectedReason("");
     setOtherReason("");

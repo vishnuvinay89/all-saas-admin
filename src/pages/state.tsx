@@ -13,7 +13,13 @@ import { AddStateModal } from "@/components/AddStateModal";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { showToastMessage } from "@/components/Toastify";
 import { SORT, Numbers, Storage } from "@/utils/app.constant";
-import { Box, Pagination, SelectChangeEvent } from "@mui/material";
+import {
+  Box,
+  Chip,
+  Pagination,
+  SelectChangeEvent,
+  Typography,
+} from "@mui/material";
 import PageSizeSelector from "@/components/PageSelector";
 import {
   createCohort,
@@ -69,6 +75,7 @@ const State: React.FC = () => {
   const [paginationCount, setPaginationCount] = useState<number>(Numbers.ZERO);
   const [userName, setUserName] = React.useState<string | null>("");
   const [statesProfilesData, setStatesProfilesData] = useState<any>([]);
+  const [pagination, setPagination] = useState(true);
 
   const setPid = useStore((state) => state.setPid);
 
@@ -79,7 +86,7 @@ const State: React.FC = () => {
     { key: "updatedBy", title: t("MASTER.UPDATED_BY"), width: "130" },
     { key: "createdAt", title: t("MASTER.CREATED_AT"), width: "160" },
     { key: "updatedAt", title: t("MASTER.UPDATED_AT"), width: "160" },
-    { key: "actions", title: t("MASTER.ACTIONS"), width: "130" },
+    // { key: "actions", title: t("MASTER.ACTIONS"), width: "130" },
   ];
 
   const handleEdit = (rowData: StateDetail) => {
@@ -188,14 +195,20 @@ const State: React.FC = () => {
   };
 
   const PagesSelector = () => (
-    <Box mt={3}>
-      <Pagination
-        color="primary"
-        count={pageCount}
-        page={pageOffset + 1}
-        onChange={handlePaginationChange}
-      />
-    </Box>
+    <>
+      <Box sx={{ display: { xs: "block" } }}>
+        <Pagination
+          // size="small"
+          color="primary"
+          count={pageCount}
+          page={pageOffset + 1}
+          onChange={handlePaginationChange}
+          siblingCount={0}
+          boundaryCount={1}
+          sx={{ marginTop: "10px" }}
+        />
+      </Box>
+    </>
   );
 
   const PageSizeSelectorFunction = () => (
@@ -236,8 +249,15 @@ const State: React.FC = () => {
 
         console.log("totalCount", totalCount);
 
+        setPagination(totalCount > 10);
         setPageSizeArray(
-          totalCount >= 15 ? [5, 10, 15, 20] : totalCount >= 10 ? [5, 10] : [5]
+          totalCount > 15
+            ? [5, 10, 15]
+            : totalCount > 10
+              ? [5, 10]
+              : totalCount > 5
+                ? [5]
+                : []
         );
 
         setPageCount(Math.ceil(totalCount / limit));
@@ -268,59 +288,47 @@ const State: React.FC = () => {
       handleSearch={handleSearch}
       handleAddUserClick={handleAddStateClick}
     >
-      {loading ? (
-        <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
+      {/* Check if stateData is empty */}
+      {stateData.length === 0 && !loading ? (
+        <Box display="flex" marginLeft="40%" gap="20px">
+          <Typography marginTop="10px" variant="h2">
+            {t("COMMON.STATE_NOT_FOUND")}
+          </Typography>
+        </Box>
       ) : (
         <div>
-          <KaTableComponent
-            columns={columns}
-            data={stateData.map((stateDetail) => ({
-              label: stateDetail.label ?? "",
-              value: stateDetail.value,
-              createdAt: stateDetail.createdAt,
-              updatedAt: stateDetail.updatedAt,
-              createdBy: stateDetail.createdBy,
-              updatedBy: stateDetail.updatedBy,
-            }))}
-            limit={pageLimit}
-            offset={pageOffset}
-            paginationEnable={paginationCount >= Numbers.FIVE}
-            PagesSelector={PagesSelector}
-            PageSizeSelector={PageSizeSelectorFunction}
-            pageSizes={pageSizeArray}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            noDataMessage={
-              stateData.length === 0 ? t("COMMON.STATE_NOT_FOUND") : ""
-            }
-            extraActions={[]}
-          />
-          <AddStateModal
-            open={addStateModalOpen}
-            onClose={() => setAddStateModalOpen(false)}
-            onSubmit={(name, value) =>
-              handleAddStateSubmit(name, value, selectedStateForEdit?.value)
-            }
-            fieldId={fieldId}
-            initialValues={
-              selectedStateForEdit
-                ? {
-                    name: selectedStateForEdit.label,
-                    value: selectedStateForEdit.value,
-                  }
-                : {}
-            }
-          />
-          <ConfirmationModal
-            modalOpen={confirmationDialogOpen}
-            message={t("COMMON.ARE_YOU_SURE_DELETE")}
-            handleAction={handleConfirmDelete}
-            buttonNames={{
-              primary: t("COMMON.DELETE"),
-              secondary: t("COMMON.CANCEL"),
-            }}
-            handleCloseModal={() => setConfirmationDialogOpen(false)}
-          />
+          {/* Show loader only for the table when loading */}
+          {loading ? (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              height="100%"
+            >
+              <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
+            </Box>
+          ) : (
+            <KaTableComponent
+              columns={columns}
+              data={stateData.map((stateDetail) => ({
+                label: stateDetail.label ?? "",
+                value: stateDetail.value ?? "",
+                createdAt: stateDetail.createdAt,
+                updatedAt: stateDetail.updatedAt,
+                createdBy: stateDetail.createdBy,
+                updatedBy: stateDetail.updatedBy,
+              }))}
+              limit={pageLimit}
+              offset={pageOffset}
+              paginationEnable={paginationCount >= Numbers.FIVE}
+              PagesSelector={PagesSelector}
+              pagination={pagination}
+              PageSizeSelector={PageSizeSelectorFunction}
+              pageSizes={pageSizeArray}
+              onEdit={handleEdit}
+              extraActions={[]}
+            />
+          )}
         </div>
       )}
     </HeaderComponent>

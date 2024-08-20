@@ -27,7 +27,7 @@ const Profile = () => {
   const adminInformation = useSubmittedButtonStore(
     (state: any) => state?.adminInformation
   );
-  console.log(adminInformation)
+  console.log(adminInformation);
   const [submitValue, setSubmitValue] = React.useState<boolean>(false);
 
   const [role, setRole] = React.useState<string | null>("");
@@ -41,7 +41,7 @@ const Profile = () => {
     (state: any) => state.setAdminInformation
   );
   const router = useRouter();
-  
+
   const handleClick4 = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl4(event.currentTarget);
     setProfileClick(true);
@@ -141,25 +141,26 @@ const Profile = () => {
 
     try {
       const fieldValue = true;
-      const response = await getUserDetailsInfo(adminInformation?.userId, fieldValue);
-     // console.log(role);
+      const response = await getUserDetailsInfo(
+        adminInformation?.userId,
+        fieldValue
+      );
+      // console.log(role);
 
       let formFields;
       if (Role.STUDENT === adminInformation?.role) {
         formFields = await getFormRead("USERS", "STUDENT");
         setFormData(mapFields(formFields, response));
         console.log("mapped formdata", formdata);
-      } else if (Role.TEACHER ===  adminInformation?.role) {
+      } else if (Role.TEACHER === adminInformation?.role) {
         console.log("mapped formdata", formdata);
 
         formFields = await getFormRead("USERS", "TEACHER");
         setFormData(mapFields(formFields, response));
-      } else if (Role.TEAM_LEADER ===  adminInformation?.role) {
+      } else if (Role.TEAM_LEADER === adminInformation?.role) {
         formFields = await getFormRead("USERS", "TEAM LEADER");
         setFormData(mapFields(formFields, response));
-      }
-      else
-      {
+      } else {
         formFields = await getFormRead("USERS", "ADMIN");
         setFormData(mapFields(formFields, response));
       }
@@ -189,10 +190,8 @@ const Profile = () => {
   }, [formdata]);
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
-     const admin = localStorage.getItem("adminInfo");
-     if(admin)
-    setAdminInfo(JSON.parse(admin))
-
+      const admin = localStorage.getItem("adminInfo");
+      if (admin) setAdminInfo(JSON.parse(admin));
     }
   }, []);
 
@@ -211,13 +210,13 @@ const Profile = () => {
         return FormContextType.TEAM_LEADER;
     }
   })();
-  
+
   return (
     <>
       <Button
         aria-label="menu"
         color="inherit"
-        aria-controls="profile-menu"  
+        aria-controls="profile-menu"
         aria-haspopup="true"
         onClick={handleClick4}
       >
@@ -250,8 +249,14 @@ const Profile = () => {
               }}
             >
               {userName
-                ? userName.charAt(0).toUpperCase() +
-                  userName.slice(1).toLowerCase()
+                ? userName
+                    .split(" ")
+                    .map(
+                      (name) =>
+                        name.charAt(0).toUpperCase() +
+                        name.slice(1).toLowerCase()
+                    )
+                    .join(" ")
                 : ""}
             </Typography>
             <FeatherIcon icon="chevron-down" size="20" />
@@ -294,7 +299,8 @@ const Profile = () => {
           <Box
             sx={{
               backgroundColor: "#FFC107",
-              padding: "10px",
+              width: "50px",
+              height: "50px",
               borderRadius: "50%",
               display: "flex",
               justifyContent: "center",
@@ -302,11 +308,14 @@ const Profile = () => {
               marginBottom: "20px",
             }}
           >
-            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: "bold", fontSize: "18px" }}
+            >
               {adminInfo?.name
-            ?.split(" ")
-            .map((word: any) => word[0])
-            .join("")}
+                ?.split(" ")
+                .map((word: any) => word[0])
+                .join("")}
             </Typography>
           </Box>
 
@@ -339,20 +348,18 @@ const Profile = () => {
           </Button>
         </Box>
       </Menu>
-{console.log(adminInfo?.role)}
-   { openEditModal && ( <CommonUserModal
-        open={openEditModal}
-        onClose={handleCloseAddLearnerModal}
-        formData={formdata}
-        isEditModal={true}
-        userId={userId}
-        onSubmit={handleModalSubmit}
-        userType={
-         userType
-        }
-      />
-   )
-}
+      {console.log(adminInfo?.role)}
+      {openEditModal && (
+        <CommonUserModal
+          open={openEditModal}
+          onClose={handleCloseAddLearnerModal}
+          formData={formdata}
+          isEditModal={true}
+          userId={userId}
+          onSubmit={handleModalSubmit}
+          userType={userType}
+        />
+      )}
     </>
   );
 };
