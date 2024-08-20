@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { DataType } from "ka-table/enums";
 import HeaderComponent from "@/components/HeaderComponent";
-import { Chip, Pagination } from "@mui/material";
+import { Chip, Pagination, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -85,6 +85,7 @@ const Block: React.FC = () => {
   const [cohortId, setCohortId] = useState<any>();
   const [stateFieldId, setStateFieldId] = useState<string>("");
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [pagination, setPagination] = useState(true);
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -221,8 +222,15 @@ const Block: React.FC = () => {
       const totalCount = response?.result?.totalCount || 0;
       setPaginationCount(totalCount);
 
+      setPagination(totalCount > 10);
       setPageSizeArray(
-        totalCount >= 15 ? [5, 10, 15, 20] : totalCount >= 10 ? [5, 10] : [5]
+        totalCount > 15
+          ? [5, 10, 15]
+          : totalCount > 10
+            ? [5, 10]
+            : totalCount > 5
+              ? [5]
+              : []
       );
 
       setPageCount(Math.ceil(totalCount / limit));
@@ -356,14 +364,19 @@ const Block: React.FC = () => {
     setPageOffset(value - 1);
   };
   const PagesSelector = () => (
-    <Box mt={3}>
-      <Pagination
-        color="primary"
-        count={pageCount}
-        page={pageOffset + 1}
-        onChange={handlePaginationChange}
-      />
-    </Box>
+    <>
+      <Box sx={{ display: { xs: "block" } }}>
+        <Pagination
+          color="primary"
+          count={pageCount}
+          page={pageOffset + 1}
+          onChange={handlePaginationChange}
+          siblingCount={0}
+          boundaryCount={1}
+          sx={{ marginTop: "10px" }}
+        />
+      </Box>
+    </>
   );
 
   const PageSizeSelectorFunction = () => (
@@ -560,29 +573,40 @@ const Block: React.FC = () => {
             </Box>
 
             <Box sx={{ marginTop: 2 }}>
-              <KaTableComponent
-                columns={columns}
-                data={blockData.map((block) => ({
-                  block: transformLabel(block.label),
-                  createdAt: block.createdAt,
-                  updatedAt: block.updatedAt,
-                  createdBy: block.createdBy,
-                  updatedBy: block.updatedBy,
-                  value: block.value,
-                }))}
-                limit={pageLimit}
-                offset={pageOffset}
-                paginationEnable={paginationCount >= Numbers.FIVE}
-                PagesSelector={PagesSelector}
-                PageSizeSelector={PageSizeSelectorFunction}
-                pageSizes={pageSizeArray}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                extraActions={[]}
-                noDataMessage={
-                  blockData.length === 0 ? t("COMMON.BLOCKS_NOT_FOUND") : ""
-                }
-              />
+              {blockData.length > 0 ? (
+                <KaTableComponent
+                  columns={columns}
+                  data={blockData.map((block) => ({
+                    block: transformLabel(block.label),
+                    createdAt: block.createdAt,
+                    updatedAt: block.updatedAt,
+                    createdBy: block.createdBy,
+                    updatedBy: block.updatedBy,
+                    value: block.value,
+                  }))}
+                  limit={pageLimit}
+                  offset={pageOffset}
+                  paginationEnable={paginationCount >= Numbers.FIVE}
+                  PagesSelector={PagesSelector}
+                  PageSizeSelector={PageSizeSelectorFunction}
+                  pageSizes={pageSizeArray}
+                  onEdit={handleEdit}
+                  pagination={pagination}
+                  onDelete={handleDelete}
+                  extraActions={[]}
+                />
+              ) : (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="20vh"
+                >
+                  <Typography marginTop="10px" textAlign="center">
+                    {t("COMMON.BLOCKS_NOT_FOUND")}
+                  </Typography>
+                </Box>
+              )}
             </Box>
           </>
         )}

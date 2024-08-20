@@ -13,7 +13,13 @@ import { AddStateModal } from "@/components/AddStateModal";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { showToastMessage } from "@/components/Toastify";
 import { SORT, Numbers, Storage } from "@/utils/app.constant";
-import { Box, Chip, Pagination, SelectChangeEvent } from "@mui/material";
+import {
+  Box,
+  Chip,
+  Pagination,
+  SelectChangeEvent,
+  Typography,
+} from "@mui/material";
 import PageSizeSelector from "@/components/PageSelector";
 import {
   createCohort,
@@ -69,6 +75,7 @@ const State: React.FC = () => {
   const [paginationCount, setPaginationCount] = useState<number>(Numbers.ZERO);
   const [userName, setUserName] = React.useState<string | null>("");
   const [statesProfilesData, setStatesProfilesData] = useState<any>([]);
+  const [pagination, setPagination] = useState(true);
 
   const setPid = useStore((state) => state.setPid);
 
@@ -188,14 +195,20 @@ const State: React.FC = () => {
   };
 
   const PagesSelector = () => (
-    <Box mt={3}>
-      <Pagination
-        color="primary"
-        count={pageCount}
-        page={pageOffset + 1}
-        onChange={handlePaginationChange}
-      />
-    </Box>
+    <>
+      <Box sx={{ display: { xs: "block" } }}>
+        <Pagination
+          // size="small"
+          color="primary"
+          count={pageCount}
+          page={pageOffset + 1}
+          onChange={handlePaginationChange}
+          siblingCount={0}
+          boundaryCount={1}
+          sx={{ marginTop: "10px" }}
+        />
+      </Box>
+    </>
   );
 
   const PageSizeSelectorFunction = () => (
@@ -236,8 +249,15 @@ const State: React.FC = () => {
 
         console.log("totalCount", totalCount);
 
+        setPagination(totalCount > 10);
         setPageSizeArray(
-          totalCount >= 15 ? [5, 10, 15, 20] : totalCount >= 10 ? [5, 10] : [5]
+          totalCount > 15
+            ? [5, 10, 15]
+            : totalCount > 10
+              ? [5, 10]
+              : totalCount > 5
+                ? [5]
+                : []
         );
 
         setPageCount(Math.ceil(totalCount / limit));
@@ -270,6 +290,12 @@ const State: React.FC = () => {
     >
       {loading ? (
         <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
+      ) : stateData.length === 0 ? (
+        <Box display="flex" marginLeft="40%" gap="20px">
+          <Typography marginTop="10px" variant="h2">
+            {t("COMMON.STATE_NOT_FOUND")}
+          </Typography>
+        </Box>
       ) : (
         <div>
           <KaTableComponent
@@ -286,6 +312,7 @@ const State: React.FC = () => {
             offset={pageOffset}
             paginationEnable={paginationCount >= Numbers.FIVE}
             PagesSelector={PagesSelector}
+            pagination={pagination}
             PageSizeSelector={PageSizeSelectorFunction}
             pageSizes={pageSizeArray}
             onEdit={handleEdit}
@@ -294,34 +321,6 @@ const State: React.FC = () => {
               stateData.length === 0 ? t("COMMON.STATE_NOT_FOUND") : ""
             }
             extraActions={[]}
-          />
-          <AddStateModal
-            open={addStateModalOpen}
-            onClose={() => setAddStateModalOpen(false)}
-            onSubmit={(name, value) =>
-              handleAddStateSubmit(name, value, selectedStateForEdit?.value)
-            }
-            fieldId={fieldId}
-            initialValues={
-              selectedStateForEdit
-                ? {
-                    name: selectedStateForEdit.label,
-                    value: selectedStateForEdit.value,
-                  }
-                : {}
-            }
-          />
-          <ConfirmationModal
-            modalOpen={confirmationDialogOpen}
-            message={t("COMMON.ARE_YOU_SURE_DELETE", {
-              state: `${selectedStateForDelete?.label} ${t("MASTER.STATE")}`,
-            })}
-            handleAction={handleConfirmDelete}
-            buttonNames={{
-              primary: t("COMMON.DELETE"),
-              secondary: t("COMMON.CANCEL"),
-            }}
-            handleCloseModal={() => setConfirmationDialogOpen(false)}
           />
         </div>
       )}
