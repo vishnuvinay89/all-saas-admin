@@ -161,7 +161,7 @@ const State: React.FC = () => {
         }
 
         if (response) {
-          await fetchStateData(searchKeyword);
+          await fetchStateData();
 
           const successMessage = isUpdating
             ? t("COMMON.STATE_UPDATED_SUCCESS")
@@ -220,7 +220,7 @@ const State: React.FC = () => {
     </Box>
   );
 
-  const fetchStateData = async (keyword = "") => {
+  const fetchStateData = async () => {
     try {
       setLoading(true);
       const limit = pageLimit;
@@ -230,7 +230,7 @@ const State: React.FC = () => {
         limit: limit,
         offset: offset,
         fieldName: "states",
-        optionName: keyword,
+        optionName: searchKeyword || "",
         sort: sortBy,
       };
 
@@ -271,8 +271,8 @@ const State: React.FC = () => {
     }
   };
   useEffect(() => {
-    fetchStateData(searchKeyword);
-  }, [searchKeyword, pageLimit, pageOffset, sortBy]);
+    fetchStateData();
+  }, [searchKeyword,pageLimit, pageOffset, sortBy]);
 
   return (
     <HeaderComponent
@@ -280,7 +280,7 @@ const State: React.FC = () => {
       searchPlaceHolder={t("MASTER.SEARCHBAR_PLACEHOLDER_STATE")}
       showStateDropdown={false}
       handleSortChange={handleSortChange}
-      showAddNew={true}
+      showAddNew={false}
       showSort={true}
       selectedSort={selectedSort}
       showFilter={false}

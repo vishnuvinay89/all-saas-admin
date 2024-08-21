@@ -244,9 +244,6 @@ const District: React.FC = () => {
 
       if (response) {
         await fetchDistrictData(searchKeyword);
-        // showToastMessage(t("COMMON.DISTRICT_ADDED_SUCCESS"), "success");
-      } else {
-        // showToastMessage(t("COMMON.DISTRICT_ADDED_FAILURE"), "error");
       }
     } catch (error) {
       console.error("Error adding district:", error);
