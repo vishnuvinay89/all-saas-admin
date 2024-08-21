@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { firstLetterInUpperCase, getUserName } from "./../utils/Helper";
 
 const UserNameCell = ({ userId }: { userId: string }) => {
+  console.log(userId)
   const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
