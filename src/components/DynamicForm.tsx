@@ -9,6 +9,7 @@ import CustomRadioWidget from "./form/CustomRadioWidget";
 import MultiSelectCheckboxes from "./form/MultiSelectCheckboxes";
 import MultiSelectDropdown from "./form/MultiSelectDropdown";
 const FormWithMaterialUI = withTheme(MaterialUITheme);
+import { getCurrentYearPattern } from '@/utils/Helper';
 
 interface DynamicFormProps {
   schema: any;
@@ -121,6 +122,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   };
 
   const transformErrors = (errors: any) => {
+    const currentYearPattern = new RegExp(getCurrentYearPattern());
+
     console.log("errors", errors);
     errors.length===0? setNoError(true):  setNoError(false)
    
@@ -203,6 +206,13 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               error.message = t(
                 "FORM_ERROR_MESSAGES.CHARACTERS_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
               );
+              break;
+            }
+            default: {
+              const validRange = currentYearPattern.test(pattern);
+              if (!validRange) {
+                error.message = t('FORM_ERROR_MESSAGES.ENTER_VALID_YEAR');
+              }
               break;
             }
           }
