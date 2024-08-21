@@ -255,7 +255,7 @@ const Block: React.FC = () => {
     },
     {
       key: "value",
-      title: t("MASTER.BLOCK_CODE"),
+      title: t("MASTER.CODE"),
       dataType: DataType.String,
       width: "130",
     },

@@ -414,7 +414,7 @@ const District: React.FC = () => {
                   },
                   {
                     key: "value",
-                    title: t("MASTER.DISTRICT_CODE"),
+                    title: t("MASTER.CODE"),
                     dataType: DataType.String,
                     width: "130",
                   },

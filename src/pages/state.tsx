@@ -80,13 +80,13 @@ const State: React.FC = () => {
   const setPid = useStore((state) => state.setPid);
 
   const columns = [
-    { key: "label", title: t("MASTER.STATE"), width: "130" },
-    { key: "value", title: t("MASTER.STATE_CODE"), width: "130" },
-    { key: "createdBy", title: t("MASTER.CREATED_BY"), width: "130" },
-    { key: "updatedBy", title: t("MASTER.UPDATED_BY"), width: "130" },
+    { key: "label", title: t("MASTER.STATE"), width: "160" },
+    { key: "value", title: t("MASTER.CODE"), width: "160" },
+    { key: "createdBy", title: t("MASTER.CREATED_BY"), width: "160" },
+    { key: "updatedBy", title: t("MASTER.UPDATED_BY"), width: "160" },
     { key: "createdAt", title: t("MASTER.CREATED_AT"), width: "160" },
     { key: "updatedAt", title: t("MASTER.UPDATED_AT"), width: "160" },
-    // { key: "actions", title: t("MASTER.ACTIONS"), width: "130" },
+    // { key: "actions", title: t("MASTER.ACTIONS"), width: "160" },
   ];
 
   const handleEdit = (rowData: StateDetail) => {
@@ -198,7 +198,6 @@ const State: React.FC = () => {
     <>
       <Box sx={{ display: { xs: "block" } }}>
         <Pagination
-          // size="small"
           color="primary"
           count={pageCount}
           page={pageOffset + 1}
@@ -288,7 +287,6 @@ const State: React.FC = () => {
       handleSearch={handleSearch}
       handleAddUserClick={handleAddStateClick}
     >
-      {/* Check if stateData is empty */}
       {stateData.length === 0 && !loading ? (
         <Box display="flex" marginLeft="40%" gap="20px">
           <Typography marginTop="10px" variant="h2">
@@ -297,7 +295,6 @@ const State: React.FC = () => {
         </Box>
       ) : (
         <div>
-          {/* Show loader only for the table when loading */}
           {loading ? (
             <Box
               display="flex"
