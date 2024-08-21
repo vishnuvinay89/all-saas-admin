@@ -8,10 +8,12 @@ import Pagination from "@mui/material/Pagination";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import {
+  fetchCohortMemberList,
   getCohortList,
   updateCohortUpdate,
 } from "@/services/CohortService/cohortService";
 import {
+  CohortTypes,
   FormValues,
   Numbers,
   SORT,
@@ -25,6 +27,7 @@ import CustomModal from "@/components/CustomModal";
 import {
   Box,
   Button,
+  Chip,
   TextField,
   Typography,
   useMediaQuery,
@@ -55,6 +58,8 @@ type cohortFilterDetails = {
   districts?: string;
   blocks?: string;
   name?: string;
+  activeMembers?: string;
+  archivedMembers?: string;
 };
 
 interface centerData {
@@ -89,7 +94,7 @@ const Center: React.FC = () => {
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
   const [selectedBlock, setSelectedBlock] = React.useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState("Sort");
-  const [selectedFilter, setSelectedFilter] = useState("All");
+  const [selectedFilter, setSelectedFilter] = useState("Active");
   const [cohortData, setCohortData] = useState<cohortFilterDetails[]>([]);
   const [pageSize, setPageSize] = React.useState<string | number>("10");
   const [confirmationModalOpen, setConfirmationModalOpen] =
@@ -110,10 +115,7 @@ const Center: React.FC = () => {
   const [pageOffset, setPageOffset] = useState(Numbers.ZERO);
   const [pageLimit, setPageLimit] = useState(Numbers.TEN);
   const [pageSizeArray, setPageSizeArray] = React.useState<number[]>([]);
-  const [filters, setFilters] = useState<cohortFilterDetails>({
-    type: "COHORT",
-    // states: stateCode,
-  });
+  const [pagination, setPagination] = useState(true);
   const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
@@ -122,6 +124,8 @@ const Center: React.FC = () => {
   const [totalCount, setTotalCound] = useState<number>(0);
   const [editFormData, setEditFormData] = useState<any>([]);
   const [isEditForm, setIsEditForm] = useState(false);
+  const [statesInformation, setStatesInformation] = useState<any>([]);
+  const [selectedRowData, setSelectedRowData] = useState<any>("");
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
   );
@@ -129,12 +133,39 @@ const Center: React.FC = () => {
     (state: any) => state.setAdminInformation
   );
 
+  const [filters, setFilters] = useState<cohortFilterDetails>({
+    type: CohortTypes.COHORT,
+    states: selectedStateCode,
+    status: [Status.ACTIVE],
+  });
   const handleCloseAddLearnerModal = () => {
     setOpenAddNewCohort(false);
   };
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
+
+  const getAdminInformation = () => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const admin = localStorage.getItem("adminInfo");
+      if (admin) {
+        const stateField: any = JSON.parse(admin).customFields.find(
+          (field: any) => field.label === "STATES"
+        );
+        console.log(stateField.value, stateField.code);
+        const object = [
+          {
+            value: stateField.code,
+            label: stateField.value,
+          },
+        ];
+        setStatesInformation(object);
+        console.log("object", object[0]?.value);
+        setSelectedStateCode(object[0]?.value);
+      }
+    }
+  };
+
   // use api calls
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -144,6 +175,8 @@ const Center: React.FC = () => {
 
     // get form data for center create
     getAddCenterFormData();
+    getAdminInformation();
+    // getCohortMemberlistData();
   }, []);
 
   const fetchUserList = async () => {
@@ -163,11 +196,27 @@ const Center: React.FC = () => {
       if (resp) {
         const result = resp?.results?.cohortDetails;
         const resultData: centerData[] = [];
-        result?.forEach((item: any) => {
+
+        const cohortIds = result.map((item: any) => item.cohortId); // Extract cohort IDs
+
+        // Fetch member counts for each cohort
+        const memberCounts = await Promise.all(
+          cohortIds?.map(async (cohortId: string) => {
+            return await getCohortMemberlistData(cohortId);
+          })
+        );
+
+        result?.forEach((item: any, index: number) => {
           const cohortType =
             item?.customFields?.map((field: any) =>
               firstLetterInUpperCase(field?.value)
             ) ?? "-";
+
+          const counts = memberCounts[index] || {
+            totalActiveMembers: 0,
+            totalArchivedMembers: 0,
+          };
+
           console.log("cohortType", cohortType);
           const requiredData = {
             name: item?.name,
@@ -178,27 +227,31 @@ const Center: React.FC = () => {
             updatedAt: item?.updatedAt,
             cohortId: item?.cohortId,
             customFieldValues: cohortType[0] ? cohortType : "-",
+            totalActiveMembers: counts?.totalActiveMembers,
+            totalArchivedMembers: counts?.totalArchivedMembers,
           };
           resultData?.push(requiredData);
         });
-
         setCohortData(resultData);
         const totalCount = resp?.count;
         setTotalCound(totalCount);
-        if (totalCount >= 20) {
-          setPageSizeArray([5, 10, 15, 20]);
-        } else if (totalCount >= 15) {
-          setPageSizeArray([5, 10, 15]);
-        } else if (totalCount >= 10) {
-          setPageSizeArray([5, 10]);
-        } else if (totalCount >= 5 || totalCount < 5) {
-          setPageSizeArray([5]);
-        }
+
+        setPagination(totalCount > 10);
+        setPageSizeArray(
+          totalCount > 15
+            ? [5, 10, 15]
+            : totalCount > 10
+              ? [5, 10]
+              : totalCount > 5
+                ? [5]
+                : []
+        );
         const pageCount = Math.ceil(totalCount / pageLimit);
         setPageCount(pageCount);
         setLoading(false);
       }
     } catch (error) {
+      setCohortData([]);
       setLoading(false);
       console.error("Error fetching user list:", error);
     }
@@ -217,6 +270,41 @@ const Center: React.FC = () => {
       showToastMessage(t("COMMON.ERROR_MESSAGE_SOMETHING_WRONG"), "error");
       console.log("Error fetching form data:", error);
     }
+  };
+
+  const getCohortMemberlistData = async (cohortId: string) => {
+    const data = {
+      limit: 300,
+      page: 0,
+      filters: {
+        cohortId: cohortId,
+      },
+    };
+
+    const response: any = await fetchCohortMemberList(data);
+
+    if (response?.result) {
+      const userDetails = response.result.userDetails;
+      const getActiveMembers = userDetails?.filter(
+        (member: any) => member?.status === Status.ACTIVE
+      );
+      const totalActiveMembers = getActiveMembers?.length || 0;
+
+      const getArchivedMembers = userDetails?.filter(
+        (member: any) => member?.status === Status.ARCHIVED
+      );
+      const totalArchivedMembers = getArchivedMembers?.length || 0;
+
+      return {
+        totalActiveMembers,
+        totalArchivedMembers,
+      };
+    }
+
+    return {
+      totalActiveMembers: 0,
+      totalArchivedMembers: 0,
+    };
   };
 
   const getAddCenterFormData = async () => {
@@ -255,12 +343,16 @@ const Center: React.FC = () => {
   };
 
   const PagesSelector = () => (
-    <Box mt={3}>
+    <Box sx={{ display: { xs: "block" } }}>
       <Pagination
+        // size="small"
         color="primary"
         count={pageCount}
         page={pageOffset + 1}
         onChange={handlePaginationChange}
+        siblingCount={0}
+        boundaryCount={1}
+        sx={{ marginTop: "10px" }}
       />
     </Box>
   );
@@ -477,10 +569,13 @@ const Center: React.FC = () => {
 
   const handleDelete = (rowData: any) => {
     setLoading(true);
+
     const cohortName = rowData?.name;
+    // SetDeletedRowData
     setInputName(cohortName);
     setConfirmationModalOpen(true);
     if (rowData) {
+      setSelectedRowData(rowData);
       const cohortId = rowData?.cohortId;
       setSelectedCohortId(cohortId);
       setLoading(false);
@@ -603,43 +698,43 @@ const Center: React.FC = () => {
     setOpenAddNewCohort(true);
   };
 
-
-   useEffect(() => {
-    const fetchData =  () => {
+  useEffect(() => {
+    const fetchData = () => {
       try {
         const object = {
           // "limit": 20,
           // "offset": 0,
           fieldName: "states",
         };
-       // const response = await getStateBlockDistrictList(object);
-       // const result = response?.result?.values;
+        // const response = await getStateBlockDistrictList(object);
+        // const result = response?.result?.values;
         if (typeof window !== "undefined" && window.localStorage) {
           const admin = localStorage.getItem("adminInfo");
-          if(admin)
-          {
-            const stateField = JSON.parse(admin).customFields.find((field: any) => field.label === "STATES");
-              console.log(stateField.value, stateField.code)
-              if (!stateField.value.includes(',')) {
+          if (admin) {
+            const stateField = JSON.parse(admin).customFields.find(
+              (field: any) => field.label === "STATES"
+            );
+            console.log(stateField.value, stateField.code);
+            if (!stateField.value.includes(",")) {
               setSelectedState([stateField.value]);
-              setSelectedStateCode(stateField.code)
-             
-              }
-              
-              const object=[{
-                value:stateField.code,
-                label:stateField.value
-              }]
+              setSelectedStateCode(stateField.code);
+            }
+
+            const object = [
+              {
+                value: stateField.code,
+                label: stateField.value,
+              },
+            ];
             // setStates(object);
-  
           }
         }
-      //  setStates(result);
+        //  setStates(result);
       } catch (error) {
         console.log(error);
       }
     };
-  
+
     fetchData();
   }, []);
 
@@ -748,6 +843,7 @@ const Center: React.FC = () => {
             offset={pageOffset}
             paginationEnable={totalCount > Numbers.TEN}
             PagesSelector={PagesSelector}
+            pagination={pagination}
             PageSizeSelector={PageSizeSelectorFunction}
             pageSizes={pageSizeArray}
             extraActions={extraActions}
