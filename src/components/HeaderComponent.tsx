@@ -12,8 +12,9 @@ import Select from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
+import { Role} from "@/utils/app.constant";
 
-import { getStateBlockDistrictList } from "../services/MasterDataService";
+import { getCenterList, getStateBlockDistrictList } from "../services/MasterDataService";
 import AreaSelection from "./AreaSelection";
 import { transformArray } from "../utils/Helper";
 
@@ -30,6 +31,10 @@ interface District {
 interface Block {
   value: string;
   label: string;
+}
+interface CenterProp {
+  cohortId: string;
+  name: string;
 }
 const Sort = ["A-Z", "Z-A"];
 const Filter = ["Active", "InActive"];
@@ -57,6 +62,8 @@ const HeaderComponent = ({
   showFilter = true,
   handleSearch,
   handleAddUserClick,
+  selectedCenter,
+  handleCenterChange
 }: any) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
@@ -65,6 +72,7 @@ const HeaderComponent = ({
   const [states, setStates] = useState<State[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
   const [stateDefaultValue, setStateDefaultValue] = useState<string>("");
+  const [allCenters, setAllCenters] = useState<CenterProp[]>([]);
 
   const [blocks, setBlocks] = useState<Block[]>([]);
 
@@ -118,12 +126,47 @@ const HeaderComponent = ({
     handleDistrictChange(selected, selectedCodes);
   };
 
-  const handleBlockChangeWrapper = (
+  const handleBlockChangeWrapper = async (
     selected: string[],
     selectedCodes: string[],
   ) => {
+    const getCentersObject = {
+      limit: 200,
+      offset: 0,
+      filters: {
+        // "type":"COHORT",
+        status: ["active"],
+        states: selectedStateCode,
+        districts: selectedDistrictCode,
+        blocks: selectedCodes[0],
+        // "name": selected[0]
+      },
+    };
+    const response = await getCenterList(getCentersObject);
+    console.log(response?.result?.results?.cohortDetails[0].cohortId);
+    // setSelectedBlockCohortId(
+    //   response?.result?.results?.cohortDetails[0].cohortId
+    // );
+    //   const result = response?.result?.cohortDetails;
+    const dataArray = response?.result?.results?.cohortDetails;
+
+    const cohortInfo = dataArray
+      ?.filter((cohort: any) => cohort.type !== "BLOCK")
+      .map((item: any) => ({
+        cohortId: item?.cohortId,
+        name: item?.name,
+      }));
+    console.log(dataArray);
+    setAllCenters(cohortInfo);
     handleBlockChange(selected, selectedCodes);
   };
+  const handleCenterChangeWrapper = (
+    selected: string[],
+    selectedCodes: string[],
+  ) => { 
+    handleCenterChange(selected, selectedCodes);
+
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -206,7 +249,11 @@ const HeaderComponent = ({
           isMobile={isMobile}
           isMediumScreen={isMediumScreen}
           inModal={false}
+          isCenterSelection={userType === Role.FACILITATORS || userType === Role.LEARNERS}
           stateDefaultValue={stateDefaultValue}
+          allCenters={allCenters}
+            selectedCenter={selectedCenter}
+            handleCenterChangeWrapper={handleCenterChangeWrapper}
         />
       )}
       <Typography variant="h1" sx={{ mt: isMobile ? "12px" : "20px" }}>

@@ -17,7 +17,7 @@ import KaTableComponent from "../components/KaTableComponent";
 import Loader from "../components/Loader";
 import { deleteUser } from "../services/DeleteUser";
 import { getCohortList } from "../services/GetCohortList";
-import { userList, getUserDetailsInfo } from "../services/UserList";
+import { userList, getUserDetailsInfo, cohortMemberList } from "../services/UserList";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import { Role, apiCatchingDuration } from "@/utils/app.constant";
 import { getFormRead } from "@/services/CreateUserService";
@@ -48,6 +48,7 @@ type FilterDetails = {
   states?: any;
   blocks?: any;
   name?: any;
+  cohortId?: any
 };
 
 interface Cohort {
@@ -87,12 +88,17 @@ const UserTable: React.FC<UserTableProps> = ({
   const { t } = useTranslation();
   const [pageSize, setPageSize] = React.useState<string | number>("10");
   const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
+  const [sortByForCohortMemberList, setsortByForCohortMemberList] = useState(["name",  SORT.ASCENDING]);
+
   const [pageCount, setPageCount] = useState(1);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState("");
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [deleteUserState, setDeleteUserState] = useState(false);
+  const [selectedCenter, setSelectedCenter] = useState<string[]>([]);
+  const [enableCenterFilter, setEnableCenterFilter] = useState<boolean>(false);
+
 
   const isMobile: boolean = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
@@ -199,6 +205,7 @@ const UserTable: React.FC<UserTableProps> = ({
     />
   );
   const handleStateChange = async (selected: string[], code: string[]) => {
+    setEnableCenterFilter(false)
     setSelectedDistrict([]);
     setSelectedBlock([]);
 
@@ -247,6 +254,8 @@ const UserTable: React.FC<UserTableProps> = ({
   };
 
   const handleDistrictChange = (selected: string[], code: string[]) => {
+    setEnableCenterFilter(false)
+
     setSelectedBlock([]);
     setSelectedDistrict(selected);
 
@@ -285,6 +294,8 @@ const UserTable: React.FC<UserTableProps> = ({
     console.log("Selected categories:", selected);
   };
   const handleBlockChange = (selected: string[], code: string[]) => {
+    setEnableCenterFilter(false)
+
     setSelectedBlock(selected);
     if (selected[0] === "" || selected[0] === t("COMMON.ALL_BLOCKS")) {
       if (filters.status) {
@@ -323,14 +334,32 @@ const UserTable: React.FC<UserTableProps> = ({
     }
     console.log("Selected categories:", selected);
   };
+  const handleCenterChange = async(selected: string[], code: string[]) => {
+    setSelectedCenter(selected)
+
+    setEnableCenterFilter(true)
+    setFilters({
+      // states: selectedStateCode,
+      // districts: selectedDistrictCode,
+      // blocks: blocks,
+      cohortId:code[0],
+      role: role,
+    });
+
+  };
   const handleSortChange = async (event: SelectChangeEvent) => {
     // let sort;
+    console.log(enableCenterFilter)
     if (event.target?.value === "Z-A") {
-      setSortBy(["name", SORT.DESCENDING]);
+      enableCenterFilter?
+      setsortByForCohortMemberList(["name", SORT.DESCENDING]): setSortBy(["name", SORT.DESCENDING]);
     } else if (event.target?.value === "A-Z") {
-      setSortBy(["name", SORT.ASCENDING]);
+      enableCenterFilter?
+      setsortByForCohortMemberList(["name", SORT.ASCENDING]): setSortBy(["name", SORT.ASCENDING]);
+
     } else {
-      setSortBy(["createdAt", SORT.ASCENDING]);
+      enableCenterFilter? setsortByForCohortMemberList(["name", SORT.ASCENDING]): setSortBy(["createdAt", SORT.ASCENDING]);
+
     }
 
     setSelectedSort(event.target?.value as string);
@@ -464,15 +493,24 @@ const UserTable: React.FC<UserTableProps> = ({
         let limit = pageLimit;
         let offset = pageOffset * limit;
         // const filters = { role: role , status:"active"};
-        const sort = sortBy;
+        const sort = enableCenterFilter? sortByForCohortMemberList: sortBy;
         console.log("filters", filters);
         if (filters.name) {
           offset = 0;
         }
-        const resp = await userList({ limit, filters, sort, offset, fields });
+        let resp;
+        if(enableCenterFilter)
+        {
+          resp=await cohortMemberList({ limit, filters,sort, offset, fields })
+        }
+        else{
+          resp = await userList({ limit, filters, sort, offset, fields });
+
+        }
         console.log(resp?.getUserDetails);
-        const result = resp?.getUserDetails;
-        // console.log(resp?.totalCount)
+        const result = enableCenterFilter?resp?.userDetails:resp?.getUserDetails;
+        console.log(result)
+         console.log(resp?.totalCount)
         if (resp?.totalCount >= 15) {
           setPagination(true);
 
@@ -494,23 +532,99 @@ const UserTable: React.FC<UserTableProps> = ({
 
         setPageCount(Math.ceil(resp?.totalCount / pageLimit));
         console.log(result);
-        const finalResult = result?.map((user: any) => {
-          const ageField = user.customFields.find(
-            (field: any) => field.label === "AGE"
+        let finalResult;
+        if(enableCenterFilter)
+        {
+          finalResult = result?.map((user: any) => {
+            const ageField = user?.customField?.find(
+              (field: any) => field?.fieldname === "AGE"
+            );
+            const genderField = user?.customField?.find(
+              (field: any) => field?.fieldname === "GENDER"
+            );
+            const blockField = user?.customField?.find(
+              (field: any) => field?.fieldname === "BLOCKS"
+            );
+            const districtField = user?.customField?.find(
+              (field: any) => field?.fieldname === "DISTRICTS"
+            );
+            const stateField = user?.customField?.find(
+              (field: any) => field?.fieldname === "STATES"
+            );
+              return {
+                userId: user?.userId,
+                username: user?.username,
+                status: user?.status,
+                name:
+                  user?.name?.charAt(0).toUpperCase() +
+                  user?.name?.slice(1).toLowerCase(),
+                role: user.role,
+                //  gender: user.gender,
+                mobile: user.mobile === "NaN" ? "-" : user.mobile,
+                age: ageField ? ageField?.fieldvalues : "-",
+                district: districtField ? districtField?.fieldvalues : "-",
+                state: stateField ? stateField?.fieldvalues : "-",
+                blocks: blockField ? blockField?.fieldvalues : "-",
+                gender: genderField
+                  ? genderField.fieldvalues?.charAt(0)?.toUpperCase() +
+                    genderField.fieldvalues.slice(1).toLowerCase()
+                  : "-",
+              //  createdAt: user?.createdAt,
+              //  updatedAt: user?.updatedAt,
+                createdBy: user?.createdBy,
+                updatedBy: user?.updatedBy,
+                // // centers: null,
+                // Programs: null,
+              };
+             
+            
+          });
+        }
+        else{
+         finalResult = result?.map((user: any) => {
+          const ageField = user?.customFields?.find(
+            (field: any) => field?.label === "AGE"
           );
-          const genderField = user.customFields.find(
-            (field: any) => field.label === "GENDER"
+          const genderField = user?.customFields?.find(
+            (field: any) => field?.label === "GENDER"
           );
-          const blockField = user.customFields.find(
-            (field: any) => field.label === "BLOCKS"
+          const blockField = user?.customFields?.find(
+            (field: any) => field?.label === "BLOCKS"
           );
-          const districtField = user.customFields.find(
-            (field: any) => field.label === "DISTRICTS"
+          const districtField = user?.customFields?.find(
+            (field: any) => field?.label === "DISTRICTS"
           );
-          const stateField = user.customFields.find(
-            (field: any) => field.label === "STATES"
+          const stateField = user?.customFields?.find(
+            (field: any) => field?.label === "STATES"
           );
-
+           if(enableCenterFilter)
+           {
+            return {
+              userId: user?.userId,
+              username: user?.username,
+              status: user?.status,
+              name:
+                user?.name?.charAt(0).toUpperCase() +
+                user?.name?.slice(1).toLowerCase(),
+              role: user.role,
+              //  gender: user.gender,
+              mobile: user.mobile === "NaN" ? "-" : user.mobile,
+              age: ageField ? ageField?.fieldvalues : "-",
+              district: districtField ? districtField.value : "-",
+              state: stateField ? stateField.value : "-",
+              blocks: blockField ? blockField.value : "-",
+              gender: genderField
+                ? genderField.value?.charAt(0)?.toUpperCase() +
+                  genderField.value.slice(1).toLowerCase()
+                : "-",
+              createdAt: user.createdAt,
+              updatedAt: user.updatedAt,
+              createdBy: user.createdBy,
+              updatedBy: user.updatedBy,
+              // // centers: null,
+              // Programs: null,
+            };
+           }
           return {
             userId: user.userId,
             username: user.username,
@@ -537,6 +651,9 @@ const UserTable: React.FC<UserTableProps> = ({
             // Programs: null,
           };
         });
+      }
+        console.log(finalResult)
+
         if (filters?.name) {
           const prioritizedResult = finalResult.sort((a: any, b: any) => {
             const aStartsWith = a.name.toLowerCase().startsWith(filters?.name);
@@ -574,6 +691,7 @@ const UserTable: React.FC<UserTableProps> = ({
     filters,
     parentState,
     deleteUserState,
+    sortByForCohortMemberList
   ]);
 
   useEffect(() => {
@@ -725,6 +843,8 @@ const UserTable: React.FC<UserTableProps> = ({
     selectedBlockCode: selectedBlockCode,
     selectedDistrictCode: selectedDistrictCode,
     selectedStateCode: selectedStateCode,
+    handleCenterChange:handleCenterChange,
+     selectedCenter: selectedCenter
   };
 
   return (
