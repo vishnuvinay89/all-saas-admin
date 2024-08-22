@@ -222,7 +222,7 @@ const HeaderComponent = ({
 
     fetchData();
   }, []);
-  console.log(selectedState)
+  console.log(userType)
 
   return (
     <Box
@@ -235,6 +235,11 @@ const HeaderComponent = ({
         borderRadius: "8px",
       }}
     >
+{!showStateDropdown && ( <Typography variant="h1" sx={{ mt: isMobile ? "12px" : "20px" }}>
+        {userType}
+      </Typography>)
+    }
+
       {showStateDropdown && (
         <AreaSelection
           states={transformArray(states)}
@@ -254,11 +259,16 @@ const HeaderComponent = ({
           allCenters={allCenters}
             selectedCenter={selectedCenter}
             handleCenterChangeWrapper={handleCenterChangeWrapper}
+            userType={userType}
         />
       )}
-      <Typography variant="h1" sx={{ mt: isMobile ? "12px" : "20px" }}>
-        {userType}
-      </Typography>
+      
+    
+      <Box
+        sx={{
+         backgroundColor: "white",
+         paddingTop:"20px"
+        }}>
       <Box
         sx={{
           display: "flex",
@@ -266,13 +276,60 @@ const HeaderComponent = ({
           gap: isMobile || isMediumScreen ? "8px" : "5%",
         }}
       >
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1 , paddingLeft:"16px",
+      paddingRight:"16px"
+      }}>
           <SearchBar onSearch={handleSearch} placeholder={searchPlaceHolder} />
         </Box>
-        <Box display={"flex"} gap={1} alignItems={"center"}>
+        {showAddNew && (
+
+        <Box display={"flex"} gap={1} alignItems={"center"} 
+          sx={{
+             display: "flex",
+            justifyContent: "center",
+             alignItems: "center",
+            // height: "40px",
+             width: isMobile ? "70%" : "200px",
+            borderRadius: "20px",
+            border: "1px solid #1E1B16",
+          //  mt: isMobile ? "10px" : "16px",
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+            mr:'10px',
+            ml:isMobile ? "50px": isMediumScreen ?"10px":undefined,
+            mt:isMobile ? "10px": isMediumScreen ?"10px":undefined
+          }}
+        >
+         
+           <Button
+            //  variant="contained"
+            startIcon={<AddIcon />}
+            sx={{
+              textTransform: "none",
+              fontSize: "14px",
+              color: theme.palette.primary["100"],
+            }}
+            onClick={handleAddUserClick}
+
+          >
+            {t("COMMON.ADD_NEW")}
+          </Button>
+        </Box>)}
+      </Box>
+      {showAddNew && (
+        <Box
+          sx={{
+            display: "flex",
+            
+            ml:"10px",
+            mt: isMobile ? "10px" : "16px",
+            mb:"10px",
+            gap:"15px"          // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+         
           {showFilter && (
             <>
-              <Typography variant="h3">
+              <Typography variant="h3" mt="10px">
                 {t("COMMON.FILTER_BY_STATUS")}
               </Typography>
               <FormControl sx={{ minWidth: "120px" }}>
@@ -284,6 +341,7 @@ const HeaderComponent = ({
                     borderRadius: "8px",
                     height: "40px",
                     fontSize: "14px",
+                    backgroundColor: theme.palette.secondary["100"],
                   }}
                 >
                   <MenuItem value="All">{t("COMMON.ALL")}</MenuItem>
@@ -297,7 +355,7 @@ const HeaderComponent = ({
             </>
           )}
           {showSort && (
-            <FormControl sx={{ minWidth: "120px" }}>
+            <FormControl sx={{ minWidth: "120px"  }}>
               <Select
                 value={selectedSort}
                 onChange={handleSortChange}
@@ -306,6 +364,8 @@ const HeaderComponent = ({
                   borderRadius: "8px",
                   height: "40px",
                   fontSize: "14px",
+                  backgroundColor: theme.palette.secondary["100"],
+
                 }}
               >
                 <MenuItem value="Sort">{t("COMMON.SORT")}</MenuItem>
@@ -318,36 +378,10 @@ const HeaderComponent = ({
             </FormControl>
           )}
         </Box>
-      </Box>
-      {showAddNew && (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "40px",
-            width: isMobile || isMediumScreen ? "100%" : "200px",
-            borderRadius: "20px",
-            border: "1px solid #1E1B16",
-            mt: isMobile ? "10px" : "16px",
-            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-          }}
-          onClick={handleAddUserClick}
-        >
-          <Button
-            //  variant="contained"
-            startIcon={<AddIcon />}
-            sx={{
-              textTransform: "none",
-              fontSize: "14px",
-              color: theme.palette.primary["100"],
-            }}
-          >
-            {t("COMMON.ADD_NEW")}
-          </Button>
-        </Box>
       )}
       {children}
+      </Box>
+     
     </Box>
   );
 };

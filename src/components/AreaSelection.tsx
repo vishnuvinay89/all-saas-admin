@@ -1,9 +1,11 @@
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import MultipleSelectCheckmarks from "./FormControl";
 import { capitalizeFirstLetterOfEachWordInArray} from "@/utils/Helper";
+import {  useMediaQuery } from "@mui/material";
+
 interface State {
   value: string;
   label: string;
@@ -52,7 +54,8 @@ interface DropdownBoxProps {
   isMobile: boolean;
   isMediumScreen: boolean;
   isCenterSelection?: boolean;
-  stateDefaultValue?:string
+  stateDefaultValue?:string;
+  userType?: string
 }
 
 const AreaSelection: React.FC<DropdownBoxProps> = ({
@@ -72,14 +75,18 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
   isCenterSelection = false,
   inModal=false,
   handleCenterChangeWrapper = () => {},
-  stateDefaultValue
+  stateDefaultValue,
+  userType
 }) => {
+
   const { t } = useTranslation();
   const theme = useTheme<any>();
-console.log("rama", selectedState)
 const [singleState, setSingleState] = useState <boolean>(true);
 const [stateValue, setStateValue] = useState <string>("");
 const [stateCode, setStateCode] = useState <string>("");
+const isSmallScreen = useMediaQuery((theme: any) =>
+theme.breakpoints.down("sm"),
+);
 
 
 
@@ -88,15 +95,44 @@ const [stateCode, setStateCode] = useState <string>("");
       sx={{
         display: "flex",
         flexDirection: "column",
-        backgroundColor: theme.palette.secondary["200"],
-        p: isMobile ? "8px" : "16px",
+        //backgroundColor: theme.palette.secondary["200"],
+        // p: isMobile ? "8px" : "16px",
         borderRadius: "8px",
-        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+       // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
       }}
     >
-      <Grid container spacing={isMobile ? 1 : 2}>
-        <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
-          <MultipleSelectCheckmarks
+
+      <Box
+       sx={{
+        display: "flex",
+        flexDirection: isSmallScreen || isMediumScreen?"column" :"row",
+       }}
+      >
+       {  userType && (<Typography marginTop="20px" variant="h1">
+      {userType} 
+      </Typography>)
+}
+    {  !isSmallScreen && (<Box
+       sx={{
+        display: "flex",
+        flexDirection: "row",
+      justifyContent: inModal? "center":"flex-end", 
+       marginLeft:  inModal? undefined: "auto", 
+
+
+       }}>
+
+       </Box>)
+}
+       <Box
+        sx={{
+          display: "flex",
+          flexDirection: isSmallScreen?"column":"row",
+          alignItems:isSmallScreen?"center": undefined,
+          justifyContent: isSmallScreen? "center": undefined
+         }}>
+
+       <MultipleSelectCheckmarks
             names={states?.map(
               (state) =>
                 state.label?.toLowerCase().charAt(0).toUpperCase() +
@@ -111,8 +147,6 @@ const [stateCode, setStateCode] = useState <string>("");
             defaultValue={ stateDefaultValue}
 
           />
-        </Grid>
-        <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
           <MultipleSelectCheckmarks
             names={districts?.map((districts) => districts.label)}
             codes={districts?.map((districts) => districts.value)}
@@ -124,9 +158,7 @@ const [stateCode, setStateCode] = useState <string>("");
             defaultValue={t("COMMON.ALL_DISTRICTS")}
 
           />
-        </Grid>
-        <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
-          <MultipleSelectCheckmarks
+           <MultipleSelectCheckmarks
             names={blocks?.map((blocks) => blocks.label)}
             codes={blocks?.map((blocks) => blocks.value)}
             tagName={t("FACILITATORS.BLOCK")}
@@ -138,10 +170,7 @@ const [stateCode, setStateCode] = useState <string>("");
             overall={!inModal}
             defaultValue={t("COMMON.ALL_BLOCKS")}
           />
-        </Grid>
-        {isCenterSelection && (
-          <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
-            <MultipleSelectCheckmarks
+         { isCenterSelection && ( <MultipleSelectCheckmarks
               names={capitalizeFirstLetterOfEachWordInArray(allCenters?.map((centers) => centers.name))}
               codes={allCenters?.map((centers) => centers.cohortId)}
               tagName={t("CENTERS.CENTERS")}
@@ -149,10 +178,13 @@ const [stateCode, setStateCode] = useState <string>("");
               onCategoryChange={handleCenterChangeWrapper}
               disabled={selectedBlock.length === 0 || selectedCenter[0] === ""}
               overall={!inModal}
-              />
-          </Grid>
-        )}
-      </Grid>
+              />)
+         }
+      </Box>
+
+       </Box>
+     
+      
     </Box>
   );
 };
