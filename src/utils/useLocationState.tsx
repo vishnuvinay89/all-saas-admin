@@ -122,13 +122,18 @@ export const useLocationState = (
             },
           };
           const response = await getCenterList(object);
-          setSelectedBlockCohortId(
-            response?.result?.results?.cohortDetails[0].cohortId
-          );
-          console.log(
-            "response?.result?.results?.cohortDetails[0].cohortId",
-            response?.result?.results?.cohortDetails[0].cohortId
-          );
+          const getCohortDetails = response?.result?.results?.cohortDetails;
+          const blockId = getCohortDetails?.map((item: any) => {
+            if (item?.type === "BLOCK") {
+              return item?.cohortId;
+            }
+          });
+          if (blockId) {
+            console.log("blockId", blockId[0]);
+            setSelectedBlockCohortId(blockId[0]);
+          } else {
+            console.log("No Block Id found");
+          }
         } else {
           const getCentersObject = {
             limit: 200,

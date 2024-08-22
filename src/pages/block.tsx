@@ -151,39 +151,17 @@ const Block: React.FC = () => {
       },
     };
 
-    console.log("reqParams block", reqParams);
-
     const response = await getCohortList(reqParams);
-    console.log("getCohortData", response);
 
     const cohortDetails = response?.results?.cohortDetails;
-    console.log("cohort detail at block", cohortDetails);
 
     if (cohortDetails && cohortDetails.length > 0) {
-      cohortDetails.forEach(
-        (cohort: { customFields: any; cohortId: any; status: any }) => {
-          const cohortId = cohort?.cohortId;
-          const cohortStatus = cohort?.status;
+      const firstCohort = cohortDetails[0];
+      const cohortID = firstCohort?.cohortId;
+      const cohortSTATUS = firstCohort?.status;
 
-          setCohortStatus(cohortStatus);
-          setCohortId(cohortId);
-
-          const addCustomFieldsState = {
-            fieldId: stateFieldId,
-            value: stateCode,
-          };
-          cohort.customFields.push(addCustomFieldsState);
-
-          const addCustomFieldsDistrict = {
-            fieldId: districtFieldId,
-            value: selectedDistrict,
-          };
-          cohort.customFields.push(
-            addCustomFieldsState,
-            addCustomFieldsDistrict
-          );
-        }
-      );
+      setCohortId(cohortID);
+      setCohortStatus(cohortSTATUS);
     } else {
       console.error("No cohort details available.");
     }
@@ -255,7 +233,7 @@ const Block: React.FC = () => {
     },
     {
       key: "value",
-      title: t("MASTER.BLOCK_CODE"),
+      title: t("MASTER.CODE"),
       dataType: DataType.String,
       width: "130",
     },
@@ -426,39 +404,48 @@ const Block: React.FC = () => {
       const response = await createOrUpdateOption(blocksFieldId, newDistrict);
 
       console.log("submit response district", response);
-      const queryParameters = {
-        name: name,
-        type: "BLOCK",
-        status: cohortStatus,
-        parentId: cohortId, //cohortId of district
-        customFields: [
-          {
-            fieldId: stateFieldId, // state fieldId
-            value: [stateCode], // state code
-          },
-
-          {
-            fieldId: districtFieldId, // district fieldId
-            value: [controllingField], // district code
-          },
-        ],
-      };
-
-      const cohortList = await createCohort(queryParameters);
-
-      console.log("fetched cohorlist in block success", cohortList);
 
       if (response) {
-        fetchBlocks(blocksFieldId);
-        showToastMessage(t("COMMON.BLOCK_ADDED_SUCCESS"), "success");
-      } else {
-        showToastMessage(t("COMMON.BLOCK_ADDED_FAILURE"), "success");
+        await fetchBlocks(blocksFieldId || "");
       }
     } catch (error) {
       console.error("Error adding block:", error);
-      showToastMessage(t("COMMON.BLOCK_UPDATED_FAILURE"), "error");
     }
 
+    const queryParameters = {
+      name: name,
+      type: "BLOCK",
+      status: cohortStatus,
+      parentId: cohortId, //cohortId of district
+      customFields: [
+        {
+          fieldId: stateFieldId, // state fieldId
+          value: [stateCode], // state code
+        },
+
+        {
+          fieldId: districtFieldId, // district fieldId
+          value: [controllingField], // district code
+        },
+      ],
+    };
+
+    console.log("queryParameters block", queryParameters);
+
+    const cohortList = await createCohort(queryParameters);
+
+    console.log("fetched cohorlist in block success", cohortList);
+
+    try {
+      if (cohortList) {
+        showToastMessage(t("COMMON.BLOCK_UPDATED_SUCCESS"), "success");
+      } else if (cohortList.responseCode === 409) {
+        showToastMessage(t("COMMON.BLOCK_DUPLICATION_FAILURE"), "error");
+      }
+    } catch (error) {
+      console.error("Error creating cohort:", error);
+      showToastMessage(t("COMMON.BLOCK_DUPLICATION_FAILURE"), "error");
+    }
     setModalOpen(false);
     setSelectedStateForEdit(null);
   };
@@ -509,7 +496,7 @@ const Block: React.FC = () => {
             display="flex"
             justifyContent="center"
             alignItems="center"
-            height="20vh" // Adjust height as needed
+            height="20vh"
           >
             <Loader showBackdrop={false} loadingText="Loading..." />
           </Box>
@@ -529,6 +516,7 @@ const Block: React.FC = () => {
               <FormControl
                 sx={{
                   width: "25%",
+                  marginLeft: 2,
                   "@media (max-width: 580px)": {
                     width: "100%",
                   },
@@ -556,7 +544,7 @@ const Block: React.FC = () => {
                 }}
               >
                 <InputLabel
-                  sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
+                  sx={{ backgroundColor: "white", padding: "2px 8px" }}
                   id="district-select-label"
                 >
                   {t("MASTER.DISTRICTS")}
@@ -585,7 +573,7 @@ const Block: React.FC = () => {
                   display="flex"
                   justifyContent="center"
                   alignItems="center"
-                  height="20vh" // Adjust height as needed
+                  height="20vh"
                 >
                   <Loader showBackdrop={false} loadingText="Loading..." />
                 </Box>
@@ -619,7 +607,7 @@ const Block: React.FC = () => {
                   display="flex"
                   justifyContent="center"
                   alignItems="center"
-                  height="20vh" // Adjust height as needed
+                  height="20vh"
                 >
                   <Typography marginTop="10px" textAlign="center">
                     {t("COMMON.BLOCKS_NOT_FOUND")}

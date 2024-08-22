@@ -62,16 +62,16 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             p: 2,
           }}
         >
+        
+
           <Button
             sx={{
-              border: "none",
               color: "secondary",
               fontSize: "14px",
               fontWeight: "500",
-              "&:hover": {
-                border: "none",
-                backgroundColor: "transparent",
-              },
+              width: "auto",
+              height: "40px",
+              marginLeft: "10px",
             }}
             variant="outlined"
             onClick={handleCloseModal}

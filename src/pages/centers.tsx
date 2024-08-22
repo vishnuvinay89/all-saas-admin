@@ -96,7 +96,7 @@ const Center: React.FC = () => {
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [selectedFilter, setSelectedFilter] = useState("Active");
   const [cohortData, setCohortData] = useState<cohortFilterDetails[]>([]);
-  const [pageSize, setPageSize] = React.useState<string | number>("10");
+  const [pageSize, setPageSize] = React.useState<string | number>(10);
   const [confirmationModalOpen, setConfirmationModalOpen] =
     React.useState<boolean>(false);
   const [selectedCohortId, setSelectedCohortId] = React.useState<string>("");
@@ -146,7 +146,7 @@ const Center: React.FC = () => {
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
-
+ 
   const getAdminInformation = () => {
     if (typeof window !== "undefined" && window.localStorage) {
       const admin = localStorage.getItem("adminInfo");
@@ -161,12 +161,19 @@ const Center: React.FC = () => {
             label: stateField.value,
           },
         ];
+
         setStatesInformation(object);
-        console.log("object", object[0]?.value);
         setSelectedStateCode(object[0]?.value);
+
+        setFilters({
+          type: "COHORT",
+          states: object[0]?.value,
+          status: filters.status,
+        });
       }
     }
   };
+  
 
   // use api calls
   useEffect(() => {
@@ -177,15 +184,15 @@ const Center: React.FC = () => {
 
     // get form data for center create
     getAddCenterFormData();
-    getAdminInformation();
     // getCohortMemberlistData();
+    getAdminInformation();
   }, []);
 
   const fetchUserList = async () => {
     setLoading(true);
     try {
       const limit = pageLimit;
-      const offset = filters?.name ? 0 : pageOffset * limit;
+      const offset = pageOffset * limit;
       const sort = sortBy;
 
       const data = {
@@ -327,9 +334,10 @@ const Center: React.FC = () => {
   };
 
   useEffect(() => {
+
     fetchUserList();
     getFormData();
-  }, [pageOffset, pageLimit, sortBy, filters]);
+  }, [pageOffset, pageLimit, sortBy, filters, filters.states, filters.status]);
 
   // handle functions
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
@@ -510,16 +518,22 @@ const Center: React.FC = () => {
   };
 
   const handleSearch = (keyword: string) => {
+    setPageOffset(Numbers.ZERO);
+    setPageCount(Numbers.ONE);
     setFilters((prevFilters) => ({
       ...prevFilters,
       name: keyword,
     }));
   };
 
-  const handleFilterChange = async (event: React.SyntheticEvent, newValue: any) => {
-    setStatusValue(newValue)
+const handleFilterChange = async (event: React.SyntheticEvent, newValue: any) => {
+  setStatusValue(newValue)
 
-    setSelectedFilter(newValue);
+  setSelectedFilter(newValue);
+  setPageSize(Numbers.TEN);
+    setPageLimit(Numbers.TEN);
+    setPageOffset(Numbers.ZERO);
+    setPageCount(Numbers.ONE);
 
     if (newValue === Status.ACTIVE) {
       setFilters((prevFilters) => ({
@@ -747,32 +761,7 @@ const Center: React.FC = () => {
     fetchData();
   }, []);
 
-  // const fetchUserDetail = async () => {
-  //   let userId;
-  //   try {
-  //     if (typeof window !== "undefined" && window.localStorage) {
-  //       userId = localStorage.getItem(Storage.USER_ID);
-  //     }
-  //     const fieldValue = true;
-  //     if (userId) {
-  //       console.log("true");
-  //       const response = await getUserDetailsInfo(userId, fieldValue);
-
-  //       const userInfo = response?.userData;
-  //       //set user info in zustand store
-  //       if (typeof window !== 'undefined' && window.localStorage) {
-  //         localStorage.setItem('adminInfo', JSON.stringify(userInfo))
-  //       }
-  //       setAdminInformation(userInfo);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchUserDetail();
-  // }, []);
+  
 
   // props to send in header
   const userProps = {
@@ -793,32 +782,12 @@ const Center: React.FC = () => {
     showAddNew: true,
     handleAddUserClick: handleAddUserClick,
     statusValue:statusValue,
-    setStatusValue:setStatusValue
+    setStatusValue:setStatusValue,
+    showSort: cohortData?.length > 0,
   };
 
   return (
     <>
-      {/* <CustomModal
-        open={editModelOpen}
-        handleClose={onCloseEditMOdel}
-        title={t("COMMON.EDIT_CENTER_NAME")}
-        // subtitle={t("COMMON.NAME")}
-        primaryBtnText={t("COMMON.UPDATE_CENTER")}
-        secondaryBtnText="Cancel"
-        // primaryBtnClick={handleUpdateAction}
-        primaryBtnDisabled={confirmButtonDisable}
-        secondaryBtnClick={onCloseEditMOdel}
-      >
-        <Box>
-          <TextField
-            id="standard-basic"
-            label="Center Name"
-            variant="standard"
-            value={inputName}
-            onChange={handleInputName}
-          />
-        </Box>
-      </CustomModal> */}
       <ConfirmationModal
         message={
           t("CENTERS.SURE_DELETE_CENTER") +

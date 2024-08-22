@@ -244,9 +244,6 @@ const District: React.FC = () => {
 
       if (response) {
         await fetchDistrictData(searchKeyword);
-        // showToastMessage(t("COMMON.DISTRICT_ADDED_SUCCESS"), "success");
-      } else {
-        // showToastMessage(t("COMMON.DISTRICT_ADDED_FAILURE"), "error");
       }
     } catch (error) {
       console.error("Error adding district:", error);
@@ -392,7 +389,7 @@ const District: React.FC = () => {
             <Box display="flex" gap={2}>
               <FormControl
                 variant="outlined"
-                sx={{ minWidth: 220, marginTop: 2 }}
+                sx={{ minWidth: 220, marginTop: 1, mb: 2, marginLeft: 2 }}
               >
                 <InputLabel id="state-select-label">{stateValue}</InputLabel>
                 <Select labelId="state-select-label" id="state-select" disabled>
@@ -414,7 +411,7 @@ const District: React.FC = () => {
                   },
                   {
                     key: "value",
-                    title: t("MASTER.DISTRICT_CODE"),
+                    title: t("MASTER.CODE"),
                     dataType: DataType.String,
                     width: "130",
                   },
