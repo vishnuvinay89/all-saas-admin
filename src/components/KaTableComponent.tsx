@@ -184,6 +184,20 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                 return <div className="table-cell">{props?.value}</div>;
               },
             },
+            dataRow: {
+              elementAttributes: ({ rowData }) => {
+                // Condition to disable or style the row
+                const isDisabled = rowData.status === Status.ARCHIVED;
+
+                return {
+                  className: isDisabled ? "disabled-row" : "",
+                  style: isDisabled
+                    ? { pointerEvents: "none", opacity: 0.5 }
+                    : {},
+                };
+              },
+            },
+
             // headCell: {
             //   content: (props) => {
             //     return <div className="table-header">{props?.column?.title}</div>;
