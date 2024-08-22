@@ -3,7 +3,7 @@ import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import MultipleSelectCheckmarks from "./FormControl";
-import { capitalizeFirstLetterOfEachWordInArray} from "@/utils/Helper";
+import { capitalizeFirstLetterOfEachWordInArray } from "@/utils/Helper";
 interface State {
   value: string;
   label: string;
@@ -31,28 +31,28 @@ interface DropdownBoxProps {
   selectedDistrict: string[];
   selectedBlock: string[];
   selectedCenter?: any;
-  inModal?:boolean
+  inModal?: boolean;
   handleStateChangeWrapper: (
     selectedNames: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => Promise<void>;
   handleDistrictChangeWrapper: (
     selected: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => Promise<void>;
   handleBlockChangeWrapper: (
     selected: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => void;
   handleCenterChangeWrapper?: (
     selected: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => void;
 
   isMobile: boolean;
   isMediumScreen: boolean;
   isCenterSelection?: boolean;
-  stateDefaultValue?:string
+  stateDefaultValue?: string;
 }
 
 const AreaSelection: React.FC<DropdownBoxProps> = ({
@@ -70,18 +70,16 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
   isMobile,
   isMediumScreen,
   isCenterSelection = false,
-  inModal=false,
+  inModal = false,
   handleCenterChangeWrapper = () => {},
-  stateDefaultValue
+  stateDefaultValue,
 }) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
-console.log("rama", selectedState)
-const [singleState, setSingleState] = useState <boolean>(true);
-const [stateValue, setStateValue] = useState <string>("");
-const [stateCode, setStateCode] = useState <string>("");
-
-
+  console.log("rama", selectedState);
+  const [singleState, setSingleState] = useState<boolean>(true);
+  const [stateValue, setStateValue] = useState<string>("");
+  const [stateCode, setStateCode] = useState<string>("");
 
   return (
     <Box
@@ -100,16 +98,17 @@ const [stateCode, setStateCode] = useState <string>("");
             names={states?.map(
               (state) =>
                 state.label?.toLowerCase().charAt(0).toUpperCase() +
-                state.label?.toLowerCase().slice(1),
+                state.label?.toLowerCase().slice(1)
             )}
             codes={states?.map((state) => state.value)}
             tagName={t("FACILITATORS.STATE")}
             selectedCategories={selectedState}
             onCategoryChange={handleStateChangeWrapper}
-            disabled={stateDefaultValue=== t("COMMON.ALL_STATES")? false: true}
+            disabled={
+              stateDefaultValue === t("COMMON.ALL_STATES") ? false : true
+            }
             overall={!inModal}
-            defaultValue={ stateDefaultValue}
-
+            defaultValue={stateDefaultValue}
           />
         </Grid>
         <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
@@ -119,10 +118,13 @@ const [stateCode, setStateCode] = useState <string>("");
             tagName={t("FACILITATORS.DISTRICT")}
             selectedCategories={selectedDistrict}
             onCategoryChange={handleDistrictChangeWrapper}
-            disabled={selectedState.length===0 &&  stateDefaultValue=== t("COMMON.ALL_STATES")}
+            disabled={
+              districts?.length <= 0 ||
+              (selectedState.length === 0 &&
+                stateDefaultValue === t("COMMON.ALL_STATES"))
+            }
             overall={!inModal}
-            defaultValue={t("COMMON.ALL_DISTRICTS")}
-
+            defaultValue={districts?.length <= 0 ? t("COMMON.NO_DISTRICTS"):t("COMMON.ALL_DISTRICTS")}
           />
         </Grid>
         <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
@@ -133,23 +135,32 @@ const [stateCode, setStateCode] = useState <string>("");
             selectedCategories={selectedBlock}
             onCategoryChange={handleBlockChangeWrapper}
             disabled={
-              selectedDistrict?.length === 0 || (selectedDistrict && selectedDistrict[0] === "" || selectedDistrict[0] === t("COMMON.ALL_DISTRICTS"))
+              blocks?.length <= 0 ||
+              selectedDistrict?.length === 0 ||
+              (selectedDistrict && selectedDistrict[0] === "") ||
+              selectedDistrict[0] === t("COMMON.ALL_DISTRICTS")
             }
             overall={!inModal}
-            defaultValue={t("COMMON.ALL_BLOCKS")}
+            defaultValue={
+              blocks?.length <= 0
+                ? t("COMMON.NO_BLOCKS")
+                : t("COMMON.ALL_BLOCKS")
+            }
           />
         </Grid>
         {isCenterSelection && (
           <Grid item xs={12} sm={isMediumScreen ? 12 : 3}>
             <MultipleSelectCheckmarks
-              names={capitalizeFirstLetterOfEachWordInArray(allCenters?.map((centers) => centers.name))}
+              names={capitalizeFirstLetterOfEachWordInArray(
+                allCenters?.map((centers) => centers.name)
+              )}
               codes={allCenters?.map((centers) => centers.cohortId)}
               tagName={t("CENTERS.CENTERS")}
               selectedCategories={selectedCenter}
               onCategoryChange={handleCenterChangeWrapper}
               disabled={selectedBlock.length === 0 || selectedCenter[0] === ""}
               overall={!inModal}
-              />
+            />
           </Grid>
         )}
       </Grid>
