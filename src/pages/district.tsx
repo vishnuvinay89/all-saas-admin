@@ -389,7 +389,7 @@ const District: React.FC = () => {
             <Box display="flex" gap={2}>
               <FormControl
                 variant="outlined"
-                sx={{ minWidth: 220, marginTop: 2 }}
+                sx={{ minWidth: 220, marginTop: 1, mb: 2, marginLeft: 2 }}
               >
                 <InputLabel id="state-select-label">{stateValue}</InputLabel>
                 <Select labelId="state-select-label" id="state-select" disabled>

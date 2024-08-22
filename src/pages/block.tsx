@@ -516,6 +516,7 @@ const Block: React.FC = () => {
               <FormControl
                 sx={{
                   width: "25%",
+                  marginLeft: 2,
                   "@media (max-width: 580px)": {
                     width: "100%",
                   },
@@ -543,7 +544,7 @@ const Block: React.FC = () => {
                 }}
               >
                 <InputLabel
-                  sx={{ backgroundColor: "#F7F7F7", padding: "2px 8px" }}
+                  sx={{ backgroundColor: "white", padding: "2px 8px" }}
                   id="district-select-label"
                 >
                   {t("MASTER.DISTRICTS")}
