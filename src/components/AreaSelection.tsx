@@ -33,22 +33,22 @@ interface DropdownBoxProps {
   selectedDistrict: string[];
   selectedBlock: string[];
   selectedCenter?: any;
-  inModal?:boolean
+  inModal?: boolean;
   handleStateChangeWrapper: (
     selectedNames: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => Promise<void>;
   handleDistrictChangeWrapper: (
     selected: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => Promise<void>;
   handleBlockChangeWrapper: (
     selected: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => void;
   handleCenterChangeWrapper?: (
     selected: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => void;
 
   isMobile: boolean;
@@ -73,7 +73,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
   isMobile,
   isMediumScreen,
   isCenterSelection = false,
-  inModal=false,
+  inModal = false,
   handleCenterChangeWrapper = () => {},
   stateDefaultValue,
   userType
@@ -136,16 +136,17 @@ theme.breakpoints.down("sm"),
             names={states?.map(
               (state) =>
                 state.label?.toLowerCase().charAt(0).toUpperCase() +
-                state.label?.toLowerCase().slice(1),
+                state.label?.toLowerCase().slice(1)
             )}
             codes={states?.map((state) => state.value)}
             tagName={t("FACILITATORS.STATE")}
             selectedCategories={selectedState}
             onCategoryChange={handleStateChangeWrapper}
-            disabled={stateDefaultValue=== t("COMMON.ALL_STATES")? false: true}
+            disabled={
+              stateDefaultValue === t("COMMON.ALL_STATES") ? false : true
+            }
             overall={!inModal}
-            defaultValue={ stateDefaultValue}
-
+            defaultValue={stateDefaultValue}
           />
           <MultipleSelectCheckmarks
             names={districts?.map((districts) => districts.label)}
@@ -153,10 +154,13 @@ theme.breakpoints.down("sm"),
             tagName={t("FACILITATORS.DISTRICT")}
             selectedCategories={selectedDistrict}
             onCategoryChange={handleDistrictChangeWrapper}
-            disabled={selectedState.length===0 &&  stateDefaultValue=== t("COMMON.ALL_STATES")}
+            disabled={
+              districts?.length <= 0 ||
+              (selectedState.length === 0 &&
+                stateDefaultValue === t("COMMON.ALL_STATES"))
+            }
             overall={!inModal}
-            defaultValue={t("COMMON.ALL_DISTRICTS")}
-
+            defaultValue={districts?.length <= 0 ? t("COMMON.NO_DISTRICTS"):t("COMMON.ALL_DISTRICTS")}
           />
            <MultipleSelectCheckmarks
             names={blocks?.map((blocks) => blocks.label)}
@@ -165,10 +169,17 @@ theme.breakpoints.down("sm"),
             selectedCategories={selectedBlock}
             onCategoryChange={handleBlockChangeWrapper}
             disabled={
-              selectedDistrict?.length === 0 || (selectedDistrict && selectedDistrict[0] === "" || selectedDistrict[0] === t("COMMON.ALL_DISTRICTS"))
+              blocks?.length <= 0 ||
+              selectedDistrict?.length === 0 ||
+              (selectedDistrict && selectedDistrict[0] === "") ||
+              selectedDistrict[0] === t("COMMON.ALL_DISTRICTS")
             }
             overall={!inModal}
-            defaultValue={t("COMMON.ALL_BLOCKS")}
+            defaultValue={
+              blocks?.length <= 0
+                ? t("COMMON.NO_BLOCKS")
+                : t("COMMON.ALL_BLOCKS")
+            }
           />
          { isCenterSelection && ( <MultipleSelectCheckmarks
               names={capitalizeFirstLetterOfEachWordInArray(allCenters?.map((centers) => centers.name))}

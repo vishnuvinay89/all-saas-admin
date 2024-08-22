@@ -18,7 +18,8 @@
 }
 
 .ka-cell {
-  line-height: 24px;
+  line-height: 24px !important;
+  word-wrap: break-word;
 }
 
 @media (max-width: 768px) {
