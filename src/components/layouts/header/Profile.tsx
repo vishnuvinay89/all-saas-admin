@@ -219,8 +219,9 @@ const Profile = () => {
         aria-controls="profile-menu"
         aria-haspopup="true"
         onClick={handleClick4}
+        sx={{ border: "none" }}
       >
-        <Box display="flex" alignItems="center" color="white">
+        <Box display="flex" alignItems="center" color="#1F1B13">
           <AccountCircleIcon />
           <Box
             sx={{
@@ -238,7 +239,7 @@ const Profile = () => {
             </Typography>
             <Typography
               variant="body1"
-              fontWeight="700"
+              fontWeight="400"
               sx={{
                 ml: 1,
                 maxWidth: "200px",
