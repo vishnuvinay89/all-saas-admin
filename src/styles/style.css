@@ -9,15 +9,15 @@
 }
 
 .table-cell {
-  font-size: medium;
+  font-size: 14px;
 }
 
 .ka-table {
-  font-size: medium;
+  font-size: 14px;
 }
 
 .ka-cell {
-  line-height: 24px !important;
+  line-height: 24px;
 }
 
 @media (max-width: 768px) {
