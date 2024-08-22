@@ -6,6 +6,7 @@ import FormControl from "@mui/material/FormControl";
 import ListItemText from "@mui/material/ListItemText";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useTranslation } from "next-i18next";
+import {  useMediaQuery } from "@mui/material";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -40,6 +41,11 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
   defaultValue,
 }) => {
   const { t } = useTranslation();
+  const isSmallScreen = useMediaQuery((theme: any) =>
+  theme.breakpoints.down("sm"),
+  );
+  const isMediumScreen = useMediaQuery("(max-width:900px)");
+
 
   const handleChange = (
     event: SelectChangeEvent<typeof selectedCategories>,
@@ -64,8 +70,9 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
 
   return (
     <div>
-      <FormControl sx={{ m: 1, width: 200 }} disabled={disabled}>
-        <InputLabel id="multiple-checkbox-label">{tagName}</InputLabel>
+      <FormControl sx={{ m: 1, width:  isSmallScreen?300: isMediumScreen?140:  200 }} disabled={disabled}>
+        <InputLabel id="multiple-checkbox-label"              
+>{tagName}</InputLabel>
         <Select
           labelId="multiple-checkbox-label"
           id="multiple-checkbox"
@@ -83,13 +90,14 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
         >
           {overall && (
             <MenuItem value="all">
-              <em>{t("COMMON.ALL")}</em>
+              <em
+              >{t("COMMON.ALL")}</em>
             </MenuItem>
           )}
 
           {names?.map((name) => (
             <MenuItem key={name} value={name}>
-              <ListItemText primary={name} />
+              <ListItemText  primary={name} />
             </MenuItem>
           ))}
         </Select>

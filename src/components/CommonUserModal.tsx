@@ -11,7 +11,7 @@ import {
 } from "@/services/CreateUserService";
 import { generateUsernameAndPassword } from "@/utils/Helper";
 import { FormData } from "@/utils/Interfaces";
-import { FormContext, FormContextType, RoleId , apiCatchingDuration} from "@/utils/app.constant";
+import { FormContext, FormContextType, RoleId ,Role, apiCatchingDuration} from "@/utils/app.constant";
 import { useLocationState } from "@/utils/useLocationState";
 import useSubmittedButtonStore from "@/utils/useSharedState";
 import { Box, Button, useTheme } from "@mui/material";
@@ -50,6 +50,8 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   const [schema, setSchema] = React.useState<any>();
   const [uiSchema, setUiSchema] = React.useState<any>();
   const [openModal, setOpenModal] = React.useState(false);
+  const [adminInfo, setAdminInfo] = React.useState<any>();
+
   const [submitButtonEnable, setSubmitButtonEnable] =
     React.useState<boolean>(false);
   const roleType = userType;
@@ -157,7 +159,6 @@ const CommonUserModal: React.FC<UserModalProps> = ({
         //   userType
         // );
         // console.log("sortedFields", response);
-        console.log(userType)
         
        const response : FormData = userType===FormContextType.TEACHER? teacherFormData: userType===FormContextType.STUDENT? studentFormData : teamLeaderFormData;
        //    console.log(studentFormData)
@@ -378,7 +379,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
         }
         const sendTo = {
         //  receipients: [userEmail],
-          receipients: userType === FormContextType.STUDENT?[adminInformation?.email]: [formData?.email],
+          receipients: userType === FormContextType.STUDENT?[adminInfo?.email]: [formData?.email],
 
         };
         if (replacements && sendTo) {
@@ -404,8 +405,9 @@ const CommonUserModal: React.FC<UserModalProps> = ({
               );
             }
           }
-        
-          if(userType===FormContextType.STUDENT && response?.result[0]?.data[0]?.status === 'success' && !isEditModal)
+        if(userType===FormContextType.STUDENT )
+        {
+          if( response?.result[0]?.data[0]?.status === 'success' && !isEditModal)
           {
             setOpenModal(true);
 
@@ -416,6 +418,8 @@ const CommonUserModal: React.FC<UserModalProps> = ({
               'success'
             );
           }
+        }
+          
           
 
         } else {
@@ -467,6 +471,13 @@ const CommonUserModal: React.FC<UserModalProps> = ({
       setSubmitButtonEnable(true);
     }
   }, [dynamicForm, dynamicFormForBlock, open]);
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const admin = localStorage.getItem("adminInfo");
+      if (admin) setAdminInfo(JSON.parse(admin));
+      console.log(adminInfo?.email)
+    }
+  }, []);
   return (
     <>
     <SimpleModal
@@ -506,13 +517,11 @@ const CommonUserModal: React.FC<UserModalProps> = ({
               // if (userType !== FormContextType.STUDENT && !isEditModal && noError) {
               //   setOpenModal(true);
               // }
-              // console.log(submittedButtonStatus)
-              setTimeout(() => {
+               console.log(submittedButtonStatus)
                 console.log(noError)
                 if (userType !== FormContextType.STUDENT && !isEditModal && noError) {
                   setOpenModal(true);
                 }
-              }, 100); 
               console.log("Submit button was clicked");
             }}
           >
@@ -611,9 +620,14 @@ const CommonUserModal: React.FC<UserModalProps> = ({
      handleBackAction={handleBackAction}
      open={openModal}
      onClose={onCloseModal}
-     email={(userType!==FormContextType.STUDENT)?userEnteredEmail: adminInformation?.email}
-     userType={userType}
-   />
+     email={(userType!==FormContextType.STUDENT)? userEnteredEmail: adminInfo?.email}
+     userType={
+      userType === FormContextType.STUDENT
+        ? Role.STUDENT
+        : userType === FormContextType.TEAM_LEADER
+        ? Role.TEAM_LEADER
+        : Role.TEACHER
+    }   />
    </>
   );
 };

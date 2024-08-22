@@ -149,11 +149,15 @@ const FullLayout = ({ children }: any) => {
         <Container
           maxWidth={false}
           sx={{
-            paddingTop: "20px",
+          //  paddingTop: "20px",
             paddingLeft: isSidebarOpen && lgUp ? "280px!important" : "",
+            backgroundColor: "#F3F5F8",
+
           }}
         >
-          <Box sx={{ minHeight: "calc(100vh - 170px)" }}>{children}</Box>
+          <Box 
+          sx={{ minHeight: "calc(100vh - 170px)" }}  >
+{children}</Box>
           <Footer />
         </Container>
       </PageWrapper>

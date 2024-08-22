@@ -114,12 +114,13 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                     />
                   );
                 }
-                if (props.column.key === DataKey?.UPDATED_AT) {
-                  return format(
+                if (props.column.key === DataKey?.UPDATED_AT && props.rowData?.updatedAt) {
+                  console.log(props.rowData?.updatedAt)
+                 return format(
                     props.rowData?.updatedAt,
                     DateFormat.YYYY_MM_DD
                   );
-                } else if (props.column.key === DataKey?.CREATED_AT) {
+                } else if (props.column.key === DataKey?.CREATED_AT &&  props.rowData?.createdAt) {
                   return format(
                     props.rowData?.createdAt,
                     DateFormat.YYYY_MM_DD

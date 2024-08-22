@@ -1,8 +1,12 @@
 import React from "react";
 import { useTranslation } from "next-i18next";
-import { Box, Typography, Tooltip, useTheme } from "@mui/material";
+import { Box, Typography, Tooltip,useTheme } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import deleteIcon from '../../public/images/deleteIcon.svg';
+import editIcon from '../../public/images/editIcon.svg';
+
+import Image from "next/image";
 
 interface ActionCellProps {
   onEdit: (rowData: any) => void;
@@ -40,12 +44,16 @@ const ActionIcon: React.FC<ActionCellProps> = ({
             alignItems: "center",
             cursor: "pointer",
             color: disable ? theme?.palette?.secondary.contrastText : "",
+            backgroundColor:"#E3EAF0",
+            p:"10px"
+
+
           }}
         >
-          <EditIcon />
-          <Typography variant="body2" fontFamily={"Poppins"}>
+<Image src={editIcon} alt="" />
+          {/* <Typography variant="body2" fontFamily={"Poppins"}>
             {t("COMMON.EDIT")}
-          </Typography>
+          </Typography> */}
         </Box>
       </Tooltip>
       <Tooltip title={t("COMMON.DELETE")}>
@@ -59,18 +67,15 @@ const ActionIcon: React.FC<ActionCellProps> = ({
             alignItems: "center",
             cursor: "pointer",
             color: disable ? theme?.palette?.secondary.contrastText : "",
+            backgroundColor:"#F8EFE7",
+            p:"10px"
           }}
         >
-          <DeleteIcon
-            sx={{
-              color: disable
-                ? theme?.palette?.secondary.contrastText
-                : "rgb(244, 67, 54)",
-            }}
-          />
+        <Image src={deleteIcon} alt="" />
+{/* 
           <Typography variant="body2" fontFamily={"Poppins"}>
             {t("COMMON.DELETE")}
-          </Typography>
+          </Typography> */}
         </Box>
       </Tooltip>
     </Box>

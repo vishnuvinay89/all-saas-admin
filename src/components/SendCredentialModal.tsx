@@ -1,11 +1,11 @@
 import { Box, Button, Divider, Modal, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'next-i18next';
 import CloseIcon from '@mui/icons-material/Close';
 import { showToastMessage } from './Toastify';
 import { sendCredentialService } from '@/services/NotificationService';
-import { FormContextType } from "@/utils/app.constant";
+import { FormContextType , Role} from "@/utils/app.constant";
 
 interface SendCredentialModalProps {
   open: boolean;
@@ -17,6 +17,7 @@ interface SendCredentialModalProps {
 
 
 }
+
 const SendCredentialModal: React.FC<SendCredentialModalProps> = ({
   open,
   onClose,
@@ -25,6 +26,7 @@ const SendCredentialModal: React.FC<SendCredentialModalProps> = ({
   userType,
   handleBackAction
 }) => {
+  console.log(email)
   const { t } = useTranslation();
   const theme = useTheme<any>();
   const style = {
@@ -60,18 +62,16 @@ const SendCredentialModal: React.FC<SendCredentialModalProps> = ({
           justifyContent={'space-between'}
           sx={{ padding: '18px 16px' }}
         >
-          <Box marginBottom={'0px'}>
-            <Typography
-              variant="h2"
-              sx={{
-                color: theme.palette.warning['A200'],
-                fontSize: '14px',
-              }}
-              component="h2"
-            >
-              {t('COMMON.NEW', { role: userType })}
-            </Typography>
-          </Box>
+          <Typography
+            variant="h2"
+            sx={{
+              color: theme.palette.warning['A200'],
+              fontSize: '14px',
+            }}
+            component="h2"
+          >
+            {t('COMMON.NEW', { role: userType })}
+          </Typography>
           <CloseIcon
             sx={{
               cursor: 'pointer',
@@ -81,7 +81,6 @@ const SendCredentialModal: React.FC<SendCredentialModalProps> = ({
           />
         </Box>
         <Divider />
-        {/* {isButtonAbsent ? ( */}
         <Box
           sx={{
             padding: '18px 16px',
@@ -93,95 +92,67 @@ const SendCredentialModal: React.FC<SendCredentialModalProps> = ({
             textAlign: 'center',
           }}
         >
-          <Box>
-            <Typography
-              variant="h2"
-              sx={{
-                color: theme.palette.warning['400'],
-                fontSize: '14px',
-              }}
-              component="h2"
-            >
-              {userType===FormContextType.STUDENT
-                ? t('COMMON.CREDENTIALS_EMAILED_OF_LEARNER')
-                : userType===FormContextType.TEAM_LEADER?t('COMMON.CREDENTIALS_EMAILED_OF_TEAM_LEADER', {email}): t('COMMON.CREDENTIALS_EMAILED_OF_FACILITATOR', {email})}
-            </Typography>
-          </Box>
-          
+          <Typography
+            variant="h2"
+            sx={{
+              color: theme.palette.warning['400'],
+              fontSize: '14px',
+            }}
+            component="h2"
+            marginRight="30px"
+          >
+            {userType === Role.STUDENT
+              ? t('COMMON.CREDENTIALS_EMAILED_OF_LEARNER',  { email })
+              : userType === Role.TEAM_LEADER
+              ? t('COMMON.CREDENTIALS_EMAILED_OF_TEAM_LEADER', { email })
+              : t('COMMON.CREDENTIALS_EMAILED_OF_FACILITATOR', { email })}
+          </Typography>
         </Box>
 
-        <>
-          <Box mt={1.5}>
-            <Divider />
-          </Box>
-          <Box p={'18px'} display={'flex'} gap={'1rem'}>
-            {/* <Button
-              className="w-100"
-              sx={{ boxShadow: 'none' }}
-              variant="outlined"
-              onClick={() => handleBackAction()}
+        <Box mt={1.5}>
+          <Divider />
+        </Box>
+        <Box
+          p="18px"
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          {userType === Role.STUDENT ? (
+            <Button
+              sx={{ boxShadow: 'none', marginLeft:"45%"}}
+              variant="contained"
+              onClick={handleBackActionForLearner}
+            
             >
-              {t('COMMON.BACK')}
-            </Button> */}
-           
-
-           {
-  userType === FormContextType.STUDENT ? (
-    <Button
-      className="w-100"
-      sx={{ boxShadow: 'none' }}
-      variant="contained"
-      onClick={handleBackActionForLearner}
-    >
-      {t('COMMON.OKAY')}
-    </Button>
-  ) : (
-    <>
-      <Button
-        className="w-100"
-        sx={{ boxShadow: 'none' }}
-        variant="outlined"
-       onClick={ handleBackAction}
-      >
-        {t('COMMON.BACK')}
-      </Button>
-      <Button
-            variant="contained"
-            type="submit"
-            form="dynamic-form" // Add this line
-            sx={{
-              fontSize: "14px",
-              fontWeight: "500",
-              width: "auto",
-              height: "40px",
-              marginLeft: "10px",
-            }}
-
-            color="primary"
-           // disabled={!submitButtonEnable}
-            // onClick={() => { 
-            //   if(userType!==FormContextType.STUDENT)
-            //          setOpenModal(true)
-            //   setSubmittedButtonStatus(true);
-            //   console.log("Submit button was clicked");
-            // }}
-          >
-        {t('COMMON.SEND_CREDENTIALS')}
-          </Button>
-      {/* <Button
-        className="w-100"
-        form="dynamic-form"
-        sx={{ boxShadow: 'none' }}
-        variant="contained"
-      >
-        {t('COMMON.SEND_CREDENTIALS')}
-      </Button> */}
-    </>
-  )
-}
-
-          </Box>
-        </>
+              {t('COMMON.OKAY')}
+            </Button>
+          ) : (
+            <>
+              <Button
+                sx={{ boxShadow: 'none' }}
+                variant="outlined"
+                onClick={handleBackAction}
+              >
+                {t('COMMON.BACK')}
+              </Button>
+              <Button
+                variant="contained"
+                type="submit"
+                form="dynamic-form"
+                sx={{
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  width: 'auto',
+                  height: '40px',
+                }}
+                color="primary"
+              >
+                {t('COMMON.SEND_CREDENTIALS')}
+              </Button>
+            </>
+          )}
+        </Box>
       </Box>
     </Modal>
   );

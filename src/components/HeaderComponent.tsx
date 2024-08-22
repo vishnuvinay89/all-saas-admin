@@ -12,8 +12,9 @@ import Select from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
+import { Role} from "@/utils/app.constant";
 
-import { getStateBlockDistrictList } from "../services/MasterDataService";
+import { getCenterList, getStateBlockDistrictList } from "../services/MasterDataService";
 import AreaSelection from "./AreaSelection";
 import { transformArray } from "../utils/Helper";
 
@@ -30,6 +31,10 @@ interface District {
 interface Block {
   value: string;
   label: string;
+}
+interface CenterProp {
+  cohortId: string;
+  name: string;
 }
 const Sort = ["A-Z", "Z-A"];
 const Filter = ["Active", "InActive"];
@@ -57,6 +62,8 @@ const HeaderComponent = ({
   showFilter = true,
   handleSearch,
   handleAddUserClick,
+  selectedCenter,
+  handleCenterChange
 }: any) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
@@ -65,6 +72,7 @@ const HeaderComponent = ({
   const [states, setStates] = useState<State[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
   const [stateDefaultValue, setStateDefaultValue] = useState<string>("");
+  const [allCenters, setAllCenters] = useState<CenterProp[]>([]);
 
   const [blocks, setBlocks] = useState<Block[]>([]);
 
@@ -118,12 +126,47 @@ const HeaderComponent = ({
     handleDistrictChange(selected, selectedCodes);
   };
 
-  const handleBlockChangeWrapper = (
+  const handleBlockChangeWrapper = async (
     selected: string[],
     selectedCodes: string[],
   ) => {
+    const getCentersObject = {
+      limit: 200,
+      offset: 0,
+      filters: {
+        // "type":"COHORT",
+        status: ["active"],
+        states: selectedStateCode,
+        districts: selectedDistrictCode,
+        blocks: selectedCodes[0],
+        // "name": selected[0]
+      },
+    };
+    const response = await getCenterList(getCentersObject);
+    console.log(response?.result?.results?.cohortDetails[0].cohortId);
+    // setSelectedBlockCohortId(
+    //   response?.result?.results?.cohortDetails[0].cohortId
+    // );
+    //   const result = response?.result?.cohortDetails;
+    const dataArray = response?.result?.results?.cohortDetails;
+
+    const cohortInfo = dataArray
+      ?.filter((cohort: any) => cohort.type !== "BLOCK")
+      .map((item: any) => ({
+        cohortId: item?.cohortId,
+        name: item?.name,
+      }));
+    console.log(dataArray);
+    setAllCenters(cohortInfo);
     handleBlockChange(selected, selectedCodes);
   };
+  const handleCenterChangeWrapper = (
+    selected: string[],
+    selectedCodes: string[],
+  ) => { 
+    handleCenterChange(selected, selectedCodes);
+
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -179,7 +222,7 @@ const HeaderComponent = ({
 
     fetchData();
   }, []);
-  console.log(selectedState)
+  console.log(userType)
 
   return (
     <Box
@@ -192,6 +235,11 @@ const HeaderComponent = ({
         borderRadius: "8px",
       }}
     >
+{!showStateDropdown && ( <Typography variant="h1" sx={{ mt: isMobile ? "12px" : "20px" }}>
+        {userType}
+      </Typography>)
+    }
+
       {showStateDropdown && (
         <AreaSelection
           states={transformArray(states)}
@@ -206,12 +254,21 @@ const HeaderComponent = ({
           isMobile={isMobile}
           isMediumScreen={isMediumScreen}
           inModal={false}
+          isCenterSelection={userType === Role.FACILITATORS || userType === Role.LEARNERS}
           stateDefaultValue={stateDefaultValue}
+          allCenters={allCenters}
+            selectedCenter={selectedCenter}
+            handleCenterChangeWrapper={handleCenterChangeWrapper}
+            userType={userType}
         />
       )}
-      <Typography variant="h1" sx={{ mt: isMobile ? "12px" : "20px" }}>
-        {userType}
-      </Typography>
+      
+    
+      <Box
+        sx={{
+         backgroundColor: "white",
+         paddingTop:"20px"
+        }}>
       <Box
         sx={{
           display: "flex",
@@ -219,13 +276,60 @@ const HeaderComponent = ({
           gap: isMobile || isMediumScreen ? "8px" : "5%",
         }}
       >
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1 , paddingLeft:"16px",
+      paddingRight:"16px"
+      }}>
           <SearchBar onSearch={handleSearch} placeholder={searchPlaceHolder} />
         </Box>
-        <Box display={"flex"} gap={1} alignItems={"center"}>
+        {showAddNew && (
+
+        <Box display={"flex"} gap={1} alignItems={"center"} 
+          sx={{
+             display: "flex",
+            justifyContent: "center",
+             alignItems: "center",
+            // height: "40px",
+             width: isMobile ? "70%" : "200px",
+            borderRadius: "20px",
+            border: "1px solid #1E1B16",
+          //  mt: isMobile ? "10px" : "16px",
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+            mr:'10px',
+            ml:isMobile ? "50px": isMediumScreen ?"10px":undefined,
+            mt:isMobile ? "10px": isMediumScreen ?"10px":undefined
+          }}
+        >
+         
+           <Button
+            //  variant="contained"
+            startIcon={<AddIcon />}
+            sx={{
+              textTransform: "none",
+              fontSize: "14px",
+              color: theme.palette.primary["100"],
+            }}
+            onClick={handleAddUserClick}
+
+          >
+            {t("COMMON.ADD_NEW")}
+          </Button>
+        </Box>)}
+      </Box>
+      {showAddNew && (
+        <Box
+          sx={{
+            display: "flex",
+            
+            ml:"10px",
+            mt: isMobile ? "10px" : "16px",
+            mb:"10px",
+            gap:"15px"          // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+         
           {showFilter && (
             <>
-              <Typography variant="h3">
+              <Typography variant="h3" mt="10px">
                 {t("COMMON.FILTER_BY_STATUS")}
               </Typography>
               <FormControl sx={{ minWidth: "120px" }}>
@@ -237,6 +341,7 @@ const HeaderComponent = ({
                     borderRadius: "8px",
                     height: "40px",
                     fontSize: "14px",
+                    backgroundColor: theme.palette.secondary["100"],
                   }}
                 >
                   <MenuItem value="All">{t("COMMON.ALL")}</MenuItem>
@@ -250,7 +355,7 @@ const HeaderComponent = ({
             </>
           )}
           {showSort && (
-            <FormControl sx={{ minWidth: "120px" }}>
+            <FormControl sx={{ minWidth: "120px"  }}>
               <Select
                 value={selectedSort}
                 onChange={handleSortChange}
@@ -259,6 +364,8 @@ const HeaderComponent = ({
                   borderRadius: "8px",
                   height: "40px",
                   fontSize: "14px",
+                  backgroundColor: theme.palette.secondary["100"],
+
                 }}
               >
                 <MenuItem value="Sort">{t("COMMON.SORT")}</MenuItem>
@@ -271,36 +378,10 @@ const HeaderComponent = ({
             </FormControl>
           )}
         </Box>
-      </Box>
-      {showAddNew && (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "40px",
-            width: isMobile || isMediumScreen ? "100%" : "200px",
-            borderRadius: "20px",
-            border: "1px solid #1E1B16",
-            mt: isMobile ? "10px" : "16px",
-            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-          }}
-          onClick={handleAddUserClick}
-        >
-          <Button
-            //  variant="contained"
-            startIcon={<AddIcon />}
-            sx={{
-              textTransform: "none",
-              fontSize: "14px",
-              color: theme.palette.primary["100"],
-            }}
-          >
-            {t("COMMON.ADD_NEW")}
-          </Button>
-        </Box>
       )}
       {children}
+      </Box>
+     
     </Box>
   );
 };
