@@ -7,16 +7,21 @@ import {
   MenuItem,
   Typography,
   useMediaQuery,
+  Divider,
+ 
+  
 } from "@mui/material";
 import Select from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
-import { Role} from "@/utils/app.constant";
-
+import { Role, Status} from "@/utils/app.constant";
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { getCenterList, getStateBlockDistrictList } from "../services/MasterDataService";
 import AreaSelection from "./AreaSelection";
 import { transformArray } from "../utils/Helper";
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 
 interface State {
   value: string;
@@ -63,7 +68,10 @@ const HeaderComponent = ({
   handleSearch,
   handleAddUserClick,
   selectedCenter,
-  handleCenterChange
+  handleCenterChange,
+  statusValue,
+
+  setStatusValue
 }: any) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
@@ -222,7 +230,10 @@ const HeaderComponent = ({
 
     fetchData();
   }, []);
-  console.log(userType)
+  const handleChange = (event: React.SyntheticEvent, newValue: any) => {
+    console.log(newValue)
+    setStatusValue(newValue);
+  };
 
   return (
     <Box
@@ -269,13 +280,48 @@ const HeaderComponent = ({
          backgroundColor: "white",
          paddingTop:"20px"
         }}>
+         
+{showFilter && (
+  <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+  <Tabs 
+    value={statusValue} 
+    onChange={handleFilterChange} 
+    aria-label="Tabs where selection follows focus"
+    selectionFollowsFocus
+  >
+    <Tab 
+      label={
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box 
+            sx={{
+              width: 8, 
+              height: 8, 
+              bgcolor: 'green', 
+              borderRadius: '50%', 
+              mr: 1 // margin-right: 1 unit
+            }}
+          />
+          {Status.ACTIVE_LABEL}
+        </Box>
+      } 
+      value={Status.ACTIVE}
+    />
+    <Tab label={Status.INACTIVE} value={Status.ARCHIVED} />
+  </Tabs>
+</Box>
+
+
+        
+        )}
       <Box
         sx={{
           display: "flex",
           flexDirection: isMobile || isMediumScreen ? "column" : "row",
           gap: isMobile || isMediumScreen ? "8px" : "5%",
+          marginTop:"20px"
         }}
       >
+       
         <Box sx={{ flex: 1 , paddingLeft:"16px",
       paddingRight:"16px"
       }}>
@@ -327,33 +373,7 @@ const HeaderComponent = ({
           }}
         >
          
-          {showFilter && (
-            <>
-              <Typography variant="h3" mt="10px">
-                {t("COMMON.FILTER_BY_STATUS")}
-              </Typography>
-              <FormControl sx={{ minWidth: "120px" }}>
-                <Select
-                  value={selectedFilter}
-                  onChange={handleFilterChange}
-                  displayEmpty
-                  style={{
-                    borderRadius: "8px",
-                    height: "40px",
-                    fontSize: "14px",
-                    backgroundColor: theme.palette.secondary["100"],
-                  }}
-                >
-                  <MenuItem value="All">{t("COMMON.ALL")}</MenuItem>
-                  {Filter?.map((filter, index) => (
-                    <MenuItem value={filter} key={index}>
-                      {filter}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </>
-          )}
+       
           {showSort && (
             <FormControl sx={{ minWidth: "120px"  }}>
               <Select

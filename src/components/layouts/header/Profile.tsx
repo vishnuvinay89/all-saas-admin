@@ -221,7 +221,7 @@ const Profile = () => {
         onClick={handleClick4}
         sx={{ border: "none" }}
       >
-        <Box display="flex" alignItems="center" color="#1F1B13">
+        <Box display="flex" alignItems="center" color="white">
           <AccountCircleIcon />
           <Box
             sx={{

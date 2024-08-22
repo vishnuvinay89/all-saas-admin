@@ -110,6 +110,7 @@ const Center: React.FC = () => {
   const [uiSchema, setUiSchema] = React.useState<any>();
   const [openAddNewCohort, setOpenAddNewCohort] =
     React.useState<boolean>(false);
+    const [statusValue, setStatusValue] = useState(Status.ACTIVE);
 
   const [pageCount, setPageCount] = useState(Numbers.ONE);
   const [pageOffset, setPageOffset] = useState(Numbers.ZERO);
@@ -136,7 +137,8 @@ const Center: React.FC = () => {
   const [filters, setFilters] = useState<cohortFilterDetails>({
     type: CohortTypes.COHORT,
     states: selectedStateCode,
-    status: [Status.ACTIVE],
+     status: [statusValue]
+    ,
   });
   const handleCloseAddLearnerModal = () => {
     setOpenAddNewCohort(false);
@@ -391,8 +393,9 @@ const Center: React.FC = () => {
       if (filters.status)
         setFilters({
           type: "COHORT",
-          status: filters.status,
           states: stateCodes,
+          status: filters.status,
+
         });
       else setFilters({ type: "COHORT", states: stateCodes });
     }
@@ -407,8 +410,9 @@ const Center: React.FC = () => {
     if (selected[0] === "") {
       if (filters.status) {
         setFilters({
-          status: filters.status,
           states: selectedStateCode,
+          status: filters.status,
+
         });
       } else {
         setFilters({
@@ -420,9 +424,10 @@ const Center: React.FC = () => {
       setSelectedDistrictCode(districts);
       if (filters.status) {
         setFilters({
-          status: filters.status,
           states: selectedStateCode,
           districts: districts,
+          status: filters.status,
+
         });
       } else {
         setFilters({
@@ -438,9 +443,10 @@ const Center: React.FC = () => {
     if (selected[0] === "") {
       if (filters.status) {
         setFilters({
-          status: filters.status,
           states: selectedStateCode,
           districts: selectedDistrictCode,
+          status: filters.status,
+
         });
       } else {
         setFilters({
@@ -453,10 +459,11 @@ const Center: React.FC = () => {
       setSelectedBlockCode(blocks);
       if (filters.status) {
         setFilters({
-          status: filters.status,
           states: selectedStateCode,
           districts: selectedDistrictCode,
           blocks: blocks,
+          status: filters.status,
+
         });
       } else {
         setFilters({
@@ -519,24 +526,26 @@ const Center: React.FC = () => {
     }));
   };
 
-  const handleFilterChange = async (event: SelectChangeEvent) => {
-    setPageSize(Numbers.TEN);
+const handleFilterChange = async (event: React.SyntheticEvent, newValue: any) => {
+  setStatusValue(newValue)
+
+  setSelectedFilter(newValue);
+  setPageSize(Numbers.TEN);
     setPageLimit(Numbers.TEN);
     setPageOffset(Numbers.ZERO);
     setPageCount(Numbers.ONE);
-    setSelectedFilter(event.target.value);
 
-    if (event.target.value === Status.ACTIVE_LABEL) {
+    if (newValue === Status.ACTIVE) {
       setFilters((prevFilters) => ({
         ...prevFilters,
         status: [Status.ACTIVE],
       }));
-    } else if (event.target.value === Status.INACTIVE) {
+    } else if (newValue === Status.ARCHIVED) {
       setFilters((prevFilters) => ({
         ...prevFilters,
         status: [Status.ARCHIVED],
       }));
-    } else if (event.target.value === Status.ALL_LABEL) {
+    } else if (newValue === Status.ALL_LABEL) {
       setFilters((prevFilters) => ({
         ...prevFilters,
         status: "",
@@ -772,6 +781,8 @@ const Center: React.FC = () => {
     handleSearch: handleSearch,
     showAddNew: true,
     handleAddUserClick: handleAddUserClick,
+    statusValue:statusValue,
+    setStatusValue:setStatusValue,
     showSort: cohortData?.length > 0,
   };
 

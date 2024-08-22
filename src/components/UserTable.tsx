@@ -89,7 +89,7 @@ const UserTable: React.FC<UserTableProps> = ({
   const [pageSize, setPageSize] = React.useState<string | number>("10");
   const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
   const [sortByForCohortMemberList, setsortByForCohortMemberList] = useState(["name",  SORT.ASCENDING]);
-
+  const [statusValue, setStatusValue] = useState(Status.ACTIVE);
   const [pageCount, setPageCount] = useState(1);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState("");
@@ -166,6 +166,8 @@ const UserTable: React.FC<UserTableProps> = ({
 
   const [filters, setFilters] = useState<FilterDetails>({
     role: role,
+    status: [statusValue],
+
   });
 
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
@@ -219,25 +221,27 @@ const UserTable: React.FC<UserTableProps> = ({
       setSelectedStateCode(stateCodes);
       if (filters.status)
         setFilters({
-          status: [filters.status],
           states: stateCodes,
           role: role,
+          status: filters.status,
+
         });
       else setFilters({ states: stateCodes, role: role });
     }
 
     console.log("Selected categories:", typeof code[0]);
   };
-  const handleFilterChange = async (event: SelectChangeEvent) => {
-    console.log(event.target.value as string);
-    setSelectedFilter(event.target.value as string);
-    if (event.target.value === Status.ACTIVE_LABEL) {
+  const handleFilterChange = async (event: React.SyntheticEvent, newValue: any) => {
+    setStatusValue(newValue)
+    console.log(newValue);
+    setSelectedFilter(newValue);
+    if (newValue === Status.ACTIVE) {
       console.log(true);
       setFilters((prevFilters) => ({
         ...prevFilters,
         status: [Status.ACTIVE],
       }));
-    } else if (event.target.value === Status.INACTIVE) {
+    } else if (newValue === Status.ARCHIVED) {
       setFilters((prevFilters) => ({
         ...prevFilters,
         status: [Status.ARCHIVED],
@@ -263,9 +267,10 @@ const UserTable: React.FC<UserTableProps> = ({
     if (selected[0] === "" || selected[0] === t("COMMON.ALL_DISTRICTS")) {
       if (filters.status) {
         setFilters({
-          status: [filters.status],
           states: selectedStateCode,
           role: role,
+          status: filters.status,
+
         });
       } else {
         setFilters({
@@ -278,10 +283,11 @@ const UserTable: React.FC<UserTableProps> = ({
       setSelectedDistrictCode(districts);
       if (filters.status) {
         setFilters({
-          status: [filters.status],
           states: selectedStateCode,
           districts: districts,
           role: role,
+          status: filters.status,
+
         });
       } else {
         setFilters({
@@ -300,10 +306,11 @@ const UserTable: React.FC<UserTableProps> = ({
     if (selected[0] === "" || selected[0] === t("COMMON.ALL_BLOCKS")) {
       if (filters.status) {
         setFilters({
-          status: [filters.status],
           states: selectedStateCode,
           districts: selectedDistrictCode,
           role: role,
+          status: filters.status,
+
         });
       } else {
         setFilters({
@@ -317,11 +324,12 @@ const UserTable: React.FC<UserTableProps> = ({
       setSelectedBlockCode(blocks);
       if (filters.status) {
         setFilters({
-          status: [filters.status],
           states: selectedStateCode,
           districts: selectedDistrictCode,
           blocks: blocks,
           role: role,
+          status: filters.status,
+
         });
       } else {
         setFilters({
@@ -344,6 +352,7 @@ const UserTable: React.FC<UserTableProps> = ({
       // blocks: blocks,
       cohortId:code[0],
       role: role,
+      status:[statusValue]
     });
 
   };
@@ -754,8 +763,9 @@ const UserTable: React.FC<UserTableProps> = ({
               setSelectedStateCode(stateField.code)
               setFilters({
                 states: stateField.code,
-
-                role: role,}
+                role: role,
+                status:[statusValue],
+              }
             
               )
               }
@@ -832,6 +842,8 @@ const UserTable: React.FC<UserTableProps> = ({
     selectedDistrict: selectedDistrict,
     selectedBlock: selectedBlock,
     selectedSort: selectedSort,
+    statusValue:statusValue,
+    setStatusValue:setStatusValue,
     handleStateChange: handleStateChange,
     handleDistrictChange: handleDistrictChange,
     handleBlockChange: handleBlockChange,
