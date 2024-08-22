@@ -289,62 +289,17 @@ const HeaderComponent = ({
             justifyContent: "center",
              alignItems: "center",
             // height: "40px",
-             width: isMobile || isMediumScreen ? "70%" : "200px",
+             width: isMobile ? "70%" : "200px",
             borderRadius: "20px",
             border: "1px solid #1E1B16",
           //  mt: isMobile ? "10px" : "16px",
             boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
             mr:'10px',
-            ml:isMobile || isMediumScreen ? "15px": undefined
+            ml:isMobile ? "50px": isMediumScreen ?"10px":undefined,
+            mt:isMobile ? "10px": isMediumScreen ?"10px":undefined
           }}
         >
-          {/* {showFilter && (
-            <>
-              <Typography variant="h3">
-                {t("COMMON.FILTER_BY_STATUS")}
-              </Typography>
-              <FormControl sx={{ minWidth: "120px" }}>
-                <Select
-                  value={selectedFilter}
-                  onChange={handleFilterChange}
-                  displayEmpty
-                  style={{
-                    borderRadius: "8px",
-                    height: "40px",
-                    fontSize: "14px",
-                  }}
-                >
-                  <MenuItem value="All">{t("COMMON.ALL")}</MenuItem>
-                  {Filter?.map((filter, index) => (
-                    <MenuItem value={filter} key={index}>
-                      {filter}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </>
-          )}
-          {showSort && (
-            <FormControl sx={{ minWidth: "120px" }}>
-              <Select
-                value={selectedSort}
-                onChange={handleSortChange}
-                displayEmpty
-                style={{
-                  borderRadius: "8px",
-                  height: "40px",
-                  fontSize: "14px",
-                }}
-              >
-                <MenuItem value="Sort">{t("COMMON.SORT")}</MenuItem>
-                {Sort?.map((state, index) => (
-                  <MenuItem value={state} key={index}>
-                    {state}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )} */}
+         
            <Button
             //  variant="contained"
             startIcon={<AddIcon />}
@@ -364,30 +319,14 @@ const HeaderComponent = ({
         <Box
           sx={{
             display: "flex",
-            // justifyContent: "center",
-            // alignItems: "center",
-            // height: "40px",
-            // width: isMobile || isMediumScreen ? "100%" : "200px",
-            // borderRadius: "20px",
-            // border: "1px solid #1E1B16",
+            
             ml:"10px",
             mt: isMobile ? "10px" : "16px",
             mb:"10px",
             gap:"15px"          // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
           }}
         >
-          {/* <Button
-            //  variant="contained"
-            startIcon={<AddIcon />}
-            sx={{
-              textTransform: "none",
-              fontSize: "14px",
-              color: theme.palette.primary["100"],
-            }}
-          >
-            {t("COMMON.ADD_NEW")}
-          </Button> */}
-
+         
           {showFilter && (
             <>
               <Typography variant="h3" mt="10px">

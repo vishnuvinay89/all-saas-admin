@@ -44,7 +44,8 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
   const isSmallScreen = useMediaQuery((theme: any) =>
   theme.breakpoints.down("sm"),
   );
-  const isMediumScreen = useMediaQuery("(max-width:986px)");
+  const isMediumScreen = useMediaQuery("(max-width:900px)");
+
 
   const handleChange = (
     event: SelectChangeEvent<typeof selectedCategories>,
@@ -69,8 +70,9 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
 
   return (
     <div>
-      <FormControl sx={{ m: 1, width: isSmallScreen?300: isMediumScreen?120:200 }} disabled={disabled}>
-        <InputLabel id="multiple-checkbox-label">{tagName}</InputLabel>
+      <FormControl sx={{ m: 1, width:  isSmallScreen?300: isMediumScreen?140:  200 }} disabled={disabled}>
+        <InputLabel id="multiple-checkbox-label"              
+>{tagName}</InputLabel>
         <Select
           labelId="multiple-checkbox-label"
           id="multiple-checkbox"
@@ -88,13 +90,14 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
         >
           {overall && (
             <MenuItem value="all">
-              <em>{t("COMMON.ALL")}</em>
+              <em
+              >{t("COMMON.ALL")}</em>
             </MenuItem>
           )}
 
           {names?.map((name) => (
             <MenuItem key={name} value={name}>
-              <ListItemText primary={name} />
+              <ListItemText  primary={name} />
             </MenuItem>
           ))}
         </Select>
