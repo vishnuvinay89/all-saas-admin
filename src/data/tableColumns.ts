@@ -26,7 +26,6 @@ const generateColumns = (
 export const getUserTableColumns = (t: any, isMobile: boolean) => {
   const configs: ColumnConfig[] = [
     { key: "name", titleKey: "FORM.NAME", width: 180 },
-    { key: "status", titleKey: "FORM.STATUS", width: 130 },
     { key: "age", titleKey: "FORM.AGE", width: 100 },
     { key: "gender", titleKey: "FORM.GENDER", width: 130 },
     { key: "mobile", titleKey: "COMMON.MOBILE", width: 130 },
@@ -47,7 +46,6 @@ export const getUserTableColumns = (t: any, isMobile: boolean) => {
 export const getTLTableColumns = (t: any, isMobile: boolean) => {
   const configs: ColumnConfig[] = [
     { key: "name", titleKey: "FORM.NAME", width: 130 },
-    { key: "status", titleKey: "TABLE_TITLE.STATUS", width: 130},
     { key: "age", titleKey: "FORM.AGE", width: 100 },
     { key: "gender", titleKey: "FORM.GENDER", width: 130 },
     { key: "state", titleKey: "FORM.STATE", width: 130,},
@@ -67,7 +65,6 @@ export const getCenterTableData = (t: any, isMobile: boolean) => {
   const configs: ColumnConfig[] = [
     { key: "name", titleKey: "TABLE_TITLE.NAME", width: 130 },
     { key: "customFieldValues", titleKey: "TABLE_TITLE.TYPE", width: 130 },
-    { key: "status", titleKey: "TABLE_TITLE.STATUS", width: 130 },
     { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130 },
     { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130 },
     { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 130 },
