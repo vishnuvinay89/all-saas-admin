@@ -621,8 +621,13 @@ const CommonUserModal: React.FC<UserModalProps> = ({
      open={openModal}
      onClose={onCloseModal}
      email={(userType!==FormContextType.STUDENT)? userEnteredEmail: adminInfo?.email}
-     userType={userType===FormContextType.STUDENT? Role.STUDENT: userType===FormContextType.TEAM_LEADER?Role.TEAM_LEADER:Role.TEACHER}
-   />
+     userType={
+      userType === FormContextType.STUDENT
+        ? Role.STUDENT
+        : userType === FormContextType.TEAM_LEADER
+        ? Role.TEAM_LEADER
+        : Role.TEACHER
+    }   />
    </>
   );
 };
