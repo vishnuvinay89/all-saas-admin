@@ -43,8 +43,8 @@ const components: Components<Omit<Theme, "components">> = {
   MuiContainer: {
     styleOverrides: {
       root: {
-        paddingLeft: "15px !important",
-        paddingRight: "15px !important",
+        // paddingLeft: "15px !important",
+         paddingRight: "15px !important",
         maxWidth: "1600px",
       },
     },

@@ -10,16 +10,14 @@ interface SearchBarProps {
   placeholder: string;
 }
 
-const SearchBox = styled(Paper)(({ theme }) => ({
+const SearchBox = styled(Paper)<{ isSmallScreen: boolean }>(({ theme, isSmallScreen }) => ({
   padding: "2px 4px",
   display: "flex",
   alignItems: "center",
   width: "100%",
-  maxWidth: 400,
+  maxWidth: isSmallScreen ? 300 : 900,
   borderRadius: "8px",
-  [theme.breakpoints.down("sm")]: {
-    maxWidth: "100%",
-  },
+  backgroundColor:"#F0F0F0",
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -65,7 +63,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder }) => {
   };
 
   return (
-    <SearchBox>
+    <SearchBox isSmallScreen={isSmallScreen}>
       <StyledInputBase
         placeholder={placeholder}
         value={keyword}

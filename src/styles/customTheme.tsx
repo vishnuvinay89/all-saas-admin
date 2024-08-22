@@ -14,7 +14,7 @@ const customTheme = extendTheme({
           main: "#0D599E",
           light: "#E7F3F8",
           contrastText: " #cdc5bd",
-          "100": "#F7F7F7",
+          "100": "#F3F5F8",
           "200": "#FFFFFF",
           "300": "#EEEEEE",
         },
