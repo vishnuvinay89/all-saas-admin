@@ -292,7 +292,7 @@ const HeaderComponent = ({
     <Tab 
       label={
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Box 
+          {/* <Box 
             sx={{
               width: 8, 
               height: 8, 
@@ -300,7 +300,7 @@ const HeaderComponent = ({
               borderRadius: '50%', 
               mr: 1 // margin-right: 1 unit
             }}
-          />
+          /> */}
           {Status.ACTIVE_LABEL}
         </Box>
       } 

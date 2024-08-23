@@ -333,8 +333,11 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                 : userType === FormContextType.TEACHER
                   ? "FACILITATORS.FACILITATOR_CREATED_SUCCESSFULLY"
                   :userType === FormContextType.TEAM_LEADER ?"TEAM_LEADERS.TEAM_LEADER_CREATED_SUCCESSFULLY": "ADMIN.ADMIN_UPDATED_SUCCESSFULLY";
-
+                  if(userType===FormContextType.STUDENT)
+                  {
+        
             showToastMessage(t(messageKey), "success");
+                  }
             // if(userType===FormContextType.STUDENT)
             // setOpenModal(true);
           } else {
@@ -393,16 +396,25 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           });
           if(userType!==FormContextType.STUDENT)
           {
+            const messageKey =
+            userType === FormContextType.STUDENT
+              ? "LEARNERS.LEARNER_CREATED_SUCCESSFULLY"
+              : userType === FormContextType.TEACHER
+                ? "FACILITATORS.FACILITATOR_CREATED_SUCCESSFULLY"
+                :userType === FormContextType.TEAM_LEADER ?"TEAM_LEADERS.TEAM_LEADER_CREATED_SUCCESSFULLY": "ADMIN.ADMIN_UPDATED_SUCCESSFULLY";
             if (response?.result[0]?.data[0]?.status === 'success') {
-              showToastMessage(
-                t('COMMON.USER_CREDENTIAL_SEND_SUCCESSFULLY'),
-                'success'
-              );
-            } else {
-              showToastMessage(
-                t('COMMON.USER_CREDENTIALS_WILL_BE_SEND_SOON'),
-                'success'
-              );
+                showToastMessage(t(messageKey), "success");
+
+            } 
+            else {
+              const messageKey =
+              userType === FormContextType.STUDENT
+                ? "LEARNERS.USER_CREDENTIALS_WILL_BE_SEND_SOON"
+                : userType === FormContextType.TEACHER
+                  ? "FACILITATORS.USER_CREDENTIALS_WILL_BE_SEND_SOON"
+                  :"TEAM_LEADERS.USER_CREDENTIALS_WILL_BE_SEND_SOON";
+                  showToastMessage(t(messageKey), "success");
+
             }
           }
         if(userType===FormContextType.STUDENT )
@@ -414,7 +426,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           }
           else{
             showToastMessage(
-              t('COMMON.USER_CREDENTIALS_WILL_BE_SEND_SOON'),
+              t('LEARNERS.USER_CREDENTIALS_WILL_BE_SEND_SOON'),
               'success'
             );
           }
