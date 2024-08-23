@@ -51,7 +51,17 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   const [uiSchema, setUiSchema] = React.useState<any>();
   const [openModal, setOpenModal] = React.useState(false);
   const [adminInfo, setAdminInfo] = React.useState<any>();
-
+  const messageKeyMap: Record<string, string> = {
+    [FormContextType.STUDENT]: "LEARNERS.LEARNER_CREATED_SUCCESSFULLY",
+    [FormContextType.TEACHER]: "FACILITATORS.FACILITATOR_CREATED_SUCCESSFULLY",
+    [FormContextType.TEAM_LEADER]: "TEAM_LEADERS.TEAM_LEADER_CREATED_SUCCESSFULLY",
+    [FormContextType.ADMIN]: "ADMIN.ADMIN_UPDATED_SUCCESSFULLY",
+  };
+  const delayCredentialsMessageMap: Record<string, string> = {
+    [FormContextType.STUDENT]: "LEARNERS.USER_CREDENTIALS_WILL_BE_SEND_SOON",
+    [FormContextType.TEACHER]: "FACILITATORS.USER_CREDENTIALS_WILL_BE_SEND_SOON",
+    [FormContextType.TEAM_LEADER]: "TEAM_LEADERS.USER_CREDENTIALS_WILL_BE_SEND_SOON",
+  };
   const [submitButtonEnable, setSubmitButtonEnable] =
     React.useState<boolean>(false);
   const roleType = userType;
@@ -327,14 +337,13 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           const response = await createUser(apiBody);
           console.log(response);
           if (response) {
-            const messageKey =
-              userType === FormContextType.STUDENT
-                ? "LEARNERS.LEARNER_CREATED_SUCCESSFULLY"
-                : userType === FormContextType.TEACHER
-                  ? "FACILITATORS.FACILITATOR_CREATED_SUCCESSFULLY"
-                  :userType === FormContextType.TEAM_LEADER ?"TEAM_LEADERS.TEAM_LEADER_CREATED_SUCCESSFULLY": "ADMIN.ADMIN_UPDATED_SUCCESSFULLY";
+            const messageKey = messageKeyMap[userType]
 
+                  if(userType===FormContextType.STUDENT)
+                  {
+        
             showToastMessage(t(messageKey), "success");
+                  }
             // if(userType===FormContextType.STUDENT)
             // setOpenModal(true);
           } else {
@@ -393,16 +402,17 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           });
           if(userType!==FormContextType.STUDENT)
           {
+            const messageKey = messageKeyMap[userType]
+
             if (response?.result[0]?.data[0]?.status === 'success') {
-              showToastMessage(
-                t('COMMON.USER_CREDENTIAL_SEND_SUCCESSFULLY'),
-                'success'
-              );
-            } else {
-              showToastMessage(
-                t('COMMON.USER_CREDENTIALS_WILL_BE_SEND_SOON'),
-                'success'
-              );
+                showToastMessage(t(messageKey), "success");
+
+            } 
+            else {
+              const messageKey = delayCredentialsMessageMap[userType] || "TEAM_LEADERS.USER_CREDENTIALS_WILL_BE_SEND_SOON";
+
+                  showToastMessage(t(messageKey), "success");
+
             }
           }
         if(userType===FormContextType.STUDENT )
@@ -414,7 +424,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           }
           else{
             showToastMessage(
-              t('COMMON.USER_CREDENTIALS_WILL_BE_SEND_SOON'),
+              t('LEARNERS.USER_CREDENTIALS_WILL_BE_SEND_SOON'),
               'success'
             );
           }

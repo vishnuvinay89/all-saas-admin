@@ -139,7 +139,9 @@
     "BLOCK": "Block",
     "NEW_FACILITATOR": "New Facilitator",
     "SEARCHBAR_PLACEHOLDER": "Search Facilitators..",
-    "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher has been successfully created",
+    "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher is created, and credentials sent successfully!",
+    "USER_CREDENTIALS_WILL_BE_SEND_SOON":"Teacher is created ,credentials will be sent soon",
+
     "FACILITATOR_UPDATED_SUCCESSFULLY": "Teacher has been successfully updated!",
     "EDIT_FACILITATOR": "Edit Facilitator"
   },
@@ -151,6 +153,8 @@
     "NEW_LEARNER": "New Learner",
     "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
     "LEARNER_CREATED_SUCCESSFULLY": "Learner has been successfully created!",
+    "USER_CREDENTIALS_WILL_BE_SEND_SOON":"Learner is created, credentials will be sent soon",
+
     "LEARNER_UPDATED_SUCCESSFULLY": "Learner has been successfully updated!",
     "EDIT_LEARNER": "Edit Learner"
   },
@@ -158,7 +162,9 @@
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders..",
     "NEW_TEAM_LEADER": "New Team Leader",
     "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
-    "TEAM_LEADER_CREATED_SUCCESSFULLY": "Team Leader has been successfully created!",
+    "TEAM_LEADER_CREATED_SUCCESSFULLY": "Team Leader is created, and credentials sent successfully!",
+    "USER_CREDENTIALS_WILL_BE_SEND_SOON":"Team Leader is created ,credentials will be sent soon",
+
     "TEAM_LEADER_UPDATED_SUCCESSFULLY": "Team Leader has been successfully updated!",
     "EDIT_TEAM_LEADER": "Edit Team Leader"
   },
