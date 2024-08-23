@@ -131,6 +131,11 @@ const Block: React.FC = () => {
 
         const districtFieldID = data?.result?.fieldId || "";
         setDistrictFieldId(districtFieldID);
+
+        // Automatically select the first district if it exists
+        if (districts.length > 0) {
+          setSelectedDistrict(districts[0].value);
+        }
       } catch (error) {
         console.error("Error fetching districts", error);
       }
@@ -221,8 +226,10 @@ const Block: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchBlocks(selectedDistrict);
-  }, [searchKeyword, selectedDistrict, sortBy, pageOffset, pageLimit]);
+    if (selectedDistrict) {
+      fetchBlocks(selectedDistrict);
+    }
+  }, [selectedDistrict, searchKeyword, sortBy, pageOffset, pageLimit]);
 
   const columns = [
     {
@@ -284,7 +291,7 @@ const Block: React.FC = () => {
 
   const handleDistrictChange = async (event: SelectChangeEvent<string>) => {
     const selectedDistrict = event.target.value;
-    setSelectedDistrict(selectedDistrict);
+    setSelectedDistrict(selectedDistrict); // This will automatically trigger `fetchBlocks`
   };
 
   const handleEdit = (rowData: any) => {

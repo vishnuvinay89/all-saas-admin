@@ -272,7 +272,7 @@ const State: React.FC = () => {
   };
   useEffect(() => {
     fetchStateData();
-  }, [searchKeyword,pageLimit, pageOffset, sortBy]);
+  }, [searchKeyword, pageLimit, pageOffset, sortBy]);
 
   return (
     <HeaderComponent
@@ -294,7 +294,7 @@ const State: React.FC = () => {
           </Typography>
         </Box>
       ) : (
-        <div>
+        <div style={{ marginTop: "40px" }}>
           {loading ? (
             <Box
               display="flex"
