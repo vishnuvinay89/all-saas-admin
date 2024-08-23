@@ -145,6 +145,8 @@ const LoginPage = () => {
         {
           const errorMessage = t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT");
           showToastMessage(errorMessage, "error");
+          localStorage.removeItem("token");
+
   
         }
         else
