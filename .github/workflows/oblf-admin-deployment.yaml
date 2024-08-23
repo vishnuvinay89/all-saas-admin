@@ -2,7 +2,7 @@ name: Deployment on the OBLF admin Server
 on:
   push:
     branches:
-      - main
+      - lateMarkingForSelfAttendance
 jobs:
   OBLF-ADMIN-DEPLOYMENT:
     runs-on: ubuntu-latest
