@@ -218,7 +218,7 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
         primaryBtnClick={handleReassign}
         primaryBtnDisabled={checkedCenters.length === 0}
       >
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 1 }}>
           <TextField
             sx={{
               backgroundColor: theme.palette.warning["A700"],

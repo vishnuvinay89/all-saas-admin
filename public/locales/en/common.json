@@ -115,7 +115,9 @@
     "CENTERS_REASSIGN_SUCCESSFULLY": "Center reassign successfully",
     "BLOCKS_REASSIGN_SUCCESSFULLY": "Block reassign successfully",
      "CENTERS_REASSIGN_FAILED":"Center Reassignment fails",
-     "BLOCKS_REASSIGN_FAILED":"Block Reassignment fails"
+     "BLOCKS_REASSIGN_FAILED":"Block Reassignment fails",
+    "USER_COHORTS": "{{name}} belongs to below cohorts",
+    "DELETE_COHORT_WARNING":"Do you want to delete user from cohort?"
 
 
   },

@@ -30,6 +30,7 @@ import CommonUserModal from "./CommonUserModal";
 import { useQuery } from "@tanstack/react-query";
 import ReassignCenterModal from "./ReassignCenterModal";
 import { getCenterList, getStateBlockDistrictList } from "@/services/MasterDataService";
+import { updateCohortMemberStatus } from "@/services/CohortService/cohortService";
 type UserDetails = {
   userId: any;
   username: any;
@@ -44,7 +45,9 @@ type UserDetails = {
   blocks?: any;
   stateCode?:any;
   districtCode?:any;
-  blockCode?:any
+  blockCode?:any;
+  centerMembershipIdList?:any;
+  blockMembershipIdList?:any
 };
 type FilterDetails = {
   role: any;
@@ -66,6 +69,7 @@ interface Cohort {
   type: string;
   customField: any[];
   cohortMemberStatus?:string
+  cohortMembershipId?:string
 }
 interface UserTableProps {
   role: string;
@@ -87,6 +91,10 @@ const UserTable: React.FC<UserTableProps> = ({
 }) => {
   console.log(userType);
   const [selectedState, setSelectedState] = React.useState<string[]>([]);
+  const [blockMembershipIdList, setBlockMembershipIdList] = React.useState<string[]>([]);
+  const [centerMembershipIdList, setCenterMembershipIdList] = React.useState<string[]>([]);
+
+
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
@@ -107,8 +115,9 @@ const UserTable: React.FC<UserTableProps> = ({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isReassignCohortModalOpen, setIsReassignCohortModalOpen] = useState(false);
   const [centers, setCenters] = useState<CenterProp[]>([]);
-  const [blockFieldId, setBlockFieldId] = useState("");
+  const [userName, setUserName] = useState("");
   const [blocks, setBlocks] = useState<FieldProp[]>([]);
+  const [userCohort, setUserCohorts] = useState ("")
 
   const [selectedUserId, setSelectedUserId] = useState("");
   const [block, setBlock] = useState("");
@@ -501,7 +510,22 @@ const UserTable: React.FC<UserTableProps> = ({
 
   const handleDelete = (rowData: any) => {
     setIsDeleteModalOpen(true);
+    console.log(rowData)
+    setUserName(rowData?.name)
+    console.log(userName)
+
+    setBlockMembershipIdList(rowData.blockMembershipIdList)
+    setCenterMembershipIdList(rowData.centerMembershipIdList)
     setSelectedUserId(rowData.userId);
+    if(userType===Role.TEAM_LEADERS)
+    {
+           setUserCohorts(rowData.blocks)
+           console.log(userCohort)
+
+    }
+    else{
+        setUserCohorts(rowData.centers)
+    }
     //const userData="";
 
     console.log("Delete row:", rowData.userId);
@@ -552,7 +576,6 @@ const UserTable: React.FC<UserTableProps> = ({
           fieldName: "blocks",
         };
         const response = await getStateBlockDistrictList(object);
-        setBlockFieldId(response?.result?.fieldId);
            //console.log(blockFieldId)
         const result = response?.result?.values;
         console.log(result)
@@ -773,7 +796,17 @@ const UserTable: React.FC<UserTableProps> = ({
             // );
             const cohortNames = response?.result?.cohortData
               ?.filter((cohort: Cohort) => cohort.type !== "BLOCK" && cohort?.cohortMemberStatus!=="archived") // Filter out cohorts with type 'block'
-              .map((cohort: Cohort) => cohort.name); //
+              .map((cohort: Cohort) => cohort.name); 
+              const centerMembershipIdList = response?.result?.cohortData
+              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK" && cohort?.cohortMemberStatus!=="archived") // Filter out cohorts with type 'block'
+              .map((cohort: Cohort) => cohort.cohortMembershipId);
+              const blockMembershipIdList = response?.result?.cohortData
+              ?.filter((cohort: Cohort) => cohort.type === "BLOCK" && cohort?.cohortMemberStatus!=="archived") // Filter out cohorts with type 'block'
+              .map((cohort: Cohort) => cohort.cohortMembershipId);
+            //  const cohortMembershipId=response?.result?.cohortData?.cohortMembershipId;
+              console.log(blockMembershipIdList)
+              console.log(centerMembershipIdList)
+
 
             let finalArray;
             if (cohortNames?.length >= 1) {
@@ -783,6 +816,9 @@ const UserTable: React.FC<UserTableProps> = ({
             // console.log(finalArray)
             return {
               ...user,
+              centerMembershipIdList: centerMembershipIdList,
+              blockMembershipIdList: blockMembershipIdList,
+
               centers: finalArray ? finalArray?.join(" , ") : "-",
             };
           })
@@ -855,6 +891,7 @@ const UserTable: React.FC<UserTableProps> = ({
     setOtherReason("");
     setIsDeleteModalOpen(false);
     setConfirmButtonDisable(true);
+
   };
   const handleCloseReassignModal = () => {
     // setSelectedReason("");
@@ -874,10 +911,58 @@ const UserTable: React.FC<UserTableProps> = ({
           status: "archived",
         },
       };
-      const response = await deleteUser(userId, userData);
-      if (response) {
+      const cohortDeletionResponse = await deleteUser(userId, userData);
+      if (cohortDeletionResponse) {
         deleteUserState ? setDeleteUserState(false) : setDeleteUserState(true);
       }
+      console.log(blockMembershipIdList)
+      if(userType===Role.TEAM_LEADERS && blockMembershipIdList.length>0)
+      {
+       
+        blockMembershipIdList.forEach(async(item) => {
+
+            const memberStatus = Status.ARCHIVED;
+        const statusReason = selectedReason;
+        const membershipId = item;
+  
+        const response = await  updateCohortMemberStatus({
+          memberStatus,
+          statusReason,
+          membershipId,
+        });
+        
+        });
+      }
+      else{
+        centerMembershipIdList.forEach(async(item) => {
+ 
+             const memberStatus = Status.ARCHIVED;
+         const statusReason = selectedReason;
+         const membershipId = item;
+   
+         const response = await  updateCohortMemberStatus({
+           memberStatus,
+           statusReason,
+           membershipId,
+         });
+         
+         });
+
+      }
+     
+      console.log(centerMembershipIdList)
+
+      // const response = await deleteUser(userId, userData);
+      //   const memberStatus = Status.ARCHIVED;
+      //   const statusReason = selectedReason;
+      //   const membershipId = "";
+  
+      //   const teacherResponse = await updateCohortMemberStatus({
+      //     memberStatus,
+      //     statusReason,
+      //     membershipId,
+      //   });
+        
       handleCloseDeleteModal();
       showToastMessage(t("COMMON.USER_DELETE_SUCCSSFULLY"), "success");
     } catch (error) {
@@ -999,6 +1084,11 @@ const UserTable: React.FC<UserTableProps> = ({
         setOtherReason={setOtherReason}
         confirmButtonDisable={confirmButtonDisable}
         setConfirmButtonDisable={setConfirmButtonDisable}
+        centers={userCohort}
+        userId={selectedUserId}
+        userName={userName}
+
+
       />
        <ReassignCenterModal
         open={isReassignCohortModalOpen}
