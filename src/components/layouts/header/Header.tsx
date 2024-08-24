@@ -5,7 +5,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import config from "../../../../config.json";
 import PropTypes from "prop-types";
-import translationIcon from '../../../../public/images/translation.svg';
 import Image from "next/image";
 import TranslateIcon from '@mui/icons-material/Translate';
 import Menu from '@mui/material/Menu';
