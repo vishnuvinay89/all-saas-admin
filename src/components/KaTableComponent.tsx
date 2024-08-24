@@ -27,6 +27,7 @@ interface KaTableComponentProps {
   pageSizes?: any;
   onDelete?: any;
   onEdit?: any;
+  reassignCohort?: any;
   onChange?: any;
   extraActions: {
     name: string;
@@ -37,6 +38,7 @@ interface KaTableComponentProps {
   showIcons?: boolean;
   noDataMessage?: any;
   pagination?: boolean;
+  
 }
 
 const KaTableComponent: React.FC<KaTableComponentProps> = ({
@@ -48,6 +50,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   paginationEnable = true,
   onEdit,
   onDelete,
+  reassignCohort,
   pageSizes,
   noDataMessage,
   pagination = true,
@@ -57,6 +60,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
+console.log(columns)
 
   const handleCheckboxChange = (rowId: number) => {
     setSelectedRowIds((prevSelected) =>
@@ -105,11 +109,14 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
             cell: {
               content: (props) => {
                 if (props.column.key === DataKey.ACTIONS) {
+                  console.log(props.rowData)
                   return (
                     <ActionIcon
                       rowData={props.rowData}
                       onEdit={onEdit}
+                      reassignCohort={reassignCohort}
                       onDelete={onDelete}
+                     userAction={props.rowData?.userId}
                       disable={props.rowData?.status === Status.ARCHIVED}
                     />
                   );
