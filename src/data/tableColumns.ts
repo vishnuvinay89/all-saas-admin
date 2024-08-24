@@ -15,7 +15,7 @@ const generateColumns = (
 ) => {
   return configs.map((config) => ({
     key: config.key,
-    title: t(config.titleKey),
+    title:  t(config.titleKey).toUpperCase(),
     dataType: DataType.String,
     sortDirection: config.sortDirection,
     width: isMobile && config.width ? config.width : config.width || undefined,
@@ -25,18 +25,18 @@ const generateColumns = (
 
 export const getUserTableColumns = (t: any, isMobile: boolean) => {
   const configs: ColumnConfig[] = [
-    { key: "name", titleKey: "FORM.NAME", width: 180 },
-    { key: "age", titleKey: "FORM.AGE", width: 100 },
-    { key: "gender", titleKey: "FORM.GENDER", width: 130 },
-    { key: "mobile", titleKey: "COMMON.MOBILE", width: 130 },
-    { key: "district", titleKey: "FORM.DISTRICT", width: 130},
-    { key: "blocks", titleKey: "FORM.BLOCK", width: 130},
-    { key: "centers", titleKey: "FORM.CENTER", width: 130,  },
+    { key: "name", titleKey: "TABLE_TITLE.NAME", width: 130 },
+    { key: "age", titleKey: "TABLE_TITLE.AGE", width: 70 },
+    { key: "gender", titleKey: "TABLE_TITLE.GENDER", width: 90},
+    { key: "mobile", titleKey: "TABLE_TITLE.MOBILE", width: 130 },
+    { key: "district", titleKey: "TABLE_TITLE.DISTRICT_BLOCK", width: 160},
+    // { key: "blocks", titleKey: "TABLE_TITLE.BLOCK", width: 130},
+    { key: "centers", titleKey: "TABLE_TITLE.CENTER", width: 130,  },
     { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 160},
     // { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130, sortDirection: SortDirection.Ascend },
     // { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 160, sortDirection: SortDirection.Ascend },
     { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 160},
-    { key: "actions", titleKey: "FORM.ACTION", width: 130 , isSortable: false },
+    { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 130 , isSortable: false },
   ];
 
   return generateColumns(t, configs, isMobile);
@@ -44,16 +44,16 @@ export const getUserTableColumns = (t: any, isMobile: boolean) => {
 
 export const getTLTableColumns = (t: any, isMobile: boolean) => {
   const configs: ColumnConfig[] = [
-    { key: "name", titleKey: "FORM.NAME", width: 130 },
-    { key: "age", titleKey: "FORM.AGE", width: 100 },
-    { key: "gender", titleKey: "FORM.GENDER", width: 130 },
-    { key: "district", titleKey: "FORM.DISTRICT", width: 130,},
-    { key: "blocks", titleKey: "FORM.BLOCK", width: 130 },
+    { key: "name", titleKey: "TABLE_TITLE.NAME", width: 130 },
+    { key: "age", titleKey: "TABLE_TITLE.AGE", width: 70 },
+    { key: "gender", titleKey: "TABLE_TITLE.GENDER", width: 90 },
+    { key: "district", titleKey: "TABLE_TITLE.DISTRICT_BLOCK", width: 150,},
+    // { key: "blocks", titleKey: "TABLE_TITLE.BLOCK", width: 130 },
     { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130,  },
     { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130,  },
     { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 160, },
     { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 160, },
-    { key: "actions", titleKey: "FORM.ACTION", width: 130 , isSortable: false},
+    { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 130 , isSortable: false},
   ];
 
   return generateColumns(t, configs, isMobile);
@@ -68,10 +68,10 @@ export const getCenterTableData = (t: any, isMobile: boolean) => {
     { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 130 },
     { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 130 },
 
-    { key: "totalActiveMembers", titleKey: "Active Members", width: 130 },
+    { key: "totalActiveMembers", titleKey: "TABLE_TITLE.ACTIVE_MEMBERS", width: 130 },
     {
       key: "totalArchivedMembers",
-      titleKey: "Archived Members",
+      titleKey: "TABLE_TITLE.ARCHIVED_MEMBERS",
       width: 130,
     },
     { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 },

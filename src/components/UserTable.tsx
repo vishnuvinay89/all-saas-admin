@@ -571,7 +571,7 @@ const UserTable: React.FC<UserTableProps> = ({
                 //  gender: user.gender,
                 mobile: user.mobile === "NaN" ? "-" : user.mobile,
                 age: ageField ? ageField?.fieldvalues : "-",
-                district: districtField ? districtField?.fieldvalues : "-",
+                district: districtField ? districtField?.fieldvalues+" , "+blockField?.fieldvalues  : "-",
                 state: stateField ? stateField?.fieldvalues : "-",
                 blocks: blockField ? blockField?.fieldvalues : "-",
                 gender: genderField
@@ -619,7 +619,7 @@ const UserTable: React.FC<UserTableProps> = ({
               //  gender: user.gender,
               mobile: user.mobile === "NaN" ? "-" : user.mobile,
               age: ageField ? ageField?.fieldvalues : "-",
-              district: districtField ? districtField.value : "-",
+              district: districtField ? districtField.value+" , "+blockField.value : "-",
               state: stateField ? stateField.value : "-",
               blocks: blockField ? blockField.value : "-",
               gender: genderField
@@ -645,7 +645,7 @@ const UserTable: React.FC<UserTableProps> = ({
             //  gender: user.gender,
             mobile: user.mobile === "NaN" ? "-" : user.mobile,
             age: ageField ? ageField.value : "-",
-            district: districtField ? districtField.value : "-",
+            district: districtField ? districtField.value+" , "+blockField.value : "-",
             state: stateField ? stateField.value : "-",
             blocks: blockField ? blockField.value : "-",
             gender: genderField

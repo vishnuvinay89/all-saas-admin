@@ -14,7 +14,7 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import { Box, Button, IconButton, Menu, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import useSubmittedButtonStore from "@/utils/useSharedState";
-
+import LogoutIcon from '@mui/icons-material/Logout';
 const Profile = () => {
   const [anchorEl4, setAnchorEl4] = React.useState<null | HTMLElement>(null);
   const [profileClick, setProfileClick] = React.useState<boolean>(false);
@@ -267,51 +267,37 @@ const Profile = () => {
       <Menu
         id="profile-menu"
         anchorEl={anchorEl4}
-        keepMounted
         open={Boolean(anchorEl4)}
         onClose={handleClose4}
+        sx={{
+          paddingTop:"0px",
+         //backgroundColor: "#F8EFE7",
+
+        }}
         PaperProps={{
           sx: {
             width: "500px",
+            backgroundColor: "#F8EFE7",
           },
         }}
       >
         <Box
-          sx={{
-            position: "relative",
-            padding: "20px",
-            borderRadius: "10px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          {/* <IconButton
             sx={{
-              position: "absolute",
-              top: 10,
-              right: 10,
-            }}
-            onClick={handleEditClick}
-          >
-            <EditIcon />
-          </IconButton> */}
-
-          <Box
-            sx={{
-              backgroundColor: "#FFC107",
+              backgroundColor: "#78590C",
               width: "50px",
               height: "50px",
               borderRadius: "50%",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              marginBottom: "20px",
+              marginLeft:"45%",
+
             }}
           >
             <Typography
               variant="h6"
-              sx={{ fontWeight: "bold", fontSize: "18px" }}
+              color={"white"}
+              sx={{ fontWeight: "bold", fontSize: "18px"}}
             >
               {adminInfo?.name
                 ?.split(" ")
@@ -319,6 +305,21 @@ const Profile = () => {
                 .join("")}
             </Typography>
           </Box>
+        <Box
+          sx={{
+            position: "relative",
+           // marginTop:"10px",
+            padding: "20px",
+           // borderRadius: "10px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            backgroundColor:"white"
+          }}
+        >
+          
+
+          
 
           <Typography variant="h5" sx={{ marginBottom: "10px" }}>
             {adminInfo?.name}
@@ -343,7 +344,12 @@ const Profile = () => {
             variant="contained"
             color="primary"
             onClick={handleLogout}
-            sx={{ fontSize: "16px" }}
+          
+            sx={{ fontSize: "16px", backgroundColor:"white",
+            border: "0.6px solid black"  // Replace with your desired border color
+
+          }}
+            endIcon={<LogoutIcon />}
           >
             {t("COMMON.LOGOUT")}
           </Button>
