@@ -350,7 +350,7 @@
     "ACTIONS": "ACTIONS",
     "TYPE": "TYPE",
     "STATE": "STATE",
-    "DISTRICT": "DISTRICT",
+    "DISTRICT_BLOCK": "DISTRICT, BLOCK",
     "BLOCK": "BLOCK",
     "CENTER": "CENTERS",
     "AGE": "AGE",
