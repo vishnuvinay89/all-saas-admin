@@ -238,9 +238,8 @@
     "CENTER_DELETE_SUCCESSFULLY": "Center has been Successfully Deleted",
     "CENTER_CREATED_SUCCESSFULLY": "Center Created Successfully",
     "SEARCHBAR_PLACEHOLDER": "Search Center..",
-    "CENTER_UPDATE_FAILED": "Something went wrong while updating center",
-    "ARCHIVED_MEMBERS": "ARCHIVED MEMBERS",
-    "ACTIVE_MEMBERS": "ACTIVE MEMBERS"
+    "CENTER_UPDATE_FAILED": "Something went wrong while updating center"
+   
   },
   "FORM": {
     "FULL_NAME": "Full Name",
@@ -341,22 +340,22 @@
     "ENTER_VALID_MOBILE_NUMBER": "Enter a valid Mobile Number"
   },
   "TABLE_TITLE": {
-    "NAME": "NAME",
-    "STATUS": "STATUS",
-    "CREATED_DATE": "CREATED DATE",
-    "UPDATED_DATE": "UPDATED DATE",
-    "CREATED_BY": "CREATED BY",
-    "UPDATED_BY": "UPDATED BY",
-    "ACTIONS": "ACTIONS",
-    "TYPE": "TYPE",
-    "STATE": "STATE",
-    "DISTRICT_BLOCK": "DISTRICT, BLOCK",
-    "BLOCK": "BLOCK",
-    "CENTER": "CENTERS",
-    "AGE": "AGE",
-    "GENDER": "GENDER",
-    "MOBILE": "MOBILE"
-
-
+    "NAME": "Name",
+    "STATUS": "Status",
+    "CREATED_DATE": "Created Date",
+    "UPDATED_DATE": "Updated Date",
+    "CREATED_BY": "Created By",
+    "UPDATED_BY": "Updated By",
+    "ACTIONS": "Actions",
+    "TYPE": "Type",
+    "STATE": "State",
+    "DISTRICT_BLOCK": "District, Block",
+    "BLOCK": "Block",
+    "CENTER": "Centers",
+    "AGE": "Age",
+    "GENDER": "Gender",
+    "MOBILE": "Mobile",
+    "ARCHIVED_MEMBERS": "Archived Members",
+    "ACTIVE_MEMBERS": "Active Members"
   }
 }
