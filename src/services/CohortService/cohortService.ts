@@ -107,3 +107,16 @@ export const fetchCohortMemberList = async ({
     // throw error;
   }
 };
+
+
+
+export const bulkCreateCohortMembers = async (payload: any): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohortmember/bulkCreate`;
+  try {
+    const response = await post(apiUrl, payload);
+    return response.data;
+  } catch (error) {
+    console.error('Error in bulk creating cohort members', error);
+    throw error;
+  }
+};

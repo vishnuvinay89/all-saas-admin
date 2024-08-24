@@ -2,6 +2,8 @@ export enum Role {
   STUDENT = "Student",
   TEACHER = "Teacher",
   TEAM_LEADER = "Team Leader",
+  TEAM_LEADERS = "Team Leaders",
+
   ADMIN = "Admin",
   LEARNERS = "Learners",
   FACILITATORS = "Facilitators",
