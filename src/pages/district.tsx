@@ -67,13 +67,17 @@ const District: React.FC = () => {
   const [sortBy, setSortBy] = useState<[string, string]>(["name", "asc"]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [paginationCount, setPaginationCount] = useState<number>(Numbers.ZERO);
-  const [stateCode, setStateCode] = useState<any>([]);
+  const [stateCode, setStateCode] = useState<any>();
   const [stateValue, setStateValue] = useState<string>("");
   useState<string>("");
   const [cohortStatus, setCohortStatus] = useState<any>();
   const [cohortId, setCohortId] = useState<any>();
   const [stateFieldId, setStateFieldId] = useState<string>("");
   const [pagination, setPagination] = useState(true);
+
+  const [districtsOptionRead, setDistrictsOptionRead] = useState<any>([]);
+  const [districtCodeArr, setDistrictCodeArr] = useState<any>([]);
+  const [districtNameArr, setDistrictNameArr] = useState<any>([]);
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -98,97 +102,97 @@ const District: React.FC = () => {
     fetchUserDetail();
   }, []);
 
-  const fetchCohortSearch = async () => {
-    const limit = pageLimit;
-    const offset = pageOffset * limit;
+  const fetchDistricts = async () => {
+    try {
+      const data = await getDistrictsForState({
+        controllingfieldfk: stateCode || "",
+        fieldName: "districts",
+      });
 
-    const reqParams = {
-      limit: limit,
-      offset: offset,
-      filters: {
-        name: stateValue,
-        type: "STATE",
-      },
-    };
+      const districts = data?.result?.values || [];
+      setDistrictsOptionRead(districts);
 
-    const response = await getCohortList(reqParams);
-    console.log("getCohortData", response);
+      const districtNameArray = districts.map((item: any) => item.label);
+      setDistrictNameArr(districtNameArray);
 
-    const cohortDetails = response?.results?.cohortDetails;
-    console.log("cohortDetails", cohortDetails);
-    if (cohortDetails && cohortDetails.length > 0) {
-      cohortDetails.forEach(
-        (cohort: { customFields: any; cohortId: any; status: any }) => {
-          const cohortId = cohort?.cohortId;
-          const cohortStatus = cohort?.status;
+      const districtCodeArray = districts.map((item: any) => item.value);
+      setDistrictCodeArr(districtCodeArray);
 
-          setCohortStatus(cohortStatus);
-          setCohortId(cohortId);
+      const districtFieldID = data?.result?.fieldId || "";
+      setDistrictFieldId(districtFieldID);
 
-          const addCustomFieldsState = {
-            fieldId: stateFieldId,
-            value: stateCode,
-          };
-          cohort.customFields.push(addCustomFieldsState);
-        }
-      );
-    } else {
-      console.error("No cohort details available.");
+      console.log("districtNameArray", districtNameArray);
+    } catch (error) {
+      console.error("Error fetching districts", error);
     }
   };
 
   useEffect(() => {
-    fetchCohortSearch();
+    fetchDistricts();
   }, [stateCode]);
 
-  const fetchDistrictData = async (stateCode: string) => {
-    setLoading(true);
+  const getFilteredCohortData = async () => {
     try {
-      const limit = pageLimit;
-      const offset = pageOffset * limit;
-
-      const data = {
-        limit: limit,
-        offset: offset,
-        controllingfieldfk: stateCode,
-        fieldName: "districts",
-        optionName: searchKeyword || "",
+      const reqParams = {
+        limit: 0,
+        offset: 0,
+        filters: {
+          name: searchKeyword,
+          states: stateCode,
+          type: "DISTRICT",
+        },
         sort: sortBy,
       };
 
-      const districtData = await getDistrictsForState(data);
-      setDistrictData(districtData.result.values || []);
+      const response = await getCohortList(reqParams);
+      const cohortDetails = response?.results?.cohortDetails || [];
 
-      const districtFieldID = districtData?.result?.fieldId || "";
-      setDistrictFieldId(districtFieldID);
+      const filteredDistrictData = cohortDetails
+        .map(
+          (districtDetail: {
+            name: string;
+            createdAt: any;
+            updatedAt: any;
+            createdBy: any;
+            updatedBy: any;
+          }) => {
+            const transformedName = transformLabel(districtDetail.name);
 
-      const totalCount = districtData?.result?.totalCount || 0;
+            const matchingDistrict = districtsOptionRead.find(
+              (district: { label: string }) =>
+                district.label === transformedName
+            );
+
+            return {
+              label: transformedName,
+              createdAt: districtDetail.createdAt,
+              updatedAt: districtDetail.updatedAt,
+              createdBy: districtDetail.createdBy,
+              updatedBy: districtDetail.updatedBy,
+              value: matchingDistrict ? matchingDistrict.value : null,
+            };
+          }
+        )
+        .filter((district: { label: any }) =>
+          districtNameArr.includes(district.label)
+        );
+
+      setDistrictData(filteredDistrictData);
+
+      const totalCount = filteredDistrictData.length;
       setPaginationCount(totalCount);
-
-      setPagination(totalCount > 10);
-      setPageSizeArray(
-        totalCount > 15
-          ? [5, 10, 15]
-          : totalCount > 10
-            ? [5, 10]
-            : totalCount > 5
-              ? [5]
-              : []
-      );
-
-      setPageCount(Math.ceil(totalCount / limit));
+      setPageCount(Math.ceil(totalCount / pageLimit));
     } catch (error) {
-      console.error("Error fetching district data:", error);
+      console.error("Error fetching and filtering cohort districts", error);
       setDistrictData([]);
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchDistrictData(stateCode);
-  }, [searchKeyword, stateCode, sortBy, pageLimit, pageOffset]);
-
+    if (stateCode) {
+      getFilteredCohortData();
+    }
+  }, [searchKeyword, pageLimit, pageOffset, stateCode, sortBy]);
   const handleEdit = (rowData: DistrictDetail) => {
     setModalOpen(true);
 
@@ -243,7 +247,8 @@ const District: React.FC = () => {
       const response = await createOrUpdateOption(districtFieldId, newDistrict);
 
       if (response) {
-        await fetchDistrictData(searchKeyword);
+        await fetchDistricts();
+        await getFilteredCohortData();
       }
     } catch (error) {
       console.error("Error adding district:", error);
@@ -296,7 +301,11 @@ const District: React.FC = () => {
   ) => {
     setPageOffset(value - 1);
   };
-
+  const paginatedData = () => {
+    const startIndex = pageOffset * pageLimit;
+    const endIndex = startIndex + pageLimit;
+    return districtData.slice(startIndex, endIndex);
+  };
   const PagesSelector = () => (
     <>
       <Box sx={{ display: { xs: "block" } }}>
@@ -374,13 +383,12 @@ const District: React.FC = () => {
           setSelectedStateForEdit(null);
         }}
       >
-        {/* Show loader if loading is true */}
         {loading ? (
           <Box
             display="flex"
             justifyContent="center"
             alignItems="center"
-            height="20vh" // Adjust height as needed
+            height="20vh"
           >
             <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
           </Box>
@@ -442,14 +450,7 @@ const District: React.FC = () => {
                     width: "130",
                   },
                 ]}
-                data={districtData.map((districtDetail) => ({
-                  label: transformLabel(districtDetail.label),
-                  createdAt: districtDetail.createdAt,
-                  updatedAt: districtDetail.updatedAt,
-                  createdBy: districtDetail.createdBy,
-                  updatedBy: districtDetail.updatedBy,
-                  value: districtDetail.value,
-                }))}
+                data={paginatedData()} // Use the paginated data here
                 limit={pageLimit}
                 offset={pageOffset}
                 paginationEnable={paginationCount >= Numbers.FIVE}

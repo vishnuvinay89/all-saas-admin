@@ -383,6 +383,7 @@ const HeaderComponent = ({
                 style={{
                   borderRadius: "8px",
                   height: "40px",
+                  marginLeft: "5px",
                   fontSize: "14px",
                   backgroundColor: theme.palette.secondary["100"],
 
