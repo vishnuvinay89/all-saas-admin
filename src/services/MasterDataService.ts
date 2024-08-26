@@ -1,4 +1,4 @@
-import { deleteApi, patch, post } from "./RestClient";
+import { deleteApi, patch, post, put } from "./RestClient";
 
 export interface CenterListParam {
   limit?: number;
@@ -212,5 +212,20 @@ export const createOrUpdateOption = async (
       error.response?.data
     );
     throw new Error("Failed to update options");
+  }
+};
+
+export const updateCohort = async (
+  cohortId: string,
+  cohortDetails: any
+): Promise<any> => {
+  let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/update/${cohortId}`;
+
+  try {
+    const response = await put(apiUrl, cohortDetails);
+    return response?.data;
+  } catch (error) {
+    console.error("Error in updating cohort details", error);
+    throw error;
   }
 };

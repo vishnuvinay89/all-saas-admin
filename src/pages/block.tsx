@@ -79,13 +79,14 @@ const Block: React.FC = () => {
   const [sortBy, setSortBy] = useState<[string, string]>(["name", "asc"]);
   const [paginationCount, setPaginationCount] = useState<number>(0);
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10, 20, 50]);
-  const [stateCode, setStateCode] = useState<any>([]);
+  const [stateCode, setStateCode] = useState<any>("");
   const [stateValue, setStateValue] = useState<string>("");
   const [cohortStatus, setCohortStatus] = useState<any>();
   const [cohortId, setCohortId] = useState<any>();
   const [stateFieldId, setStateFieldId] = useState<string>("");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [pagination, setPagination] = useState(true);
+  const [cohortBlockDetails, setCohortBlockDetails] = useState<any>([]);
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -144,21 +145,24 @@ const Block: React.FC = () => {
     fetchDistricts();
   }, [stateCode]);
 
-  const getCohortSearchBlock = async () => {
+  const getCohortSearchDistrict = async () => {
     const limit = pageLimit;
     const offset = pageOffset * limit;
     const reqParams = {
       limit: limit,
       offset: offset,
       filters: {
-        name: selectedDistrict,
+        name: searchKeyword,
+        states: stateCode,
         type: "DISTRICT",
       },
+      sort: sortBy,
     };
 
     const response = await getCohortList(reqParams);
 
     const cohortDetails = response?.results?.cohortDetails;
+    console.log("cohortDetails", cohortDetails);
 
     if (cohortDetails && cohortDetails.length > 0) {
       const firstCohort = cohortDetails[0];
@@ -173,36 +177,39 @@ const Block: React.FC = () => {
   };
 
   useEffect(() => {
-    getCohortSearchBlock();
+    getCohortSearchDistrict();
   }, [selectedDistrict]);
 
-  const fetchBlocks = async (DistrictId: string) => {
-    console.log("districtId", DistrictId);
-    setLoading(true);
-    try {
-      const limit = pageLimit;
-      const offset = pageOffset * limit;
+  const getCohortSearchBlock = async () => {
+    const limit = pageLimit;
+    const offset = pageOffset * limit;
+    const reqParams = {
+      limit: limit,
+      offset: offset,
+      filters: {
+        name: searchKeyword,
+        districts: selectedDistrict,
+        type: "BLOCK",
+      },
+      sort: sortBy,
+    };
 
-      const response = await getBlocksForDistricts({
-        limit: limit,
-        offset: offset,
-        controllingfieldfk: selectedDistrict || "",
-        fieldName: "blocks",
-        optionName: searchKeyword || "",
-        sort: sortBy,
-      });
+    const response = await getCohortList(reqParams);
 
-      console.log("block response", response);
-      setBlockData(response?.result?.values || []);
+    const cohortDetails = response?.results?.cohortDetails;
+    console.log("cohortDetails", cohortDetails);
+    setCohortBlockDetails(cohortDetails);
 
-      const blockFieldID = response?.result?.fieldId || "";
+    if (cohortDetails && cohortDetails.length > 0) {
+      const firstCohort = cohortDetails[0];
+      const cohortID = firstCohort?.cohortId;
+      const cohortSTATUS = firstCohort?.status;
 
-      console.log("blockFieldID", blockFieldID);
-      setBlocksFieldId(blockFieldID);
+      setCohortId(cohortID);
+      setCohortStatus(cohortSTATUS);
 
-      console.log("new blockFeldId", blocksFieldId);
-
-      const totalCount = response?.result?.totalCount || 0;
+      const totalCount = response?.count || 0;
+      console.log("totalCount", totalCount);
       setPaginationCount(totalCount);
 
       setPagination(totalCount > 10);
@@ -217,9 +224,40 @@ const Block: React.FC = () => {
       );
 
       setPageCount(Math.ceil(totalCount / limit));
+    } else {
+      console.error("No cohort details available.");
+      setCohortBlockDetails([]);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedDistrict) {
+      getCohortSearchBlock();
+    }
+  }, [selectedDistrict, searchKeyword, sortBy, pageOffset, pageLimit]);
+
+  const fetchBlocks = async (DistrictId: string) => {
+    console.log("districtId", DistrictId);
+    setLoading(true);
+    try {
+      const response = await getBlocksForDistricts({
+        limit: 0,
+        offset: 0,
+        controllingfieldfk: selectedDistrict || "",
+        fieldName: "blocks",
+      });
+
+      console.log("block response", response);
+      setBlockData(response?.result?.values || []);
+
+      const blockFieldID = response?.result?.fieldId || "";
+
+      console.log("blockFieldID", blockFieldID);
+      setBlocksFieldId(blockFieldID);
+
+      console.log("new blockFeldId", blocksFieldId);
     } catch (error) {
       console.error("Error fetching blocks", error);
-      setBlockData([]);
     } finally {
       setLoading(false);
     }
@@ -229,18 +267,24 @@ const Block: React.FC = () => {
     if (selectedDistrict) {
       fetchBlocks(selectedDistrict);
     }
-  }, [selectedDistrict, searchKeyword, sortBy, pageOffset, pageLimit]);
+  }, [selectedDistrict]);
 
   const columns = [
     {
-      key: "block",
+      key: "name",
       title: t("COMMON.BLOCK"),
       dataType: DataType.String,
       width: "130",
     },
     {
-      key: "value",
+      key: "code",
       title: t("MASTER.CODE"),
+      dataType: DataType.String,
+      width: "130",
+    },
+    {
+      key: "status",
+      title: t("Status"),
       dataType: DataType.String,
       width: "130",
     },
@@ -291,7 +335,7 @@ const Block: React.FC = () => {
 
   const handleDistrictChange = async (event: SelectChangeEvent<string>) => {
     const selectedDistrict = event.target.value;
-    setSelectedDistrict(selectedDistrict); // This will automatically trigger `fetchBlocks`
+    setSelectedDistrict(selectedDistrict); 
   };
 
   const handleEdit = (rowData: any) => {
@@ -587,14 +631,7 @@ const Block: React.FC = () => {
               ) : blockData.length > 0 ? (
                 <KaTableComponent
                   columns={columns}
-                  data={blockData.map((block) => ({
-                    block: transformLabel(block.label),
-                    createdAt: block.createdAt,
-                    updatedAt: block.updatedAt,
-                    createdBy: block.createdBy,
-                    updatedBy: block.updatedBy,
-                    value: block.value,
-                  }))}
+                  data={cohortBlockDetails}
                   limit={pageLimit}
                   offset={pageOffset}
                   paginationEnable={paginationCount >= Numbers.FIVE}
@@ -606,7 +643,7 @@ const Block: React.FC = () => {
                   onDelete={handleDelete}
                   extraActions={[]}
                   noDataMessage={
-                    blockData.length === 0 ? t("COMMON.BLOCKS_NOT_FOUND") : ""
+                    cohortBlockDetails === 0 ? t("COMMON.BLOCKS_NOT_FOUND") : ""
                   }
                 />
               ) : (

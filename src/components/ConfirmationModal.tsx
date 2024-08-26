@@ -1,5 +1,4 @@
 import * as React from "react";
-
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { Divider } from "@mui/material";
@@ -12,6 +11,7 @@ interface ConfirmationModalProps {
   buttonNames: ButtonNames;
   handleCloseModal: () => void;
   modalOpen: boolean;
+  disableDelete?: boolean; // New prop to disable the delete button
 }
 
 interface ButtonNames {
@@ -25,6 +25,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   handleAction,
   buttonNames,
   handleCloseModal,
+  disableDelete = false,
 }) => {
   const theme = useTheme();
 
@@ -62,8 +63,6 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             p: 2,
           }}
         >
-        
-
           <Button
             sx={{
               color: "secondary",
@@ -95,6 +94,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                 handleCloseModal();
               }
             }}
+            disabled={disableDelete}
           >
             {buttonNames.primary}
           </Button>

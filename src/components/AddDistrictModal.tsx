@@ -170,6 +170,7 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
   };
 
   const isEditing = !!initialValues.name;
+  const isEditCode = !!initialValues.value;
   const buttonText = isEditing ? t("COMMON.UPDATE") : t("COMMON.SUBMIT");
   const dialogTitle = isEditing
     ? t("COMMON.UPDATE_DISTRICT")
@@ -220,6 +221,7 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
           onChange={(e) => handleChange("value", e.target.value.toUpperCase())}
           error={!!errors.value}
           helperText={errors.value}
+          disabled={isEditCode}
         />
         <Box display="flex" alignItems="center" mt={2}>
           <InfoOutlinedIcon color="primary" sx={{ mr: 1 }} />
