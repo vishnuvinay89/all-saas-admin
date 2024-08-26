@@ -85,6 +85,7 @@ const District: React.FC = () => {
   const [cohortIdForEdit, setCohortIdForEdit] = useState<any>();
   const [districtValueForDelete, setDistrictValueForDelete] = useState<any>("");
   const [countOfBlocks, setCountOfBlocks] = useState<number>(0);
+  const [cohortIdofState,setCohortIdofState] = useState<any>("");
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -139,6 +140,40 @@ const District: React.FC = () => {
   useEffect(() => {
     fetchDistricts();
   }, [stateCode]);
+
+
+  const getStatecohorts = async () => {
+    try {
+      const reqParams = {
+        limit: 0,
+        offset: 0,
+        filters: {
+          type: "STATE",
+        },
+        sort: sortBy,
+      };
+  
+      const response = await getCohortList(reqParams);
+      console.log("state code response data", response?.results);
+  
+      const maharashtraState = response?.results?.cohortDetails?.find(
+        (state: { name: string; }) => state.name === "Maharashtra"
+      );
+  
+      setCohortIdofState(maharashtraState?.cohortId);
+
+      
+    } catch (error) {
+      console.error("Error fetching and filtering cohort districts", error);
+      setDistrictData([]);
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    getStatecohorts();
+  }, []);
+  
 
   const getFilteredCohortData = async () => {
     try {
@@ -347,7 +382,7 @@ const District: React.FC = () => {
       name: name,
       type: "DISTRICT",
       status: Status.ACTIVE,
-      parentId: cohortId,
+      parentId: cohortIdofState,
       customFields: [
         {
           fieldId: stateFieldId,
@@ -359,6 +394,7 @@ const District: React.FC = () => {
     try {
       const cohortCreateResponse = await createCohort(queryParameters);
       if (cohortCreateResponse) {
+        paginatedData()
         showToastMessage(t("COMMON.DISTRICT_ADDED_SUCCESS"), "success");
       } else if (cohortCreateResponse.responseCode === 409) {
         showToastMessage(t("COMMON.DISTRICT_DUPLICATION_FAILURE"), "error");
@@ -409,6 +445,7 @@ const District: React.FC = () => {
         queryParameters
       );
       if (cohortCreateResponse) {
+        paginatedData()
         showToastMessage(t("COMMON.DISTRICT_UPDATED_SUCCESS"), "success");
       } else if (cohortCreateResponse.responseCode === 409) {
         showToastMessage(t("COMMON.DISTRICT_DUPLICATION_FAILURE"), "error");
