@@ -59,7 +59,7 @@ export interface SendCredentialsRequest {
   isQueue: boolean;
   context: string;
   key: string;
-  replacements: any[];
+  replacements: object;
   email: {
     receipients: any[];
   };

@@ -106,7 +106,19 @@
     "OKAY": "okay",
     "NEW": "New {{role}}",
     "USER_CREDENTIAL_SEND_SUCCESSFULLY": "User credentials sent successfully!",
-    "USER_CREDENTIALS_WILL_BE_SEND_SOON": "User credentials will be sent soon"
+    "USER_CREDENTIALS_WILL_BE_SEND_SOON":"User credentials will be sent soon",
+
+    "REASSIGN_CENTERS": "Re-assign Center",
+    "REASSIGN_BLOCKS": "Re-assign Blocks",
+    "REASSIGN":"Reassign",
+    "COHORT_ID_NOT_FOUND": "Could not found cohort Id for {{block}} ",
+    "CENTERS_REASSIGN_SUCCESSFULLY": "Center reassign successfully",
+    "BLOCKS_REASSIGN_SUCCESSFULLY": "Block reassign successfully",
+     "CENTERS_REASSIGN_FAILED":"Center Reassignment fails",
+     "BLOCKS_REASSIGN_FAILED":"Block Reassignment fails",
+    "USER_COHORTS": "{{name}} belongs to below cohorts",
+    "DELETE_COHORT_WARNING":"Do you want to delete user from cohort?"
+
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -238,6 +250,8 @@
     "CENTER_CREATED_SUCCESSFULLY": "Center Created Successfully",
     "SEARCHBAR_PLACEHOLDER": "Search Center..",
     "CENTER_UPDATE_FAILED": "Something went wrong while updating center"
+    
+
    
   },
   "FORM": {

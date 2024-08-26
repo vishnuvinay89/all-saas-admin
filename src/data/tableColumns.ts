@@ -35,13 +35,8 @@ export const getUserTableColumns = (t: any, isMobile: boolean) => {
     { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 160 },
     // { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130, sortDirection: SortDirection.Ascend },
     // { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 160, sortDirection: SortDirection.Ascend },
-    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 160 },
-    {
-      key: "actions",
-      titleKey: "TABLE_TITLE.ACTIONS",
-      width: 130,
-      isSortable: false,
-    },
+    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 160},
+    { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 150 , isSortable: false },
   ];
 
   return generateColumns(t, configs, isMobile);
@@ -54,16 +49,11 @@ export const getTLTableColumns = (t: any, isMobile: boolean) => {
     { key: "gender", titleKey: "TABLE_TITLE.GENDER", width: 90 },
     { key: "district", titleKey: "TABLE_TITLE.DISTRICT_BLOCK", width: 150 },
     // { key: "blocks", titleKey: "TABLE_TITLE.BLOCK", width: 130 },
-    { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130 },
-    { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130 },
-    { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 160 },
-    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 160 },
-    {
-      key: "actions",
-      titleKey: "TABLE_TITLE.ACTIONS",
-      width: 130,
-      isSortable: false,
-    },
+    { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130,  },
+    { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130,  },
+    { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 160, },
+    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 160, },
+    { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 150 , isSortable: false},
   ];
 
   return generateColumns(t, configs, isMobile);

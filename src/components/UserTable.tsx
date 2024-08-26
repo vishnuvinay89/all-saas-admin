@@ -28,6 +28,9 @@ import { TablePagination, useMediaQuery } from "@mui/material";
 import { Theme } from "@mui/system";
 import CommonUserModal from "./CommonUserModal";
 import { useQuery } from "@tanstack/react-query";
+import ReassignCenterModal from "./ReassignCenterModal";
+import { getCenterList, getStateBlockDistrictList } from "@/services/MasterDataService";
+import { updateCohortMemberStatus } from "@/services/CohortService/cohortService";
 type UserDetails = {
   userId: any;
   username: any;
@@ -40,6 +43,11 @@ type UserDetails = {
   state?: any;
   district?: any;
   blocks?: any;
+  stateCode?:any;
+  districtCode?:any;
+  blockCode?:any;
+  centerMembershipIdList?:any;
+  blockMembershipIdList?:any
 };
 type FilterDetails = {
   role: any;
@@ -50,13 +58,18 @@ type FilterDetails = {
   name?: any;
   cohortId?: any
 };
-
+interface CenterProp {
+  cohortId: string;
+  name: string;
+}
 interface Cohort {
   cohortId: string;
   name: string;
   parentId: string | null;
   type: string;
   customField: any[];
+  cohortMemberStatus?:string
+  cohortMembershipId?:string
 }
 interface UserTableProps {
   role: string;
@@ -64,6 +77,10 @@ interface UserTableProps {
   searchPlaceholder: string;
   handleAddUserClick: any;
   parentState?: boolean;
+}
+interface FieldProp {
+  value: string;
+  label: string;
 }
 const UserTable: React.FC<UserTableProps> = ({
   role,
@@ -74,6 +91,10 @@ const UserTable: React.FC<UserTableProps> = ({
 }) => {
   console.log(userType);
   const [selectedState, setSelectedState] = React.useState<string[]>([]);
+  const [blockMembershipIdList, setBlockMembershipIdList] = React.useState<string[]>([]);
+  const [centerMembershipIdList, setCenterMembershipIdList] = React.useState<string[]>([]);
+
+
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
@@ -92,7 +113,15 @@ const UserTable: React.FC<UserTableProps> = ({
   const [statusValue, setStatusValue] = useState(Status.ACTIVE);
   const [pageCount, setPageCount] = useState(1);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isReassignCohortModalOpen, setIsReassignCohortModalOpen] = useState(false);
+  const [centers, setCenters] = useState<CenterProp[]>([]);
+  const [userName, setUserName] = useState("");
+  const [blocks, setBlocks] = useState<FieldProp[]>([]);
+  const [userCohort, setUserCohorts] = useState ("")
+
   const [selectedUserId, setSelectedUserId] = useState("");
+  const [block, setBlock] = useState("");
+
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [deleteUserState, setDeleteUserState] = useState(false);
@@ -481,10 +510,83 @@ const UserTable: React.FC<UserTableProps> = ({
 
   const handleDelete = (rowData: any) => {
     setIsDeleteModalOpen(true);
+    console.log(rowData)
+    setUserName(rowData?.name)
+    console.log(userName)
+
+    setBlockMembershipIdList(rowData.blockMembershipIdList)
+    setCenterMembershipIdList(rowData.centerMembershipIdList)
     setSelectedUserId(rowData.userId);
+    if(userType===Role.TEAM_LEADERS)
+    {
+           setUserCohorts(rowData.blocks)
+           console.log(userCohort)
+
+    }
+    else{
+        setUserCohorts(rowData.centers)
+    }
     //const userData="";
 
     console.log("Delete row:", rowData.userId);
+  };
+ 
+  const handleReassignCohort = async(rowData: any) => {
+   // setIsDeleteModalOpen(true);
+   console.log(rowData)
+    setSelectedUserId(rowData.userId );
+    setBlock(rowData.blocks)
+    setIsReassignCohortModalOpen(true)
+
+    //const userData="";
+    try{
+      console.log(userType , Role.TEAM_LEADER)
+      if(userType!=="Team Leaders")
+      {
+
+      
+    const getCentersObject = {
+      limit: 200,
+      offset: 0,
+      filters: {
+        // "type":"COHORT",
+        status: ["active"],
+        states: rowData.stateCode,
+        districts: rowData.districtCode,
+        blocks: rowData.blockCode
+        // "name": selected[0]
+      },
+    };
+    const response = await getCenterList(getCentersObject);
+    const dataArray = response?.result?.results?.cohortDetails;
+
+          const cohortInfo = dataArray
+            ?.filter((cohort: any) => cohort.type !== "BLOCK")
+            .map((item: any) => ({
+              cohortId: item?.cohortId,
+              name: item?.name,
+            }));
+          setCenters(cohortInfo)
+      }
+      else{
+
+
+        const object = {
+          controllingfieldfk: rowData.districtCode,
+          fieldName: "blocks",
+        };
+        const response = await getStateBlockDistrictList(object);
+           //console.log(blockFieldId)
+        const result = response?.result?.values;
+        console.log(result)
+        setBlocks(result);
+      }
+
+  }
+  catch(error: any)
+  {
+     console.log(error)
+  }
   };
   const handleSearch = (keyword: string) => {
     //  console.log(filters)
@@ -606,34 +708,8 @@ const UserTable: React.FC<UserTableProps> = ({
           const stateField = user?.customFields?.find(
             (field: any) => field?.label === "STATES"
           );
-           if(enableCenterFilter)
-           {
-            return {
-              userId: user?.userId,
-              username: user?.username,
-              status: user?.status,
-              name:
-                user?.name?.charAt(0).toUpperCase() +
-                user?.name?.slice(1).toLowerCase(),
-              role: user.role,
-              //  gender: user.gender,
-              mobile: user.mobile === "NaN" ? "-" : user.mobile,
-              age: ageField ? ageField?.fieldvalues : "-",
-              district: districtField ? districtField.value+" , "+blockField.value : "-",
-              state: stateField ? stateField.value : "-",
-              blocks: blockField ? blockField.value : "-",
-              gender: genderField
-                ? genderField.value?.charAt(0)?.toUpperCase() +
-                  genderField.value.slice(1).toLowerCase()
-                : "-",
-              createdAt: user.createdAt,
-              updatedAt: user.updatedAt,
-              createdBy: user.createdBy,
-              updatedBy: user.updatedBy,
-              // // centers: null,
-              // Programs: null,
-            };
-           }
+        
+           
           return {
             userId: user.userId,
             username: user.username,
@@ -656,6 +732,9 @@ const UserTable: React.FC<UserTableProps> = ({
             updatedAt: user.updatedAt,
             createdBy: user.createdBy,
             updatedBy: user.updatedBy,
+            stateCode:stateField?.code,
+            districtCode:districtField?.code,
+            blockCode:blockField?.code
             // centers: null,
             // Programs: null,
           };
@@ -716,8 +795,18 @@ const UserTable: React.FC<UserTableProps> = ({
             //   (cohort: Cohort) => cohort.name,
             // );
             const cohortNames = response?.result?.cohortData
-              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK") // Filter out cohorts with type 'block'
-              .map((cohort: Cohort) => cohort.name); //
+              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK" && cohort?.cohortMemberStatus!=="archived") // Filter out cohorts with type 'block'
+              .map((cohort: Cohort) => cohort.name); 
+              const centerMembershipIdList = response?.result?.cohortData
+              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK" && cohort?.cohortMemberStatus!=="archived") // Filter out cohorts with type 'block'
+              .map((cohort: Cohort) => cohort.cohortMembershipId);
+              const blockMembershipIdList = response?.result?.cohortData
+              ?.filter((cohort: Cohort) => cohort.type === "BLOCK" && cohort?.cohortMemberStatus!=="archived") // Filter out cohorts with type 'block'
+              .map((cohort: Cohort) => cohort.cohortMembershipId);
+            //  const cohortMembershipId=response?.result?.cohortData?.cohortMembershipId;
+              console.log(blockMembershipIdList)
+              console.log(centerMembershipIdList)
+
 
             let finalArray;
             if (cohortNames?.length >= 1) {
@@ -727,6 +816,9 @@ const UserTable: React.FC<UserTableProps> = ({
             // console.log(finalArray)
             return {
               ...user,
+              centerMembershipIdList: centerMembershipIdList,
+              blockMembershipIdList: blockMembershipIdList,
+
               centers: finalArray ? finalArray?.join(" , ") : "-",
             };
           })
@@ -799,6 +891,14 @@ const UserTable: React.FC<UserTableProps> = ({
     setOtherReason("");
     setIsDeleteModalOpen(false);
     setConfirmButtonDisable(true);
+
+  };
+  const handleCloseReassignModal = () => {
+    // setSelectedReason("");
+    // setOtherReason("");
+    setIsReassignCohortModalOpen(false);
+    setSelectedUserId("")
+   // setConfirmButtonDisable(true);
   };
 
   const handleDeleteUser = async (category: string) => {
@@ -811,10 +911,58 @@ const UserTable: React.FC<UserTableProps> = ({
           status: "archived",
         },
       };
-      const response = await deleteUser(userId, userData);
-      if (response) {
+      const cohortDeletionResponse = await deleteUser(userId, userData);
+      if (cohortDeletionResponse) {
         deleteUserState ? setDeleteUserState(false) : setDeleteUserState(true);
       }
+      console.log(blockMembershipIdList)
+      if(userType===Role.TEAM_LEADERS && blockMembershipIdList.length>0)
+      {
+       
+        blockMembershipIdList.forEach(async(item) => {
+
+            const memberStatus = Status.ARCHIVED;
+        const statusReason = selectedReason;
+        const membershipId = item;
+  
+        const response = await  updateCohortMemberStatus({
+          memberStatus,
+          statusReason,
+          membershipId,
+        });
+        
+        });
+      }
+      else{
+        centerMembershipIdList.forEach(async(item) => {
+ 
+             const memberStatus = Status.ARCHIVED;
+         const statusReason = selectedReason;
+         const membershipId = item;
+   
+         const response = await  updateCohortMemberStatus({
+           memberStatus,
+           statusReason,
+           membershipId,
+         });
+         
+         });
+
+      }
+     
+      console.log(centerMembershipIdList)
+
+      // const response = await deleteUser(userId, userData);
+      //   const memberStatus = Status.ARCHIVED;
+      //   const statusReason = selectedReason;
+      //   const membershipId = "";
+  
+      //   const teacherResponse = await updateCohortMemberStatus({
+      //     memberStatus,
+      //     statusReason,
+      //     membershipId,
+      //   });
+        
       handleCloseDeleteModal();
       showToastMessage(t("COMMON.USER_DELETE_SUCCSSFULLY"), "success");
     } catch (error) {
@@ -878,6 +1026,7 @@ const UserTable: React.FC<UserTableProps> = ({
               ? getTLTableColumns(t, isMobile)
               : getUserTableColumns(t, isMobile)
           }
+          reassignCohort={handleReassignCohort}
           data={data}
           limit={pageLimit}
           offset={pageOffset}
@@ -889,7 +1038,9 @@ const UserTable: React.FC<UserTableProps> = ({
           onEdit={handleEdit}
           onDelete={handleDelete}
           pagination={pagination}
+         // reassignCohort={reassignCohort}
           noDataMessage={data?.length === 0 ? t("COMMON.NO_USER_FOUND") : ""}
+          reassignType={userType===Role.TEAM_LEADERS?  t("COMMON.REASSIGN_BLOCKS"):  t("COMMON.REASSIGN_CENTERS")}
         />
       ) : (
         loading === false &&
@@ -934,6 +1085,20 @@ const UserTable: React.FC<UserTableProps> = ({
         setOtherReason={setOtherReason}
         confirmButtonDisable={confirmButtonDisable}
         setConfirmButtonDisable={setConfirmButtonDisable}
+        centers={userCohort}
+        userId={selectedUserId}
+        userName={userName}
+
+
+      />
+       <ReassignCenterModal
+        open={isReassignCohortModalOpen}
+        onClose={handleCloseReassignModal}
+       userType={userType}
+        cohortData={centers}
+       blocks={blocks}
+        userId={selectedUserId}
+        blockName={block}
       />
 
       <CommonUserModal
