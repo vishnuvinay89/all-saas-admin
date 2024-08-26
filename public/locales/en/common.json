@@ -119,6 +119,7 @@
     "BLOCKS_REASSIGN_FAILED": "Block Reassignment fails",
     "USER_COHORTS": "{{name}} belongs to below cohorts",
     "DELETE_COHORT_WARNING": "Do you want to delete user from cohort?"
+
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -366,6 +367,8 @@
     "GENDER": "Gender",
     "MOBILE": "Mobile",
     "ARCHIVED_MEMBERS": "Archived Members",
-    "ACTIVE_MEMBERS": "Active Members"
+    "ACTIVE_MEMBERS": "Active Members",
+    "ACTIVE_LEARNERS": "Active Learners",
+    "ARCHIVED_LEARNERS": " Archived Learners"
   }
 }

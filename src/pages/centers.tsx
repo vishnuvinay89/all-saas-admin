@@ -110,7 +110,7 @@ const Center: React.FC = () => {
   const [uiSchema, setUiSchema] = React.useState<any>();
   const [openAddNewCohort, setOpenAddNewCohort] =
     React.useState<boolean>(false);
-    const [statusValue, setStatusValue] = useState(Status.ACTIVE);
+  const [statusValue, setStatusValue] = useState(Status.ACTIVE);
 
   const [pageCount, setPageCount] = useState(Numbers.ONE);
   const [pageOffset, setPageOffset] = useState(Numbers.ZERO);
@@ -137,8 +137,7 @@ const Center: React.FC = () => {
   const [filters, setFilters] = useState<cohortFilterDetails>({
     type: CohortTypes.COHORT,
     states: selectedStateCode,
-     status: [statusValue]
-    ,
+    status: [statusValue],
   });
   const handleCloseAddLearnerModal = () => {
     setOpenAddNewCohort(false);
@@ -146,7 +145,7 @@ const Center: React.FC = () => {
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
- 
+
   const getAdminInformation = () => {
     if (typeof window !== "undefined" && window.localStorage) {
       const admin = localStorage.getItem("adminInfo");
@@ -173,7 +172,6 @@ const Center: React.FC = () => {
       }
     }
   };
-  
 
   // use api calls
   useEffect(() => {
@@ -334,7 +332,6 @@ const Center: React.FC = () => {
   };
 
   useEffect(() => {
-
     fetchUserList();
     getFormData();
   }, [pageOffset, pageLimit, sortBy, filters, filters.states, filters.status]);
@@ -395,7 +392,6 @@ const Center: React.FC = () => {
           type: "COHORT",
           states: stateCodes,
           status: filters.status,
-
         });
       else setFilters({ type: "COHORT", states: stateCodes });
     }
@@ -406,13 +402,13 @@ const Center: React.FC = () => {
   const handleDistrictChange = (selected: string[], code: string[]) => {
     setSelectedBlock([]);
     setSelectedDistrict(selected);
+    
 
     if (selected[0] === "") {
       if (filters.status) {
         setFilters({
           states: selectedStateCode,
           status: filters.status,
-
         });
       } else {
         setFilters({
@@ -427,7 +423,6 @@ const Center: React.FC = () => {
           states: selectedStateCode,
           districts: districts,
           status: filters.status,
-
         });
       } else {
         setFilters({
@@ -446,7 +441,6 @@ const Center: React.FC = () => {
           states: selectedStateCode,
           districts: selectedDistrictCode,
           status: filters.status,
-
         });
       } else {
         setFilters({
@@ -463,7 +457,6 @@ const Center: React.FC = () => {
           districts: selectedDistrictCode,
           blocks: blocks,
           status: filters.status,
-
         });
       } else {
         setFilters({
@@ -507,14 +500,14 @@ const Center: React.FC = () => {
   };
 
   const handleSortChange = async (event: SelectChangeEvent) => {
-    if (event.target.value === "Z-A") {
-      setSortBy(["name", SORT.DESCENDING]);
-    } else if (event.target.value === "A-Z") {
-      setSortBy(["name", SORT.ASCENDING]);
-    } else {
-      setSortBy(["createdAt", SORT.ASCENDING]);
-    }
-    setSelectedSort(event.target.value);
+      if (event.target.value === "Z-A") {
+        setSortBy(["name", SORT.DESCENDING]);
+      } else if (event.target.value === "A-Z") {
+        setSortBy(["name", SORT.ASCENDING]);
+      } else {
+        setSortBy(["createdAt", SORT.ASCENDING]);
+      }
+      setSelectedSort(event.target.value);
   };
 
   const handleSearch = (keyword: string) => {
@@ -526,11 +519,14 @@ const Center: React.FC = () => {
     }));
   };
 
-const handleFilterChange = async (event: React.SyntheticEvent, newValue: any) => {
-  setStatusValue(newValue)
+  const handleFilterChange = async (
+    event: React.SyntheticEvent,
+    newValue: any
+  ) => {
+    setStatusValue(newValue);
 
-  setSelectedFilter(newValue);
-  setPageSize(Numbers.TEN);
+    setSelectedFilter(newValue);
+    setPageSize(Numbers.TEN);
     setPageLimit(Numbers.TEN);
     setPageOffset(Numbers.ZERO);
     setPageCount(Numbers.ONE);
@@ -761,8 +757,6 @@ const handleFilterChange = async (event: React.SyntheticEvent, newValue: any) =>
     fetchData();
   }, []);
 
-  
-
   // props to send in header
   const userProps = {
     userType: t("SIDEBAR.CENTERS"),
@@ -781,9 +775,9 @@ const handleFilterChange = async (event: React.SyntheticEvent, newValue: any) =>
     handleSearch: handleSearch,
     showAddNew: true,
     handleAddUserClick: handleAddUserClick,
-    statusValue:statusValue,
-    setStatusValue:setStatusValue,
-    showSort: cohortData?.length > 0,
+    statusValue: statusValue,
+    setStatusValue: setStatusValue,
+    showSort: true,
   };
 
   return (

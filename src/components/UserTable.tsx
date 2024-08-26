@@ -1040,6 +1040,7 @@ const UserTable: React.FC<UserTableProps> = ({
           pagination={pagination}
          // reassignCohort={reassignCohort}
           noDataMessage={data?.length === 0 ? t("COMMON.NO_USER_FOUND") : ""}
+          reassignType={userType===Role.TEAM_LEADERS?  t("COMMON.REASSIGN_BLOCKS"):  t("COMMON.REASSIGN_CENTERS")}
         />
       ) : (
         loading === false &&

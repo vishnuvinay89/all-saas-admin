@@ -38,7 +38,7 @@ interface KaTableComponentProps {
   showIcons?: boolean;
   noDataMessage?: any;
   pagination?: boolean;
-  
+  reassignType?:string;
 }
 
 const KaTableComponent: React.FC<KaTableComponentProps> = ({
@@ -54,6 +54,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   pageSizes,
   noDataMessage,
   pagination = true,
+  reassignType
 }) => {
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
   const { t } = useTranslation();
@@ -118,6 +119,7 @@ console.log(columns)
                       onDelete={onDelete}
                      userAction={props.rowData?.userId}
                       disable={props.rowData?.status === Status.ARCHIVED}
+                      reassignType={reassignType}
                     />
                   );
                 }
