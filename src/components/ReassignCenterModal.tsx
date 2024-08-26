@@ -42,7 +42,7 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
   blocks,
   blockName
 }) => {
-  console.log(blockName)
+  console.log(blocks)
   const { t } = useTranslation();
   const theme = useTheme<any>();
 
@@ -196,9 +196,15 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
   const filteredCohorts = cohorts?.filter((cohort) =>
     cohort.name.toLowerCase().includes(searchInput)
   );
+  // const filteredCBlocks = blocks?.filter((cohort: any) =>
+  //   cohort.label.toLowerCase().includes(searchInput)
+  // );
   const filteredCBlocks = blocks?.filter((cohort: any) =>
-    cohort.label.toLowerCase().includes(searchInput)
-  );
+  cohort.label.toLowerCase().includes(searchInput)
+).map((cohort: any) => ({
+  label: cohort.label,
+  value: cohort.value,
+}));
   const handleToggle2 = (centerName: string) => {
     // If the selected center is already checked, uncheck it
     if (checkedCenters.includes(centerName)) {
@@ -269,8 +275,8 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
               >
                 <span style={{ color: "black" }}>{center.label}</span>
                 <Checkbox
-                  checked={checkedCenters.includes(center.label)}
-                  onChange={() => handleToggle2(center.label)}
+                  checked={checkedCenters.includes(center.value)}
+                  onChange={() => handleToggle2(center.value)}
                   sx={{
                     color: theme.palette.text.primary,
                     "&.Mui-checked": {
