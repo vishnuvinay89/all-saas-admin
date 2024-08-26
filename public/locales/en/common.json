@@ -369,6 +369,8 @@
     "GENDER": "Gender",
     "MOBILE": "Mobile",
     "ARCHIVED_MEMBERS": "Archived Members",
-    "ACTIVE_MEMBERS": "Active Members"
+    "ACTIVE_MEMBERS": "Active Members",
+    "ACTIVE_LEARNERS": "Active Learners",
+    "ARCHIVED_LEARNERS": " Archived Learners"
   }
 }

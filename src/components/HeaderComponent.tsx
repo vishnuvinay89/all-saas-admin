@@ -116,6 +116,7 @@ const HeaderComponent = ({
     selected: string[],
     selectedCodes: string[],
   ) => {
+    setBlocks([]);
     if (selected[0] === "") {
       handleBlockChange([], []);
     }
