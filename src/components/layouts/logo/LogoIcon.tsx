@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "@mui/material";
 import Image from "next/image";
-import LogoDark from "../../../../public/images/Logo.svg";
+// import LogoDark from "../../../../public/images/Logo.svg";
+import LogoDark from "../../../../public/images/logo.png";
 
 const LogoIcon = () => {
   return (

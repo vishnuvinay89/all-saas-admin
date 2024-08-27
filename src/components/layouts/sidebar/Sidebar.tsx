@@ -20,7 +20,7 @@ import LogoIcon from "../logo/LogoIcon";
 import Buynow from "./Buynow";
 import Menuitems from "./MenuItems";
 import Image from "next/image";
-import MasterIcon  from '../../../../public/images/database.svg';
+import MasterIcon from "../../../../public/images/database.svg";
 
 const Sidebar = ({
   isMobileSidebarOpen,
@@ -52,14 +52,16 @@ const Sidebar = ({
 
       <Box mt={2}>
         <List>
-          {Menuitems?.map((item, index) => (
-            <List component="li" disablePadding key={item.title}>
-              <Tooltip placement="right-start" title={t(item.title)}>
+          {Menuitems?.map((item?: any, index?: number) => (
+            <List component="li" disablePadding key={item?.title}>
+              <Tooltip placement="right-start" title={t(item?.title)}>
                 <ListItem
                   button
                   onClick={() => {
                     if (item.subOptions) {
-                      handleClick(index);
+                      if (index) {
+                        handleClick(index);
+                      }
                     } else {
                       router.push(item.href);
                       onSidebarClose();
@@ -68,7 +70,7 @@ const Sidebar = ({
                   selected={location === item.href}
                   sx={{
                     mb: 1,
-                    
+
                     ...(location === item.href && {
                       color: "black",
                       backgroundColor: (theme) =>
@@ -76,14 +78,13 @@ const Sidebar = ({
                     }),
                   }}
                 >
-             {/* {  item.icon && (<ListItemIcon>
+                  {/* {  item.icon && (<ListItemIcon>
   {item.icon}
 </ListItemIcon>) */}
-<ListItemIcon>
-<Image src={item.icon} alt="" />
-
-</ListItemIcon>
-      <ListItemText>
+                  <ListItemIcon>
+                    <Image src={item.icon} alt="" />
+                  </ListItemIcon>
+                  <ListItemText>
                     <Typography variant="h2" sx={{ fontWeight: "700px" }}>
                       {t(item.title)}
                     </Typography>
@@ -101,29 +102,35 @@ const Sidebar = ({
               {item.subOptions && (
                 <Collapse in={open === index} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
-                    {item?.subOptions?.map((subItem) => (
-                      <Tooltip title={t(subItem.title)} placement="right-start" key={subItem.title}>
-                        <ListItem
-                          button
-                          key={subItem.title}
-                          onClick={() => {
-                            router.push(subItem.href);
-                            onSidebarClose();
-                          }}
-                          selected={location === subItem.href}
-                          sx={{
-                            pl: 8,
-                           ml: 2,
-                            mb: 1,
-                            ...(location === subItem.href && {
-                              color: "black",
-                              backgroundColor: (theme) =>
-                                `${theme.palette.primary.main}!important`,
-                            }),
-                          }}
-                        >
-                          <ListItemText>{t(subItem.title)}</ListItemText>
-                        </ListItem>
+                    {item?.subOptions?.map((subItem: any) => (
+                      <Tooltip
+                        title={t(subItem.title)}
+                        placement="right-start"
+                        key={subItem.title}
+                      >
+                        {subItem && (
+                          <ListItem
+                            button
+                            key={subItem.title}
+                            onClick={() => {
+                              router?.push(subItem.href);
+                              onSidebarClose();
+                            }}
+                            selected={location === subItem.href}
+                            sx={{
+                              pl: 8,
+                              ml: 2,
+                              mb: 1,
+                              ...(location === subItem.href && {
+                                color: "black",
+                                backgroundColor: (theme) =>
+                                  `${theme.palette.primary.main}!important`,
+                              }),
+                            }}
+                          >
+                            <ListItemText>{t(subItem.title)}</ListItemText>
+                          </ListItem>
+                        )}
                       </Tooltip>
                     ))}
                   </List>
