@@ -30,6 +30,7 @@ import {
 } from "@/services/CohortService/cohortService";
 import useStore from "@/store/store";
 import { getUserDetailsInfo } from "@/services/UserList";
+import { getCohortList as getMyCohorts } from "@/services/GetCohortList";
 
 type StateDetail = {
   stateCode: string | undefined;
@@ -141,31 +142,30 @@ const District: React.FC = () => {
     fetchDistricts();
   }, [stateCode]);
 
-
   const getStatecohorts = async () => {
+    let userId: any;
     try {
-      const reqParams = {
-        limit: 0,
-        offset: 0,
-        filters: {
-          type: "STATE",
-        },
-        sort: sortBy,
-      };
+      if (typeof window !== "undefined" && window.localStorage) {
+        userId = localStorage.getItem(Storage.USER_ID);
+      }
   
-      const response = await getCohortList(reqParams);
-      console.log("state code response data", response?.results);
+      const response: any = await getMyCohorts(userId);      
+      const cohortData = response?.result?.cohortData;
+      if (Array.isArray(cohortData)) {
+        const stateCohort = cohortData.find(cohort => cohort.type === "STATE");
   
-      const maharashtraState = response?.results?.cohortDetails?.find(
-        (state: { name: string; }) => state.name === "Maharashtra"
-      );
+        if (stateCohort) {
+          const cohortIdOfState = stateCohort.cohortId;
+          setCohortIdofState(cohortIdOfState);
+        } else {
+          console.error("No STATE type cohort found");
+        }
+      } else {
+        console.error("cohortData is not an array or is undefined");
+      }
   
-      setCohortIdofState(maharashtraState?.cohortId);
-
-      
     } catch (error) {
       console.error("Error fetching and filtering cohort districts", error);
-      setDistrictData([]);
       setLoading(false);
     }
   };
@@ -203,6 +203,7 @@ const District: React.FC = () => {
             updatedBy: any;
           }) => {
             const transformedName = transformLabel(districtDetail.name);
+            
 
             const matchingDistrict = districtsOptionRead.find(
               (district: { label: string }) =>
@@ -598,7 +599,7 @@ const District: React.FC = () => {
               </FormControl>
             </Box>
 
-            {districtData.length > 0 ? (
+            {paginatedData().length > 0 ? (
               <KaTableComponent
                 columns={[
                   {
