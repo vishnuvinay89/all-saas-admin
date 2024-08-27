@@ -789,9 +789,9 @@ const Center: React.FC = () => {
       <ConfirmationModal
         message={
           selectedRowData?.totalActiveMembers > 0
-            ? t("CENTERS.YOU_CANT_DELETE_CENTER_HAS") +
-              ` ${selectedRowData?.totalActiveMembers} ` +
-              t("TABLE_TITLE.ACTIVE_MEMBERS")
+            ? t("CENTERS.YOU_CANT_DELETE_CENTER_HAS_ACTIVE_LEARNERS", {
+                activeMembers: `${selectedRowData?.totalActiveMembers}`,
+              })
             : t("CENTERS.SURE_DELETE_CENTER") +
               inputName +
               " " +
