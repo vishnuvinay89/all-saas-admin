@@ -161,10 +161,12 @@ const State: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (stateData) {
-      getStatecohorts();
+    if (stateDataOption.length > 0 && stateNameArray.length > 0) {
+        getStatecohorts();
     }
-  }, [stateData, searchKeyword, pageLimit, pageOffset, sortBy]);
+}, [stateDataOption, stateNameArray, searchKeyword, pageLimit, pageOffset, sortBy]);
+
+
   const handleEdit = (rowData: StateDetail) => {
     setSelectedStateForEdit(rowData);
     setAddStateModalOpen(true);
