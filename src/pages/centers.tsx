@@ -99,6 +99,8 @@ const Center: React.FC = () => {
   const [pageSize, setPageSize] = React.useState<string | number>(10);
   const [confirmationModalOpen, setConfirmationModalOpen] =
     React.useState<boolean>(false);
+  const [confirmationModalOpenForActive, setConfirmationModalOpenForActive] =
+    React.useState<boolean>(false);
   const [selectedCohortId, setSelectedCohortId] = React.useState<string>("");
   const [editModelOpen, setIsEditModalOpen] = React.useState<boolean>(false);
   const [confirmButtonDisable, setConfirmButtonDisable] =
@@ -402,7 +404,6 @@ const Center: React.FC = () => {
   const handleDistrictChange = (selected: string[], code: string[]) => {
     setSelectedBlock([]);
     setSelectedDistrict(selected);
-    
 
     if (selected[0] === "") {
       if (filters.status) {
@@ -497,9 +498,11 @@ const Center: React.FC = () => {
       console.log("No Cohort Selected");
       setSelectedCohortId("");
     }
+    fetchUserList();
   };
 
   const handleSortChange = async (event: SelectChangeEvent) => {
+    if (cohortData?.length > 0) {
       if (event.target.value === "Z-A") {
         setSortBy(["name", SORT.DESCENDING]);
       } else if (event.target.value === "A-Z") {
@@ -508,6 +511,7 @@ const Center: React.FC = () => {
         setSortBy(["createdAt", SORT.ASCENDING]);
       }
       setSelectedSort(event.target.value);
+    }
   };
 
   const handleSearch = (keyword: string) => {
@@ -784,20 +788,26 @@ const Center: React.FC = () => {
     <>
       <ConfirmationModal
         message={
-          t("CENTERS.SURE_DELETE_CENTER") +
-          inputName +
-          " " +
-          t("CENTERS.CENTER") +
-          "?"
+          selectedRowData?.totalActiveMembers > 0
+            ? t("CENTERS.YOU_CANT_DELETE_CENTER_HAS_ACTIVE_LEARNERS", {
+                activeMembers: `${selectedRowData?.totalActiveMembers}`,
+              })
+            : t("CENTERS.SURE_DELETE_CENTER") +
+              inputName +
+              " " +
+              t("CENTERS.CENTER") +
+              "?"
         }
         handleAction={handleActionForDelete}
-        buttonNames={{
-          primary: t("COMMON.YES"),
-          secondary: t("COMMON.CANCEL"),
-        }}
+        buttonNames={
+          selectedRowData?.totalActiveMembers > 0
+            ? { secondary: t("COMMON.CANCEL") }
+            : { primary: t("COMMON.YES"), secondary: t("COMMON.CANCEL") }
+        }
         handleCloseModal={handleCloseModal}
         modalOpen={confirmationModalOpen}
       />
+
       <HeaderComponent {...userProps}>
         {loading ? (
           <Box
