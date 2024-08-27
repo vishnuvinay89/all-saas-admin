@@ -126,7 +126,7 @@ export const mapFields = (formFields: any, Details: any) => {
   let initialFormData: any = {};
   console.log("Details", Details);
 
-  formFields.fields.forEach((item: any) => {
+  formFields?.fields.forEach((item: any) => {
     const customFieldValue = Details?.customFields?.find(
       (field: any) => field.fieldId === item.fieldId
     );

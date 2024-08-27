@@ -81,24 +81,22 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
   );
-  const [stateDefaultValueForCenter, setStateDefaultValueForCenter] = useState<string>("");
+  const [stateDefaultValueForCenter, setStateDefaultValueForCenter] =
+    useState<string>("");
 
-  useEffect(() => { 
+  useEffect(() => {
     const getAddLearnerFormData = async () => {
-
-
       const admin = localStorage.getItem("adminInfo");
-          if(admin)
-          {
-            const stateField = JSON.parse(admin).customFields.find((field: any) => field.label === "STATES");
-              if (!stateField.value.includes(',')) {
-                setStateDefaultValueForCenter(stateField.value)
-              }
-              else{
-                setStateDefaultValueForCenter(t("COMMON.ALL_STATES"))
-
-              }
-          }
+      if (admin) {
+        const stateField = JSON.parse(admin)?.customFields?.find(
+          (field: any) => field.label === "STATES"
+        );
+        if (!stateField?.value.includes(",")) {
+          setStateDefaultValueForCenter(stateField?.value);
+        } else {
+          setStateDefaultValueForCenter(t("COMMON.ALL_STATES"));
+        }
+      }
       try {
         const response = await getFormRead("cohorts", "cohort");
         console.log("sortedFields", response);

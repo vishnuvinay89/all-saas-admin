@@ -154,11 +154,11 @@ const Center: React.FC = () => {
         const stateField: any = JSON.parse(admin).customFields.find(
           (field: any) => field.label === "STATES"
         );
-        console.log(stateField.value, stateField.code);
+        console.log(stateField?.value, stateField?.code);
         const object = [
-          {
-            value: stateField.code,
-            label: stateField.value,
+          { 
+            value: stateField?.code,
+            label: stateField?.value,
           },
         ];
 
