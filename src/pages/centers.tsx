@@ -498,6 +498,7 @@ const Center: React.FC = () => {
       console.log("No Cohort Selected");
       setSelectedCohortId("");
     }
+    fetchUserList();
   };
 
   const handleSortChange = async (event: SelectChangeEvent) => {
