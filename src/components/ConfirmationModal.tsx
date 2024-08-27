@@ -15,8 +15,8 @@ interface ConfirmationModalProps {
 }
 
 interface ButtonNames {
-  primary: string;
-  secondary: string;
+  primary?: string;
+  secondary?: string;
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -63,41 +63,45 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             p: 2,
           }}
         >
-          <Button
-            sx={{
-              color: "secondary",
-              fontSize: "14px",
-              fontWeight: "500",
-              width: "auto",
-              height: "40px",
-              marginLeft: "10px",
-            }}
-            variant="outlined"
-            onClick={handleCloseModal}
-          >
-            {buttonNames.secondary}
-          </Button>
-          <Button
-            sx={{
-              width: "auto",
-              height: "40px",
-              fontSize: "14px",
-              fontWeight: "500",
-            }}
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              if (handleAction !== undefined) {
-                handleAction();
-                handleCloseModal();
-              } else {
-                handleCloseModal();
-              }
-            }}
-            disabled={disableDelete}
-          >
-            {buttonNames.primary}
-          </Button>
+          {buttonNames.secondary && (
+            <Button
+              sx={{
+                color: "secondary",
+                fontSize: "14px",
+                fontWeight: "500",
+                width: "auto",
+                height: "40px",
+                marginLeft: "10px",
+              }}
+              variant="outlined"
+              onClick={handleCloseModal}
+            >
+              {buttonNames.secondary}
+            </Button>
+          )}
+          {buttonNames.primary && (
+            <Button
+              sx={{
+                width: "auto",
+                height: "40px",
+                fontSize: "14px",
+                fontWeight: "500",
+              }}
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                if (handleAction !== undefined) {
+                  handleAction();
+                  handleCloseModal();
+                } else {
+                  handleCloseModal();
+                }
+              }}
+              disabled={disableDelete}
+            >
+              {buttonNames.primary}
+            </Button>
+          )}
         </Box>
       </Box>
     </Modal>
