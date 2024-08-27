@@ -142,6 +142,7 @@ const District: React.FC = () => {
     fetchDistricts();
   }, [stateCode]);
 
+// get cohort id of state
   const getStatecohorts = async () => {
     let userId: any;
     try {
@@ -173,8 +174,9 @@ const District: React.FC = () => {
   useEffect(() => {
     getStatecohorts();
   }, []);
-  
 
+  
+  
   const getFilteredCohortData = async () => {
     try {
       const reqParams = {
@@ -202,7 +204,7 @@ const District: React.FC = () => {
             createdBy: any;
             updatedBy: any;
           }) => {
-            const transformedName = transformLabel(districtDetail.name);
+            const transformedName = districtDetail.name
             
 
             const matchingDistrict = districtsOptionRead.find(
@@ -210,7 +212,6 @@ const District: React.FC = () => {
                 district.label === transformedName
             );
 
-            console.log("matchingDistrict", matchingDistrict);
 
             return {
               label: transformedName,
@@ -258,9 +259,9 @@ const District: React.FC = () => {
         sort: sortBy,
       };
 
-      const response = await getCohortList(reqParams);
-
-      const activeBlocks = response?.results?.cohortDetails || [];
+      const response:any = await getCohortList(reqParams);
+ 
+      const activeBlocks =  response?.results?.cohortDetails || [];
       console.log("activeBlocks", activeBlocks);
 
       const activeBlocksCount = activeBlocks.filter(
@@ -273,6 +274,8 @@ const District: React.FC = () => {
       setLoading(false);
     }
   };
+
+
   useEffect(() => {
     if (districtValueForDelete) {
       getBlockDataCohort();
@@ -332,7 +335,7 @@ const District: React.FC = () => {
       const resp = await updateCohort(cohotIdForDelete, cohortDetails);
       console.log(resp);
       if (resp?.responseCode === 200) {
-        const cohort = paginatedData()?.find(
+        const cohort = filteredCohortOptionData()?.find(
           (item: any) => item.cohortId == cohotIdForDelete
         );
         if (cohort) {
@@ -395,7 +398,7 @@ const District: React.FC = () => {
     try {
       const cohortCreateResponse = await createCohort(queryParameters);
       if (cohortCreateResponse) {
-        paginatedData()
+        filteredCohortOptionData()
         showToastMessage(t("COMMON.DISTRICT_ADDED_SUCCESS"), "success");
       } else if (cohortCreateResponse.responseCode === 409) {
         showToastMessage(t("COMMON.DISTRICT_DUPLICATION_FAILURE"), "error");
@@ -446,7 +449,7 @@ const District: React.FC = () => {
         queryParameters
       );
       if (cohortCreateResponse) {
-        paginatedData()
+        filteredCohortOptionData()
         showToastMessage(t("COMMON.DISTRICT_UPDATED_SUCCESS"), "success");
       } else if (cohortCreateResponse.responseCode === 409) {
         showToastMessage(t("COMMON.DISTRICT_DUPLICATION_FAILURE"), "error");
@@ -478,12 +481,28 @@ const District: React.FC = () => {
   ) => {
     setPageOffset(value - 1);
   };
-  const paginatedData = () => {
+
+  function transformLabels(label: string) {
+    if (!label || typeof label !== 'string') return ''; 
+    return label
+      .toLowerCase() 
+      .replace(/_/g, " ") 
+      .replace(/\b\w/g, (char) => char.toUpperCase()); 
+  }
+  
+  
+  const filteredCohortOptionData = () => {
     const startIndex = pageOffset * pageLimit;
     const endIndex = startIndex + pageLimit;
-    return districtData.slice(startIndex, endIndex);
+    
+    const transformedData = districtData.map(item => ({
+      ...item,
+      label: transformLabels(item.label) 
+    }));
+    
+    return transformedData.slice(startIndex, endIndex);
   };
-  const PagesSelector = () => (
+    const PagesSelector = () => (
     <>
       <Box sx={{ display: { xs: "block" } }}>
         <Pagination
@@ -599,7 +618,7 @@ const District: React.FC = () => {
               </FormControl>
             </Box>
 
-            {paginatedData().length > 0 ? (
+            {filteredCohortOptionData().length > 0 ? (
               <KaTableComponent
                 columns={[
                   {
@@ -641,7 +660,7 @@ const District: React.FC = () => {
                     width: "130",
                   },
                 ]}
-                data={paginatedData()}
+                data={filteredCohortOptionData()}
                 limit={pageLimit}
                 offset={pageOffset}
                 paginationEnable={paginationCount >= Numbers.FIVE}
