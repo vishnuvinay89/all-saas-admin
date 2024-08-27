@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -27,7 +28,7 @@ import {
 } from "@/services/CohortService/cohortService";
 import { getUserDetailsInfo } from "@/services/UserList";
 import useStore from "@/store/store";
-
+import { transformLabel } from "@/utils/Helper";
 export interface StateDetail {
   updatedAt: any;
   createdAt: any;
@@ -37,7 +38,6 @@ export interface StateDetail {
   name: string;
   value: string;
 }
-
 type cohortFilterDetails = {
   type?: string;
   status?: any;
@@ -46,13 +46,11 @@ type cohortFilterDetails = {
   blocks?: string;
   name?: string;
 };
-
 type Option = {
   name: string;
   value: string;
   controllingfieldfk?: string;
 };
-
 const State: React.FC = () => {
   const { t } = useTranslation();
   const [stateData, setStateData] = useState<StateDetail[]>([]);
@@ -76,9 +74,10 @@ const State: React.FC = () => {
   const [userName, setUserName] = React.useState<string | null>("");
   const [statesProfilesData, setStatesProfilesData] = useState<any>([]);
   const [pagination, setPagination] = useState(true);
-
+  const [stateDataOption, setStateDataOptinon] = useState<any>([]);
+  const [stateCodArrray, setStateCodeArr] = useState<any>([]);
+  const [stateNameArray, setStateNameArr] = useState<any>([]);
   const setPid = useStore((state) => state.setPid);
-
   const columns = [
     { key: "label", title: t("MASTER.STATE"), width: "160" },
     { key: "value", title: t("MASTER.CODE"), width: "160" },
@@ -88,24 +87,100 @@ const State: React.FC = () => {
     { key: "updatedAt", title: t("MASTER.UPDATED_AT"), width: "160" },
     // { key: "actions", title: t("MASTER.ACTIONS"), width: "160" },
   ];
+  const fetchStateData = async () => {
+    try {
+      setLoading(true);
+      const limit = pageLimit;
+      const offset = pageOffset * limit;
+      const data = {
+        limit: limit,
+        offset: offset,
+        fieldName: "states",
+        optionName: searchKeyword || "",
+        sort: sortBy,
+      };
+      const resp = await getStateBlockDistrictList(data);
+      const states = resp?.result?.values || [];
+      setStateDataOptinon(states);
+      const stateNameArra = states.map((item: any) => item.label);
+      setStateNameArr(stateNameArra);
+      console.log("stateNameArray", stateNameArray);
+      const stateCodeArra = states.map((item: any) => item.value);
+      setStateCodeArr(stateCodeArra);
+      console.log("stateDataOptinon", stateCodeArra);
+      if (resp?.result?.fieldId) {
+        setFieldId(resp.result.fieldId);
+      } else {
+        console.error("Unexpected fieldId:", resp?.result?.fieldId);
+      }
+    } catch (error) {
+      console.error("Error fetching state data", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchStateData();
+  }, []);
+  const getStatecohorts = async () => {
+    try {
+      const reqParams = {
+        limit: 0,
+        offset: 0,
+        filters: {
+          name: searchKeyword,
+          type: "STATE",
+        },
+        sort: sortBy,
+      };
+      const response = await getCohortList(reqParams);
+      const statecohortDetails = response?.results?.cohortDetails || [];
+      const filteredStateData = statecohortDetails
+        .map((stateDetail: any) => {
+          const transformedName = transformLabel(stateDetail.name);
+          const matchingState = stateDataOption.find(
+            (state: { label: string }) => state.label === transformedName
+          );
+          return {
+            label: transformedName,
+            value: matchingState ? matchingState.value : null,
+            createdAt: stateDetail.createdAt,
+            updatedAt: stateDetail.updatedAt,
+            createdBy: stateDetail.createdBy,
+            updatedBy: stateDetail.updatedBy,
+            cohortId: stateDetail.cohortId,
+          };
+        })
+        .filter((state: { label: any }) =>
+          stateNameArray.includes(state.label)
+        );
+      setStateData(filteredStateData);
+      console.log(stateData);
+    } catch (error) {
+      console.error("Error fetching and filtering cohort states", error);
+    }
+  };
+  useEffect(() => {
+    if (stateDataOption.length > 0 && stateNameArray.length > 0) {
+        getStatecohorts();
+    }
+}, [stateDataOption, stateNameArray, searchKeyword, pageLimit, pageOffset, sortBy]);
+
 
   const handleEdit = (rowData: StateDetail) => {
     setSelectedStateForEdit(rowData);
     setAddStateModalOpen(true);
   };
-
   const handleDelete = (rowData: StateDetail) => {
     setSelectedStateForDelete(rowData);
     setConfirmationDialogOpen(true);
   };
-
   const handleSortChange = async (event: SelectChangeEvent) => {
     const sortOrder =
       event.target.value === "Z-A" ? SORT.DESCENDING : SORT.ASCENDING;
     setSortBy(["name", sortOrder]);
     setSelectedSort(event.target.value);
   };
-
   const handleConfirmDelete = async () => {
     if (selectedStateForDelete) {
       try {
@@ -123,16 +198,13 @@ const State: React.FC = () => {
       setConfirmationDialogOpen(false);
     }
   };
-
   const handleSearch = (keyword: string) => {
     setSearchKeyword(keyword);
   };
-
   const handleAddStateClick = () => {
     setSelectedStateForEdit(null);
     setAddStateModalOpen(true);
   };
-
   const handleAddStateSubmit = async (
     name: string,
     value: string,
@@ -145,7 +217,6 @@ const State: React.FC = () => {
       if (fieldId) {
         const isUpdating = selectedState !== null;
         const response = await createOrUpdateOption(fieldId, newState);
-
         const queryParameters = {
           name: name,
           type: "STATE",
@@ -153,20 +224,15 @@ const State: React.FC = () => {
           parentId: null,
           customFields: [],
         };
-
         console.log("before cohortList");
-
         if (!isUpdating) {
           await createCohort(queryParameters);
         }
-
         if (response) {
           await fetchStateData();
-
           const successMessage = isUpdating
             ? t("COMMON.STATE_UPDATED_SUCCESS")
             : t("COMMON.STATE_ADDED_SUCCESS");
-
           showToastMessage(successMessage, "success");
         } else {
           console.error("Failed to create/update state:", response);
@@ -186,14 +252,12 @@ const State: React.FC = () => {
     );
     setPageLimit(newSize);
   };
-
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
     value: number
   ) => {
     setPageOffset(value - 1);
   };
-
   const PagesSelector = () => (
     <>
       <Box sx={{ display: { xs: "block" } }}>
@@ -209,7 +273,6 @@ const State: React.FC = () => {
       </Box>
     </>
   );
-
   const PageSizeSelectorFunction = () => (
     <Box mt={2}>
       <PageSizeSelector
@@ -219,61 +282,6 @@ const State: React.FC = () => {
       />
     </Box>
   );
-
-  const fetchStateData = async () => {
-    try {
-      setLoading(true);
-      const limit = pageLimit;
-      const offset = pageOffset * limit;
-
-      const data = {
-        limit: limit,
-        offset: offset,
-        fieldName: "states",
-        optionName: searchKeyword || "",
-        sort: sortBy,
-      };
-
-      console.log("fetchStateData", data);
-
-      const resp = await getStateBlockDistrictList(data);
-
-      if (resp?.result?.fieldId) {
-        setFieldId(resp.result.fieldId);
-        setStateData(resp.result.values);
-
-        const totalCount = resp?.result?.totalCount || 0;
-
-        setPaginationCount(totalCount);
-
-        console.log("totalCount", totalCount);
-
-        setPagination(totalCount > 10);
-        setPageSizeArray(
-          totalCount > 15
-            ? [5, 10, 15]
-            : totalCount > 10
-              ? [5, 10]
-              : totalCount > 5
-                ? [5]
-                : []
-        );
-
-        setPageCount(Math.ceil(totalCount / limit));
-      } else {
-        console.error("Unexpected fieldId:", resp?.result?.fieldId);
-      }
-    } catch (error) {
-      console.error("Error fetching state data", error);
-      setStateData([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchStateData();
-  }, [searchKeyword, pageLimit, pageOffset, sortBy]);
-
   return (
     <HeaderComponent
       userType={t("MASTER.STATE")}
@@ -307,14 +315,7 @@ const State: React.FC = () => {
           ) : (
             <KaTableComponent
               columns={columns}
-              data={stateData.map((stateDetail) => ({
-                label: stateDetail.label ?? "",
-                value: stateDetail.value ?? "",
-                createdAt: stateDetail.createdAt,
-                updatedAt: stateDetail.updatedAt,
-                createdBy: stateDetail.createdBy,
-                updatedBy: stateDetail.updatedBy,
-              }))}
+              data={stateData}
               limit={pageLimit}
               offset={pageOffset}
               paginationEnable={paginationCount >= Numbers.FIVE}
@@ -331,9 +332,7 @@ const State: React.FC = () => {
     </HeaderComponent>
   );
 };
-
 export default State;
-
 export const getServerSideProps = async ({ locale }: { locale: string }) => {
   return {
     props: {
@@ -341,3 +340,7 @@ export const getServerSideProps = async ({ locale }: { locale: string }) => {
     },
   };
 };
+
+
+
+

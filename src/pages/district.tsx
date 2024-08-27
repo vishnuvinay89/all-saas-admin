@@ -30,6 +30,7 @@ import {
 } from "@/services/CohortService/cohortService";
 import useStore from "@/store/store";
 import { getUserDetailsInfo } from "@/services/UserList";
+import { getCohortList as getMyCohorts } from "@/services/GetCohortList";
 
 type StateDetail = {
   stateCode: string | undefined;
@@ -85,6 +86,7 @@ const District: React.FC = () => {
   const [cohortIdForEdit, setCohortIdForEdit] = useState<any>();
   const [districtValueForDelete, setDistrictValueForDelete] = useState<any>("");
   const [countOfBlocks, setCountOfBlocks] = useState<number>(0);
+  const [cohortIdofState,setCohortIdofState] = useState<any>("");
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -140,6 +142,39 @@ const District: React.FC = () => {
     fetchDistricts();
   }, [stateCode]);
 
+  const getStatecohorts = async () => {
+    let userId: any;
+    try {
+      if (typeof window !== "undefined" && window.localStorage) {
+        userId = localStorage.getItem(Storage.USER_ID);
+      }
+  
+      const response: any = await getMyCohorts(userId);      
+      const cohortData = response?.result?.cohortData;
+      if (Array.isArray(cohortData)) {
+        const stateCohort = cohortData.find(cohort => cohort.type === "STATE");
+  
+        if (stateCohort) {
+          const cohortIdOfState = stateCohort.cohortId;
+          setCohortIdofState(cohortIdOfState);
+        } else {
+          console.error("No STATE type cohort found");
+        }
+      } else {
+        console.error("cohortData is not an array or is undefined");
+      }
+  
+    } catch (error) {
+      console.error("Error fetching and filtering cohort districts", error);
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    getStatecohorts();
+  }, []);
+  
+
   const getFilteredCohortData = async () => {
     try {
       const reqParams = {
@@ -168,6 +203,7 @@ const District: React.FC = () => {
             updatedBy: any;
           }) => {
             const transformedName = transformLabel(districtDetail.name);
+            
 
             const matchingDistrict = districtsOptionRead.find(
               (district: { label: string }) =>
@@ -347,7 +383,7 @@ const District: React.FC = () => {
       name: name,
       type: "DISTRICT",
       status: Status.ACTIVE,
-      parentId: cohortId,
+      parentId: cohortIdofState,
       customFields: [
         {
           fieldId: stateFieldId,
@@ -359,6 +395,7 @@ const District: React.FC = () => {
     try {
       const cohortCreateResponse = await createCohort(queryParameters);
       if (cohortCreateResponse) {
+        paginatedData()
         showToastMessage(t("COMMON.DISTRICT_ADDED_SUCCESS"), "success");
       } else if (cohortCreateResponse.responseCode === 409) {
         showToastMessage(t("COMMON.DISTRICT_DUPLICATION_FAILURE"), "error");
@@ -409,6 +446,7 @@ const District: React.FC = () => {
         queryParameters
       );
       if (cohortCreateResponse) {
+        paginatedData()
         showToastMessage(t("COMMON.DISTRICT_UPDATED_SUCCESS"), "success");
       } else if (cohortCreateResponse.responseCode === 409) {
         showToastMessage(t("COMMON.DISTRICT_DUPLICATION_FAILURE"), "error");
@@ -561,7 +599,7 @@ const District: React.FC = () => {
               </FormControl>
             </Box>
 
-            {districtData.length > 0 ? (
+            {paginatedData().length > 0 ? (
               <KaTableComponent
                 columns={[
                   {
