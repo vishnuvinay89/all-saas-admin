@@ -807,22 +807,7 @@ const Center: React.FC = () => {
         handleCloseModal={handleCloseModal}
         modalOpen={confirmationModalOpen}
       />
-      <ConfirmationModal
-        message={
-          t("CENTERS.SURE_DELETE_CENTER") +
-          inputName +
-          " " +
-          t("CENTERS.CENTER") +
-          "?"
-        }
-        handleAction={handleActionForDelete}
-        buttonNames={{
-          // primary: t("COMMON.YES"),
-          secondary: t("COMMON.CANCEL"),
-        }}
-        handleCloseModal={handleCloseModal}
-        modalOpen={confirmationModalOpenForActive}
-      />
+
       <HeaderComponent {...userProps}>
         {loading ? (
           <Box
