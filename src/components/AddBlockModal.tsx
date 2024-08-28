@@ -15,6 +15,7 @@ import {
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
 import { getDistrictsForState } from "@/services/MasterDataService";
+import { getCohortList } from "@/services/CohortService/cohortService";
 
 interface AddBlockModalProps {
   open: boolean;
@@ -53,6 +54,11 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   const [districts, setDistricts] = useState<
     { value: string; label: string }[]
   >([]);
+
+  const [districtsOptionRead, setDistrictsOptionRead] = useState<any>([]);
+  const [districtCodeArr, setDistrictCodeArr] = useState<any>([]);
+  const [districtNameArr, setDistrictNameArr] = useState<any>([]);
+
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -64,29 +70,92 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     setErrors({});
   }, [initialValues]);
 
-  useEffect(() => {
-    const fetchDistricts = async () => {
-      try {
-        const response = await getDistrictsForState({ fieldName: "districts" });
-        if (response.result.values) {
-          setDistricts(response.result.values);
-          console.log("modal all districts", response.result.values);
-        } else {
-          console.error("Unexpected response format:", response);
-          setDistricts([]);
-        }
-      } catch (error: any) {
-        console.error("Error fetching districts:", error.message);
-        setDistricts([]);
-      }
-    };
+  const fetchDistricts = async () => {
+    try {
+      const data = await getDistrictsForState({
+        fieldName: "districts",
+      });
 
+      const districts = data?.result?.values || [];
+      setDistrictsOptionRead(districts);
+
+      const districtNameArray = districts.map((item: any) => item.label);
+      setDistrictNameArr(districtNameArray);
+
+      const districtCodeArray = districts.map((item: any) => item.value);
+      setDistrictCodeArr(districtCodeArray);
+
+      // const districtFieldID = data?.result?.fieldId || "";
+      // setDistrictFieldId(districtFieldID);
+
+      console.log("districtNameArray", districtNameArray);
+    } catch (error) {
+      console.error("Error fetching districts", error);
+    }
+  };
+
+  useEffect(() => {
     if (open) fetchDistricts();
   }, [open, formData.controllingField]);
 
+  const getFilteredCohortData = async () => {
+    try {
+      const reqParams = {
+        limit: 0,
+        offset: 0,
+        filters: {
+          name: "",
+          states: "",
+          type: "DISTRICT",
+        },
+        sort: ["name","asc"],
+      };
+
+      const response = await getCohortList(reqParams);
+
+      const cohortDetails = response?.results?.cohortDetails || [];
+
+      const filteredDistrictData = cohortDetails
+        .map(
+          (districtDetail: {
+            cohortId: any;
+            name: string;
+            createdAt: any;
+            updatedAt: any;
+            createdBy: any;
+            updatedBy: any;
+          }) => {
+            const transformedName = districtDetail.name;
+
+            const matchingDistrict = districtsOptionRead.find(
+              (district: { label: string }) =>
+                district.label === transformedName
+            );
+            return {
+              label: transformedName,
+              value: matchingDistrict ? matchingDistrict.value : null,
+              createdAt: districtDetail.createdAt,
+              updatedAt: districtDetail.updatedAt,
+              createdBy: districtDetail.createdBy,
+              updatedBy: districtDetail.updatedBy,
+              cohortId: districtDetail?.cohortId,
+            };
+          }
+        )
+        .filter((district: { label: any }) =>
+          districtNameArr.includes(district.label)
+        );
+
+      console.log("filteredDistrictData", filteredDistrictData);
+
+      setDistricts(filteredDistrictData);
+    } catch (error) {
+      console.error("Error fetching and filtering cohort districts", error);
+    }
+  };
   useEffect(() => {
-    console.log("Selected District:", formData.controllingField);
-  }, [formData.controllingField]);
+    getFilteredCohortData();
+  }, []);
 
   const validateField = (
     field: keyof typeof formData,
@@ -214,10 +283,11 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           variant="outlined"
           margin="dense"
           error={!!errors.controllingField}
+          disabled={isEditing}
         >
           <MenuItem value="">{t("COMMON.SELECT_DISTRICT")}</MenuItem>
-          {districts.length > 0 ? (
-            districts.map((district) => (
+          {districtsOptionRead.length > 0 ? (
+            districtsOptionRead.map((district: any) => (
               <MenuItem key={district.value} value={district.value}>
                 {district.label}
               </MenuItem>
@@ -252,6 +322,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           onChange={handleChange("value")}
           error={!!errors.value}
           helperText={errors.value}
+          disabled={isEditing}
         />
         <Box display="flex" alignItems="center" mt={2}>
           <InfoOutlinedIcon color="primary" sx={{ mr: 1 }} />
