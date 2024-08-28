@@ -31,6 +31,7 @@ import { useQuery } from "@tanstack/react-query";
 import ReassignCenterModal from "./ReassignCenterModal";
 import { getCenterList, getStateBlockDistrictList } from "@/services/MasterDataService";
 import { updateCohortMemberStatus } from "@/services/CohortService/cohortService";
+import { showFilters } from "../../app.config";
 type UserDetails = {
   userId: any;
   username: any;
@@ -1004,7 +1005,9 @@ const UserTable: React.FC<UserTableProps> = ({
     selectedDistrictCode: selectedDistrictCode,
     selectedStateCode: selectedStateCode,
     handleCenterChange:handleCenterChange,
-     selectedCenter: selectedCenter
+     selectedCenter: selectedCenter,
+     showStateDropdown:showFilters,
+     showAddNew:true
   };
 
   return (

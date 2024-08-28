@@ -8,6 +8,7 @@ import Pagination from "@mui/material/Pagination";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import {
+  createCohort,
   fetchCohortMemberList,
   getCohortList,
   updateCohortUpdate,
@@ -50,6 +51,7 @@ import { RJSFSchema } from "@rjsf/utils";
 import DynamicForm from "@/components/DynamicForm";
 import useSubmittedButtonStore from "@/utils/useSharedState";
 import { getUserDetailsInfo } from "@/services/UserList";
+import { showFilters } from "../../app.config";
 
 type cohortFilterDetails = {
   type?: string;
@@ -76,6 +78,7 @@ interface CohortDetails {
   type?: string;
   parentId?: string | null;
   customFields?: CustomField[];
+  params?: any;
 }
 
 const Center: React.FC = () => {
@@ -155,11 +158,11 @@ const Center: React.FC = () => {
         const stateField: any = JSON.parse(admin).customFields.find(
           (field: any) => field.label === "STATES"
         );
-        console.log(stateField.value, stateField.code);
+        console.log(stateField?.value, stateField?.code);
         const object = [
           {
-            value: stateField.code,
-            label: stateField.value,
+            value: stateField?.code,
+            label: stateField?.value,
           },
         ];
 
@@ -581,7 +584,6 @@ const Center: React.FC = () => {
       const formFields = await getFormRead("cohorts", "cohort");
 
       const cohortDetails = resp?.results?.cohortDetails?.[0] || {};
-
       setEditFormData(mapFields(formFields, cohortDetails));
       setLoading(false);
       setIsEditForm(true);
@@ -631,6 +633,92 @@ const Center: React.FC = () => {
     console.log("error");
   };
 
+  // const handleUpdateAction = async (
+  //   data: IChangeEvent<any, RJSFSchema, any>,
+  //   event: React.FormEvent<any>
+  // ) => {
+  //   setLoading(true);
+  //   const formData = data?.formData;
+  //   console.log("formData", formData);
+  //   const schemaProperties = schema.properties;
+
+  //   let apiBody: any = {
+  //     customFields: [],
+  //   };
+  //   Object.entries(formData).forEach(([fieldKey, fieldValue]) => {
+  //     const fieldSchema = schemaProperties[fieldKey];
+  //     const fieldId = fieldSchema?.fieldId;
+
+  //     console.log(
+  //       `FieldID: ${fieldId}, FieldValue: ${JSON.stringify(fieldSchema)}, type: ${typeof fieldValue}`
+  //     );
+
+  //     if (fieldId === null || fieldId === "null") {
+  //       if (typeof fieldValue !== "object") {
+  //         apiBody[fieldKey] = fieldValue;
+  //       }
+  //     } else {
+  //       if (
+  //         fieldSchema?.hasOwnProperty("isDropdown") ||
+  //         fieldSchema?.hasOwnProperty("isCheckbox") ||
+  //         fieldSchema?.type === "radio"
+  //       ) {
+  //         apiBody.customFields.push({
+  //           fieldId: fieldId,
+  //           value: Array.isArray(fieldValue) ? fieldValue : [fieldValue],
+  //         });
+  //       } else {
+  //         if (fieldSchema?.checkbox && fieldSchema.type === "array") {
+  //           if (String(fieldValue).length != 0) {
+  //             apiBody.customFields.push({
+  //               fieldId: fieldId,
+  //               value: String(fieldValue).split(","),
+  //             });
+  //           }
+  //         } else {
+  //           if (fieldId) {
+  //             apiBody.customFields.push({
+  //               fieldId: fieldId,
+  //               value: String(fieldValue),
+  //             });
+  //           }
+  //         }
+  //       }
+  //     }
+  //   });
+
+  //   const customFields = apiBody?.customFields;
+  //   try {
+  //     setLoading(true);
+  //     setConfirmButtonDisable(true);
+  //     if (!selectedCohortId) {
+  //       console.log("No cohort Id Selected");
+  //       showToastMessage(t("CENTERS.NO_COHORT_ID_SELECTED"), "error");
+  //       return;
+  //     }
+  //     let cohortDetails = {
+  //       name: formData?.name,
+  //       customFields: customFields,
+  //     };
+  //     const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
+  //     if (resp?.responseCode === 200 || resp?.responseCode === 201) {
+  //       showToastMessage(t("CENTERS.CENTER_UPDATE_SUCCESSFULLY"), "success");
+  //       setLoading(false);
+  //     } else {
+  //       showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating cohort:", error);
+  //     showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
+  //   } finally {
+  //     setLoading(false);
+  //     setConfirmButtonDisable(false);
+  //     onCloseEditMOdel();
+  //     fetchUserList();
+  //     setIsEditForm(false);
+  //   }
+  // };
+
   const handleUpdateAction = async (
     data: IChangeEvent<any, RJSFSchema, any>,
     event: React.FormEvent<any>
@@ -640,52 +728,42 @@ const Center: React.FC = () => {
     console.log("formData", formData);
     const schemaProperties = schema.properties;
 
-    let apiBody: any = {
+    // Initialize the API body similar to handleSubmit
+    let cohortDetails: CohortDetails = {
+      name: formData?.name,
       customFields: [],
+      params: {
+        self: {
+          allowed: 1,
+          allow_late_marking: 1,
+          restrict_attendance_timings: 1,
+          attendance_starts_at: formData?.attendance_starts_at,
+          attendance_ends_at: formData?.attendance_ends_at,
+          back_dated_attendance: 0,
+          back_dated_attendance_allowed_days: 0,
+          update_once_marked: 0,
+          capture_geoLocation: 1,
+        },
+        student: {
+          allowed: 1,
+          allow_late_marking: 1,
+          restrict_attendance_timings: 0,
+          back_dated_attendance: 1,
+          back_dated_attendance_allowed_days: 7,
+          update_once_marked: 1,
+          capture_geoLocation: 0,
+        },
+      },
     };
-    Object.entries(formData).forEach(([fieldKey, fieldValue]) => {
-      const fieldSchema = schemaProperties[fieldKey];
-      const fieldId = fieldSchema?.fieldId;
 
-      console.log(
-        `FieldID: ${fieldId}, FieldValue: ${JSON.stringify(fieldSchema)}, type: ${typeof fieldValue}`
-      );
+    const clusterFieldId = schema?.properties?.cluster?.fieldId;
+    if (clusterFieldId && formData?.cluster) {
+      cohortDetails?.customFields?.push({
+        fieldId: clusterFieldId,
+        value: formData.cluster,
+      });
+    }
 
-      if (fieldId === null || fieldId === "null") {
-        if (typeof fieldValue !== "object") {
-          apiBody[fieldKey] = fieldValue;
-        }
-      } else {
-        if (
-          fieldSchema?.hasOwnProperty("isDropdown") ||
-          fieldSchema?.hasOwnProperty("isCheckbox") ||
-          fieldSchema?.type === "radio"
-        ) {
-          apiBody.customFields.push({
-            fieldId: fieldId,
-            value: Array.isArray(fieldValue) ? fieldValue : [fieldValue],
-          });
-        } else {
-          if (fieldSchema?.checkbox && fieldSchema.type === "array") {
-            if (String(fieldValue).length != 0) {
-              apiBody.customFields.push({
-                fieldId: fieldId,
-                value: String(fieldValue).split(","),
-              });
-            }
-          } else {
-            if (fieldId) {
-              apiBody.customFields.push({
-                fieldId: fieldId,
-                value: String(fieldValue),
-              });
-            }
-          }
-        }
-      }
-    });
-
-    const customFields = apiBody?.customFields;
     try {
       setLoading(true);
       setConfirmButtonDisable(true);
@@ -694,14 +772,9 @@ const Center: React.FC = () => {
         showToastMessage(t("CENTERS.NO_COHORT_ID_SELECTED"), "error");
         return;
       }
-      let cohortDetails = {
-        name: formData?.name,
-        customFields: customFields,
-      };
       const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
         showToastMessage(t("CENTERS.CENTER_UPDATE_SUCCESSFULLY"), "success");
-        setLoading(false);
       } else {
         showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
       }
@@ -719,6 +792,7 @@ const Center: React.FC = () => {
 
   const handleAddUserClick = () => {
     setOpenAddNewCohort(true);
+    // setIsEditForm(true);
   };
 
   useEffect(() => {
@@ -761,6 +835,135 @@ const Center: React.FC = () => {
     fetchData();
   }, []);
 
+  // // for new changes
+  // useEffect(() => {
+  //   const getAddLearnerFormData = async () => {
+  //     const admin = localStorage.getItem("adminInfo");
+  //     if (admin) {
+  //       const stateField = JSON.parse(admin)?.customFields?.find(
+  //         (field: any) => field.label === "STATES"
+  //       );
+  //       if (!stateField?.value.includes(",")) {
+  //         setStateDefaultValueForCenter(stateField?.value);
+  //       } else {
+  //         setStateDefaultValueForCenter(t("COMMON.ALL_STATES"));
+  //       }
+  //     }
+  //     try {
+  //       const response = await getFormRead("cohorts", "cohort");
+  //       console.log("sortedFields", response);
+
+  //       if (response) {
+  //         const { schema, uiSchema } = GenerateSchemaAndUiSchema(response, t);
+  //         console.log("schema", schema);
+  //         console.log("uiSchema", uiSchema);
+  //         setSchemaCreate(schema);
+  //         setUiSchemaCreate(uiSchema);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching form data:", error);
+  //     }
+  //   };
+  //   getAddLearnerFormData();
+  // }, []);
+
+  const handleSubmit = async (
+    data: IChangeEvent<any, RJSFSchema, any>,
+    event: React.FormEvent<any>
+  ) => {
+    const formData = data?.formData;
+    console.log("formData", formData);
+
+    // if (selectedBlockCohortId) {
+    // const parentId = selectedBlockCohortId;
+    const cohortDetails: CohortDetails = {
+      name: formData.name,
+      type: CohortTypes.COHORT,
+      // parentId: parentId,
+      customFields: [
+        // {
+        //   fieldId: stateFieldId,
+        //   value: [selectedStateCode],
+        // },
+        // {
+        //   fieldId: districtFieldId,
+        //   value: [selectedDistrictCode],
+        // },
+        // {
+        //   fieldId: blockFieldId,
+        //   value: [selectedBlockCode],
+        // },
+      ],
+      params: {
+        self: {
+          allowed: 1,
+          allow_late_marking: 1,
+          restrict_attendance_timings: 1,
+          attendance_starts_at: formData?.attendance_starts_at,
+          attendance_ends_at: formData?.attendance_ends_at,
+          back_dated_attendance: 0,
+          back_dated_attendance_allowed_days: 0,
+          update_once_marked: 0,
+          capture_geoLocation: 1,
+        },
+        student: {
+          allowed: 1,
+          allow_late_marking: 1,
+          restrict_attendance_timings: 0,
+          back_dated_attendance: 1,
+          back_dated_attendance_allowed_days: 7,
+          update_once_marked: 1,
+          capture_geoLocation: 0,
+        },
+      },
+    };
+
+    // Object.entries(formData).forEach(([fieldKey, fieldValue]) => {
+    //   const fieldSchema = schema.properties[fieldKey];
+    //   const fieldId = fieldSchema?.fieldId;
+    //   console.log("formData", formData);
+    //   console.log("fieldSchema", fieldSchema);
+    //   console.log("fieldId", fieldId);
+
+    //   if (fieldId !== null) {
+    //     cohortDetails?.customFields?.push({
+    //       fieldId: fieldId,
+    //       value: formData.cohort_type,
+    //     });
+    //   }
+    // });
+
+    // add only cluster in customFields
+    const clusterFieldId = schema?.properties?.cluster?.fieldId;
+    if (clusterFieldId && formData?.cluster) {
+      cohortDetails?.customFields?.push({
+        fieldId: clusterFieldId,
+        value: formData.cluster,
+      });
+    }
+
+    if (
+      cohortDetails?.customFields &&
+      cohortDetails?.customFields?.length > 0 &&
+      cohortDetails?.name
+    ) {
+      console.log("cohortDetails", cohortDetails);
+      const cohortData = await createCohort(cohortDetails);
+      if (cohortData) {
+        showToastMessage(t("CENTERS.CENTER_CREATED_SUCCESSFULLY"), "success");
+        setOpenAddNewCohort(false);
+        // onClose();
+      }
+    } else {
+      showToastMessage("Please Input Data", "warning");
+    }
+    fetchUserList();
+  };
+  // else {
+  //   showToastMessage(t("CENTER.NOT_ABLE_CREATE_CENTER"), "error");
+  // }
+  // };
+
   // props to send in header
   const userProps = {
     userType: t("SIDEBAR.CENTERS"),
@@ -781,7 +984,8 @@ const Center: React.FC = () => {
     handleAddUserClick: handleAddUserClick,
     statusValue: statusValue,
     setStatusValue: setStatusValue,
-    showSort: true,
+    showSort: cohortData?.length > 0,
+    showStateDropdown: showFilters,
   };
 
   return (
@@ -872,7 +1076,7 @@ const Center: React.FC = () => {
               widgets={{}}
               showErrorList={true}
               customFields={customFields}
-              formData={editFormData}
+              formData={editFormData ? editFormData : ""}
               id="update-center-form"
             >
               <Box
@@ -919,6 +1123,87 @@ const Center: React.FC = () => {
               </Box>
             </DynamicForm>
           )}
+        </SimpleModal>
+
+        <SimpleModal
+          open={openAddNewCohort}
+          onClose={handleCloseAddLearnerModal}
+          showFooter={false}
+          modalTitle={t("CENTERS.NEW_CENTER")}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px",
+              marginTop: "10px",
+            }}
+          ></Box>
+          {schema && uiSchema && (
+            <DynamicForm
+              schema={schema}
+              uiSchema={uiSchema}
+              onSubmit={handleSubmit}
+              // onChange={handleChangeFormCreate}
+              // onError={handleErrorCreate}
+              widgets={{}}
+              showErrorList={true}
+              customFields={customFields}
+              id="new-center-form"
+              onChange={handleChangeForm}
+              onError={handleError}
+            >
+              <Box
+                style={{
+                  display: "flex",
+                  justifyContent: "right", // Centers the button horizontally
+                  marginTop: "20px", // Adjust margin as needed
+                }}
+                gap={2}
+              >
+                <Button
+                  variant="outlined"
+                  type="submit"
+                  form="new-center-form" // Add this line
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    width: "auto",
+                    height: "40px",
+                    marginLeft: "10px",
+                  }}
+                  onClick={handleCloseAddLearnerModal}
+                >
+                  {t("COMMON.CANCEL")}
+                </Button>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  form="new-center-form" // Add this line
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    width: "auto",
+                    height: "40px",
+                    marginLeft: "10px",
+                  }}
+                  onClick={() => {
+                    setSubmittedButtonStatus(true);
+                    console.log("Submit button was clicked");
+                  }}
+                >
+                  {t("COMMON.CREATE")}
+                </Button>
+              </Box>
+            </DynamicForm>
+          )}
+          {/* {!selectedBlockCohortId && selectedBlockCohortId !== "" && (
+            <Box mt={3} textAlign={"center"}>
+              <Typography color={"error"}>
+                {t("COMMON.SOMETHING_WENT_WRONG")}
+              </Typography>
+            </Box>
+          )} */}
         </SimpleModal>
       </HeaderComponent>
     </>

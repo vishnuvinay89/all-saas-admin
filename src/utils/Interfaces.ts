@@ -10,7 +10,14 @@ export interface FieldOption {
 
 export interface Field {
   name: string;
-  type: "text" | "numeric" | "drop_down" | "checkbox" | "radio" | "email";
+  type:
+    | "text"
+    | "numeric"
+    | "drop_down"
+    | "checkbox"
+    | "radio"
+    | "email"
+    | "time";
   label: string;
   order: string;
   coreField: number;
@@ -39,7 +46,7 @@ export interface TenantCohortRoleMapping {
 
 export interface CustomField {
   fieldId: string;
-  value: string;
+  value: any;
   isRequired?: boolean;
 }
 export interface FormData {

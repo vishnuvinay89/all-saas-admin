@@ -2,7 +2,7 @@ import masterIcon from '../../../../public/images/database.svg';
 import centerIcon from '../../../../public/images/centers.svg';
 import dashboardIcon from '../../../../public/images/dashboard.svg';
 import userIcon from '../../../../public/images/group.svg';
-import coursePannerIcon from '../../../../public/images/event_available.svg';
+import { TeamLeaders, classes, coursePlanner, masters, showClasses, showCoursePlanner, showLearners, showManageUsers, showMasters, showTeamLeaders, showfaciliator } from '../../../../app.config';
 
 
 
@@ -15,25 +15,25 @@ const Menuitems = [
   //   icon: dashboardIcon,
   //   href: "/dashboard",
   // },
-  {
+  showClasses && {
     title: "SIDEBAR.CENTERS",
     icon: centerIcon,
     href: "/centers",
   },
-  {
+  showManageUsers && {
     title: "SIDEBAR.MANAGE_USERS",
     icon: userIcon,
     //  href: "/",
     subOptions: [
-      {
+      showTeamLeaders && {
         title: "SIDEBAR.TEAM_LEADERS",
         href: "/teamLeader",
       },
-      {
+      showfaciliator && {
         title: "SIDEBAR.FACILITATORS",
         href: "/faciliator",
       },
-      {
+      showLearners && {
         title: "SIDEBAR.LEARNERS",
         href: "/learners",
       },
@@ -42,7 +42,7 @@ const Menuitems = [
 
 
 
-  {
+  showMasters && {
     title: "Master ",
     icon: masterIcon,
     // href: "/",
@@ -61,7 +61,7 @@ const Menuitems = [
       },
     ],
   },
-  {
+  showCoursePlanner && {
     title: "SIDEBAR.COURSE_PLANNER",
     icon: coursePannerIcon,
     href: "/course-planner",

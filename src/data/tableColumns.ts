@@ -29,7 +29,7 @@ export const getUserTableColumns = (t: any, isMobile: boolean) => {
     { key: "age", titleKey: "TABLE_TITLE.AGE", width: 70 },
     { key: "gender", titleKey: "TABLE_TITLE.GENDER", width: 90 },
     { key: "mobile", titleKey: "TABLE_TITLE.MOBILE", width: 130 },
-    { key: "district", titleKey: "TABLE_TITLE.DISTRICT_BLOCK", width: 160 },
+    // { key: "district", titleKey: "TABLE_TITLE.DISTRICT_BLOCK", width: 160 },
     // { key: "blocks", titleKey: "TABLE_TITLE.BLOCK", width: 130},
     { key: "centers", titleKey: "TABLE_TITLE.CENTER", width: 130 },
     { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 160 },
@@ -70,12 +70,12 @@ export const getCenterTableData = (t: any, isMobile: boolean) => {
 
     {
       key: "totalActiveMembers",
-      titleKey: "TABLE_TITLE.ACTIVE_LEARNERS",
+      titleKey: "CENTERS.ACTIVE_LEARNERS",
       width: 130,
     },
     {
       key: "totalArchivedMembers",
-      titleKey: "TABLE_TITLE.ARCHIVED_LEARNERS",
+      titleKey: "CENTERS.ARCHIVED_LEARNERS",
       width: 130,
     },
     { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 },

@@ -326,93 +326,129 @@ const HeaderComponent = ({
             </Tabs>
           </Box>
         )}
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: isMobile || isMediumScreen ? "column" : "row",
-            gap: isMobile || isMediumScreen ? "8px" : "5%",
-            marginTop: "20px",
-          }}
-        >
-          <Box sx={{ flex: 1, paddingLeft: "16px", paddingRight: "16px" }}>
-            <SearchBar
-              onSearch={handleSearch}
-              placeholder={searchPlaceHolder}
-            />
-          </Box>
-          {showAddNew && (
-            <Box
-              display={"flex"}
-              gap={1}
-              alignItems={"center"}
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                // height: "40px",
-                width: isMobile ? "70%" : "200px",
-                borderRadius: "20px",
-                border: "1px solid #1E1B16",
-                //  mt: isMobile ? "10px" : "16px",
-                boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-                mr: "10px",
-                ml: isMobile ? "50px" : isMediumScreen ? "10px" : undefined,
-                mt: isMobile ? "10px" : isMediumScreen ? "10px" : undefined,
-              }}
-            >
-              <Button
-                //  variant="contained"
-                startIcon={<AddIcon />}
-                sx={{
-                  textTransform: "none",
-                  fontSize: "14px",
-                  color: theme.palette.primary["100"],
-                }}
-                onClick={handleAddUserClick}
-              >
-                {t("COMMON.ADD_NEW")}
-              </Button>
-            </Box>
-          )}
+
+        <Box sx={{ flex: 1, paddingLeft: "16px", paddingRight: "16px" }}>
+          <SearchBar onSearch={handleSearch} placeholder={searchPlaceHolder} />
         </Box>
         {showAddNew && (
           <Box
+            display={"flex"}
+            gap={1}
+            alignItems={"center"}
             sx={{
               display: "flex",
-
-              ml: "10px",
-              mt: isMobile ? "10px" : "16px",
-              mb: "10px",
-              gap: "15px", // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+              justifyContent: "center",
+              alignItems: "center",
+              // height: "40px",
+              width: isMobile ? "70%" : "200px",
+              borderRadius: "20px",
+              border: "1px solid #1E1B16",
+              //  mt: isMobile ? "10px" : "16px",
+              boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+              mr: "10px",
+              ml: isMobile ? "50px" : isMediumScreen ? "10px" : undefined,
+              mt: isMobile ? "10px" : isMediumScreen ? "10px" : undefined,
             }}
           >
-            {showSort && (
-              <FormControl sx={{ minWidth: "120px" }}>
-                <Select
-                  value={selectedSort}
-                  onChange={handleSortChange}
-                  displayEmpty
-                  style={{
-                    borderRadius: "8px",
-                    height: "40px",
-                    marginLeft: "5px",
-                    fontSize: "14px",
-                    backgroundColor: theme.palette.secondary["100"],
-                  }}
-                >
-                  <MenuItem value="Sort">{t("COMMON.SORT")}</MenuItem>
-                  {Sort?.map((state, index) => (
-                    <MenuItem value={state} key={index}>
-                      {state}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
+            <Button
+              //  variant="contained"
+              startIcon={<AddIcon />}
+              sx={{
+                textTransform: "none",
+                fontSize: "14px",
+                color: theme.palette.primary["100"],
+              }}
+              onClick={handleAddUserClick}
+            >
+              {t("COMMON.ADD_NEW")}
+            </Button>
           </Box>
         )}
-        {children}
       </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: isMobile || isMediumScreen ? "column" : "row",
+          gap: isMobile || isMediumScreen ? "8px" : "5%",
+          marginTop: "20px",
+        }}
+      >
+        <Box sx={{ flex: 1, paddingLeft: "16px", paddingRight: "16px" }}>
+          <SearchBar onSearch={handleSearch} placeholder={searchPlaceHolder} />
+        </Box>
+        {showAddNew && (
+          <Box
+            display={"flex"}
+            gap={1}
+            alignItems={"center"}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              // height: "40px",
+              width: isMobile ? "70%" : "200px",
+              borderRadius: "20px",
+              border: "1px solid #1E1B16",
+              //  mt: isMobile ? "10px" : "16px",
+              boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+              mr: "10px",
+              ml: isMobile ? "50px" : isMediumScreen ? "10px" : undefined,
+              mt: isMobile ? "10px" : isMediumScreen ? "10px" : undefined,
+            }}
+          >
+            <Button
+              //  variant="contained"
+              startIcon={<AddIcon />}
+              sx={{
+                textTransform: "none",
+                fontSize: "14px",
+                color: theme.palette.primary["100"],
+              }}
+              onClick={handleAddUserClick}
+            >
+              {t("COMMON.ADD_NEW")}
+            </Button>
+          </Box>
+        )}
+      </Box>
+      {/* {showAddNew && ( */}
+        <Box
+          sx={{
+            display: "flex",
+
+            ml: "10px",
+            mt: isMobile ? "10px" : "16px",
+            mb: "10px",
+            gap: "15px", // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          {showSort && (
+            <FormControl sx={{ minWidth: "120px" }}>
+              <Select
+                value={selectedSort}
+                onChange={handleSortChange}
+                displayEmpty
+                style={{
+                  borderRadius: "8px",
+                  height: "40px",
+                  marginLeft: "5px",
+                  fontSize: "14px",
+                  backgroundColor: theme.palette.secondary["100"],
+                }}
+              >
+                <MenuItem value="Sort">{t("COMMON.SORT")}</MenuItem>
+                {Sort?.map((state, index) => (
+                  <MenuItem value={state} key={index}>
+                    {state}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+        </Box>
+      // )}
+      {children}
     </Box>
   );
 };
