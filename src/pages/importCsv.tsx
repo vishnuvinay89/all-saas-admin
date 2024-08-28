@@ -17,6 +17,8 @@ import AttachmentIcon from "@mui/icons-material/Attachment";
 import FileUploadDialog from "@/components/FileUploadDialog";
 import { useTranslation } from "react-i18next";
 import Loader from "@/components/Loader";
+import { CoursePlannerMetaData } from "@/utils/Interfaces";
+import { uploadCoursePlanner } from "@/services/coursePlanner";
 
 const ImportCsv = () => {
   const router = useRouter();
@@ -73,15 +75,28 @@ const ImportCsv = () => {
     setSelectedFile(null);
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (selectedFile) {
-      router.push({
-        pathname: "/csvDetails",
-        query: {
-          fileName: selectedFile.name,
-          subject: subjectDetails?.subject || "",
-        },
-      });
+
+     
+  const metaData: CoursePlannerMetaData = {
+    subject: 'Marathi',
+    class: '10',
+    state: 'Punjab',
+    board: 'PSEB',
+    type: 'mainCourse',
+    role: 'Teacher',
+    medium: 'Hindi',
+  };
+
+
+  const result = await uploadCoursePlanner(selectedFile, metaData).then(response => {
+    console.log('Upload successful:', response);
+    console.log('Upload successful:', result);
+  }).catch(error => {
+    console.error('Upload failed:', error);
+  });
+      
     }
   };
 
