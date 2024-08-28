@@ -239,7 +239,9 @@
     "SEARCHBAR_PLACEHOLDER": "Search Class..",
     "CENTER_UPDATE_FAILED": "Something went wrong while updating Classes",
     "ARCHIVED_MEMBERS": "Archived Members:",
-    "ACTIVE_MEMBERS": "Active Members"
+    "ACTIVE_MEMBERS": "Active Members",
+    "ARCHIVED_LEARNERS": "Archived Learners",
+    "ACTIVE_LEARNERS": "Active Learners"
   },
   "FORM": {
     "FULL_NAME": "Full Name",
