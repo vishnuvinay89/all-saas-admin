@@ -28,6 +28,7 @@ import { TablePagination, useMediaQuery } from "@mui/material";
 import { Theme } from "@mui/system";
 import CommonUserModal from "./CommonUserModal";
 import { useQuery } from "@tanstack/react-query";
+import { showFilters } from "../../app.config";
 type UserDetails = {
   userId: any;
   username: any;
@@ -856,7 +857,8 @@ const UserTable: React.FC<UserTableProps> = ({
     selectedDistrictCode: selectedDistrictCode,
     selectedStateCode: selectedStateCode,
     handleCenterChange:handleCenterChange,
-     selectedCenter: selectedCenter
+     selectedCenter: selectedCenter,
+     showStateDropdown:showFilters
   };
 
   return (

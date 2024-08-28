@@ -10,3 +10,4 @@ export const showTeamLeaders = false;
 export const showfaciliator = true;
 export const showLearners = true;
 
+export const showFilters = false
