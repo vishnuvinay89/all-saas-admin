@@ -202,7 +202,10 @@
     "IMPORT_PLANNER_TO_UPLOADING": "Click on ‘Import Planner’ to start uploading ",
     "TOPIC_DETAILS": "Topic Details",
     "BROWSE_FILE": "Browse File",
-    "UPLOAD": "Upload"
+    "UPLOAD": "Upload",
+    "COURSE_CREATED_SUCCESSFULLY":"Course created successfully",
+    "COURSE_NOT_CREATED": "Course not created"
+
   },
   "MASTER": {
     "STATE": "State",

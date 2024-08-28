@@ -19,6 +19,7 @@ import { useTranslation } from "react-i18next";
 import Loader from "@/components/Loader";
 import { CoursePlannerMetaData } from "@/utils/Interfaces";
 import { uploadCoursePlanner } from "@/services/coursePlanner";
+import { showToastMessage } from "@/components/Toastify";
 
 const ImportCsv = () => {
   const router = useRouter();
@@ -77,26 +78,42 @@ const ImportCsv = () => {
 
   const handleUpload = async () => {
     if (selectedFile) {
+      const metaData: CoursePlannerMetaData = {
+        subject: "Gujarati",
+        class: "10",
+        state: "Punjab",
+        board: "PSEB",
+        type: "mainCourse",
+        role: "Teacher",
+        medium: "Hindi",
+      };
 
-     
-  const metaData: CoursePlannerMetaData = {
-    subject: 'Marathi',
-    class: '10',
-    state: 'Punjab',
-    board: 'PSEB',
-    type: 'mainCourse',
-    role: 'Teacher',
-    medium: 'Hindi',
-  };
+      const result = await uploadCoursePlanner(selectedFile, metaData)
+        .then((response) => {
+          console.log(
+            "Upload successful:",
+            response.result.solutionData.message
+          );
 
-
-  const result = await uploadCoursePlanner(selectedFile, metaData).then(response => {
-    console.log('Upload successful:', response);
-    console.log('Upload successful:', result);
-  }).catch(error => {
-    console.error('Upload failed:', error);
-  });
-      
+          if (
+            response.result.solutionData.message ==
+            "Solution created successfully"
+          ) {
+            showToastMessage(
+              t("COURSE_PLANNER.COURSE_CREATED_SUCCESSFULLY"),
+              "success"
+            );
+            setOpen(false);
+          } else {
+            showToastMessage(
+              t("COURSE_PLANNER.COURSE_NOT_CREATED"),
+              "success"
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Upload failed:", error);
+        });
     }
   };
 
@@ -108,7 +125,7 @@ const ImportCsv = () => {
       },
       (err) => {
         console.error("Failed to copy link: ", err);
-      },
+      }
     );
   };
 
