@@ -46,7 +46,7 @@ export interface TenantCohortRoleMapping {
 
 export interface CustomField {
   fieldId: string;
-  value: string;
+  value: any;
   isRequired?: boolean;
 }
 export interface FormData {

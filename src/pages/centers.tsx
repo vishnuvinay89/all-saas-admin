@@ -499,6 +499,7 @@ const Center: React.FC = () => {
       console.log("No Cohort Selected");
       setSelectedCohortId("");
     }
+    fetchUserList();
   };
 
   const handleSortChange = async (event: SelectChangeEvent) => {
@@ -579,7 +580,6 @@ const Center: React.FC = () => {
       const formFields = await getFormRead("cohorts", "cohort");
 
       const cohortDetails = resp?.results?.cohortDetails?.[0] || {};
-
       setEditFormData(mapFields(formFields, cohortDetails));
       setLoading(false);
       setIsEditForm(true);
@@ -629,6 +629,92 @@ const Center: React.FC = () => {
     console.log("error");
   };
 
+  // const handleUpdateAction = async (
+  //   data: IChangeEvent<any, RJSFSchema, any>,
+  //   event: React.FormEvent<any>
+  // ) => {
+  //   setLoading(true);
+  //   const formData = data?.formData;
+  //   console.log("formData", formData);
+  //   const schemaProperties = schema.properties;
+
+  //   let apiBody: any = {
+  //     customFields: [],
+  //   };
+  //   Object.entries(formData).forEach(([fieldKey, fieldValue]) => {
+  //     const fieldSchema = schemaProperties[fieldKey];
+  //     const fieldId = fieldSchema?.fieldId;
+
+  //     console.log(
+  //       `FieldID: ${fieldId}, FieldValue: ${JSON.stringify(fieldSchema)}, type: ${typeof fieldValue}`
+  //     );
+
+  //     if (fieldId === null || fieldId === "null") {
+  //       if (typeof fieldValue !== "object") {
+  //         apiBody[fieldKey] = fieldValue;
+  //       }
+  //     } else {
+  //       if (
+  //         fieldSchema?.hasOwnProperty("isDropdown") ||
+  //         fieldSchema?.hasOwnProperty("isCheckbox") ||
+  //         fieldSchema?.type === "radio"
+  //       ) {
+  //         apiBody.customFields.push({
+  //           fieldId: fieldId,
+  //           value: Array.isArray(fieldValue) ? fieldValue : [fieldValue],
+  //         });
+  //       } else {
+  //         if (fieldSchema?.checkbox && fieldSchema.type === "array") {
+  //           if (String(fieldValue).length != 0) {
+  //             apiBody.customFields.push({
+  //               fieldId: fieldId,
+  //               value: String(fieldValue).split(","),
+  //             });
+  //           }
+  //         } else {
+  //           if (fieldId) {
+  //             apiBody.customFields.push({
+  //               fieldId: fieldId,
+  //               value: String(fieldValue),
+  //             });
+  //           }
+  //         }
+  //       }
+  //     }
+  //   });
+
+  //   const customFields = apiBody?.customFields;
+  //   try {
+  //     setLoading(true);
+  //     setConfirmButtonDisable(true);
+  //     if (!selectedCohortId) {
+  //       console.log("No cohort Id Selected");
+  //       showToastMessage(t("CENTERS.NO_COHORT_ID_SELECTED"), "error");
+  //       return;
+  //     }
+  //     let cohortDetails = {
+  //       name: formData?.name,
+  //       customFields: customFields,
+  //     };
+  //     const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
+  //     if (resp?.responseCode === 200 || resp?.responseCode === 201) {
+  //       showToastMessage(t("CENTERS.CENTER_UPDATE_SUCCESSFULLY"), "success");
+  //       setLoading(false);
+  //     } else {
+  //       showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating cohort:", error);
+  //     showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
+  //   } finally {
+  //     setLoading(false);
+  //     setConfirmButtonDisable(false);
+  //     onCloseEditMOdel();
+  //     fetchUserList();
+  //     setIsEditForm(false);
+  //   }
+  // };
+
   const handleUpdateAction = async (
     data: IChangeEvent<any, RJSFSchema, any>,
     event: React.FormEvent<any>
@@ -638,52 +724,42 @@ const Center: React.FC = () => {
     console.log("formData", formData);
     const schemaProperties = schema.properties;
 
-    let apiBody: any = {
+    // Initialize the API body similar to handleSubmit
+    let cohortDetails: CohortDetails = {
+      name: formData?.name,
       customFields: [],
+      params: {
+        self: {
+          allowed: 1,
+          allow_late_marking: 1,
+          restrict_attendance_timings: 1,
+          attendance_starts_at: formData?.attendance_starts_at,
+          attendance_ends_at: formData?.attendance_ends_at,
+          back_dated_attendance: 0,
+          back_dated_attendance_allowed_days: 0,
+          update_once_marked: 0,
+          capture_geoLocation: 1,
+        },
+        student: {
+          allowed: 1,
+          allow_late_marking: 1,
+          restrict_attendance_timings: 0,
+          back_dated_attendance: 1,
+          back_dated_attendance_allowed_days: 7,
+          update_once_marked: 1,
+          capture_geoLocation: 0,
+        },
+      },
     };
-    Object.entries(formData).forEach(([fieldKey, fieldValue]) => {
-      const fieldSchema = schemaProperties[fieldKey];
-      const fieldId = fieldSchema?.fieldId;
 
-      console.log(
-        `FieldID: ${fieldId}, FieldValue: ${JSON.stringify(fieldSchema)}, type: ${typeof fieldValue}`
-      );
+    const clusterFieldId = schema?.properties?.cluster?.fieldId;
+    if (clusterFieldId && formData?.cluster) {
+      cohortDetails?.customFields?.push({
+        fieldId: clusterFieldId,
+        value: formData.cluster,
+      });
+    }
 
-      if (fieldId === null || fieldId === "null") {
-        if (typeof fieldValue !== "object") {
-          apiBody[fieldKey] = fieldValue;
-        }
-      } else {
-        if (
-          fieldSchema?.hasOwnProperty("isDropdown") ||
-          fieldSchema?.hasOwnProperty("isCheckbox") ||
-          fieldSchema?.type === "radio"
-        ) {
-          apiBody.customFields.push({
-            fieldId: fieldId,
-            value: Array.isArray(fieldValue) ? fieldValue : [fieldValue],
-          });
-        } else {
-          if (fieldSchema?.checkbox && fieldSchema.type === "array") {
-            if (String(fieldValue).length != 0) {
-              apiBody.customFields.push({
-                fieldId: fieldId,
-                value: String(fieldValue).split(","),
-              });
-            }
-          } else {
-            if (fieldId) {
-              apiBody.customFields.push({
-                fieldId: fieldId,
-                value: String(fieldValue),
-              });
-            }
-          }
-        }
-      }
-    });
-
-    const customFields = apiBody?.customFields;
     try {
       setLoading(true);
       setConfirmButtonDisable(true);
@@ -692,14 +768,9 @@ const Center: React.FC = () => {
         showToastMessage(t("CENTERS.NO_COHORT_ID_SELECTED"), "error");
         return;
       }
-      let cohortDetails = {
-        name: formData?.name,
-        customFields: customFields,
-      };
       const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
         showToastMessage(t("CENTERS.CENTER_UPDATE_SUCCESSFULLY"), "success");
-        setLoading(false);
       } else {
         showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
       }
@@ -827,20 +898,18 @@ const Center: React.FC = () => {
           attendance_starts_at: formData?.attendance_starts_at,
           attendance_ends_at: formData?.attendance_ends_at,
           back_dated_attendance: 0,
-          back_dated_attendance_allowed_days: 7,
-          update_once_marked: 1,
+          back_dated_attendance_allowed_days: 0,
+          update_once_marked: 0,
           capture_geoLocation: 1,
         },
         student: {
           allowed: 1,
           allow_late_marking: 1,
-          back_dated_attendance: 0,
+          restrict_attendance_timings: 0,
+          back_dated_attendance: 1,
           back_dated_attendance_allowed_days: 7,
           update_once_marked: 1,
-          // restrict_attendance_timings: 1,
-          // attendance_starts_at: "12:20",
-          // attendance_ends_at: "13:10",
-          // capture_geoLocation: 1,
+          capture_geoLocation: 0,
         },
       },
     };
@@ -891,7 +960,6 @@ const Center: React.FC = () => {
   // }
   // };
 
- 
   // props to send in header
   const userProps = {
     userType: t("SIDEBAR.CENTERS"),
@@ -913,7 +981,7 @@ const Center: React.FC = () => {
     statusValue: statusValue,
     setStatusValue: setStatusValue,
     showSort: cohortData?.length > 0,
-    showStateDropdown:showFilters
+    showStateDropdown: showFilters,
   };
 
   return (
