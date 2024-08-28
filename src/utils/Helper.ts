@@ -122,6 +122,78 @@ export const getCurrentYearPattern = () => {
   return `^(19[0-9][0-9]|20[0-${Math.floor(currentYear / 10) % 10}][0-${currentYear % 10}])$`;
 };
 
+// export const mapFields = (formFields: any, Details: any) => {
+//   let initialFormData: any = {};
+//   console.log("Details", Details);
+
+//   formFields?.fields.forEach((item: any) => {
+//     const customFieldValue = Details?.customFields?.find(
+//       (field: any) => field.fieldId === item.fieldId
+//     );
+
+//     const getValue = (data: any, field: any) => {
+//       if (item.default) {
+//         return item.default;
+//       }
+//       if (item?.isMultiSelect) {
+//         if (data[item.name] && item?.maxSelections > 1) {
+//           return [field?.value];
+//         } else if (item?.type === InputTypes.CHECKBOX) {
+//           return String(field?.value).split(",");
+//         } else {
+//           return field?.value?.toLowerCase();
+//         }
+//       } else if (item?.type === InputTypes.RADIO) {
+//         return field?.value || null;
+//       } else if (item?.type === InputTypes.NUMERIC) {
+//         return parseInt(String(field?.value));
+//       } else if (item?.type === InputTypes.TEXT) {
+//         return String(field?.value);
+//       } else {
+//         if (
+//           field?.value === FormValues.FEMALE ||
+//           field?.value === FormValues.MALE
+//         ) {
+//           return field?.value?.toLowerCase();
+//         }
+//         return field?.value?.toLowerCase();
+//       }
+//     };
+
+//     if (item.coreField) {
+//       if (item?.isMultiSelect) {
+//         if (Details[item.name] && item?.maxSelections > 1) {
+//           initialFormData[item.name] = [Details[item.name]];
+//         } else if (item?.type === "checkbox") {
+//           initialFormData[item.name] = String(Details[item.name]).split(",");
+//         } else {
+//           initialFormData[item.name] = Details[item.name];
+//         }
+//       } else if (item?.type === "radio") {
+//         initialFormData[item.name] = Details[item.name] || null;
+//       } else if (item?.type === "numeric") {
+//         initialFormData[item.name] = Number(Details[item.name]);
+//       } else if (item?.type === "text" && Details[item.name]) {
+//         initialFormData[item.name] = String(Details[item.name]);
+//       } else {
+//         if (Details[item.name]) {
+//           initialFormData[item.name] = Details[item.name];
+//         }
+//       }
+//     } else {
+//       const fieldValue = getValue(Details, customFieldValue);
+
+//       if (fieldValue) {
+//         initialFormData[item.name] = fieldValue;
+//       }
+//     }
+//   });
+
+//   console.log("initialFormData", initialFormData);
+//   return initialFormData;
+// };
+
+
 export const mapFields = (formFields: any, Details: any) => {
   let initialFormData: any = {};
   console.log("Details", Details);
@@ -180,6 +252,9 @@ export const mapFields = (formFields: any, Details: any) => {
           initialFormData[item.name] = Details[item.name];
         }
       }
+    } else if (item.name === "attendance_starts_at" || item.name === "attendance_ends_at") {
+      // Special case for attendance timing fields
+      initialFormData[item.name] = Details.params.self[item.name];
     } else {
       const fieldValue = getValue(Details, customFieldValue);
 
