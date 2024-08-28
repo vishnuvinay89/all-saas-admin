@@ -105,6 +105,10 @@ export const GenerateSchemaAndUiSchema = (
         }));
         fieldUiSchema["ui:widget"] = "CustomRadioWidget";
         break;
+        case 'time':
+        fieldSchema.type = 'string';
+        fieldSchema.format = 'time';
+        break;
       default:
         break;
     }

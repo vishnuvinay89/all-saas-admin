@@ -8,6 +8,7 @@ import Pagination from "@mui/material/Pagination";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import {
+  createCohort,
   fetchCohortMemberList,
   getCohortList,
   updateCohortUpdate,
@@ -76,6 +77,7 @@ interface CohortDetails {
   type?: string;
   parentId?: string | null;
   customFields?: CustomField[];
+  params?: any;
 }
 
 const Center: React.FC = () => {
@@ -110,7 +112,7 @@ const Center: React.FC = () => {
   const [uiSchema, setUiSchema] = React.useState<any>();
   const [openAddNewCohort, setOpenAddNewCohort] =
     React.useState<boolean>(false);
-    const [statusValue, setStatusValue] = useState(Status.ACTIVE);
+  const [statusValue, setStatusValue] = useState(Status.ACTIVE);
 
   const [pageCount, setPageCount] = useState(Numbers.ONE);
   const [pageOffset, setPageOffset] = useState(Numbers.ZERO);
@@ -137,8 +139,7 @@ const Center: React.FC = () => {
   const [filters, setFilters] = useState<cohortFilterDetails>({
     type: CohortTypes.COHORT,
     states: selectedStateCode,
-     status: [statusValue]
-    ,
+    status: [statusValue],
   });
   const handleCloseAddLearnerModal = () => {
     setOpenAddNewCohort(false);
@@ -146,7 +147,7 @@ const Center: React.FC = () => {
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
- 
+
   const getAdminInformation = () => {
     if (typeof window !== "undefined" && window.localStorage) {
       const admin = localStorage.getItem("adminInfo");
@@ -156,7 +157,7 @@ const Center: React.FC = () => {
         );
         console.log(stateField?.value, stateField?.code);
         const object = [
-          { 
+          {
             value: stateField?.code,
             label: stateField?.value,
           },
@@ -173,7 +174,6 @@ const Center: React.FC = () => {
       }
     }
   };
-  
 
   // use api calls
   useEffect(() => {
@@ -334,7 +334,6 @@ const Center: React.FC = () => {
   };
 
   useEffect(() => {
-
     fetchUserList();
     getFormData();
   }, [pageOffset, pageLimit, sortBy, filters, filters.states, filters.status]);
@@ -395,7 +394,6 @@ const Center: React.FC = () => {
           type: "COHORT",
           states: stateCodes,
           status: filters.status,
-
         });
       else setFilters({ type: "COHORT", states: stateCodes });
     }
@@ -412,7 +410,6 @@ const Center: React.FC = () => {
         setFilters({
           states: selectedStateCode,
           status: filters.status,
-
         });
       } else {
         setFilters({
@@ -427,7 +424,6 @@ const Center: React.FC = () => {
           states: selectedStateCode,
           districts: districts,
           status: filters.status,
-
         });
       } else {
         setFilters({
@@ -446,7 +442,6 @@ const Center: React.FC = () => {
           states: selectedStateCode,
           districts: selectedDistrictCode,
           status: filters.status,
-
         });
       } else {
         setFilters({
@@ -463,7 +458,6 @@ const Center: React.FC = () => {
           districts: selectedDistrictCode,
           blocks: blocks,
           status: filters.status,
-
         });
       } else {
         setFilters({
@@ -526,11 +520,14 @@ const Center: React.FC = () => {
     }));
   };
 
-const handleFilterChange = async (event: React.SyntheticEvent, newValue: any) => {
-  setStatusValue(newValue)
+  const handleFilterChange = async (
+    event: React.SyntheticEvent,
+    newValue: any
+  ) => {
+    setStatusValue(newValue);
 
-  setSelectedFilter(newValue);
-  setPageSize(Numbers.TEN);
+    setSelectedFilter(newValue);
+    setPageSize(Numbers.TEN);
     setPageLimit(Numbers.TEN);
     setPageOffset(Numbers.ZERO);
     setPageCount(Numbers.ONE);
@@ -719,6 +716,7 @@ const handleFilterChange = async (event: React.SyntheticEvent, newValue: any) =>
 
   const handleAddUserClick = () => {
     setOpenAddNewCohort(true);
+    // setIsEditForm(true);
   };
 
   useEffect(() => {
@@ -761,8 +759,138 @@ const handleFilterChange = async (event: React.SyntheticEvent, newValue: any) =>
     fetchData();
   }, []);
 
-  
+  // // for new changes
+  // useEffect(() => {
+  //   const getAddLearnerFormData = async () => {
+  //     const admin = localStorage.getItem("adminInfo");
+  //     if (admin) {
+  //       const stateField = JSON.parse(admin)?.customFields?.find(
+  //         (field: any) => field.label === "STATES"
+  //       );
+  //       if (!stateField?.value.includes(",")) {
+  //         setStateDefaultValueForCenter(stateField?.value);
+  //       } else {
+  //         setStateDefaultValueForCenter(t("COMMON.ALL_STATES"));
+  //       }
+  //     }
+  //     try {
+  //       const response = await getFormRead("cohorts", "cohort");
+  //       console.log("sortedFields", response);
 
+  //       if (response) {
+  //         const { schema, uiSchema } = GenerateSchemaAndUiSchema(response, t);
+  //         console.log("schema", schema);
+  //         console.log("uiSchema", uiSchema);
+  //         setSchemaCreate(schema);
+  //         setUiSchemaCreate(uiSchema);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching form data:", error);
+  //     }
+  //   };
+  //   getAddLearnerFormData();
+  // }, []);
+
+  const handleSubmit = async (
+    data: IChangeEvent<any, RJSFSchema, any>,
+    event: React.FormEvent<any>
+  ) => {
+    const formData = data?.formData;
+    console.log("formData", formData);
+
+    // if (selectedBlockCohortId) {
+    // const parentId = selectedBlockCohortId;
+    const cohortDetails: CohortDetails = {
+      name: formData.name,
+      type: CohortTypes.COHORT,
+      // parentId: parentId,
+      customFields: [
+        // {
+        //   fieldId: stateFieldId,
+        //   value: [selectedStateCode],
+        // },
+        // {
+        //   fieldId: districtFieldId,
+        //   value: [selectedDistrictCode],
+        // },
+        // {
+        //   fieldId: blockFieldId,
+        //   value: [selectedBlockCode],
+        // },
+      ],
+      params: {
+        self: {
+          allowed: 1,
+          allow_late_marking: 1,
+          restrict_attendance_timings: 1,
+          attendance_starts_at: formData?.attendance_starts_at,
+          attendance_ends_at: formData?.attendance_ends_at,
+          back_dated_attendance: 0,
+          back_dated_attendance_allowed_days: 7,
+          update_once_marked: 1,
+          capture_geoLocation: 1,
+        },
+        student: {
+          allowed: 1,
+          allow_late_marking: 1,
+          back_dated_attendance: 0,
+          back_dated_attendance_allowed_days: 7,
+          update_once_marked: 1,
+          // restrict_attendance_timings: 1,
+          // attendance_starts_at: "12:20",
+          // attendance_ends_at: "13:10",
+          // capture_geoLocation: 1,
+        },
+      },
+    };
+
+    // Object.entries(formData).forEach(([fieldKey, fieldValue]) => {
+    //   const fieldSchema = schema.properties[fieldKey];
+    //   const fieldId = fieldSchema?.fieldId;
+    //   console.log("formData", formData);
+    //   console.log("fieldSchema", fieldSchema);
+    //   console.log("fieldId", fieldId);
+
+    //   if (fieldId !== null) {
+    //     cohortDetails?.customFields?.push({
+    //       fieldId: fieldId,
+    //       value: formData.cohort_type,
+    //     });
+    //   }
+    // });
+
+    // add only cluster in customFields
+    const clusterFieldId = schema?.properties?.cluster?.fieldId;
+    if (clusterFieldId && formData?.cluster) {
+      cohortDetails?.customFields?.push({
+        fieldId: clusterFieldId,
+        value: formData.cluster,
+      });
+    }
+
+    if (
+      cohortDetails?.customFields &&
+      cohortDetails?.customFields?.length > 0 &&
+      cohortDetails?.name
+    ) {
+      console.log("cohortDetails", cohortDetails);
+      const cohortData = await createCohort(cohortDetails);
+      if (cohortData) {
+        showToastMessage(t("CENTERS.CENTER_CREATED_SUCCESSFULLY"), "success");
+        setOpenAddNewCohort(false);
+        // onClose();
+      }
+    } else {
+      showToastMessage("Please Input Data", "warning");
+    }
+    fetchUserList();
+  };
+  // else {
+  //   showToastMessage(t("CENTER.NOT_ABLE_CREATE_CENTER"), "error");
+  // }
+  // };
+
+ 
   // props to send in header
   const userProps = {
     userType: t("SIDEBAR.CENTERS"),
@@ -781,8 +909,8 @@ const handleFilterChange = async (event: React.SyntheticEvent, newValue: any) =>
     handleSearch: handleSearch,
     showAddNew: true,
     handleAddUserClick: handleAddUserClick,
-    statusValue:statusValue,
-    setStatusValue:setStatusValue,
+    statusValue: statusValue,
+    setStatusValue: setStatusValue,
     showSort: cohortData?.length > 0,
   };
 
@@ -868,7 +996,7 @@ const handleFilterChange = async (event: React.SyntheticEvent, newValue: any) =>
               widgets={{}}
               showErrorList={true}
               customFields={customFields}
-              formData={editFormData}
+              formData={editFormData ? editFormData : ""}
               id="update-center-form"
             >
               <Box
@@ -915,6 +1043,87 @@ const handleFilterChange = async (event: React.SyntheticEvent, newValue: any) =>
               </Box>
             </DynamicForm>
           )}
+        </SimpleModal>
+
+        <SimpleModal
+          open={openAddNewCohort}
+          onClose={handleCloseAddLearnerModal}
+          showFooter={false}
+          modalTitle={t("CENTERS.NEW_CENTER")}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px",
+              marginTop: "10px",
+            }}
+          ></Box>
+          {schema && uiSchema && (
+            <DynamicForm
+              schema={schema}
+              uiSchema={uiSchema}
+              onSubmit={handleSubmit}
+              // onChange={handleChangeFormCreate}
+              // onError={handleErrorCreate}
+              widgets={{}}
+              showErrorList={true}
+              customFields={customFields}
+              id="new-center-form"
+              onChange={handleChangeForm}
+              onError={handleError}
+            >
+              <Box
+                style={{
+                  display: "flex",
+                  justifyContent: "right", // Centers the button horizontally
+                  marginTop: "20px", // Adjust margin as needed
+                }}
+                gap={2}
+              >
+                <Button
+                  variant="outlined"
+                  type="submit"
+                  form="new-center-form" // Add this line
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    width: "auto",
+                    height: "40px",
+                    marginLeft: "10px",
+                  }}
+                  onClick={handleCloseAddLearnerModal}
+                >
+                  {t("COMMON.CANCEL")}
+                </Button>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  form="new-center-form" // Add this line
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    width: "auto",
+                    height: "40px",
+                    marginLeft: "10px",
+                  }}
+                  onClick={() => {
+                    setSubmittedButtonStatus(true);
+                    console.log("Submit button was clicked");
+                  }}
+                >
+                  {t("COMMON.CREATE")}
+                </Button>
+              </Box>
+            </DynamicForm>
+          )}
+          {/* {!selectedBlockCohortId && selectedBlockCohortId !== "" && (
+            <Box mt={3} textAlign={"center"}>
+              <Typography color={"error"}>
+                {t("COMMON.SOMETHING_WENT_WRONG")}
+              </Typography>
+            </Box>
+          )} */}
         </SimpleModal>
       </HeaderComponent>
     </>
