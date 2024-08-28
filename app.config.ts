@@ -11,3 +11,9 @@ export const showfaciliator = true;
 export const showLearners = true;
 
 export const showFilters = false
+
+// show fields in table 
+export const showBlock = false
+export const showDistrict = false
+export const showActiveMembers = false
+export const showArchievedMembers = false

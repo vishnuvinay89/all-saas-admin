@@ -320,8 +320,9 @@
     "SOCIAL_SCIENCE": "Social Science",
     "LIFE_SKILLS": "Life Skills",
     "CLUSTER": "Cluster",
-    "START_AT":"Start At",
-    "END_AT":"End At"
+    "START_AT": "Start At",
+    "END_AT": "End At",
+    "CLASS_NAME": "Class Name"
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",
