@@ -858,7 +858,8 @@ const UserTable: React.FC<UserTableProps> = ({
     selectedStateCode: selectedStateCode,
     handleCenterChange:handleCenterChange,
      selectedCenter: selectedCenter,
-     showStateDropdown:showFilters
+     showStateDropdown:showFilters,
+     showAddNew:true
   };
 
   return (
