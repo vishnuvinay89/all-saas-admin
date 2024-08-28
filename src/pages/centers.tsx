@@ -51,6 +51,7 @@ import { RJSFSchema } from "@rjsf/utils";
 import DynamicForm from "@/components/DynamicForm";
 import useSubmittedButtonStore from "@/utils/useSharedState";
 import { getUserDetailsInfo } from "@/services/UserList";
+import { showFilters } from "../../app.config";
 
 type cohortFilterDetails = {
   type?: string;
@@ -912,6 +913,7 @@ const Center: React.FC = () => {
     statusValue: statusValue,
     setStatusValue: setStatusValue,
     showSort: cohortData?.length > 0,
+    showStateDropdown:showFilters
   };
 
   return (
