@@ -31,7 +31,6 @@ import {
   getCohortList,
 } from "@/services/CohortService/cohortService";
 import { Numbers } from "@/utils/app.constant";
-import { set } from "date-fns";
 
 type StateDetail = {
   name: string | undefined;
@@ -43,6 +42,7 @@ type StateDetail = {
 };
 
 type DistrictDetail = {
+  cohortId(cohortId: any): unknown;
   value: string;
   label: string;
 };
@@ -108,6 +108,10 @@ const Block: React.FC = () => {
   const [cohortIdForDelete, setCohortIdForDelete] = useState<any>("");
   const [cohortIdForEdit, setCohortIdForEdit] = useState<any>();
   const [cohortIdOfDistrict, setCohortIdOfDistrict] = useState<any>();
+  const [blockValueForDelete, setBlockValueForDelete] = useState<any>();
+  const [countOfCenter, setCountOfCenter] = useState<number>(0);
+  const [cohortIds, setCohortIds] = useState<any>([]);
+  const [selectedCohortId, setSelectedCohortId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -214,9 +218,10 @@ const Block: React.FC = () => {
         .filter((district: { label: any }) =>
           districtNameArr.includes(district.label)
         );
-
-      console.log("filteredDistrictData", filteredDistrictData);
-
+      if (filteredDistrictData.length > 0) {
+        setSelectedDistrict(filteredDistrictData[0].value);
+      }
+      console.log("cohortIds", selectedCohortId);
       setDistrictData(filteredDistrictData);
     } catch (error) {
       console.error("Error fetching and filtering cohort districts", error);
@@ -227,7 +232,7 @@ const Block: React.FC = () => {
     if (stateCode) {
       getFilteredCohortData();
     }
-  }, [searchKeyword, pageLimit, pageOffset, stateCode, sortBy]);
+  }, [searchKeyword, pageLimit, pageOffset, stateCode]);
 
   const fetchBlocks = async () => {
     try {
@@ -315,7 +320,6 @@ const Block: React.FC = () => {
       console.log("Filtered Block Data:", filteredBlockData);
 
       setBlockData(filteredBlockData);
-      
 
       const totalCount = filteredBlockData.length;
       setPaginationCount(totalCount);
@@ -330,6 +334,36 @@ const Block: React.FC = () => {
       getCohortSearchBlock(selectedDistrict);
     }
   }, [blockNameArr, searchKeyword, pageLimit, pageOffset, sortBy]);
+
+  const getCohortDataCohort = async () => {
+    try {
+      const reqParams = {
+        limit: 0,
+        offset: 0,
+        filters: {
+          parentId: selectedCohortId, //cohort id of block
+        },
+      };
+
+      const response: any = await getCohortList(reqParams);
+
+      const activeCenters = response?.results?.cohortDetails || [];
+      console.log("activeBlocks", activeCenters);
+
+      const activeCentersCount = activeCenters.filter(
+        (block: { status: string }) => block.status === "active"
+      ).length;
+      setCountOfCenter(activeCentersCount);
+    } catch (error) {
+      console.error("Error fetching and filtering cohort districts", error);
+    }
+  };
+
+  console.log("countOfCenter", countOfCenter);
+
+  useEffect(() => {
+    if (selectedDistrict) getCohortDataCohort();
+  }, [selectedDistrict]);
 
   function transformLabels(label: string) {
     if (!label || typeof label !== "string") return "";
@@ -418,10 +452,19 @@ const Block: React.FC = () => {
   const handleDistrictChange = async (event: SelectChangeEvent<string>) => {
     const selectedDistrict = event.target.value;
     setSelectedDistrict(selectedDistrict);
-
+  
+    const selectedDistrictData = districtData.find(
+      (district) => district.value === selectedDistrict
+    );
+  
+    const cohortId = selectedDistrictData?.cohortId as any | null;
+  
+    setSelectedCohortId(cohortId);
+  
     await getCohortSearchBlock(selectedDistrict);
   };
-
+  
+  console.log("selectedCohortId", selectedCohortId);
   useEffect(() => {
     if (selectedDistrict) {
       getCohortSearchBlock(selectedDistrict);
@@ -431,7 +474,6 @@ const Block: React.FC = () => {
     searchKeyword,
     pageLimit,
     pageOffset,
-    sortBy,
     selectedDistrict,
   ]);
 
@@ -453,9 +495,13 @@ const Block: React.FC = () => {
   };
   const handleDelete = (rowData: BlockDetail) => {
     console.log("deleted data for row", rowData);
+
     setSelectedStateForDelete(rowData);
-    setConfirmationDialogOpen(true);
     setCohortIdForDelete(rowData.cohortId);
+    setConfirmationDialogOpen(true);
+
+    const blockValue = rowData.value;
+    setBlockValueForDelete(blockValue);
   };
   console.log("cohortIdForDelete", cohortIdForDelete);
 
@@ -549,7 +595,6 @@ const Block: React.FC = () => {
     userType: t("MASTER.BLOCKS"),
     searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK"),
     showFilter: false,
-    showSort: true,
   };
 
   const handleAddNewBlock = () => {
@@ -708,14 +753,17 @@ const Block: React.FC = () => {
       />
       <ConfirmationModal
         modalOpen={confirmationDialogOpen}
-        message={t("COMMON.ARE_YOU_SURE_DELETE", {
-          state: `${selectedStateForDelete?.block} ${t("COMMON.BLOCK")}`,
-        })}
+        message={
+          countOfCenter > 0
+            ? t("COMMON.ARE_YOU_SURE_DELETE_BLOCK")
+            : t("COMMON.NO_ACTIVE_CENTERS_DELETE")
+        }
         handleAction={handleConfirmDelete}
         buttonNames={{
           primary: t("COMMON.DELETE"),
           secondary: t("COMMON.CANCEL"),
         }}
+        disableDelete={countOfCenter > 0}
         handleCloseModal={() => setConfirmationDialogOpen(false)}
       />
 
@@ -827,9 +875,7 @@ const Block: React.FC = () => {
                   pagination={pagination}
                   onDelete={handleDelete}
                   extraActions={[]}
-                  noDataMessage={
-                    cohortBlockDetails === 0 ? t("COMMON.BLOCKS_NOT_FOUND") : ""
-                  }
+                  noDataMessage={t("COMMON.BLOCKS_NOT_FOUND")}
                 />
               ) : (
                 <Box

@@ -28,10 +28,10 @@ import { TablePagination, useMediaQuery } from "@mui/material";
 import { Theme } from "@mui/system";
 import CommonUserModal from "./CommonUserModal";
 import { useQuery } from "@tanstack/react-query";
+import { showFilters } from "../../app.config";
 import ReassignCenterModal from "./ReassignCenterModal";
 import { getCenterList, getStateBlockDistrictList } from "@/services/MasterDataService";
 import { updateCohortMemberStatus } from "@/services/CohortService/cohortService";
-import { showFilters } from "../../app.config";
 type UserDetails = {
   userId: any;
   username: any;
@@ -550,7 +550,7 @@ const UserTable: React.FC<UserTableProps> = ({
       limit: 200,
       offset: 0,
       filters: {
-        // "type":"COHORT",
+        type:"COHORT",
         status: ["active"],
         states: rowData.stateCode,
         districts: rowData.districtCode,

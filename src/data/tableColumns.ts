@@ -70,12 +70,12 @@ export const getCenterTableData = (t: any, isMobile: boolean) => {
 
     {
       key: "totalActiveMembers",
-      titleKey: "CENTERS.ACTIVE_LEARNERS",
+      titleKey: "TABLE_TITLE.ACTIVE_LEARNERS",
       width: 130,
     },
     {
       key: "totalArchivedMembers",
-      titleKey: "CENTERS.ARCHIVED_LEARNERS",
+      titleKey: "TABLE_TITLE.ARCHIVED_LEARNERS",
       width: 130,
     },
     { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 },

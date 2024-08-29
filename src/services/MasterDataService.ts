@@ -215,6 +215,29 @@ export const createOrUpdateOption = async (
   }
 };
 
+
+export const fieldSearch = async (
+  filters: any,
+  limit?: any,
+  offset?: any,
+): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/search`;
+
+  console.log("API URL:", apiUrl);
+
+  try {
+    const response = await post(apiUrl, { filters, limit, offset });
+    console.log("search fueld API response", response?.data);
+    return response?.data;
+  } catch (error: any) {
+    console.error(
+      "Error in seraching the field:",
+      error.message,
+      error.response?.data
+    );
+    throw new Error("Failed to search the field");
+  }
+};
 export const updateCohort = async (
   cohortId: string,
   cohortDetails: any

@@ -111,6 +111,7 @@ const Center: React.FC = () => {
   const [inputName, setInputName] = React.useState<string>("");
   const [loading, setLoading] = useState<boolean | undefined>(undefined);
   const [userId, setUserId] = useState("");
+  const [centerFormData, setCenterFormData] = React.useState<any>();
   const [schema, setSchema] = React.useState<any>();
   const [uiSchema, setUiSchema] = React.useState<any>();
   const [openAddNewCohort, setOpenAddNewCohort] =
@@ -323,6 +324,8 @@ const Center: React.FC = () => {
     try {
       const response = await getFormRead("cohorts", "cohort");
       if (response) {
+        setCenterFormData(response);
+
         const { schema, uiSchema } = GenerateSchemaAndUiSchema(response, t);
 
         setSchema(schema);
@@ -608,10 +611,15 @@ const Center: React.FC = () => {
     setLoading(false);
   };
 
+  const handleAddFacilitator = () => {
+    console.log("handleAddFacilitator clicked")
+  }
+
   // add  extra buttons
   const extraActions: any = [
     { name: t("COMMON.EDIT"), onClick: handleEdit, icon: EditIcon },
     { name: t("COMMON.DELETE"), onClick: handleDelete, icon: DeleteIcon },
+    //{ name: t("COMMON.ADDFACILITATOR"), onClick: handleAddFacilitator, icon: EditIcon },
   ];
 
   const onCloseEditMOdel = () => {
@@ -725,8 +733,7 @@ const Center: React.FC = () => {
   ) => {
     setLoading(true);
     const formData = data?.formData;
-    console.log("formData", formData);
-    const schemaProperties = schema.properties;
+    //const schemaProperties = schema.properties;
 
     // Initialize the API body similar to handleSubmit
     let cohortDetails: CohortDetails = {
@@ -872,38 +879,48 @@ const Center: React.FC = () => {
     event: React.FormEvent<any>
   ) => {
     const formData = data?.formData;
-    console.log("formData", formData);
+    console.log("formData", centerFormData);
 
-    // if (selectedBlockCohortId) {
-    // const parentId = selectedBlockCohortId;
-    const cohortDetails: CohortDetails = {
-      name: formData.name,
-      type: CohortTypes.COHORT,
-      // parentId: parentId,
-      customFields: [
-        // {
-        //   fieldId: stateFieldId,
-        //   value: [selectedStateCode],
-        // },
-        // {
-        //   fieldId: districtFieldId,
-        //   value: [selectedDistrictCode],
-        // },
-        // {
-        //   fieldId: blockFieldId,
-        //   value: [selectedBlockCode],
-        // },
-      ],
+    const schoolFieldOptions = centerFormData.fields.find((item:any) => item.name === 'nondependantschools');
+    const schoolField = schoolFieldOptions.options.find((item:any) => item.value === formData.nondependantschools);
+    
+    const classFieldOptions = centerFormData.fields.find((item:any) => item.name === 'classes');
+    const classField = classFieldOptions.options.find((item:any) => item.value === formData.classes);
+    
+    const slotFieldOptions = centerFormData.fields.find((item:any) => item.name === 'slots');
+    const slotField = slotFieldOptions.options.find((item:any) => item.value === formData.slots);
+
+    
+    console.log("cohortName", schoolField.label, classField.label, slotField.label);
+
+    const reqParams = {
+      limit:1, 
+      offset: 0,
+      filters: {
+        name: schoolField.label,
+        type: "SCHOOL"
+      }    
+    };
+
+    const response = await getCohortList(reqParams);
+    const parentCohort = response?.results?.cohortDetails[0];
+
+    const { timePlus5, timeMinus5 } = getModifiedTimes(slotField.label);
+    
+    const newClassCohort = {
+      name: schoolField.label + ", " + classField.label + ", " + slotField.label,
+      type: "COHORT",
+      parentId: parentCohort.cohortId,
       params: {
         self: {
           allowed: 1,
           allow_late_marking: 1,
           restrict_attendance_timings: 1,
-          attendance_starts_at: formData?.attendance_starts_at,
-          attendance_ends_at: formData?.attendance_ends_at,
+          attendance_starts_at: timeMinus5,
+          attendance_ends_at: timePlus5,
           back_dated_attendance: 0,
           back_dated_attendance_allowed_days: 0,
-          update_once_marked: 0,
+          can_be_updated: 0,
           capture_geoLocation: 1,
         },
         student: {
@@ -912,57 +929,61 @@ const Center: React.FC = () => {
           restrict_attendance_timings: 0,
           back_dated_attendance: 1,
           back_dated_attendance_allowed_days: 7,
-          update_once_marked: 1,
+          can_be_updated: 1,
           capture_geoLocation: 0,
         },
       },
     };
-
-    // Object.entries(formData).forEach(([fieldKey, fieldValue]) => {
-    //   const fieldSchema = schema.properties[fieldKey];
-    //   const fieldId = fieldSchema?.fieldId;
-    //   console.log("formData", formData);
-    //   console.log("fieldSchema", fieldSchema);
-    //   console.log("fieldId", fieldId);
-
-    //   if (fieldId !== null) {
-    //     cohortDetails?.customFields?.push({
-    //       fieldId: fieldId,
-    //       value: formData.cohort_type,
-    //     });
-    //   }
-    // });
-
-    // add only cluster in customFields
-    const clusterFieldId = schema?.properties?.cluster?.fieldId;
-    if (clusterFieldId && formData?.cluster) {
-      cohortDetails?.customFields?.push({
-        fieldId: clusterFieldId,
-        value: formData.cluster,
-      });
-    }
-
-    if (
-      cohortDetails?.customFields &&
-      cohortDetails?.customFields?.length > 0 &&
-      cohortDetails?.name
-    ) {
-      console.log("cohortDetails", cohortDetails);
-      const cohortData = await createCohort(cohortDetails);
-      if (cohortData) {
-        showToastMessage(t("CENTERS.CENTER_CREATED_SUCCESSFULLY"), "success");
-        setOpenAddNewCohort(false);
-        // onClose();
-      }
-    } else {
-      showToastMessage("Please Input Data", "warning");
+    console.log("cohortDetails", newClassCohort);
+    const cohortData = await createCohort(newClassCohort);
+    if (cohortData) {
+      showToastMessage(t("CENTERS.CENTER_CREATED_SUCCESSFULLY"), "success");
+      setOpenAddNewCohort(false);
+      // onClose();
     }
     fetchUserList();
   };
-  // else {
-  //   showToastMessage(t("CENTER.NOT_ABLE_CREATE_CENTER"), "error");
-  // }
-  // };
+ 
+  const convertTo24HourFormat = (time12h:any) => {
+    const [time, modifier] = time12h.split(' ');
+
+    let [hours, minutes] = time.split(':');
+    hours = parseInt(hours, 10);
+
+    if (modifier === 'PM' && hours !== 12) {
+      hours += 12;
+    }
+    if (modifier === 'AM' && hours === 12) {
+      hours = 0;
+    }
+
+    return `${hours.toString().padStart(2, '0')}:${minutes}`;
+  };
+
+  const addMinutes = (time:any, minutesToAdd:any) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours);
+    date.setMinutes(minutes + minutesToAdd);
+
+    const hours24 = date.getHours().toString().padStart(2, '0');
+    const minutes24 = date.getMinutes().toString().padStart(2, '0');
+
+    return `${hours24}:${minutes24}`;
+  };
+
+  const getModifiedTimes = (timeRange:any) => {
+    const startTime12h = timeRange.split(' - ')[0];
+    const startTime24h = convertTo24HourFormat(startTime12h);
+
+    const timePlus5 = addMinutes(startTime24h, 5);
+    const timeMinus5 = addMinutes(startTime24h, -5);
+
+    return {
+      timePlus5,
+      timeMinus5,
+    };
+  };
 
   // props to send in header
   const userProps = {
