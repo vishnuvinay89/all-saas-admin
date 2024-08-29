@@ -24,6 +24,7 @@ interface AddBlockModalProps {
     name: string,
     value: string,
     controllingField: string,
+    cohortId: string,
     fieldId: string,
     districtId?: string
   ) => void;
@@ -52,14 +53,14 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [districts, setDistricts] = useState<
-    { value: string; label: string }[]
+    { value: string; label: string; cohortId: string | null}[]
   >([]);
 
   const [districtsOptionRead, setDistrictsOptionRead] = useState<any>([]);
   const [districtCodeArr, setDistrictCodeArr] = useState<any>([]);
   const [districtNameArr, setDistrictNameArr] = useState<any>([]);
 
-  const [cohortIdAddNew,setCohortIdAddNewDropdown] = useState<any>("");
+  const [cohortIdAddNewDropdown, setCohortIdAddNewDropdown] = useState<any>("");
 
   const { t } = useTranslation();
 
@@ -68,13 +69,21 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
       name: initialValues.name || "",
       value: initialValues.value || "",
       controllingField: initialValues.controllingField || "",
-      // cohortId:cohortIdAddNew
     });
 
     setErrors({});
   }, [initialValues]);
 
   console.log("formData", formData);
+
+  useEffect(() => {
+    if (formData.controllingField) {
+      const selectedDistrict = districts.find(
+        (district) => district.value === formData.controllingField
+      );
+      setCohortIdAddNewDropdown(selectedDistrict?.cohortId || null);
+    }
+  }, [formData.controllingField, districts]);
 
   const fetchDistricts = async () => {
     try {
@@ -197,12 +206,13 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
 
   const handleChange =
     (field: keyof typeof formData) =>
-    (e: React.ChangeEvent<HTMLInputElement | { value: unknown }>) => {
+    async (e: React.ChangeEvent<HTMLInputElement | { value: unknown }>) => {
       let value = typeof e.target.value === "string" ? e.target.value : "";
 
       if (field === "value") {
         value = value.toUpperCase().slice(0, 3);
       }
+
       setFormData((prev) => ({ ...prev, [field]: value }));
 
       let errorMessage: string | null = null;
@@ -225,16 +235,15 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           value,
           t("COMMON.DISTRICT_NAME_REQUIRED")
         );
+
+        const selectedDistrict = districts.find(
+          (district) => district.value === value
+        );
+        setCohortIdAddNewDropdown(selectedDistrict?.cohortId || null);
+
+        console.log("Selected District:", selectedDistrict); 
+        console.log("Cohort ID Set:", selectedDistrict?.cohortId); 
       }
-
-       // Log the selected district data
-       const selectedDistrict = districts.find(
-        (district) => district.value === value
-      );
-
-      // const cohortIdAddNewDropdown = selectedDistrict?.cohortId;
-      // setCohortIdAddNewDropdown(cohortIdAddNewDropdown || null);
-      // console.log("Selected District:", cohortIdAddNewDropdown);
 
       setErrors((prev) => ({
         ...prev,
@@ -267,22 +276,35 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
 
   const handleSubmit = () => {
     if (validateForm()) {
+      const currentCohortId: any = cohortIdAddNewDropdown;
+      console.log("Cohort ID on Submit:", currentCohortId);
+
+      if (!currentCohortId) {
+        setErrors((prev) => ({
+          ...prev,
+          controllingField: t("COMMON.DISTRICT_NOT_VALID"),
+        }));
+        return;
+      }
+
       onSubmit(
         formData.name,
         formData.value,
         formData.controllingField,
+        currentCohortId,
         fieldId,
-        districtId
+        districtId,
       );
+
       setFormData({
         name: "",
         value: "",
         controllingField: "",
       });
+
       onClose();
     }
   };
-
   const isEditing = !!initialValues.name;
   const buttonText = isEditing ? t("COMMON.UPDATE") : t("COMMON.SUBMIT");
   const dialogTitle = isEditing

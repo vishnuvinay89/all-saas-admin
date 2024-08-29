@@ -83,6 +83,7 @@
     "BLOCK_ADDED_FAILURE": "Unable to add block",
     "BLOCK_UPDATED_SUCCESS": "Block Updated Successfully!",
     "BLOCK_UPDATED_FAILURE": "Unable to update block",
+    "BLOCK_DUPLICATION_FAILURE": "Block is already exists!",
     "ADD": "Add",
     "INACTIVE": "Inactive",
     "DISTRICT": "District",

@@ -93,7 +93,7 @@ const Block: React.FC = () => {
   const [stateCode, setStateCode] = useState<any>("");
   const [stateValue, setStateValue] = useState<string>("");
   const [cohortStatus, setCohortStatus] = useState<any>();
-  const [cohortId, setCohortId] = useState<any>();
+  // const [cohortId, setCohortId] = useState<any>();
   const [stateFieldId, setStateFieldId] = useState<string>("");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [pagination, setPagination] = useState(true);
@@ -236,6 +236,7 @@ const Block: React.FC = () => {
 
   const fetchBlocks = async () => {
     try {
+      setLoading(true);
       const response = await getBlocksForDistricts({
         controllingfieldfk: selectedDistrict || "",
         fieldName: "blocks",
@@ -256,6 +257,7 @@ const Block: React.FC = () => {
     } catch (error) {
       console.error("Error fetching blocks", error);
     } finally {
+      setLoading(false);
     }
   };
 
@@ -346,6 +348,7 @@ const Block: React.FC = () => {
       };
 
       const response: any = await getCohortList(reqParams);
+      console.log("response", response);
 
       const activeCenters = response?.results?.cohortDetails || [];
       console.log("activeBlocks", activeCenters);
@@ -452,30 +455,24 @@ const Block: React.FC = () => {
   const handleDistrictChange = async (event: SelectChangeEvent<string>) => {
     const selectedDistrict = event.target.value;
     setSelectedDistrict(selectedDistrict);
-  
+
     const selectedDistrictData = districtData.find(
       (district) => district.value === selectedDistrict
     );
-  
+
     const cohortId = selectedDistrictData?.cohortId as any | null;
-  
+
     setSelectedCohortId(cohortId);
-  
+
     await getCohortSearchBlock(selectedDistrict);
   };
-  
+
   console.log("selectedCohortId", selectedCohortId);
   useEffect(() => {
     if (selectedDistrict) {
       getCohortSearchBlock(selectedDistrict);
     }
-  }, [
-    blockNameArr,
-    searchKeyword,
-    pageLimit,
-    pageOffset,
-    selectedDistrict,
-  ]);
+  }, [blockNameArr, searchKeyword, pageLimit, pageOffset, selectedDistrict]);
 
   const handleEdit = (rowData: any) => {
     setModalOpen(true);
@@ -609,8 +606,9 @@ const Block: React.FC = () => {
     name: string,
     value: string,
     controllingField: string,
+    cohortId?: string,
     DistrictId?: string,
-    extraArgument?: any
+    extraArgument?: any,
   ) => {
     const newDistrict = {
       options: [
@@ -621,6 +619,7 @@ const Block: React.FC = () => {
         },
       ],
     };
+
     try {
       const response = await createOrUpdateOption(blocksFieldId, newDistrict);
 
@@ -634,8 +633,8 @@ const Block: React.FC = () => {
     const queryParameters = {
       name: name,
       type: "BLOCK",
-      status: cohortStatus,
-      parentId: cohortId, //cohortId of district
+      status: Status.ACTIVE,
+      parentId: cohortId || "",
       customFields: [
         {
           fieldId: stateFieldId, // state fieldId
@@ -648,6 +647,8 @@ const Block: React.FC = () => {
         },
       ],
     };
+
+    console.log("queryParameters", queryParameters);
     try {
       const cohortCreateResponse = await createCohort(queryParameters);
       if (cohortCreateResponse) {
@@ -722,7 +723,7 @@ const Block: React.FC = () => {
       <AddBlockModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSubmit={(name: string, value: string, controllingField: string) => {
+        onSubmit={(name: string, value: string, controllingField: string, cohortId?: string) => {
           if (selectedStateForEdit) {
             handleUpdateCohortSubmit(
               name,
@@ -736,7 +737,8 @@ const Block: React.FC = () => {
               name,
               value,
               controllingField,
-              blocksFieldId
+              cohortId,
+              blocksFieldId,
             );
           }
         }}
