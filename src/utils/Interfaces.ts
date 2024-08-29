@@ -75,3 +75,14 @@ export interface CohortMemberList {
   };
   sort?: string[];
 }
+
+export interface CoursePlannerMetaData {
+  subject: string;
+  class: string;
+  state: string;
+  board: string;
+  type: string;
+  role: string;
+  medium: string;
+}
+

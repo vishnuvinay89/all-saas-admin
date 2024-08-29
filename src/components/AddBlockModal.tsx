@@ -15,6 +15,7 @@ import {
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
 import { getDistrictsForState } from "@/services/MasterDataService";
+import { getCohortList } from "@/services/CohortService/cohortService";
 
 interface AddBlockModalProps {
   open: boolean;
@@ -23,6 +24,7 @@ interface AddBlockModalProps {
     name: string,
     value: string,
     controllingField: string,
+    cohortId: string,
     fieldId: string,
     districtId?: string
   ) => void;
@@ -51,8 +53,15 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [districts, setDistricts] = useState<
-    { value: string; label: string }[]
+    { value: string; label: string; cohortId: string | null}[]
   >([]);
+
+  const [districtsOptionRead, setDistrictsOptionRead] = useState<any>([]);
+  const [districtCodeArr, setDistrictCodeArr] = useState<any>([]);
+  const [districtNameArr, setDistrictNameArr] = useState<any>([]);
+
+  const [cohortIdAddNewDropdown, setCohortIdAddNewDropdown] = useState<any>("");
+
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -61,32 +70,115 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
       value: initialValues.value || "",
       controllingField: initialValues.controllingField || "",
     });
+
     setErrors({});
   }, [initialValues]);
 
-  useEffect(() => {
-    const fetchDistricts = async () => {
-      try {
-        const response = await getDistrictsForState({ fieldName: "districts" });
-        if (response.result.values) {
-          setDistricts(response.result.values);
-          console.log("modal all districts", response.result.values);
-        } else {
-          console.error("Unexpected response format:", response);
-          setDistricts([]);
-        }
-      } catch (error: any) {
-        console.error("Error fetching districts:", error.message);
-        setDistricts([]);
-      }
-    };
+  console.log("formData", formData);
 
+  useEffect(() => {
+    if (formData.controllingField) {
+      const selectedDistrict = districts.find(
+        (district) => district.value === formData.controllingField
+      );
+      setCohortIdAddNewDropdown(selectedDistrict?.cohortId || null);
+    }
+  }, [formData.controllingField, districts]);
+
+  const fetchDistricts = async () => {
+    try {
+      const data = await getDistrictsForState({
+        fieldName: "districts",
+      });
+
+      const districts = data?.result?.values || [];
+      setDistrictsOptionRead(districts);
+
+      const districtNameArray = districts.map((item: any) => item.label);
+      setDistrictNameArr(districtNameArray);
+
+      const districtCodeArray = districts.map((item: any) => item.value);
+      setDistrictCodeArr(districtCodeArray);
+
+      // const districtFieldID = data?.result?.fieldId || "";
+      // setDistrictFieldId(districtFieldID);
+
+      console.log("districtNameArray", districtNameArray);
+    } catch (error) {
+      console.error("Error fetching districts", error);
+    }
+  };
+
+  useEffect(() => {
     if (open) fetchDistricts();
   }, [open, formData.controllingField]);
 
+  const getFilteredCohortData = async () => {
+    try {
+      const reqParams = {
+        limit: 0,
+        offset: 0,
+        filters: {
+          name: "",
+          states: "",
+          type: "DISTRICT",
+        },
+        sort: ["name", "asc"],
+      };
+
+      const response = await getCohortList(reqParams);
+
+      const cohortDetails = response?.results?.cohortDetails || [];
+
+      const filteredDistrictData = cohortDetails
+        .map(
+          (districtDetail: {
+            cohortId: any;
+            name: string;
+            createdAt: any;
+            updatedAt: any;
+            createdBy: any;
+            updatedBy: any;
+          }) => {
+            const transformedName = districtDetail.name;
+
+            const matchingDistrict = districtsOptionRead.find(
+              (district: { label: string }) =>
+                district.label === transformedName
+            );
+            return {
+              label: transformedName,
+              value: matchingDistrict ? matchingDistrict.value : null,
+              createdAt: districtDetail.createdAt,
+              updatedAt: districtDetail.updatedAt,
+              createdBy: districtDetail.createdBy,
+              updatedBy: districtDetail.updatedBy,
+              cohortId: districtDetail?.cohortId,
+            };
+          }
+        )
+        .filter((district: { label: any }) =>
+          districtNameArr.includes(district.label)
+        );
+
+      console.log("filteredDistrictData", filteredDistrictData);
+
+      setDistricts(filteredDistrictData);
+    } catch (error) {
+      console.error("Error fetching and filtering cohort districts", error);
+    }
+  };
   useEffect(() => {
-    console.log("Selected District:", formData.controllingField);
-  }, [formData.controllingField]);
+    if (open) getFilteredCohortData();
+  }, [open, districtNameArr]);
+
+  function transformLabels(label: string) {
+    if (!label || typeof label !== "string") return "";
+    return label
+      .toLowerCase()
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  }
 
   const validateField = (
     field: keyof typeof formData,
@@ -114,12 +206,13 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
 
   const handleChange =
     (field: keyof typeof formData) =>
-    (e: React.ChangeEvent<HTMLInputElement | { value: unknown }>) => {
+    async (e: React.ChangeEvent<HTMLInputElement | { value: unknown }>) => {
       let value = typeof e.target.value === "string" ? e.target.value : "";
 
       if (field === "value") {
         value = value.toUpperCase().slice(0, 3);
       }
+
       setFormData((prev) => ({ ...prev, [field]: value }));
 
       let errorMessage: string | null = null;
@@ -142,6 +235,14 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           value,
           t("COMMON.DISTRICT_NAME_REQUIRED")
         );
+
+        const selectedDistrict = districts.find(
+          (district) => district.value === value
+        );
+        setCohortIdAddNewDropdown(selectedDistrict?.cohortId || null);
+
+        console.log("Selected District:", selectedDistrict); 
+        console.log("Cohort ID Set:", selectedDistrict?.cohortId); 
       }
 
       setErrors((prev) => ({
@@ -175,22 +276,35 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
 
   const handleSubmit = () => {
     if (validateForm()) {
+      const currentCohortId: any = cohortIdAddNewDropdown;
+      console.log("Cohort ID on Submit:", currentCohortId);
+
+      if (!currentCohortId) {
+        setErrors((prev) => ({
+          ...prev,
+          controllingField: t("COMMON.DISTRICT_NOT_VALID"),
+        }));
+        return;
+      }
+
       onSubmit(
         formData.name,
         formData.value,
         formData.controllingField,
+        currentCohortId,
         fieldId,
-        districtId
+        districtId,
       );
+
       setFormData({
         name: "",
         value: "",
         controllingField: "",
       });
+
       onClose();
     }
   };
-
   const isEditing = !!initialValues.name;
   const buttonText = isEditing ? t("COMMON.UPDATE") : t("COMMON.SUBMIT");
   const dialogTitle = isEditing
@@ -214,12 +328,13 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           variant="outlined"
           margin="dense"
           error={!!errors.controllingField}
+          disabled={isEditing}
         >
           <MenuItem value="">{t("COMMON.SELECT_DISTRICT")}</MenuItem>
           {districts.length > 0 ? (
-            districts.map((district) => (
+            districts.map((district: any) => (
               <MenuItem key={district.value} value={district.value}>
-                {district.label}
+                {transformLabels(district.label)}
               </MenuItem>
             ))
           ) : (
@@ -252,6 +367,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           onChange={handleChange("value")}
           error={!!errors.value}
           helperText={errors.value}
+          disabled={isEditing}
         />
         <Box display="flex" alignItems="center" mt={2}>
           <InfoOutlinedIcon color="primary" sx={{ mr: 1 }} />

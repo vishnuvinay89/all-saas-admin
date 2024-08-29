@@ -29,8 +29,10 @@
     "SUBMIT": "Submit",
     "BACK": "Back",
     "CANCEL": "Cancel",
-    "ARE_YOU_SURE_DELETE": "There are {{state}} Active blocks in this district you cannot delete it.",
+    "ARE_YOU_SURE_DELETE": "There are {{block}} Active blocks in this district you cannot delete it.",
     "NO_ACTIVE_BLOCKS_DELETE": "There are no active blocks in this district. Do you want to delete it?",
+    "ARE_YOU_SURE_DELETE_BLOCK": "There are Active centers in this block you cannot delete it",
+    "NO_ACTIVE_CENTERS_DELETE": "There are no active centers in this block. Do you want to delete it?",
     "CONFIRM_DELETE": "Confirm Delete",
     "ADD_STATE": "Add New State",
     "ADD_STATE_CODE": "Code",
@@ -81,6 +83,7 @@
     "BLOCK_ADDED_FAILURE": "Unable to add block",
     "BLOCK_UPDATED_SUCCESS": "Block Updated Successfully!",
     "BLOCK_UPDATED_FAILURE": "Unable to update block",
+    "BLOCK_DUPLICATION_FAILURE": "Block is already exists!",
     "ADD": "Add",
     "INACTIVE": "Inactive",
     "DISTRICT": "District",
@@ -202,7 +205,10 @@
     "IMPORT_PLANNER_TO_UPLOADING": "Click on ‘Import Planner’ to start uploading ",
     "TOPIC_DETAILS": "Topic Details",
     "BROWSE_FILE": "Browse File",
-    "UPLOAD": "Upload"
+    "UPLOAD": "Upload",
+    "COURSE_CREATED_SUCCESSFULLY":"Course created successfully",
+    "COURSE_NOT_CREATED": "Course not created"
+
   },
   "MASTER": {
     "STATE": "State",

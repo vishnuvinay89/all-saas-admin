@@ -30,6 +30,7 @@ import {
 } from "@/services/CohortService/cohortService";
 import useStore from "@/store/store";
 import { getUserDetailsInfo } from "@/services/UserList";
+import { getCohortList as getMyCohorts } from "@/services/GetCohortList";
 
 type StateDetail = {
   stateCode: string | undefined;
@@ -85,6 +86,7 @@ const District: React.FC = () => {
   const [cohortIdForEdit, setCohortIdForEdit] = useState<any>();
   const [districtValueForDelete, setDistrictValueForDelete] = useState<any>("");
   const [countOfBlocks, setCountOfBlocks] = useState<number>(0);
+  const [cohortIdofState,setCohortIdofState] = useState<any>("");
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -140,6 +142,41 @@ const District: React.FC = () => {
     fetchDistricts();
   }, [stateCode]);
 
+// get cohort id of state
+  const getStatecohorts = async () => {
+    let userId: any;
+    try {
+      if (typeof window !== "undefined" && window.localStorage) {
+        userId = localStorage.getItem(Storage.USER_ID);
+      }
+  
+      const response: any = await getMyCohorts(userId);      
+      const cohortData = response?.result?.cohortData;
+      if (Array.isArray(cohortData)) {
+        const stateCohort = cohortData.find(cohort => cohort.type === "STATE");
+  
+        if (stateCohort) {
+          const cohortIdOfState = stateCohort.cohortId;
+          setCohortIdofState(cohortIdOfState);
+        } else {
+          console.error("No STATE type cohort found");
+        }
+      } else {
+        console.error("cohortData is not an array or is undefined");
+      }
+  
+    } catch (error) {
+      console.error("Error fetching and filtering cohort districts", error);
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    getStatecohorts();
+  }, []);
+
+  
+  
   const getFilteredCohortData = async () => {
     try {
       const reqParams = {
@@ -167,14 +204,14 @@ const District: React.FC = () => {
             createdBy: any;
             updatedBy: any;
           }) => {
-            const transformedName = transformLabel(districtDetail.name);
+            const transformedName = districtDetail.name
+            
 
             const matchingDistrict = districtsOptionRead.find(
               (district: { label: string }) =>
                 district.label === transformedName
             );
 
-            console.log("matchingDistrict", matchingDistrict);
 
             return {
               label: transformedName,
@@ -222,9 +259,9 @@ const District: React.FC = () => {
         sort: sortBy,
       };
 
-      const response = await getCohortList(reqParams);
-
-      const activeBlocks = response?.results?.cohortDetails || [];
+      const response:any = await getCohortList(reqParams);
+ 
+      const activeBlocks =  response?.results?.cohortDetails || [];
       console.log("activeBlocks", activeBlocks);
 
       const activeBlocksCount = activeBlocks.filter(
@@ -237,6 +274,8 @@ const District: React.FC = () => {
       setLoading(false);
     }
   };
+
+
   useEffect(() => {
     if (districtValueForDelete) {
       getBlockDataCohort();
@@ -259,7 +298,6 @@ const District: React.FC = () => {
   };
   const handleDelete = (rowData: DistrictDetail) => {
     setSelectedStateForDelete(rowData);
-
     const districtValue = rowData.value;
     setDistrictValueForDelete(districtValue);
 
@@ -296,7 +334,7 @@ const District: React.FC = () => {
       const resp = await updateCohort(cohotIdForDelete, cohortDetails);
       console.log(resp);
       if (resp?.responseCode === 200) {
-        const cohort = paginatedData()?.find(
+        const cohort = filteredCohortOptionData()?.find(
           (item: any) => item.cohortId == cohotIdForDelete
         );
         if (cohort) {
@@ -347,7 +385,7 @@ const District: React.FC = () => {
       name: name,
       type: "DISTRICT",
       status: Status.ACTIVE,
-      parentId: cohortId,
+      parentId: cohortIdofState,
       customFields: [
         {
           fieldId: stateFieldId,
@@ -359,6 +397,7 @@ const District: React.FC = () => {
     try {
       const cohortCreateResponse = await createCohort(queryParameters);
       if (cohortCreateResponse) {
+        filteredCohortOptionData()
         showToastMessage(t("COMMON.DISTRICT_ADDED_SUCCESS"), "success");
       } else if (cohortCreateResponse.responseCode === 409) {
         showToastMessage(t("COMMON.DISTRICT_DUPLICATION_FAILURE"), "error");
@@ -409,6 +448,7 @@ const District: React.FC = () => {
         queryParameters
       );
       if (cohortCreateResponse) {
+        filteredCohortOptionData()
         showToastMessage(t("COMMON.DISTRICT_UPDATED_SUCCESS"), "success");
       } else if (cohortCreateResponse.responseCode === 409) {
         showToastMessage(t("COMMON.DISTRICT_DUPLICATION_FAILURE"), "error");
@@ -440,12 +480,28 @@ const District: React.FC = () => {
   ) => {
     setPageOffset(value - 1);
   };
-  const paginatedData = () => {
+
+  function transformLabels(label: string) {
+    if (!label || typeof label !== 'string') return ''; 
+    return label
+      .toLowerCase() 
+      .replace(/_/g, " ") 
+      .replace(/\b\w/g, (char) => char.toUpperCase()); 
+  }
+  
+  
+  const filteredCohortOptionData = () => {
     const startIndex = pageOffset * pageLimit;
     const endIndex = startIndex + pageLimit;
-    return districtData.slice(startIndex, endIndex);
+    
+    const transformedData = districtData.map(item => ({
+      ...item,
+      label: transformLabels(item.label) 
+    }));
+    
+    return transformedData.slice(startIndex, endIndex);
   };
-  const PagesSelector = () => (
+    const PagesSelector = () => (
     <>
       <Box sx={{ display: { xs: "block" } }}>
         <Pagination
@@ -510,7 +566,7 @@ const District: React.FC = () => {
         message={
           countOfBlocks > 0
             ? t("COMMON.ARE_YOU_SURE_DELETE", {
-                state: `${countOfBlocks}`,
+                block: `${countOfBlocks}`,
               })
             : t("COMMON.NO_ACTIVE_BLOCKS_DELETE")
         }
@@ -561,7 +617,7 @@ const District: React.FC = () => {
               </FormControl>
             </Box>
 
-            {districtData.length > 0 ? (
+            {filteredCohortOptionData().length > 0 ? (
               <KaTableComponent
                 columns={[
                   {
@@ -603,7 +659,7 @@ const District: React.FC = () => {
                     width: "130",
                   },
                 ]}
-                data={paginatedData()}
+                data={filteredCohortOptionData()}
                 limit={pageLimit}
                 offset={pageOffset}
                 paginationEnable={paginationCount >= Numbers.FIVE}
