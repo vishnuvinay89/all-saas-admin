@@ -102,6 +102,8 @@ const Center: React.FC = () => {
   const [pageSize, setPageSize] = React.useState<string | number>(10);
   const [confirmationModalOpen, setConfirmationModalOpen] =
     React.useState<boolean>(false);
+  const [confirmationModalOpenForActive, setConfirmationModalOpenForActive] =
+    React.useState<boolean>(false);
   const [selectedCohortId, setSelectedCohortId] = React.useState<string>("");
   const [editModelOpen, setIsEditModalOpen] = React.useState<boolean>(false);
   const [confirmButtonDisable, setConfirmButtonDisable] =
@@ -506,14 +508,16 @@ const Center: React.FC = () => {
   };
 
   const handleSortChange = async (event: SelectChangeEvent) => {
-    if (event.target.value === "Z-A") {
-      setSortBy(["name", SORT.DESCENDING]);
-    } else if (event.target.value === "A-Z") {
-      setSortBy(["name", SORT.ASCENDING]);
-    } else {
-      setSortBy(["createdAt", SORT.ASCENDING]);
+    if (cohortData?.length > 0) {
+      if (event.target.value === "Z-A") {
+        setSortBy(["name", SORT.DESCENDING]);
+      } else if (event.target.value === "A-Z") {
+        setSortBy(["name", SORT.ASCENDING]);
+      } else {
+        setSortBy(["createdAt", SORT.ASCENDING]);
+      }
+      setSelectedSort(event.target.value);
     }
-    setSelectedSort(event.target.value);
   };
 
   const handleSearch = (keyword: string) => {
@@ -916,7 +920,7 @@ const Center: React.FC = () => {
           attendance_ends_at: timePlus5,
           back_dated_attendance: 0,
           back_dated_attendance_allowed_days: 0,
-          update_once_marked: 0,
+          can_be_updated: 0,
           capture_geoLocation: 1,
         },
         student: {
@@ -925,7 +929,7 @@ const Center: React.FC = () => {
           restrict_attendance_timings: 0,
           back_dated_attendance: 1,
           back_dated_attendance_allowed_days: 7,
-          update_once_marked: 1,
+          can_be_updated: 1,
           capture_geoLocation: 0,
         },
       },
@@ -1009,20 +1013,26 @@ const Center: React.FC = () => {
     <>
       <ConfirmationModal
         message={
-          t("CENTERS.SURE_DELETE_CENTER") +
-          inputName +
-          " " +
-          t("CENTERS.CENTER") +
-          "?"
+          selectedRowData?.totalActiveMembers > 0
+            ? t("CENTERS.YOU_CANT_DELETE_CENTER_HAS_ACTIVE_LEARNERS", {
+                activeMembers: `${selectedRowData?.totalActiveMembers}`,
+              })
+            : t("CENTERS.SURE_DELETE_CENTER") +
+              inputName +
+              " " +
+              t("CENTERS.CENTER") +
+              "?"
         }
         handleAction={handleActionForDelete}
-        buttonNames={{
-          primary: t("COMMON.YES"),
-          secondary: t("COMMON.CANCEL"),
-        }}
+        buttonNames={
+          selectedRowData?.totalActiveMembers > 0
+            ? { secondary: t("COMMON.CANCEL") }
+            : { primary: t("COMMON.YES"), secondary: t("COMMON.CANCEL") }
+        }
         handleCloseModal={handleCloseModal}
         modalOpen={confirmationModalOpen}
       />
+
       <HeaderComponent {...userProps}>
         {loading ? (
           <Box

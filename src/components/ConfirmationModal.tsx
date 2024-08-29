@@ -1,5 +1,4 @@
 import * as React from "react";
-
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { Divider } from "@mui/material";
@@ -12,11 +11,12 @@ interface ConfirmationModalProps {
   buttonNames: ButtonNames;
   handleCloseModal: () => void;
   modalOpen: boolean;
+  disableDelete?: boolean; // New prop to disable the delete button
 }
 
 interface ButtonNames {
-  primary: string;
-  secondary: string;
+  primary?: string;
+  secondary?: string;
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -25,6 +25,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   handleAction,
   buttonNames,
   handleCloseModal,
+  disableDelete = false,
 }) => {
   const theme = useTheme();
 
@@ -62,42 +63,45 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             p: 2,
           }}
         >
-        
-
-          <Button
-            sx={{
-              color: "secondary",
-              fontSize: "14px",
-              fontWeight: "500",
-              width: "auto",
-              height: "40px",
-              marginLeft: "10px",
-            }}
-            variant="outlined"
-            onClick={handleCloseModal}
-          >
-            {buttonNames.secondary}
-          </Button>
-          <Button
-            sx={{
-              width: "auto",
-              height: "40px",
-              fontSize: "14px",
-              fontWeight: "500",
-            }}
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              if (handleAction !== undefined) {
-                handleAction();
-                handleCloseModal();
-              } else {
-                handleCloseModal();
-              }
-            }}
-          >
-            {buttonNames.primary}
-          </Button>
+          {buttonNames.secondary && (
+            <Button
+              sx={{
+                color: "secondary",
+                fontSize: "14px",
+                fontWeight: "500",
+                width: "auto",
+                height: "40px",
+                marginLeft: "10px",
+              }}
+              variant="outlined"
+              onClick={handleCloseModal}
+            >
+              {buttonNames.secondary}
+            </Button>
+          )}
+          {buttonNames.primary && (
+            <Button
+              sx={{
+                width: "auto",
+                height: "40px",
+                fontSize: "14px",
+                fontWeight: "500",
+              }}
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                if (handleAction !== undefined) {
+                  handleAction();
+                  handleCloseModal();
+                } else {
+                  handleCloseModal();
+                }
+              }}
+              disabled={disableDelete}
+            >
+              {buttonNames.primary}
+            </Button>
+          )}
         </Box>
       </Box>
     </Modal>

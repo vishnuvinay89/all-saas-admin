@@ -1,4 +1,4 @@
-import { deleteApi, patch, post } from "./RestClient";
+import { deleteApi, patch, post, put } from "./RestClient";
 
 export interface CenterListParam {
   limit?: number;
@@ -112,9 +112,9 @@ export const getBlocksForDistricts = async ({
   optionName,
   sort,
 }: {
-  limit: number;
-  offset: number;
-  controllingfieldfk: string | undefined;
+  limit?: number;
+  offset?: number;
+  controllingfieldfk?: string | undefined;
   fieldName: string;
   optionName?: string;
   sort?: [string, string];
@@ -122,8 +122,8 @@ export const getBlocksForDistricts = async ({
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/fields/options/read`;
 
   const requestBody: {
-    limit: number;
-    offset: number;
+    limit?: number;
+    offset?: number;
     controllingfieldfk?: string;
     fieldName: string;
     optionName?: string;
@@ -236,5 +236,19 @@ export const fieldSearch = async (
       error.response?.data
     );
     throw new Error("Failed to search the field");
+  }
+};
+export const updateCohort = async (
+  cohortId: string,
+  cohortDetails: any
+): Promise<any> => {
+  let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/update/${cohortId}`;
+
+  try {
+    const response = await put(apiUrl, cohortDetails);
+    return response?.data;
+  } catch (error) {
+    console.error("Error in updating cohort details", error);
+    throw error;
   }
 };

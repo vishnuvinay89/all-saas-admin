@@ -17,6 +17,9 @@ import AttachmentIcon from "@mui/icons-material/Attachment";
 import FileUploadDialog from "@/components/FileUploadDialog";
 import { useTranslation } from "react-i18next";
 import Loader from "@/components/Loader";
+import { CoursePlannerMetaData } from "@/utils/Interfaces";
+import { uploadCoursePlanner } from "@/services/coursePlanner";
+import { showToastMessage } from "@/components/Toastify";
 
 const ImportCsv = () => {
   const router = useRouter();
@@ -73,15 +76,44 @@ const ImportCsv = () => {
     setSelectedFile(null);
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (selectedFile) {
-      router.push({
-        pathname: "/csvDetails",
-        query: {
-          fileName: selectedFile.name,
-          subject: subjectDetails?.subject || "",
-        },
-      });
+      const metaData: CoursePlannerMetaData = {
+        subject: "Gujarati",
+        class: "10",
+        state: "Punjab",
+        board: "PSEB",
+        type: "mainCourse",
+        role: "Teacher",
+        medium: "Hindi",
+      };
+
+      const result = await uploadCoursePlanner(selectedFile, metaData)
+        .then((response) => {
+          console.log(
+            "Upload successful:",
+            response.result.solutionData.message
+          );
+
+          if (
+            response.result.solutionData.message ==
+            "Solution created successfully"
+          ) {
+            showToastMessage(
+              t("COURSE_PLANNER.COURSE_CREATED_SUCCESSFULLY"),
+              "success"
+            );
+            setOpen(false);
+          } else {
+            showToastMessage(
+              t("COURSE_PLANNER.COURSE_NOT_CREATED"),
+              "success"
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Upload failed:", error);
+        });
     }
   };
 
@@ -93,7 +125,7 @@ const ImportCsv = () => {
       },
       (err) => {
         console.error("Failed to copy link: ", err);
-      },
+      }
     );
   };
 
