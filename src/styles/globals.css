@@ -79,3 +79,7 @@ ul.MuiList-root li.MuiMenuItem-root[data-value=""] {
 .ka-thead-cell {
   font-weight: 600;
 }
+.ka-thead-cell-content
+{
+  font-weight: normal !important;
+}

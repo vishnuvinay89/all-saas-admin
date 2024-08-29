@@ -47,17 +47,25 @@ const Menuitems = [
     icon: masterIcon,
     // href: "/",
     subOptions: [
-      {
+      /*{
         title: "State",
         href: "/state",
+      },*/
+      {
+        title: "Cluster",
+        href: "/cluster",
       },
       {
-        title: "District",
-        href: "/district",
+        title: "School",
+        href: "/school",
       },
       {
-        title: "Block",
-        href: "/block",
+        title: "Class",
+        href: "/class",
+      },
+      {
+        title: "Slot",
+        href: "/slot",
       },
     ],
   },

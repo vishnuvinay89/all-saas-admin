@@ -14,7 +14,11 @@ export interface cohortListData {
   offset?: Number;
   filter?: any;
 }
-
+export interface UpdateCohortMemberStatusParams {
+  memberStatus: string;
+  statusReason?: string;
+  membershipId: string | number;
+}
 export const getCohortList = async (data: cohortListData): Promise<any> => {
   let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/search`;
 
@@ -104,6 +108,39 @@ export const fetchCohortMemberList = async ({
     return response?.data;
   } catch (error) {
     console.error("error in cohort member list API ", error);
+    // throw error;
+  }
+};
+
+
+
+export const bulkCreateCohortMembers = async (payload: any): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohortmember/bulkCreate`;
+  try {
+    const response = await post(apiUrl, payload);
+    return response.data;
+  } catch (error) {
+    console.error('Error in bulk creating cohort members', error);
+    throw error;
+  }
+};
+
+
+export const updateCohortMemberStatus = async ({
+  memberStatus,
+  statusReason,
+  membershipId,
+}: UpdateCohortMemberStatusParams): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohortmember/update/${membershipId}`;
+  try {
+    const response = await put(apiUrl, {
+      status: memberStatus,
+      statusReason,
+    });
+    console.log('data', response?.data);
+    return response?.data;
+  } catch (error) {
+    console.error('error in attendance report api ', error);
     // throw error;
   }
 };

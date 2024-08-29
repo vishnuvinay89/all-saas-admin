@@ -373,15 +373,27 @@ const CommonUserModal: React.FC<UserModalProps> = ({
        if (typeof window !== 'undefined' && window.localStorage) {
           createrName = localStorage.getItem('name');
         }
-        let replacements;
+        let replacements: { [key: string]: string };
+        replacements={}
+        console.log(Object.keys(replacements).length === 0)
         if (createrName) {
           if(userType===FormContextType.STUDENT)
           {
-            replacements = [createrName, apiBody['name'], username, password];
-
+            replacements = 
+            {
+              "{FirstName}": createrName,
+              "{UserName}": username,
+              "{LearnerName}" : apiBody['name'],
+              "{Password}": password
+          }
           }
           else{
-             replacements = [apiBody['name'], username, password];
+            replacements = 
+            {
+              "{FirstName}": apiBody['name'],
+              "{UserName}": username,
+              "{Password}": password
+          }
 
           }
           
@@ -391,7 +403,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           receipients: userType === FormContextType.STUDENT?[adminInfo?.email]: [formData?.email],
 
         };
-        if (replacements && sendTo) {
+        if (Object.keys(replacements).length !== 0 && sendTo) {
          
           const response = await sendCredentialService({
             isQueue,

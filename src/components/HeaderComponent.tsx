@@ -8,20 +8,21 @@ import {
   Typography,
   useMediaQuery,
   Divider,
- 
-  
 } from "@mui/material";
 import Select from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
-import { Role, Status} from "@/utils/app.constant";
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import { getCenterList, getStateBlockDistrictList } from "../services/MasterDataService";
+import { Role, Status } from "@/utils/app.constant";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import {
+  getCenterList,
+  getStateBlockDistrictList,
+} from "../services/MasterDataService";
 import AreaSelection from "./AreaSelection";
 import { transformArray } from "../utils/Helper";
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
 
 interface State {
   value: string;
@@ -71,7 +72,7 @@ const HeaderComponent = ({
   handleCenterChange,
   statusValue,
 
-  setStatusValue
+  setStatusValue,
 }: any) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
@@ -86,9 +87,8 @@ const HeaderComponent = ({
 
   const handleStateChangeWrapper = async (
     selectedNames: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => {
-    
     if (selectedNames[0] === "") {
       // if(districts.length!==0)
       // {
@@ -114,8 +114,9 @@ const HeaderComponent = ({
 
   const handleDistrictChangeWrapper = async (
     selected: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => {
+    setBlocks([]);
     if (selected[0] === "") {
       handleBlockChange([], []);
     }
@@ -136,7 +137,7 @@ const HeaderComponent = ({
 
   const handleBlockChangeWrapper = async (
     selected: string[],
-    selectedCodes: string[],
+    selectedCodes: string[]
   ) => {
     const getCentersObject = {
       limit: 200,
@@ -170,11 +171,10 @@ const HeaderComponent = ({
   };
   const handleCenterChangeWrapper = (
     selected: string[],
-    selectedCodes: string[],
-  ) => { 
+    selectedCodes: string[]
+  ) => {
     handleCenterChange(selected, selectedCodes);
-
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -184,44 +184,42 @@ const HeaderComponent = ({
           // "offset": 0,
           fieldName: "states",
         };
-       // const response = await getStateBlockDistrictList(object);
-       // const result = response?.result?.values;
+        // const response = await getStateBlockDistrictList(object);
+        // const result = response?.result?.values;
         if (typeof window !== "undefined" && window.localStorage) {
           const admin = localStorage.getItem("adminInfo");
-          if(admin)
-          {
-            const stateField = JSON.parse(admin).customFields.find((field: any) => field.label === "STATES");
-              console.log(stateField.value, stateField.code)
-              if (stateField.value.includes(',')) {
-                console.log('The value contains more than one item.');
-                setStateDefaultValue(t("COMMON.ALL_STATES"))
-              }
-              else{
-                setStateDefaultValue(stateField.value);
+          if (admin) {
+            const stateField = JSON.parse(admin).customFields.find(
+              (field: any) => field.label === "STATES"
+            );
+            console.log(stateField.value, stateField.code);
+            if (stateField.value.includes(",")) {
+              console.log("The value contains more than one item.");
+              setStateDefaultValue(t("COMMON.ALL_STATES"));
+            } else {
+              setStateDefaultValue(stateField.value);
 
+              const object = {
+                controllingfieldfk: stateField.code,
 
+                fieldName: "districts",
+              };
+              console.log(object);
+              const response = await getStateBlockDistrictList(object);
+              const result = response?.result?.values;
+              setDistricts(result);
+            }
 
-                const object = {
-                  controllingfieldfk: stateField.code,
-          
-                  fieldName: "districts",
-                };
-                console.log(object);
-                const response = await getStateBlockDistrictList(object);
-                const result = response?.result?.values;
-                setDistricts(result);
-              }
-              
-              
-              const object=[{
-                value:stateField.code,
-                label:stateField.value
-              }]
-             setStates(object);
-
+            const object = [
+              {
+                value: stateField.code,
+                label: stateField.value,
+              },
+            ];
+            setStates(object);
           }
         }
-      //  setStates(result);
+        //  setStates(result);
         console.log(typeof states);
       } catch (error) {
         console.log(error);
@@ -231,7 +229,7 @@ const HeaderComponent = ({
     fetchData();
   }, []);
   const handleChange = (event: React.SyntheticEvent, newValue: any) => {
-    console.log(newValue)
+    console.log(newValue);
     setStatusValue(newValue);
   };
 
@@ -246,10 +244,11 @@ const HeaderComponent = ({
         borderRadius: "8px",
       }}
     >
-{!showStateDropdown && ( <Typography variant="h1" sx={{ mt: isMobile ? "12px" : "20px" }}>
-        {userType}
-      </Typography>)
-    }
+      {!showStateDropdown && (
+        <Typography variant="h1" sx={{ mt: isMobile ? "12px" : "20px" }}>
+          {userType}
+        </Typography>
+      )}
 
       {showStateDropdown && (
         <AreaSelection
@@ -265,143 +264,154 @@ const HeaderComponent = ({
           isMobile={isMobile}
           isMediumScreen={isMediumScreen}
           inModal={false}
-          isCenterSelection={userType === Role.FACILITATORS || userType === Role.LEARNERS}
+          isCenterSelection={
+            userType === Role.FACILITATORS || userType === Role.LEARNERS
+          }
           stateDefaultValue={stateDefaultValue}
           allCenters={allCenters}
-            selectedCenter={selectedCenter}
-            handleCenterChangeWrapper={handleCenterChangeWrapper}
-            userType={userType}
+          selectedCenter={selectedCenter}
+          handleCenterChangeWrapper={handleCenterChangeWrapper}
+          userType={userType}
         />
       )}
-      
-    
+
       <Box
         sx={{
-         backgroundColor: "white",
-         paddingTop:"20px"
-        }}>
-         
-{showFilter && (
-  <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-  <Tabs 
-    value={statusValue} 
-    onChange={handleFilterChange} 
-    aria-label="Tabs where selection follows focus"
-    selectionFollowsFocus
-  >
-    <Tab 
-      label={
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {/* <Box 
-            sx={{
-              width: 8, 
-              height: 8, 
-              bgcolor: 'green', 
-              borderRadius: '50%', 
-              mr: 1 // margin-right: 1 unit
-            }}
-          /> */}
-          {Status.ACTIVE_LABEL}
-        </Box>
-      } 
-      value={Status.ACTIVE}
-    />
-    <Tab label={Status.INACTIVE} value={Status.ARCHIVED} />
-  </Tabs>
-</Box>
-
-
-        
-        )}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: isMobile || isMediumScreen ? "column" : "row",
-          gap: isMobile || isMediumScreen ? "8px" : "5%",
-          marginTop:"20px"
+          backgroundColor: "white",
+          paddingTop: "20px",
         }}
       >
-       
-        <Box sx={{ flex: 1 , paddingLeft:"16px",
-      paddingRight:"16px"
-      }}>
-          <SearchBar onSearch={handleSearch} placeholder={searchPlaceHolder} />
-        </Box>
-        {showAddNew && (
-
-        <Box display={"flex"} gap={1} alignItems={"center"} 
-          sx={{
-             display: "flex",
-            justifyContent: "center",
-             alignItems: "center",
-            // height: "40px",
-             width: isMobile ? "70%" : "200px",
-            borderRadius: "20px",
-            border: "1px solid #1E1B16",
-          //  mt: isMobile ? "10px" : "16px",
-            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-            mr:'10px',
-            ml:isMobile ? "50px": isMediumScreen ?"10px":undefined,
-            mt:isMobile ? "10px": isMediumScreen ?"10px":undefined
-          }}
-        >
-         
-           <Button
-            //  variant="contained"
-            startIcon={<AddIcon />}
-            sx={{
-              textTransform: "none",
-              fontSize: "14px",
-              color: theme.palette.primary["100"],
-            }}
-            onClick={handleAddUserClick}
-
-          >
-            {t("COMMON.ADD_NEW")}
-          </Button>
-        </Box>)}
-      </Box>
-      
+        {showFilter && (
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs
+              value={statusValue}
+              onChange={handleFilterChange}
+              aria-label="Tabs where selection follows focus"
+              selectionFollowsFocus
+            >
+              <Tab
+                label={
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      color:
+                        statusValue === Status.ACTIVE
+                          ? theme.palette.primary["100"]
+                          : "inherit",
+                    }}
+                  >
+                    {Status.ACTIVE_LABEL}
+                  </Box>
+                }
+                value={Status.ACTIVE}
+              />
+              <Tab
+                label={
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      color:
+                        statusValue === Status.ARCHIVED
+                          ? theme.palette.primary["100"]
+                          : "inherit",
+                    }}
+                  >
+                    {Status.INACTIVE}
+                  </Box>
+                }
+                value={Status.ARCHIVED}
+              />
+            </Tabs>
+          </Box>
+        )}
         <Box
           sx={{
             display: "flex",
-            
-            ml:"10px",
-            mt: isMobile ? "10px" : "16px",
-            mb:"10px",
-            gap:"15px"          // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+            flexDirection: isMobile || isMediumScreen ? "column" : "row",
+            gap: isMobile || isMediumScreen ? "8px" : "5%",
+            marginTop: "20px",
           }}
         >
-         
-       
-          {showSort && (
-            <FormControl sx={{ minWidth: "120px"  }}>
-              <Select
-                value={selectedSort}
-                onChange={handleSortChange}
-                displayEmpty
-                style={{
-                  borderRadius: "8px",
-                  height: "40px",
+          <Box sx={{ flex: 1, paddingLeft: "16px", paddingRight: "16px" }}>
+            <SearchBar
+              onSearch={handleSearch}
+              placeholder={searchPlaceHolder}
+            />
+          </Box>
+          {showAddNew && (
+            <Box
+              display={"flex"}
+              gap={1}
+              alignItems={"center"}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                // height: "40px",
+                width: isMobile ? "70%" : "200px",
+                borderRadius: "20px",
+                border: "1px solid #1E1B16",
+                //  mt: isMobile ? "10px" : "16px",
+                boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+                mr: "10px",
+                ml: isMobile ? "50px" : isMediumScreen ? "10px" : undefined,
+                mt: isMobile ? "10px" : isMediumScreen ? "10px" : undefined,
+              }}
+            >
+              <Button
+                //  variant="contained"
+                startIcon={<AddIcon />}
+                sx={{
+                  textTransform: "none",
                   fontSize: "14px",
-                  backgroundColor: theme.palette.secondary["100"],
-
+                  color: theme.palette.primary["100"],
                 }}
+                onClick={handleAddUserClick}
               >
-                <MenuItem value="Sort">{t("COMMON.SORT")}</MenuItem>
-                {Sort?.map((state, index) => (
-                  <MenuItem value={state} key={index}>
-                    {state}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                {t("COMMON.ADD_NEW")}
+              </Button>
+            </Box>
           )}
         </Box>
+          <Box
+            sx={{
+              display: "flex",
+
+              ml: "10px",
+              mt: isMobile ? "10px" : "16px",
+              mb: "10px",
+              gap: "15px", // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            {showSort && (
+              <FormControl sx={{ minWidth: "120px" }}>
+                <Select
+                  value={selectedSort}
+                  onChange={handleSortChange}
+                  displayEmpty
+                  style={{
+                    borderRadius: "8px",
+                    height: "40px",
+                    marginLeft: "5px",
+                    fontSize: "14px",
+                    backgroundColor: theme.palette.secondary["100"],
+                  }}
+                >
+                  <MenuItem value="Sort">{t("COMMON.SORT")}</MenuItem>
+                  {Sort?.map((state, index) => (
+                    <MenuItem value={state} key={index}>
+                      {state}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+          </Box>
       
-      {children}
+        {children}
       </Box>
-     
     </Box>
   );
 };

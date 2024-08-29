@@ -3,8 +3,8 @@ import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import MultipleSelectCheckmarks from "./FormControl";
-import { capitalizeFirstLetterOfEachWordInArray} from "@/utils/Helper";
-import {  useMediaQuery } from "@mui/material";
+import { capitalizeFirstLetterOfEachWordInArray } from "@/utils/Helper";
+import { useMediaQuery } from "@mui/material";
 
 interface State {
   value: string;
@@ -54,8 +54,8 @@ interface DropdownBoxProps {
   isMobile: boolean;
   isMediumScreen: boolean;
   isCenterSelection?: boolean;
-  stateDefaultValue?:string;
-  userType?: string
+  stateDefaultValue?: string;
+  userType?: string;
 }
 
 const AreaSelection: React.FC<DropdownBoxProps> = ({
@@ -76,19 +76,16 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
   inModal = false,
   handleCenterChangeWrapper = () => {},
   stateDefaultValue,
-  userType
+  userType,
 }) => {
-
   const { t } = useTranslation();
   const theme = useTheme<any>();
-const [singleState, setSingleState] = useState <boolean>(true);
-const [stateValue, setStateValue] = useState <string>("");
-const [stateCode, setStateCode] = useState <string>("");
-const isSmallScreen = useMediaQuery((theme: any) =>
-theme.breakpoints.down("sm"),
-);
-
-
+  const [singleState, setSingleState] = useState<boolean>(true);
+  const [stateValue, setStateValue] = useState<string>("");
+  const [stateCode, setStateCode] = useState<string>("");
+  const isSmallScreen = useMediaQuery((theme: any) =>
+    theme.breakpoints.down("sm")
+  );
 
   return (
     <Box
@@ -98,41 +95,39 @@ theme.breakpoints.down("sm"),
         //backgroundColor: theme.palette.secondary["200"],
         // p: isMobile ? "8px" : "16px",
         borderRadius: "8px",
-       // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+        // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
       }}
     >
-
       <Box
-       sx={{
-        display: "flex",
-        flexDirection: isSmallScreen || isMediumScreen?"column" :"row",
-       }}
-      >
-       {  userType && (<Typography marginTop="20px" variant="h1">
-      {userType} 
-      </Typography>)
-}
-    {  !isSmallScreen && (<Box
-       sx={{
-        display: "flex",
-        flexDirection: "row",
-      justifyContent: inModal? "center":"flex-end", 
-       marginLeft:  inModal? undefined: "auto", 
-
-
-       }}>
-
-       </Box>)
-}
-       <Box
         sx={{
           display: "flex",
-          flexDirection: isSmallScreen?"column":"row",
-          alignItems:isSmallScreen?"center": undefined,
-          justifyContent: isSmallScreen? "center": undefined
-         }}>
-
-       <MultipleSelectCheckmarks
+          flexDirection: isSmallScreen || isMediumScreen ? "column" : "row",
+        }}
+      >
+        {userType && (
+          <Typography marginTop="20px" variant="h1">
+            {userType}
+          </Typography>
+        )}
+        {!isSmallScreen && (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: inModal ? "center" : "flex-end",
+              marginLeft: inModal ? undefined : "auto",
+            }}
+          ></Box>
+        )}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: isSmallScreen ? "column" : "row",
+            alignItems: isSmallScreen ? "center" : undefined,
+            justifyContent: isSmallScreen ? "center" : undefined,
+          }}
+        >
+          <MultipleSelectCheckmarks
             names={states?.map(
               (state) =>
                 state.label?.toLowerCase().charAt(0).toUpperCase() +
@@ -160,9 +155,13 @@ theme.breakpoints.down("sm"),
                 stateDefaultValue === t("COMMON.ALL_STATES"))
             }
             overall={!inModal}
-            defaultValue={districts?.length <= 0 ? t("COMMON.NO_DISTRICTS"):t("COMMON.ALL_DISTRICTS")}
+            defaultValue={
+              selectedState.length > 0 && districts?.length <= 0
+                ? t("COMMON.NO_DISTRICTS")
+                : t("COMMON.ALL_DISTRICTS")
+            }
           />
-           <MultipleSelectCheckmarks
+          <MultipleSelectCheckmarks
             names={blocks?.map((blocks) => blocks.label)}
             codes={blocks?.map((blocks) => blocks.value)}
             tagName={t("FACILITATORS.BLOCK")}
@@ -176,26 +175,26 @@ theme.breakpoints.down("sm"),
             }
             overall={!inModal}
             defaultValue={
-              blocks?.length <= 0
+              selectedDistrict?.length > 0 && blocks?.length <= 0
                 ? t("COMMON.NO_BLOCKS")
                 : t("COMMON.ALL_BLOCKS")
             }
           />
-         { isCenterSelection && ( <MultipleSelectCheckmarks
-              names={capitalizeFirstLetterOfEachWordInArray(allCenters?.map((centers) => centers.name))}
+          {isCenterSelection && (
+            <MultipleSelectCheckmarks
+              names={capitalizeFirstLetterOfEachWordInArray(
+                allCenters?.map((centers) => centers.name)
+              )}
               codes={allCenters?.map((centers) => centers.cohortId)}
               tagName={t("CENTERS.CENTERS")}
               selectedCategories={selectedCenter}
               onCategoryChange={handleCenterChangeWrapper}
               disabled={selectedBlock.length === 0 || selectedCenter[0] === ""}
               overall={!inModal}
-              />)
-         }
+            />
+          )}
+        </Box>
       </Box>
-
-       </Box>
-     
-      
     </Box>
   );
 };

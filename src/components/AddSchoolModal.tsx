@@ -15,17 +15,19 @@ import {
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
 import { getDistrictsForState } from "@/services/MasterDataService";
-import { getCohortList } from "@/services/CohortService/cohortService";
-
-interface AddBlockModalProps {
+import {
+  getCohortList,
+} from "@/services/CohortService/cohortService";
+interface AddSchoolModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (
+    parentClusterName: string,
     name: string,
     value: string,
     controllingField: string,
     fieldId: string,
-    districtId?: string
+    districtId?: string,
   ) => void;
   fieldId: string;
   initialValues?: {
@@ -36,7 +38,7 @@ interface AddBlockModalProps {
   districtId?: string;
 }
 
-export const AddBlockModal: React.FC<AddBlockModalProps> = ({
+export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({
   open,
   onClose,
   onSubmit,
@@ -49,18 +51,11 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     value: initialValues.value || "",
     controllingField: initialValues.controllingField || "",
   });
-
+  const [parentClusterName, setparentCluster]=useState<any>();
   const [errors, setErrors] = useState<Record<string, string | null>>({});
-  const [districts, setDistricts] = useState<
+  const [clusters, setClusters] = useState<
     { value: string; label: string }[]
   >([]);
-
-  const [districtsOptionRead, setDistrictsOptionRead] = useState<any>([]);
-  const [districtCodeArr, setDistrictCodeArr] = useState<any>([]);
-  const [districtNameArr, setDistrictNameArr] = useState<any>([]);
-
-  const [cohortIdAddNew,setCohortIdAddNewDropdown] = useState<any>("");
-
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -68,108 +63,33 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
       name: initialValues.name || "",
       value: initialValues.value || "",
       controllingField: initialValues.controllingField || "",
-      // cohortId:cohortIdAddNew
     });
-
     setErrors({});
   }, [initialValues]);
 
-  console.log("formData", formData);
-
-  const fetchDistricts = async () => {
-    try {
-      const data = await getDistrictsForState({
-        fieldName: "districts",
-      });
-
-      const districts = data?.result?.values || [];
-      setDistrictsOptionRead(districts);
-
-      const districtNameArray = districts.map((item: any) => item.label);
-      setDistrictNameArr(districtNameArray);
-
-      const districtCodeArray = districts.map((item: any) => item.value);
-      setDistrictCodeArr(districtCodeArray);
-
-      // const districtFieldID = data?.result?.fieldId || "";
-      // setDistrictFieldId(districtFieldID);
-
-      console.log("districtNameArray", districtNameArray);
-    } catch (error) {
-      console.error("Error fetching districts", error);
-    }
-  };
-
   useEffect(() => {
-    if (open) fetchDistricts();
+    const fetchClusters = async () => {
+      try {
+        const response = await getDistrictsForState({ fieldName: "clusters" });
+        if (response.result.values) {
+          setClusters(response.result.values);
+          console.log("modal all districts", response.result.values);
+        } else {
+          console.error("Unexpected response format:", response);
+          setClusters([]);
+        }
+      } catch (error: any) {
+        console.error("Error fetching districts:", error.message);
+        setClusters([]);
+      }
+    };
+
+    if (open) fetchClusters();
   }, [open, formData.controllingField]);
 
-  const getFilteredCohortData = async () => {
-    try {
-      const reqParams = {
-        limit: 0,
-        offset: 0,
-        filters: {
-          name: "",
-          states: "",
-          type: "DISTRICT",
-        },
-        sort: ["name", "asc"],
-      };
-
-      const response = await getCohortList(reqParams);
-
-      const cohortDetails = response?.results?.cohortDetails || [];
-
-      const filteredDistrictData = cohortDetails
-        .map(
-          (districtDetail: {
-            cohortId: any;
-            name: string;
-            createdAt: any;
-            updatedAt: any;
-            createdBy: any;
-            updatedBy: any;
-          }) => {
-            const transformedName = districtDetail.name;
-
-            const matchingDistrict = districtsOptionRead.find(
-              (district: { label: string }) =>
-                district.label === transformedName
-            );
-            return {
-              label: transformedName,
-              value: matchingDistrict ? matchingDistrict.value : null,
-              createdAt: districtDetail.createdAt,
-              updatedAt: districtDetail.updatedAt,
-              createdBy: districtDetail.createdBy,
-              updatedBy: districtDetail.updatedBy,
-              cohortId: districtDetail?.cohortId,
-            };
-          }
-        )
-        .filter((district: { label: any }) =>
-          districtNameArr.includes(district.label)
-        );
-
-      console.log("filteredDistrictData", filteredDistrictData);
-
-      setDistricts(filteredDistrictData);
-    } catch (error) {
-      console.error("Error fetching and filtering cohort districts", error);
-    }
-  };
   useEffect(() => {
-    if (open) getFilteredCohortData();
-  }, [open, districtNameArr]);
-
-  function transformLabels(label: string) {
-    if (!label || typeof label !== "string") return "";
-    return label
-      .toLowerCase()
-      .replace(/_/g, " ")
-      .replace(/\b\w/g, (char) => char.toUpperCase());
-  }
+    console.log("Selected Cluster:", formData.controllingField);
+  }, [formData.controllingField]);
 
   const validateField = (
     field: keyof typeof formData,
@@ -185,11 +105,37 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     };
 
     if (field === "name" && !isUnique("name", value)) {
-      return t("COMMON.BLOCK_NAME_NOT_UNIQUE");
+      return t("COMMON.SCHOOL_NAME_NOT_UNIQUE");
     }
 
     if (field === "value" && !isUnique("value", value)) {
-      return t("COMMON.BLOCK_CODE_NOT_UNIQUE");
+      return t("COMMON.SCHOOL_CODE_NOT_UNIQUE");
+    }
+
+    if (field == "controllingField" && clusters.length > 0) {
+
+      const clusterLabel = clusters.find(item => item.value === value)?.label;
+      setparentCluster(clusterLabel);
+      // const reqParams = {
+      //   limit: 1,
+      //   offset: 0,
+      //   filters: {  
+      //     name: clusterLabel,
+      //     type: "CLUSTER",
+      //   },
+      // };
+
+      //const response = await getCohortList(reqParams);
+
+      //const cohortDetails = response?.results?.cohortDetails;
+
+      // if (cohortDetails && cohortDetails.length > 0) {
+      //   const parentCohortId = cohortDetails[0]?.cohortId;
+      //   setparentCluster(parentCohortId);
+      // } 
+      // else {
+      //   return t("COMMON.COHORT NOT CREATED FOR SELECTED CLUSTER");
+      // }
     }
 
     return null;
@@ -211,31 +157,21 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
         errorMessage = validateField(
           field,
           value,
-          t("COMMON.BLOCK_NAME_REQUIRED")
+          t("COMMON.SCHOOL_NAME_REQUIRED")
         );
       } else if (field === "value") {
         errorMessage = validateField(
           field,
           value,
-          t("COMMON.BLOCK_CODE_REQUIRED")
+          t("COMMON.SCHOOL_CODE_REQUIRED")
         );
       } else if (field === "controllingField") {
-        errorMessage = validateField(
-          field,
-          value,
-          t("COMMON.DISTRICT_NAME_REQUIRED")
-        );
+          errorMessage = validateField(
+            field,
+            value,
+            t("COMMON.CLUSTER_NAME_REQUIRED")
+          );
       }
-
-       // Log the selected district data
-       const selectedDistrict = districts.find(
-        (district) => district.value === value
-      );
-
-      // const cohortIdAddNewDropdown = selectedDistrict?.cohortId;
-      // setCohortIdAddNewDropdown(cohortIdAddNewDropdown || null);
-      // console.log("Selected District:", cohortIdAddNewDropdown);
-
       setErrors((prev) => ({
         ...prev,
         [field]: errorMessage,
@@ -247,17 +183,17 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
       name: validateField(
         "name",
         formData.name,
-        t("COMMON.BLOCK_NAME_REQUIRED")
+        t("COMMON.SCHOOL_NAME_REQUIRED")
       ),
       value: validateField(
         "value",
         formData.value,
-        t("COMMON.BLOCK_CODE_REQUIRED")
+        t("COMMON.SCHOOL_CODE_REQUIRED")
       ),
       controllingField: validateField(
         "controllingField",
         formData.controllingField,
-        t("COMMON.DISTRICT_NAME_REQUIRED")
+        t("COMMON.CLUSTER_NAME_REQUIRED")
       ),
     };
 
@@ -268,11 +204,12 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   const handleSubmit = () => {
     if (validateForm()) {
       onSubmit(
+        parentClusterName,
         formData.name,
         formData.value,
         formData.controllingField,
         fieldId,
-        districtId
+        districtId,
       );
       setFormData({
         name: "",
@@ -286,8 +223,8 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   const isEditing = !!initialValues.name;
   const buttonText = isEditing ? t("COMMON.UPDATE") : t("COMMON.SUBMIT");
   const dialogTitle = isEditing
-    ? t("COMMON.UPDATE_BLOCK")
-    : t("COMMON.ADD_BLOCK");
+    ? t("COMMON.UPDATE_SCHOOL")
+    : t("COMMON.ADD_SCHOOL");
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -306,17 +243,16 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           variant="outlined"
           margin="dense"
           error={!!errors.controllingField}
-          disabled={isEditing}
         >
-          <MenuItem value="">{t("COMMON.SELECT_DISTRICT")}</MenuItem>
-          {districts.length > 0 ? (
-            districts.map((district: any) => (
-              <MenuItem key={district.value} value={district.value}>
-                {transformLabels(district.label)}
+          <MenuItem value="">{t("COMMON.SELECT_CLUSTER")}</MenuItem>
+          {clusters.length > 0 ? (
+            clusters.map((cluster) => (
+              <MenuItem key={cluster.value} value={cluster.value}>
+                {cluster.label}
               </MenuItem>
             ))
           ) : (
-            <MenuItem disabled>{t("COMMON.NO_DISTRICTS")}</MenuItem>
+            <MenuItem disabled>{t("COMMON.NO_CLUSTERS")}</MenuItem>
           )}
         </Select>
         {errors.controllingField && (
@@ -326,7 +262,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
         )}
         <TextField
           margin="dense"
-          label={t("COMMON.BLOCK_NAME")}
+          label={t("COMMON.SCHOOL_NAME")}
           type="text"
           fullWidth
           variant="outlined"
@@ -337,7 +273,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
         />
         <TextField
           margin="dense"
-          label={t("COMMON.BLOCK_CODE")}
+          label={t("COMMON.SCHOOL_CODE")}
           type="text"
           fullWidth
           variant="outlined"
@@ -345,7 +281,6 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           onChange={handleChange("value")}
           error={!!errors.value}
           helperText={errors.value}
-          disabled={isEditing}
         />
         <Box display="flex" alignItems="center" mt={2}>
           <InfoOutlinedIcon color="primary" sx={{ mr: 1 }} />
