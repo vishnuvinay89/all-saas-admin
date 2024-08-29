@@ -206,7 +206,8 @@
     "BROWSE_FILE": "Browse File",
     "UPLOAD": "Upload",
     "COURSE_CREATED_SUCCESSFULLY":"Course created successfully",
-    "COURSE_NOT_CREATED": "Course not created"
+    "COURSE_NOT_CREATED": "Course not created",
+    "RESOURCES": "Resources"
 
   },
   "MASTER": {

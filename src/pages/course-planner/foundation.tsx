@@ -115,7 +115,7 @@ const Foundation = () => {
             </Box> */}
             <Grid container spacing={2}>
               {!selectedCardId ? (
-                cardData?.map((card) => (
+                cardData?.map((card:any) => (
                   <Grid item xs={12} md={4} key={card.id}> {/* Added item prop and key here */}
                     <Box
                       sx={{
