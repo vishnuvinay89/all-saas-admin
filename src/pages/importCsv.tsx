@@ -77,10 +77,10 @@ const ImportCsv = () => {
     try {
       setLoading(true);
       const response = await getTargetedSolutions({
-        subject: 'English',
+        subject: 'Marathi',
         class: '10',
         state: 'Maharashtra',
-        board: 'USEB',
+        board: 'ISEB',
         type: 'mainCourse',
         role: 'Teacher',
         medium: 'Hindi',
@@ -116,10 +116,10 @@ const ImportCsv = () => {
       });
   
       const updatedResponse = await getTargetedSolutions({
-        subject: 'English',
+        subject: 'Marathi',
         class: '10',
         state: 'Maharashtra',
-        board: 'USEB',
+        board: 'ISEB',
         type: 'mainCourse',
         role: 'Teacher',
         medium: 'Hindi',
@@ -177,10 +177,10 @@ const ImportCsv = () => {
   const handleUpload = async () => {
     if (selectedFile) {
       const metaData: CoursePlannerMetaData = {
-        subject: "English",
+        subject: "Marathi",
         class: "10",
         state: "Maharashtra",
-        board: "USEB",
+        board: "ISEB",
         type: "mainCourse",
         role: "Teacher",
         medium: "Hindi",
@@ -324,10 +324,6 @@ const ImportCsv = () => {
 
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: isSmallScreen ? "50vh" : "calc(75vh - 200px)",
           padding: "16px",
         }}
       >
