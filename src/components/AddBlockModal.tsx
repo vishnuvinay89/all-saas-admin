@@ -59,6 +59,8 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   const [districtCodeArr, setDistrictCodeArr] = useState<any>([]);
   const [districtNameArr, setDistrictNameArr] = useState<any>([]);
 
+  const [cohortIdAddNew,setCohortIdAddNewDropdown] = useState<any>("");
+
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -66,9 +68,13 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
       name: initialValues.name || "",
       value: initialValues.value || "",
       controllingField: initialValues.controllingField || "",
+      // cohortId:cohortIdAddNew
     });
+
     setErrors({});
   }, [initialValues]);
+
+  console.log("formData", formData);
 
   const fetchDistricts = async () => {
     try {
@@ -108,7 +114,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           states: "",
           type: "DISTRICT",
         },
-        sort: ["name","asc"],
+        sort: ["name", "asc"],
       };
 
       const response = await getCohortList(reqParams);
@@ -154,8 +160,16 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     }
   };
   useEffect(() => {
-    getFilteredCohortData();
-  }, []);
+    if (open) getFilteredCohortData();
+  }, [open, districtNameArr]);
+
+  function transformLabels(label: string) {
+    if (!label || typeof label !== "string") return "";
+    return label
+      .toLowerCase()
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  }
 
   const validateField = (
     field: keyof typeof formData,
@@ -212,6 +226,15 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           t("COMMON.DISTRICT_NAME_REQUIRED")
         );
       }
+
+       // Log the selected district data
+       const selectedDistrict = districts.find(
+        (district) => district.value === value
+      );
+
+      // const cohortIdAddNewDropdown = selectedDistrict?.cohortId;
+      // setCohortIdAddNewDropdown(cohortIdAddNewDropdown || null);
+      // console.log("Selected District:", cohortIdAddNewDropdown);
 
       setErrors((prev) => ({
         ...prev,
@@ -286,10 +309,10 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           disabled={isEditing}
         >
           <MenuItem value="">{t("COMMON.SELECT_DISTRICT")}</MenuItem>
-          {districtsOptionRead.length > 0 ? (
-            districtsOptionRead.map((district: any) => (
+          {districts.length > 0 ? (
+            districts.map((district: any) => (
               <MenuItem key={district.value} value={district.value}>
-                {district.label}
+                {transformLabels(district.label)}
               </MenuItem>
             ))
           ) : (
