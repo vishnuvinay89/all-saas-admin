@@ -217,9 +217,12 @@ const Center: React.FC = () => {
 
         result?.forEach((item: any, index: number) => {
           const cohortType =
-            item?.customFields?.map((field: any) =>
-              firstLetterInUpperCase(field?.value)
-            ) ?? "-";
+            item?.customFields?.find(
+              (field: any) => field.label === "TYPE_OF_COHORT"
+            )?.value ?? "-";
+
+          const formattedCohortType =
+            cohortType !== "-" ? firstLetterInUpperCase(cohortType) : "-";
 
           const counts = memberCounts[index] || {
             totalActiveMembers: 0,
