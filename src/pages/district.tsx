@@ -298,7 +298,6 @@ const District: React.FC = () => {
   };
   const handleDelete = (rowData: DistrictDetail) => {
     setSelectedStateForDelete(rowData);
-
     const districtValue = rowData.value;
     setDistrictValueForDelete(districtValue);
 
@@ -567,7 +566,7 @@ const District: React.FC = () => {
         message={
           countOfBlocks > 0
             ? t("COMMON.ARE_YOU_SURE_DELETE", {
-                state: `${countOfBlocks}`,
+                block: `${countOfBlocks}`,
               })
             : t("COMMON.NO_ACTIVE_BLOCKS_DELETE")
         }
