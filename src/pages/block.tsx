@@ -48,6 +48,7 @@ type DistrictDetail = {
 };
 
 type BlockDetail = {
+  parentId(parentId: any): unknown;
   status: Status;
   cohortId(cohortId: any): unknown;
   updatedBy: any;
@@ -112,6 +113,7 @@ const Block: React.FC = () => {
   const [countOfCenter, setCountOfCenter] = useState<number>(0);
   const [cohortIds, setCohortIds] = useState<any>([]);
   const [selectedCohortId, setSelectedCohortId] = useState<string | null>(null);
+  const [parentIdBlock, setParentIdBlock] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -287,6 +289,7 @@ const Block: React.FC = () => {
       const filteredBlockData = cohortDetails
         .map(
           (blockDetail: {
+            parentId: any;
             cohortId: any;
             name: string;
             code: string;
@@ -314,6 +317,7 @@ const Block: React.FC = () => {
               createdBy: blockDetail.createdBy,
               updatedBy: blockDetail.updatedBy,
               cohortId: blockDetail.cohortId,
+              parentId: blockDetail.parentId,
             };
           }
         )
@@ -343,7 +347,7 @@ const Block: React.FC = () => {
         limit: 0,
         offset: 0,
         filters: {
-          parentId: selectedCohortId, //cohort id of block
+          parentId: parentIdBlock, //cohort id of block
         },
       };
 
@@ -365,8 +369,10 @@ const Block: React.FC = () => {
   console.log("countOfCenter", countOfCenter);
 
   useEffect(() => {
-    if (selectedDistrict) getCohortDataCohort();
-  }, [selectedDistrict]);
+    if (parentIdBlock) {
+      getCohortDataCohort();
+    }
+  }, [parentIdBlock]);
 
   function transformLabels(label: string) {
     if (!label || typeof label !== "string") return "";
@@ -497,6 +503,7 @@ const Block: React.FC = () => {
     setCohortIdForDelete(rowData.cohortId);
     setConfirmationDialogOpen(true);
 
+    setParentIdBlock(rowData.parentId as any | null);
     const blockValue = rowData.value;
     setBlockValueForDelete(blockValue);
   };
@@ -625,7 +632,7 @@ const Block: React.FC = () => {
 
       if (response) {
         await fetchBlocks();
-       }
+      }
     } catch (error) {
       console.error("Error adding district:", error);
     }
@@ -646,13 +653,13 @@ const Block: React.FC = () => {
           value: [controllingField], // district code
         },
       ],
-    }; 
+    };
 
     console.log("queryParameters", queryParameters);
     try {
       const cohortCreateResponse = await createCohort(queryParameters);
       if (cohortCreateResponse) {
-        filteredCohortOptionData()
+        filteredCohortOptionData();
         showToastMessage(t("COMMON.BLOCK_ADDED_SUCCESS"), "success");
       } else if (cohortCreateResponse.responseCode === 409) {
         showToastMessage(t("COMMON.BLOCK_DUPLICATION_FAILURE"), "error");
@@ -702,9 +709,8 @@ const Block: React.FC = () => {
         queryParameters
       );
       if (cohortCreateResponse) {
-
-       await fetchBlocks();
-       await getCohortSearchBlock(selectedDistrict);
+        await fetchBlocks();
+        await getCohortSearchBlock(selectedDistrict);
         showToastMessage(t("COMMON.BLOCK_UPDATED_SUCCESS"), "success");
       } else if (cohortCreateResponse.responseCode === 409) {
         showToastMessage(t("COMMON.BLOCK_DUPLICATION_FAILURE"), "error");
