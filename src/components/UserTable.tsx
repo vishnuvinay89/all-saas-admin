@@ -17,7 +17,11 @@ import KaTableComponent from "../components/KaTableComponent";
 import Loader from "../components/Loader";
 import { deleteUser } from "../services/DeleteUser";
 import { getCohortList } from "../services/GetCohortList";
-import { userList, getUserDetailsInfo, cohortMemberList } from "../services/UserList";
+import {
+  userList,
+  getUserDetailsInfo,
+  cohortMemberList,
+} from "../services/UserList";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import { Role, apiCatchingDuration } from "@/utils/app.constant";
 import { getFormRead } from "@/services/CreateUserService";
@@ -30,7 +34,10 @@ import CommonUserModal from "./CommonUserModal";
 import { useQuery } from "@tanstack/react-query";
 import { showFilters } from "../../app.config";
 import ReassignCenterModal from "./ReassignCenterModal";
-import { getCenterList, getStateBlockDistrictList } from "@/services/MasterDataService";
+import {
+  getCenterList,
+  getStateBlockDistrictList,
+} from "@/services/MasterDataService";
 import { updateCohortMemberStatus } from "@/services/CohortService/cohortService";
 type UserDetails = {
   userId: any;
@@ -44,11 +51,11 @@ type UserDetails = {
   state?: any;
   district?: any;
   blocks?: any;
-  stateCode?:any;
-  districtCode?:any;
-  blockCode?:any;
-  centerMembershipIdList?:any;
-  blockMembershipIdList?:any
+  stateCode?: any;
+  districtCode?: any;
+  blockCode?: any;
+  centerMembershipIdList?: any;
+  blockMembershipIdList?: any;
 };
 type FilterDetails = {
   role: any;
@@ -57,7 +64,7 @@ type FilterDetails = {
   states?: any;
   blocks?: any;
   name?: any;
-  cohortId?: any
+  cohortId?: any;
 };
 interface CenterProp {
   cohortId: string;
@@ -69,8 +76,8 @@ interface Cohort {
   parentId: string | null;
   type: string;
   customField: any[];
-  cohortMemberStatus?:string
-  cohortMembershipId?:string
+  cohortMemberStatus?: string;
+  cohortMembershipId?: string;
 }
 interface UserTableProps {
   role: string;
@@ -92,9 +99,12 @@ const UserTable: React.FC<UserTableProps> = ({
 }) => {
   console.log(userType);
   const [selectedState, setSelectedState] = React.useState<string[]>([]);
-  const [blockMembershipIdList, setBlockMembershipIdList] = React.useState<string[]>([]);
-  const [centerMembershipIdList, setCenterMembershipIdList] = React.useState<string[]>([]);
-
+  const [blockMembershipIdList, setBlockMembershipIdList] = React.useState<
+    string[]
+  >([]);
+  const [centerMembershipIdList, setCenterMembershipIdList] = React.useState<
+    string[]
+  >([]);
 
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
@@ -110,15 +120,19 @@ const UserTable: React.FC<UserTableProps> = ({
   const { t } = useTranslation();
   const [pageSize, setPageSize] = React.useState<string | number>("10");
   const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
-  const [sortByForCohortMemberList, setsortByForCohortMemberList] = useState(["name",  SORT.ASCENDING]);
+  const [sortByForCohortMemberList, setsortByForCohortMemberList] = useState([
+    "name",
+    SORT.ASCENDING,
+  ]);
   const [statusValue, setStatusValue] = useState(Status.ACTIVE);
   const [pageCount, setPageCount] = useState(1);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isReassignCohortModalOpen, setIsReassignCohortModalOpen] = useState(false);
+  const [isReassignCohortModalOpen, setIsReassignCohortModalOpen] =
+    useState(false);
   const [centers, setCenters] = useState<CenterProp[]>([]);
   const [userName, setUserName] = useState("");
   const [blocks, setBlocks] = useState<FieldProp[]>([]);
-  const [userCohort, setUserCohorts] = useState ("")
+  const [userCohort, setUserCohorts] = useState("");
 
   const [selectedUserId, setSelectedUserId] = useState("");
   const [block, setBlock] = useState("");
@@ -128,7 +142,6 @@ const UserTable: React.FC<UserTableProps> = ({
   const [deleteUserState, setDeleteUserState] = useState(false);
   const [selectedCenter, setSelectedCenter] = useState<string[]>([]);
   const [enableCenterFilter, setEnableCenterFilter] = useState<boolean>(false);
-
 
   const isMobile: boolean = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
@@ -143,23 +156,36 @@ const UserTable: React.FC<UserTableProps> = ({
   const [openAddLearnerModal, setOpenAddLearnerModal] = React.useState(false);
   const [userId, setUserId] = useState();
   const [submitValue, setSubmitValue] = useState<boolean>(false);
-  const { data:teacherFormData ,isLoading: teacherFormDataLoading, error :teacherFormDataErrror } = useQuery<any[]>({
-    queryKey: ["teacherFormData"],  
-    queryFn: () => Promise.resolve([]), 
+  const [previousCenters, setPreviousCenters] = useState<string[]>([]);
+  const {
+    data: teacherFormData,
+    isLoading: teacherFormDataLoading,
+    error: teacherFormDataErrror,
+  } = useQuery<any[]>({
+    queryKey: ["teacherFormData"],
+    queryFn: () => Promise.resolve([]),
     staleTime: apiCatchingDuration.GETREADFORM,
-    enabled: false, 
+    enabled: false,
   });
-  const {data:studentFormData ,isLoading: studentFormDataLoading, error :studentFormDataErrror} = useQuery<any[]>({
-    queryKey: ["studentFormData"],  
-    queryFn: () => Promise.resolve([]), 
+  const {
+    data: studentFormData,
+    isLoading: studentFormDataLoading,
+    error: studentFormDataErrror,
+  } = useQuery<any[]>({
+    queryKey: ["studentFormData"],
+    queryFn: () => Promise.resolve([]),
     staleTime: apiCatchingDuration.GETREADFORM,
-    enabled: false, 
+    enabled: false,
   });
-  const { data:teamLeaderFormData ,isLoading: teamLeaderFormDataLoading, error :teamLeaderFormDataErrror } = useQuery<any[]>({
-    queryKey: ["teamLeaderFormData"],  
-    queryFn: () => Promise.resolve([]), 
+  const {
+    data: teamLeaderFormData,
+    isLoading: teamLeaderFormDataLoading,
+    error: teamLeaderFormDataErrror,
+  } = useQuery<any[]>({
+    queryKey: ["teamLeaderFormData"],
+    queryFn: () => Promise.resolve([]),
     staleTime: apiCatchingDuration.GETREADFORM,
-    enabled: false, 
+    enabled: false,
   });
   const handleOpenAddLearnerModal = () => {
     setOpenAddLearnerModal(true);
@@ -197,7 +223,6 @@ const UserTable: React.FC<UserTableProps> = ({
   const [filters, setFilters] = useState<FilterDetails>({
     role: role,
     status: [statusValue],
-
   });
 
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
@@ -214,7 +239,7 @@ const UserTable: React.FC<UserTableProps> = ({
 
   const PagesSelector = () => (
     <>
-      <Box sx={{ display: { xs: "block"} }}>
+      <Box sx={{ display: { xs: "block" } }}>
         <Pagination
           // size="small"
           color="primary"
@@ -237,12 +262,12 @@ const UserTable: React.FC<UserTableProps> = ({
     />
   );
   const handleStateChange = async (selected: string[], code: string[]) => {
-    setEnableCenterFilter(false)
+    setEnableCenterFilter(false);
     setSelectedDistrict([]);
     setSelectedBlock([]);
 
     setSelectedState(selected);
-    console.log(selected[0])
+    console.log(selected[0]);
     if (selected[0] === "" || selected[0] === t("COMMON.ALL_STATES")) {
       if (filters.status) setFilters({ status: [filters.status], role: role });
       else setFilters({ role: role });
@@ -254,15 +279,17 @@ const UserTable: React.FC<UserTableProps> = ({
           states: stateCodes,
           role: role,
           status: filters.status,
-
         });
       else setFilters({ states: stateCodes, role: role });
     }
 
     console.log("Selected categories:", typeof code[0]);
   };
-  const handleFilterChange = async (event: React.SyntheticEvent, newValue: any) => {
-    setStatusValue(newValue)
+  const handleFilterChange = async (
+    event: React.SyntheticEvent,
+    newValue: any
+  ) => {
+    setStatusValue(newValue);
     console.log(newValue);
     setSelectedFilter(newValue);
     if (newValue === Status.ACTIVE) {
@@ -288,11 +315,10 @@ const UserTable: React.FC<UserTableProps> = ({
   };
 
   const handleDistrictChange = (selected: string[], code: string[]) => {
-    setEnableCenterFilter(false)
+    setEnableCenterFilter(false);
 
     setSelectedBlock([]);
     setSelectedDistrict(selected);
-
 
     if (selected[0] === "" || selected[0] === t("COMMON.ALL_DISTRICTS")) {
       if (filters.status) {
@@ -300,7 +326,6 @@ const UserTable: React.FC<UserTableProps> = ({
           states: selectedStateCode,
           role: role,
           status: filters.status,
-
         });
       } else {
         setFilters({
@@ -317,7 +342,6 @@ const UserTable: React.FC<UserTableProps> = ({
           districts: districts,
           role: role,
           status: filters.status,
-
         });
       } else {
         setFilters({
@@ -330,7 +354,7 @@ const UserTable: React.FC<UserTableProps> = ({
     console.log("Selected categories:", selected);
   };
   const handleBlockChange = (selected: string[], code: string[]) => {
-    setEnableCenterFilter(false)
+    setEnableCenterFilter(false);
 
     setSelectedBlock(selected);
     if (selected[0] === "" || selected[0] === t("COMMON.ALL_BLOCKS")) {
@@ -340,7 +364,6 @@ const UserTable: React.FC<UserTableProps> = ({
           districts: selectedDistrictCode,
           role: role,
           status: filters.status,
-
         });
       } else {
         setFilters({
@@ -359,7 +382,6 @@ const UserTable: React.FC<UserTableProps> = ({
           blocks: blocks,
           role: role,
           status: filters.status,
-
         });
       } else {
         setFilters({
@@ -372,33 +394,34 @@ const UserTable: React.FC<UserTableProps> = ({
     }
     console.log("Selected categories:", selected);
   };
-  const handleCenterChange = async(selected: string[], code: string[]) => {
-    setSelectedCenter(selected)
+  const handleCenterChange = async (selected: string[], code: string[]) => {
+    setSelectedCenter(selected);
 
-    setEnableCenterFilter(true)
+    setEnableCenterFilter(true);
     setFilters({
       // states: selectedStateCode,
       // districts: selectedDistrictCode,
       // blocks: blocks,
-      cohortId:code[0],
+      cohortId: code[0],
       role: role,
-      status:[statusValue]
+      status: [statusValue],
     });
-
   };
   const handleSortChange = async (event: SelectChangeEvent) => {
     // let sort;
-    console.log(enableCenterFilter)
+    console.log(enableCenterFilter);
     if (event.target?.value === "Z-A") {
-      enableCenterFilter?
-      setsortByForCohortMemberList(["name", SORT.DESCENDING]): setSortBy(["name", SORT.DESCENDING]);
+      enableCenterFilter
+        ? setsortByForCohortMemberList(["name", SORT.DESCENDING])
+        : setSortBy(["name", SORT.DESCENDING]);
     } else if (event.target?.value === "A-Z") {
-      enableCenterFilter?
-      setsortByForCohortMemberList(["name", SORT.ASCENDING]): setSortBy(["name", SORT.ASCENDING]);
-
+      enableCenterFilter
+        ? setsortByForCohortMemberList(["name", SORT.ASCENDING])
+        : setSortBy(["name", SORT.ASCENDING]);
     } else {
-      enableCenterFilter? setsortByForCohortMemberList(["name", SORT.ASCENDING]): setSortBy(["createdAt", SORT.ASCENDING]);
-
+      enableCenterFilter
+        ? setsortByForCohortMemberList(["name", SORT.ASCENDING])
+        : setSortBy(["createdAt", SORT.ASCENDING]);
     }
 
     setSelectedSort(event.target?.value as string);
@@ -487,11 +510,11 @@ const UserTable: React.FC<UserTableProps> = ({
 
       let formFields;
       if (Role.STUDENT === role) {
-      //  formFields = await getFormRead("USERS", "STUDENT");
+        //  formFields = await getFormRead("USERS", "STUDENT");
         setFormData(mapFields(studentFormData, response));
         console.log("mapped formdata", formdata);
       } else if (Role.TEACHER === role) {
-       // formFields = await getFormRead("USERS", "TEACHER");
+        // formFields = await getFormRead("USERS", "TEACHER");
 
         setFormData(mapFields(teacherFormData, response));
         //  handleOpenAddFacilitatorModal();
@@ -511,83 +534,75 @@ const UserTable: React.FC<UserTableProps> = ({
 
   const handleDelete = (rowData: any) => {
     setIsDeleteModalOpen(true);
-    console.log(rowData)
-    setUserName(rowData?.name)
-    console.log(userName)
+    console.log(rowData);
+    setUserName(rowData?.name);
+    console.log(userName);
 
-    setBlockMembershipIdList(rowData.blockMembershipIdList)
-    setCenterMembershipIdList(rowData.centerMembershipIdList)
+    setBlockMembershipIdList(rowData.blockMembershipIdList);
+    setCenterMembershipIdList(rowData.centerMembershipIdList);
     setSelectedUserId(rowData.userId);
-    if(userType===Role.TEAM_LEADERS)
-    {
-           setUserCohorts(rowData.blocks)
-           console.log(userCohort)
-
-    }
-    else{
-        setUserCohorts(rowData.centers)
+    if (userType === Role.TEAM_LEADERS) {
+      setUserCohorts(rowData.blocks);
+      console.log(userCohort);
+    } else {
+      setUserCohorts(rowData.centers);
     }
     //const userData="";
 
     console.log("Delete row:", rowData.userId);
   };
- 
-  const handleReassignCohort = async(rowData: any) => {
-   // setIsDeleteModalOpen(true);
-   console.log(rowData)
-    setSelectedUserId(rowData.userId );
-    setBlock(rowData.blocks)
-    setIsReassignCohortModalOpen(true)
 
+  const handleReassignCohort = async (rowData: any) => {
+    // setIsDeleteModalOpen(true);
+    console.log("rowData", rowData);
+    setSelectedUserId(rowData.userId);
+    setBlock(rowData.blocks);
+    setIsReassignCohortModalOpen(true);
+
+    if (rowData?.centers) {
+      setPreviousCenters(rowData?.centers);
+    }
     //const userData="";
-    try{
-      console.log(userType , Role.TEAM_LEADER)
-      if(userType!=="Team Leaders")
-      {
+    try {
+      console.log(userType, Role.TEAM_LEADER);
+      if (userType !== "Team Leaders") {
+        const getCentersObject = {
+          limit: 200,
+          offset: 0,
+          filters: {
+            type: "COHORT",
+            status: ["active"],
+            states: rowData.stateCode,
+            districts: rowData.districtCode,
+            blocks: rowData.blockCode,
+            // "name": selected[0]
+          },
+        };
+        const response = await getCenterList(getCentersObject);
+        const dataArray = response?.result?.results?.cohortDetails;
 
-      
-    const getCentersObject = {
-      limit: 200,
-      offset: 0,
-      filters: {
-        type:"COHORT",
-        status: ["active"],
-        states: rowData.stateCode,
-        districts: rowData.districtCode,
-        blocks: rowData.blockCode
-        // "name": selected[0]
-      },
-    };
-    const response = await getCenterList(getCentersObject);
-    const dataArray = response?.result?.results?.cohortDetails;
-
-          const cohortInfo = dataArray
-            ?.filter((cohort: any) => cohort.type !== "BLOCK")
-            .map((item: any) => ({
-              cohortId: item?.cohortId,
-              name: item?.name,
-            }));
-          setCenters(cohortInfo)
-      }
-      else{
-
-
+        const cohortInfo = dataArray
+          ?.filter((cohort: any) => cohort.type !== "BLOCK")
+          .map((item: any) => ({
+            cohortId: item?.cohortId,
+            name: item?.name,
+          }));
+        console.log("cohortInfo", cohortInfo);
+        setCenters(cohortInfo);
+      } else {
         const object = {
           controllingfieldfk: rowData.districtCode,
           fieldName: "blocks",
         };
         const response = await getStateBlockDistrictList(object);
-           //console.log(blockFieldId)
+        //console.log(blockFieldId)
         const result = response?.result?.values;
-        console.log(result)
+        console.log(result);
         setBlocks(result);
       }
-
-  }
-  catch(error: any)
-  {
-     console.log(error)
-  }
+    } catch (error: any) {
+      console.log(error);
+    }
   };
   const handleSearch = (keyword: string) => {
     //  console.log(filters)
@@ -605,24 +620,29 @@ const UserTable: React.FC<UserTableProps> = ({
         let limit = pageLimit;
         let offset = pageOffset * limit;
         // const filters = { role: role , status:"active"};
-        const sort = enableCenterFilter? sortByForCohortMemberList: sortBy;
+        const sort = enableCenterFilter ? sortByForCohortMemberList : sortBy;
         console.log("filters", filters);
         if (filters.name) {
           offset = 0;
         }
         let resp;
-        if(enableCenterFilter)
-        {
-          resp=await cohortMemberList({ limit, filters,sort, offset, fields })
-        }
-        else{
+        if (enableCenterFilter) {
+          resp = await cohortMemberList({
+            limit,
+            filters,
+            sort,
+            offset,
+            fields,
+          });
+        } else {
           resp = await userList({ limit, filters, sort, offset, fields });
-
         }
         console.log(resp?.getUserDetails);
-        const result = enableCenterFilter?resp?.userDetails:resp?.getUserDetails;
-        console.log(result)
-         console.log(resp?.totalCount)
+        const result = enableCenterFilter
+          ? resp?.userDetails
+          : resp?.getUserDetails;
+        console.log(result);
+        console.log(resp?.totalCount);
         if (resp?.totalCount >= 15) {
           setPagination(true);
 
@@ -645,8 +665,7 @@ const UserTable: React.FC<UserTableProps> = ({
         setPageCount(Math.ceil(resp?.totalCount / pageLimit));
         console.log(result);
         let finalResult;
-        if(enableCenterFilter)
-        {
+        if (enableCenterFilter) {
           finalResult = result?.map((user: any) => {
             const ageField = user?.customField?.find(
               (field: any) => field?.fieldname === "AGE"
@@ -663,85 +682,85 @@ const UserTable: React.FC<UserTableProps> = ({
             const stateField = user?.customField?.find(
               (field: any) => field?.fieldname === "STATES"
             );
-              return {
-                userId: user?.userId,
-                username: user?.username,
-                status: user?.status,
-                name:
-                  user?.name?.charAt(0).toUpperCase() +
-                  user?.name?.slice(1).toLowerCase(),
-                role: user.role,
-                //  gender: user.gender,
-                mobile: user.mobile === "NaN" ? "-" : user.mobile,
-                age: ageField ? ageField?.fieldvalues : "-",
-                district: districtField ? districtField?.fieldvalues+" , "+blockField?.fieldvalues  : "-",
-                state: stateField ? stateField?.fieldvalues : "-",
-                blocks: blockField ? blockField?.fieldvalues : "-",
-                gender: genderField
-                  ? genderField.fieldvalues?.charAt(0)?.toUpperCase() +
-                    genderField.fieldvalues.slice(1).toLowerCase()
-                  : "-",
+            return {
+              userId: user?.userId,
+              username: user?.username,
+              status: user?.status,
+              name:
+                user?.name?.charAt(0).toUpperCase() +
+                user?.name?.slice(1).toLowerCase(),
+              role: user.role,
+              //  gender: user.gender,
+              mobile: user.mobile === "NaN" ? "-" : user.mobile,
+              age: ageField ? ageField?.fieldvalues : "-",
+              district: districtField
+                ? districtField?.fieldvalues + " , " + blockField?.fieldvalues
+                : "-",
+              state: stateField ? stateField?.fieldvalues : "-",
+              blocks: blockField ? blockField?.fieldvalues : "-",
+              gender: genderField
+                ? genderField.fieldvalues?.charAt(0)?.toUpperCase() +
+                  genderField.fieldvalues.slice(1).toLowerCase()
+                : "-",
               //  createdAt: user?.createdAt,
               //  updatedAt: user?.updatedAt,
-                createdBy: user?.createdBy,
-                updatedBy: user?.updatedBy,
-                // // centers: null,
-                // Programs: null,
-              };
-             
-            
+              createdBy: user?.createdBy,
+              updatedBy: user?.updatedBy,
+              // // centers: null,
+              // Programs: null,
+            };
+          });
+        } else {
+          finalResult = result?.map((user: any) => {
+            const ageField = user?.customFields?.find(
+              (field: any) => field?.label === "AGE"
+            );
+            const genderField = user?.customFields?.find(
+              (field: any) => field?.label === "GENDER"
+            );
+            const blockField = user?.customFields?.find(
+              (field: any) => field?.label === "BLOCKS"
+            );
+            const districtField = user?.customFields?.find(
+              (field: any) => field?.label === "DISTRICTS"
+            );
+            const stateField = user?.customFields?.find(
+              (field: any) => field?.label === "STATES"
+            );
+
+            return {
+              userId: user.userId,
+              username: user.username,
+              status: user.status,
+              name:
+                user.name.charAt(0).toUpperCase() +
+                user.name.slice(1).toLowerCase(),
+              role: user.role,
+              //  gender: user.gender,
+              mobile: user.mobile === "NaN" ? "-" : user.mobile,
+              age: ageField ? ageField.value : "-",
+              district: districtField
+                ? districtField.value + " , " + blockField.value
+                : "-",
+              state: stateField ? stateField.value : "-",
+              blocks: blockField ? blockField.value : "-",
+              gender: genderField
+                ? genderField.value?.charAt(0)?.toUpperCase() +
+                  genderField.value.slice(1).toLowerCase()
+                : "-",
+              createdAt: user.createdAt,
+              updatedAt: user.updatedAt,
+              createdBy: user.createdBy,
+              updatedBy: user.updatedBy,
+              stateCode: stateField?.code,
+              districtCode: districtField?.code,
+              blockCode: blockField?.code,
+              // centers: null,
+              // Programs: null,
+            };
           });
         }
-        else{
-         finalResult = result?.map((user: any) => {
-          const ageField = user?.customFields?.find(
-            (field: any) => field?.label === "AGE"
-          );
-          const genderField = user?.customFields?.find(
-            (field: any) => field?.label === "GENDER"
-          );
-          const blockField = user?.customFields?.find(
-            (field: any) => field?.label === "BLOCKS"
-          );
-          const districtField = user?.customFields?.find(
-            (field: any) => field?.label === "DISTRICTS"
-          );
-          const stateField = user?.customFields?.find(
-            (field: any) => field?.label === "STATES"
-          );
-        
-           
-          return {
-            userId: user.userId,
-            username: user.username,
-            status: user.status,
-            name:
-              user.name.charAt(0).toUpperCase() +
-              user.name.slice(1).toLowerCase(),
-            role: user.role,
-            //  gender: user.gender,
-            mobile: user.mobile === "NaN" ? "-" : user.mobile,
-            age: ageField ? ageField.value : "-",
-            district: districtField ? districtField.value+" , "+blockField.value : "-",
-            state: stateField ? stateField.value : "-",
-            blocks: blockField ? blockField.value : "-",
-            gender: genderField
-              ? genderField.value?.charAt(0)?.toUpperCase() +
-                genderField.value.slice(1).toLowerCase()
-              : "-",
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt,
-            createdBy: user.createdBy,
-            updatedBy: user.updatedBy,
-            stateCode:stateField?.code,
-            districtCode:districtField?.code,
-            blockCode:blockField?.code
-            // centers: null,
-            // Programs: null,
-          };
-        });
-      }
-        console.log(finalResult)
+        console.log(finalResult);
 
         if (filters?.name) {
           const prioritizedResult = finalResult.sort((a: any, b: any) => {
@@ -780,7 +799,7 @@ const UserTable: React.FC<UserTableProps> = ({
     filters,
     parentState,
     deleteUserState,
-    sortByForCohortMemberList
+    sortByForCohortMemberList,
   ]);
 
   useEffect(() => {
@@ -796,18 +815,29 @@ const UserTable: React.FC<UserTableProps> = ({
             //   (cohort: Cohort) => cohort.name,
             // );
             const cohortNames = response?.result?.cohortData
-              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK" && cohort?.cohortMemberStatus!=="archived") // Filter out cohorts with type 'block'
-              .map((cohort: Cohort) => cohort.name); 
-              const centerMembershipIdList = response?.result?.cohortData
-              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK" && cohort?.cohortMemberStatus!=="archived") // Filter out cohorts with type 'block'
+              ?.filter(
+                (cohort: Cohort) =>
+                  cohort.type !== "BLOCK" &&
+                  cohort?.cohortMemberStatus !== "archived"
+              ) // Filter out cohorts with type 'block'
+              .map((cohort: Cohort) => cohort.name);
+            const centerMembershipIdList = response?.result?.cohortData
+              ?.filter(
+                (cohort: Cohort) =>
+                  cohort.type !== "BLOCK" &&
+                  cohort?.cohortMemberStatus !== "archived"
+              ) // Filter out cohorts with type 'block'
               .map((cohort: Cohort) => cohort.cohortMembershipId);
-              const blockMembershipIdList = response?.result?.cohortData
-              ?.filter((cohort: Cohort) => cohort.type === "BLOCK" && cohort?.cohortMemberStatus!=="archived") // Filter out cohorts with type 'block'
+            const blockMembershipIdList = response?.result?.cohortData
+              ?.filter(
+                (cohort: Cohort) =>
+                  cohort.type === "BLOCK" &&
+                  cohort?.cohortMemberStatus !== "archived"
+              ) // Filter out cohorts with type 'block'
               .map((cohort: Cohort) => cohort.cohortMembershipId);
             //  const cohortMembershipId=response?.result?.cohortData?.cohortMembershipId;
-              console.log(blockMembershipIdList)
-              console.log(centerMembershipIdList)
-
+            console.log(blockMembershipIdList);
+            console.log(centerMembershipIdList);
 
             let finalArray;
             if (cohortNames?.length >= 1) {
@@ -834,72 +864,63 @@ const UserTable: React.FC<UserTableProps> = ({
     fetchData();
   }, [data, cohortsFetched]);
 
-
   useEffect(() => {
-    const fetchData =  () => {
+    const fetchData = () => {
       try {
         const object = {
           // "limit": 20,
           // "offset": 0,
           fieldName: "states",
         };
-       // const response = await getStateBlockDistrictList(object);
-       // const result = response?.result?.values;
+        // const response = await getStateBlockDistrictList(object);
+        // const result = response?.result?.values;
         if (typeof window !== "undefined" && window.localStorage) {
           const admin = localStorage.getItem("adminInfo");
-          if(admin)
-          {
-            const stateField = JSON.parse(admin).customFields.find((field: any) => field.label === "STATES");
-              console.log(stateField.value, stateField.code)
-              if (!stateField.value.includes(',')) {
+          if (admin) {
+            const stateField = JSON.parse(admin).customFields.find(
+              (field: any) => field.label === "STATES"
+            );
+            console.log(stateField.value, stateField.code);
+            if (!stateField.value.includes(",")) {
               setSelectedState([stateField.value]);
-              setSelectedStateCode(stateField.code)
+              setSelectedStateCode(stateField.code);
               setFilters({
                 states: stateField.code,
                 role: role,
-                status:[statusValue],
-              }
-            
-              )
-              }
-              
-              const object=[{
-                value:stateField.code,
-                label:stateField.value
-              }]
+                status: [statusValue],
+              });
+            }
+
+            const object = [
+              {
+                value: stateField.code,
+                label: stateField.value,
+              },
+            ];
             // setStates(object);
-  
           }
         }
-      //  setStates(result);
+        //  setStates(result);
       } catch (error) {
         console.log(error);
       }
     };
-  
+
     fetchData();
   }, []);
-
-
-
-
-
-
-
 
   const handleCloseDeleteModal = () => {
     setSelectedReason("");
     setOtherReason("");
     setIsDeleteModalOpen(false);
     setConfirmButtonDisable(true);
-
   };
   const handleCloseReassignModal = () => {
     // setSelectedReason("");
     // setOtherReason("");
     setIsReassignCohortModalOpen(false);
-    setSelectedUserId("")
-   // setConfirmButtonDisable(true);
+    setSelectedUserId("");
+    // setConfirmButtonDisable(true);
   };
 
   const handleDeleteUser = async (category: string) => {
@@ -916,54 +937,46 @@ const UserTable: React.FC<UserTableProps> = ({
       if (cohortDeletionResponse) {
         deleteUserState ? setDeleteUserState(false) : setDeleteUserState(true);
       }
-      console.log(blockMembershipIdList)
-      if(userType===Role.TEAM_LEADERS && blockMembershipIdList.length>0)
-      {
-       
-        blockMembershipIdList.forEach(async(item) => {
+      console.log(blockMembershipIdList);
+      if (userType === Role.TEAM_LEADERS && blockMembershipIdList.length > 0) {
+        blockMembershipIdList.forEach(async (item) => {
+          const memberStatus = Status.ARCHIVED;
+          const statusReason = selectedReason;
+          const membershipId = item;
 
-            const memberStatus = Status.ARCHIVED;
-        const statusReason = selectedReason;
-        const membershipId = item;
-  
-        const response = await  updateCohortMemberStatus({
-          memberStatus,
-          statusReason,
-          membershipId,
+          const response = await updateCohortMemberStatus({
+            memberStatus,
+            statusReason,
+            membershipId,
+          });
         });
-        
+      } else {
+        centerMembershipIdList.forEach(async (item) => {
+          const memberStatus = Status.ARCHIVED;
+          const statusReason = selectedReason;
+          const membershipId = item;
+
+          const response = await updateCohortMemberStatus({
+            memberStatus,
+            statusReason,
+            membershipId,
+          });
         });
       }
-      else{
-        centerMembershipIdList.forEach(async(item) => {
- 
-             const memberStatus = Status.ARCHIVED;
-         const statusReason = selectedReason;
-         const membershipId = item;
-   
-         const response = await  updateCohortMemberStatus({
-           memberStatus,
-           statusReason,
-           membershipId,
-         });
-         
-         });
 
-      }
-     
-      console.log(centerMembershipIdList)
+      console.log(centerMembershipIdList);
 
       // const response = await deleteUser(userId, userData);
       //   const memberStatus = Status.ARCHIVED;
       //   const statusReason = selectedReason;
       //   const membershipId = "";
-  
+
       //   const teacherResponse = await updateCohortMemberStatus({
       //     memberStatus,
       //     statusReason,
       //     membershipId,
       //   });
-        
+
       handleCloseDeleteModal();
       showToastMessage(t("COMMON.USER_DELETE_SUCCSSFULLY"), "success");
     } catch (error) {
@@ -991,8 +1004,8 @@ const UserTable: React.FC<UserTableProps> = ({
     selectedDistrict: selectedDistrict,
     selectedBlock: selectedBlock,
     selectedSort: selectedSort,
-    statusValue:statusValue,
-    setStatusValue:setStatusValue,
+    statusValue: statusValue,
+    setStatusValue: setStatusValue,
     handleStateChange: handleStateChange,
     handleDistrictChange: handleDistrictChange,
     handleBlockChange: handleBlockChange,
@@ -1004,10 +1017,10 @@ const UserTable: React.FC<UserTableProps> = ({
     selectedBlockCode: selectedBlockCode,
     selectedDistrictCode: selectedDistrictCode,
     selectedStateCode: selectedStateCode,
-    handleCenterChange:handleCenterChange,
-     selectedCenter: selectedCenter,
-     showStateDropdown:showFilters,
-     showAddNew:true
+    handleCenterChange: handleCenterChange,
+    selectedCenter: selectedCenter,
+    showStateDropdown: showFilters,
+    showAddNew: true,
   };
 
   return (
@@ -1041,9 +1054,13 @@ const UserTable: React.FC<UserTableProps> = ({
           onEdit={handleEdit}
           onDelete={handleDelete}
           pagination={pagination}
-         // reassignCohort={reassignCohort}
+          // reassignCohort={reassignCohort}
           noDataMessage={data?.length === 0 ? t("COMMON.NO_USER_FOUND") : ""}
-          reassignType={userType===Role.TEAM_LEADERS?  t("COMMON.REASSIGN_BLOCKS"):  t("COMMON.REASSIGN_CENTERS")}
+          reassignType={
+            userType === Role.TEAM_LEADERS
+              ? t("COMMON.REASSIGN_BLOCKS")
+              : t("COMMON.REASSIGN_CENTERS")
+          }
         />
       ) : (
         loading === false &&
@@ -1091,17 +1108,16 @@ const UserTable: React.FC<UserTableProps> = ({
         centers={userCohort}
         userId={selectedUserId}
         userName={userName}
-
-
       />
-       <ReassignCenterModal
+      <ReassignCenterModal
         open={isReassignCohortModalOpen}
         onClose={handleCloseReassignModal}
-       userType={userType}
+        userType={userType}
         cohortData={centers}
-       blocks={blocks}
+        blocks={blocks}
         userId={selectedUserId}
         blockName={block}
+        previousCenters={previousCenters}
       />
 
       <CommonUserModal

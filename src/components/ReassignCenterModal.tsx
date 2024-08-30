@@ -5,7 +5,7 @@ import {
   InputAdornment,
   TextField,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import { showToastMessage } from "./Toastify";
@@ -25,6 +25,7 @@ interface ReassignCohortModalProps {
   userType?: string;
   blocks?: any;
   blockName?: any;
+  previousCenters?: any;
 }
 
 interface Cohort {
@@ -41,6 +42,7 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
   userType,
   blocks,
   blockName,
+  previousCenters,
 }) => {
   console.log(blocks);
   const { t } = useTranslation();
@@ -57,6 +59,10 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
   const [selectedBlockId, setselectedBlockId] = useState("");
 
   const [checkedCenters, setCheckedCenters] = useState<string[]>([]);
+
+  useEffect(() => {
+    setCheckedCenters(previousCenters);
+  }, [previousCenters]);
 
   const handleSearchInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -187,6 +193,8 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
         ),
         "error"
       );
+    } finally {
+      window.location.reload();
     }
   };
 
