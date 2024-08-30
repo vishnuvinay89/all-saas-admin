@@ -17,7 +17,7 @@
     "ALL": "All",
     "NO_GO_BACK": "No, go back",
     "YES": "Yes",
-    "SURE_REASSIGN_CENTER": "Are you sure you want to re-assign Classes to this user?",
+    "SURE_REASSIGN_CENTER": "Are you sure you want to Assign Classes to this user?",
     "OTHER": "Other",
     "SORT": "Sort",
     "EDIT_CENTER_NAME": "Edit Classes",
@@ -63,7 +63,7 @@
     "STATE_NOT_FOUND": "States not found",
     "DISTRICT_NOT_FOUND": "District not found",
     "SCHOOLS_NOT_FOUND": "Schools not found",
-    "CLUSTER_NOT_FOUND":"Clusters not found",
+    "CLUSTER_NOT_FOUND": "Clusters not found",
     "USERS_EMAIL": "Users Email",
     "STATE_NAME_REQUIRED": "State Name is Required",
     "DISTRICT_NAME_REQUIRED": "District Name is Required",
@@ -110,7 +110,7 @@
     "NO_BLOCKS": "No Blocks",
 
     "SEND_CREDENTIALS": "Send Credentials",
-    "CREDENTIALS_EMAILED_OF_FACILITATOR": "The login credentials will be emailed to the Facilitator at {{email}} ",
+    "CREDENTIALS_EMAILED_OF_FACILITATOR": "The login credentials will be emailed to the Teacher at {{email}} ",
     "CREDENTIALS_EMAILED_OF_TEAM_LEADER": "The login credentials will be emailed to the Team Leader at  {{email}}",
     "CREDENTIALS_EMAILED_OF_LEARNER": "The login credentials have been send to your email at  {{email}} ",
     "OKAY": "okay",
@@ -118,14 +118,14 @@
     "USER_CREDENTIAL_SEND_SUCCESSFULLY": "User credentials sent successfully!",
     "USER_CREDENTIALS_WILL_BE_SEND_SOON": "User credentials will be sent soon",
 
-    "REASSIGN_CENTERS": "Re-assign Center",
-    "REASSIGN_BLOCKS": "Re-assign Blocks",
-    "REASSIGN": "Reassign",
+    "REASSIGN_CENTERS": "Assign Class",
+    "REASSIGN_BLOCKS": "Assign Blocks",
+    "REASSIGN": "Assign",
     "COHORT_ID_NOT_FOUND": "Could not found cohort Id for {{block}} ",
-    "CENTERS_REASSIGN_SUCCESSFULLY": "Center reassign successfully",
-    "BLOCKS_REASSIGN_SUCCESSFULLY": "Block reassign successfully",
-    "CENTERS_REASSIGN_FAILED": "Center Reassignment fails",
-    "BLOCKS_REASSIGN_FAILED": "Block Reassignment fails",
+    "CENTERS_REASSIGN_SUCCESSFULLY": "Class Assign successfully",
+    "BLOCKS_REASSIGN_SUCCESSFULLY": "Block Assign successfully",
+    "CENTERS_REASSIGN_FAILED": "Class Assignment fails",
+    "BLOCKS_REASSIGN_FAILED": "Block Assignment fails",
     "USER_COHORTS": "{{name}} belongs to below cohorts",
     "DELETE_COHORT_WARNING": "Do you want to delete user from cohort?",
 
@@ -159,38 +159,40 @@
     "MANAGE_USERS": "Manage Users",
     "COURSE_PLANNER": "Course Planner",
     "CENTERS": "Classes",
-    "FACILITATORS": "Facilitators",
-    "LEARNERS": "Learners",
+    "FACILITATORS": "Teachers",
+    "LEARNERS": "Students",
     "TEAM_LEADERS": "Team Leaders",
     "CREATE_PLAN": "Create Plan",
     "VIEW_PLANS": "View Plans",
     "FOUNDATION_COURSE": "Foundation Course",
-    "MAIN_COURSE": "Main Course"
+    "MAIN_COURSE": "Main Course",
+    "TEACHERS": "Teachers",
+    "STUDENTS": "Students"
   },
   "FACILITATORS": {
     "STATE": "State",
     "DISTRICT": "District",
     "BLOCK": "Block",
-    "NEW_FACILITATOR": "New Facilitator",
-    "SEARCHBAR_PLACEHOLDER": "Search Facilitators..",
+    "NEW_FACILITATOR": "New Teacher",
+    "SEARCHBAR_PLACEHOLDER": "Search Teacher..",
     "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher is created, and credentials sent successfully!",
     "USER_CREDENTIALS_WILL_BE_SEND_SOON": "Teacher is created ,credentials will be sent soon",
 
     "FACILITATOR_UPDATED_SUCCESSFULLY": "Teacher has been successfully updated!",
-    "EDIT_FACILITATOR": "Edit Facilitator"
+    "EDIT_FACILITATOR": "Edit Teacher"
   },
   "NAVBAR": {
     "SEARCHBAR_PLACEHOLDER": "Search course, topic, student, pdf etc.."
   },
   "LEARNERS": {
-    "SEARCHBAR_PLACEHOLDER": "Search Learners..",
-    "NEW_LEARNER": "New Learner",
+    "SEARCHBAR_PLACEHOLDER": "Search Students..",
+    "NEW_LEARNER": "New Students",
     "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
-    "LEARNER_CREATED_SUCCESSFULLY": "Learner has been successfully created!",
-    "USER_CREDENTIALS_WILL_BE_SEND_SOON": "Learner is created, credentials will be sent soon",
+    "LEARNER_CREATED_SUCCESSFULLY": "Student has been successfully created!",
+    "USER_CREDENTIALS_WILL_BE_SEND_SOON": "Student is created, credentials will be sent soon",
 
-    "LEARNER_UPDATED_SUCCESSFULLY": "Learner has been successfully updated!",
-    "EDIT_LEARNER": "Edit Learner"
+    "LEARNER_UPDATED_SUCCESSFULLY": "Student has been successfully updated!",
+    "EDIT_LEARNER": "Edit Students"
   },
   "TEAM_LEADERS": {
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders..",
@@ -225,9 +227,8 @@
     "TOPIC_DETAILS": "Topic Details",
     "BROWSE_FILE": "Browse File",
     "UPLOAD": "Upload",
-    "COURSE_CREATED_SUCCESSFULLY":"Course created successfully",
+    "COURSE_CREATED_SUCCESSFULLY": "Course created successfully",
     "COURSE_NOT_CREATED": "Course not created"
-
   },
   "MASTER": {
     "STATE": "State",
@@ -252,6 +253,7 @@
     "SEARCHBAR_PLACEHOLDER_CLUSTER": "Search Cluster",
     "CLUSTER": "Cluster",
     "CLUSTERS": "Clusters",
+   
     "SCHOOL":"School",
     "SCHOOLS":"Schools",
     "SEARCHBAR_PLACEHOLDER_SCHOOL":"Search School",
@@ -270,7 +272,7 @@
     "REGULAR": "Regular",
     "REMOTE": "Remote",
     "SEARCH_BLOCKS": "Search Blocks",
-    "BLOCK_REQUEST": "You are sending a request to the state Team Leader to re-assign the Block to this user",
+    "BLOCK_REQUEST": "You are sending a request to the state Team Leader to Assign the Block to this user",
     "NEW_CENTER": "New Class",
     "CENTER_TYPE": "Classes Type",
     "UNIT_NAME": "Unit Name",
@@ -282,6 +284,8 @@
     "CENTER_RENAMED": "Class Renamed Successfully!",
     "SEND_REQUEST": "Send Request",
     "SURE_DELETE_CENTER": "Are you sure you want to Delete ",
+    "YOU_CANT_DELETE_CENTER_HAS_ACTIVE_LEARNERS": "You can't delete the Class because it has {{activeMembers}} Active Students",
+
     "CENTER_UPDATE_SUCCESSFULLY": "Class has been Successfully Updated",
     "CENTER_DELETE_SUCCESSFULLY": "Class has been Successfully Deleted",
     "CENTER_CREATED_SUCCESSFULLY": "Class Created Successfully",
@@ -289,10 +293,9 @@
     "CENTER_UPDATE_FAILED": "Something went wrong while updating Classes",
     "ARCHIVED_MEMBERS": "Archived Members:",
     "ACTIVE_MEMBERS": "Active Members",
-    "ARCHIVED_LEARNERS": "Archived Learners",
-    "ACTIVE_LEARNERS": "Active Learners",
-    "YOU_CANT_DELETE_CENTER_HAS_ACTIVE_LEARNERS":  "You can't delete the center because it has {{activeMembers}} Active Learners"
-
+    "ARCHIVED_LEARNERS": "Archived Students",
+    "ACTIVE_LEARNERS": "Active Students",
+    "YOU_CANT_DELETE_CENTER_HAS_ACTIVE_LEARNERS": "You can't delete the center because it has {{activeMembers}} Active Students"
   },
   "FORM": {
     "FULL_NAME": "Full Name",
@@ -349,14 +352,14 @@
     "YEAR_OF_JOINING_SCP": "Year of joining SCP",
     "ASSIGN_CENTERS": "Assign Classes",
     "TYPE_OF_COHORT": "Type Of Class",
-    "UNIT_NAME": "Unit Name",
+    "UNIT_NAME": "Class Name",
     "SUBJECTS_I_TEACH": "Subject I Teach",
     "MY_MAIN_SUBJECTS": "Main subjects",
     "NUMBER_OF_CLUSTERS_I_TEACH": "Number of cluster",
     "DESIGNATION": "Designation",
     "REGULAR": "Regular",
     "REMOTE": "Remote",
-    "NOTE_THIS_WILL_BE_CENTER_NAME": "Note : This will be center name",
+    "NOTE_THIS_WILL_BE_CENTER_NAME": "Note : This will be Class name",
     "STATE": "State",
     "DISTRICT": "District",
     "BLOCK": "Block",
@@ -376,9 +379,12 @@
     "START_AT": "Start At",
     "END_AT": "End At",
     "CLASS_NAME": "Class Name",
-    "SCHOOL":"School",
-    "CLASSES":"Class",
-    "SLOTS":"Slot"
+    "SCHOOL": "School",
+    "CLASSES": "Classes",
+    "SLOTS": "Slots",
+    "MOTHER_NAME": "Mother Name",
+    "ACCESS_TO_WHATSAPP": "Access To WhatsApp",
+    "ADDRESS": "Address"
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",
@@ -411,16 +417,13 @@
     "STATE": "State",
     "DISTRICT_BLOCK": "District, Block",
     "BLOCK": "Block",
-    "CENTER": "Centers",
+    "CENTER": "Class",
     "AGE": "Age",
     "GENDER": "Gender",
     "MOBILE": "Mobile",
     "ARCHIVED_MEMBERS": "Archived Members",
     "ACTIVE_MEMBERS": "Active Members",
-    "ACTIVE_LEARNERS": "Active Learners",
-    "ARCHIVED_LEARNERS": " Archived Learners"
+    "ACTIVE_LEARNERS": "Active Students",
+    "ARCHIVED_LEARNERS": " Archived Students"
   }
-
-  
 }
-

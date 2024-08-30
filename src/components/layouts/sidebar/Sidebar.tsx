@@ -55,48 +55,52 @@ const Sidebar = ({
           {Menuitems?.map((item?: any, index?: number) => (
             <List component="li" disablePadding key={item?.title}>
               <Tooltip placement="right-start" title={t(item?.title)}>
-                <ListItem
-                  button
-                  onClick={() => {
-                    if (item.subOptions) {
-                      if (index) {
-                        handleClick(index);
-                      }
-                    } else {
-                      router.push(item.href);
-                      onSidebarClose();
-                    }
-                  }}
-                  selected={location === item.href}
-                  sx={{
-                    mb: 1,
+                <Box>
+                  {item && (
+                    <ListItem
+                      button
+                      onClick={() => {
+                        if (item.subOptions) {
+                          if (index) {
+                            handleClick(index);
+                          }
+                        } else {
+                          router?.push(item.href);
+                          onSidebarClose();
+                        }
+                      }}
+                      selected={location === item.href}
+                      sx={{
+                        mb: 1,
 
-                    ...(location === item.href && {
-                      color: "black",
-                      backgroundColor: (theme) =>
-                        `${theme.palette.primary.main}!important`,
-                    }),
-                  }}
-                >
-                  {/* {  item.icon && (<ListItemIcon>
+                        ...(location === item.href && {
+                          color: "black",
+                          backgroundColor: (theme) =>
+                            `${theme.palette.primary.main}!important`,
+                        }),
+                      }}
+                    >
+                      {/* {  item.icon && (<ListItemIcon>
   {item.icon}
 </ListItemIcon>) */}
-                  <ListItemIcon>
-                    <Image src={item.icon} alt="" />
-                  </ListItemIcon>
-                  <ListItemText>
-                    <Typography variant="h2" sx={{ fontWeight: "700px" }}>
-                      {t(item.title)}
-                    </Typography>
-                  </ListItemText>
-                  {item.subOptions ? (
-                    open === index ? (
-                      <ExpandLess />
-                    ) : (
-                      <ExpandMore />
-                    )
-                  ) : null}
-                </ListItem>
+                      <ListItemIcon>
+                        <Image src={item.icon} alt="" />
+                      </ListItemIcon>
+                      <ListItemText>
+                        <Typography variant="h2" sx={{ fontWeight: "700px" }}>
+                          {t(item.title)}
+                        </Typography>
+                      </ListItemText>
+                      {item.subOptions ? (
+                        open === index ? (
+                          <ExpandLess />
+                        ) : (
+                          <ExpandMore />
+                        )
+                      ) : null}
+                    </ListItem>
+                  )}
+                </Box>
               </Tooltip>
 
               {item.subOptions && (

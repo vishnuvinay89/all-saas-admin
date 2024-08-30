@@ -275,7 +275,7 @@ const HeaderComponent = ({
         />
       )}
 
-      <Box
+<Box
         sx={{
           backgroundColor: "white",
           paddingTop: "20px",
@@ -375,6 +375,7 @@ const HeaderComponent = ({
             </Box>
           )}
         </Box>
+        {/* {showAddNew && ( */}
           <Box
             sx={{
               display: "flex",
@@ -409,7 +410,7 @@ const HeaderComponent = ({
               </FormControl>
             )}
           </Box>
-      
+        {/* )} */}
         {children}
       </Box>
     </Box>

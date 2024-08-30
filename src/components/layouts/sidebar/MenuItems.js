@@ -30,11 +30,11 @@ const Menuitems = [
         href: "/teamLeader",
       },
       showfaciliator && {
-        title: "SIDEBAR.FACILITATORS",
+        title: "SIDEBAR.TEACHERS",
         href: "/faciliator",
       },
       showLearners && {
-        title: "SIDEBAR.LEARNERS",
+        title: "SIDEBAR.STUDENTS",
         href: "/learners",
       },
     ],
