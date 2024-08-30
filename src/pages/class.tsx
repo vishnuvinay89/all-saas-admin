@@ -9,7 +9,7 @@ import {
   createOrUpdateOption,
 } from "@/services/MasterDataService";
 import Loader from "@/components/Loader";
-import { AddStateModal } from "@/components/AddStateModal";
+import { AddClassModal } from "@/components/AddClassModal";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { showToastMessage } from "@/components/Toastify";
 import { SORT, Numbers, Storage } from "@/utils/app.constant";
@@ -45,7 +45,7 @@ const State: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] =
     useState<boolean>(false);
-  const [addStateModalOpen, setAddStateModalOpen] = useState<boolean>(false);
+  const [addClassModalOpen, setAddClassModalOpen] = useState<boolean>(false);
   const [selectedStateForDelete, setSelectedStateForDelete] =
     useState<ClassDetail | null>(null);
   const [selectedStateForEdit, setSelectedStateForEdit] =
@@ -77,7 +77,7 @@ const State: React.FC = () => {
 
   const handleEdit = (rowData: ClassDetail) => {
     setSelectedStateForEdit(rowData);
-    setAddStateModalOpen(true);
+    setAddClassModalOpen(true);
   };
 
   const handleDelete = (rowData: ClassDetail) => {
@@ -114,15 +114,15 @@ const State: React.FC = () => {
     setSearchKeyword(keyword);
   };
 
-  const handleAddStateClick = () => {
-    setSelectedStateForEdit(null);
-    setAddStateModalOpen(true);
+  const handleAddClassClick = () => {
+    //setSelectedStateForEdit(null);
+    setAddClassModalOpen(true);
   };
 
-  const handleAddStateSubmit = async (
+  const handleAddClassSubmit = async (
     name: string,
     value: string,
-    selectedState: any
+    selectedState?: any
   ) => {
     const newState = {
       options: [{ name, value }],
@@ -132,38 +132,24 @@ const State: React.FC = () => {
         const isUpdating = selectedState !== null;
         const response = await createOrUpdateOption(fieldId, newState);
 
-        const queryParameters = {
-          name: name,
-          type: "STATE",
-          status: "active",
-          parentId: null,
-          customFields: [],
-        };
-
-        console.log("before cohortList");
-
-        if (!isUpdating) {
-          await createCohort(queryParameters);
-        }
-
         if (response) {
-          await fetchStateData();
+          await fetchClassData();
 
           const successMessage = isUpdating
-            ? t("COMMON.STATE_UPDATED_SUCCESS")
-            : t("COMMON.STATE_ADDED_SUCCESS");
+            ? t("COMMON.CLASS_UPDATED_SUCCESS")
+            : t("COMMON.CLASS_ADDED_SUCCESS");
 
           showToastMessage(successMessage, "success");
         } else {
           console.error("Failed to create/update state:", response);
-          showToastMessage(t("COMMON.STATE_OPERATION_FAILURE"), "error");
+          showToastMessage(t("COMMON.CLASS_OPERATION_FAILURE"), "error");
         }
       }
     } catch (error) {
       console.error("Error creating/updating state:", error);
-      showToastMessage(t("COMMON.STATE_OPERATION_FAILURE"), "error");
+      showToastMessage(t("COMMON.CLASS_OPERATION_FAILURE"), "error");
     }
-    setAddStateModalOpen(false);
+    setAddClassModalOpen(false);
   };
   const handleChangePageSize = (event: SelectChangeEvent<number>) => {
     const newSize = Number(event.target.value);
@@ -206,7 +192,7 @@ const State: React.FC = () => {
     </Box>
   );
 
-  const fetchStateData = async () => {
+  const fetchClassData = async () => {
     try {
       setLoading(true);
       const limit = pageLimit;
@@ -254,21 +240,30 @@ const State: React.FC = () => {
     }
   };
   useEffect(() => {
-    fetchStateData();
+    fetchClassData();
   }, [searchKeyword,pageLimit, pageOffset, sortBy]);
 
   return (
+    <React.Fragment>
+    <AddClassModal
+        open={addClassModalOpen}
+        onClose={() => setAddClassModalOpen(false)}
+        onSubmit={(name: string, value: string) =>
+          handleAddClassSubmit(name, value)
+        }
+        initialValues={{}}
+      />
     <HeaderComponent
       userType={t("MASTER.CLASSES")}
       searchPlaceHolder={t("MASTER.SEARCHBAR_PLACEHOLDER_CLASS")}
       showStateDropdown={false}
       handleSortChange={handleSortChange}
-      showAddNew={false}
+      showAddNew={true}
       showSort={true}
       selectedSort={selectedSort}
       showFilter={false}
       handleSearch={handleSearch}
-      handleAddUserClick={handleAddStateClick}
+      handleAddUserClick={handleAddClassClick}
     >
       {classData.length === 0 && !loading ? (
         <Box display="flex" marginLeft="40%" gap="20px">
@@ -312,6 +307,7 @@ const State: React.FC = () => {
         </div>
       )}
     </HeaderComponent>
+    </React.Fragment>
   );
 };
 

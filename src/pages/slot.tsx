@@ -7,9 +7,10 @@ import {
   getStateBlockDistrictList,
   deleteOption,
   createOrUpdateOption,
+  fieldSearch
 } from "@/services/MasterDataService";
 import Loader from "@/components/Loader";
-import { AddStateModal } from "@/components/AddStateModal";
+import { AddSlotModal } from "@/components/AddSlotModal";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { showToastMessage } from "@/components/Toastify";
 import { SORT, Numbers, Storage } from "@/utils/app.constant";
@@ -45,7 +46,7 @@ const State: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] =
     useState<boolean>(false);
-  const [addStateModalOpen, setAddStateModalOpen] = useState<boolean>(false);
+  const [addSlotModalOpen, setAddSlotModalOpen] = useState<boolean>(false);
   const [selectedStateForDelete, setSelectedStateForDelete] =
     useState<slotDetail | null>(null);
   const [selectedStateForEdit, setSelectedStateForEdit] =
@@ -77,7 +78,7 @@ const State: React.FC = () => {
 
   const handleEdit = (rowData: slotDetail) => {
     setSelectedStateForEdit(rowData);
-    setAddStateModalOpen(true);
+    setAddSlotModalOpen(true);
   };
 
   const handleDelete = (rowData: slotDetail) => {
@@ -114,56 +115,41 @@ const State: React.FC = () => {
     setSearchKeyword(keyword);
   };
 
-  const handleAddStateClick = () => {
-    setSelectedStateForEdit(null);
-    setAddStateModalOpen(true);
+  const handleAddSlotClick = () => {
+    //setSelectedStateForEdit(null);
+    setAddSlotModalOpen(true);
   };
 
-  const handleAddStateSubmit = async (
+  const handleAddSlotSubmit = async (
     name: string,
     value: string,
-    selectedState: any
   ) => {
     const newState = {
       options: [{ name, value }],
     };
     try {
       if (fieldId) {
-        const isUpdating = selectedState !== null;
+        const isUpdating = 0 //selectedState !== null;
         const response = await createOrUpdateOption(fieldId, newState);
 
-        const queryParameters = {
-          name: name,
-          type: "STATE",
-          status: "active",
-          parentId: null,
-          customFields: [],
-        };
-
-        console.log("before cohortList");
-
-        if (!isUpdating) {
-          await createCohort(queryParameters);
-        }
-
         if (response) {
-          await fetchStateData();
+          await fetchSlotData();
 
           const successMessage = isUpdating
-            ? t("COMMON.STATE_UPDATED_SUCCESS")
-            : t("COMMON.STATE_ADDED_SUCCESS");
+            ? t("COMMON.SLOT_UPDATED_SUCCESS")
+            : t("COMMON.SLOT_ADDED_SUCCESS");
 
           showToastMessage(successMessage, "success");
         } else {
           console.error("Failed to create/update state:", response);
-          showToastMessage(t("COMMON.STATE_OPERATION_FAILURE"), "error");
+          showToastMessage(t("COMMON.SLOT_OPERATION_FAILURE"), "error");
         }
       }
     } catch (error) {
-      console.error("Error creating/updating state:", error);
-      showToastMessage(t("COMMON.STATE_OPERATION_FAILURE"), "error");
+      console.error("Error creating/updating slot:", error);
+      showToastMessage(t("COMMON.SLOT_OPERATION_FAILURE"), "error");
     }
-    setAddStateModalOpen(false);
+    setAddSlotModalOpen(false);
   };
   const handleChangePageSize = (event: SelectChangeEvent<number>) => {
     const newSize = Number(event.target.value);
@@ -206,7 +192,25 @@ const State: React.FC = () => {
     </Box>
   );
 
-  const fetchStateData = async () => {
+  useEffect(() => {
+    getSlotFieldId();
+  });
+
+  const getSlotFieldId = async () => {
+    try {
+      const response = await fieldSearch({name: "slots"}, 1, 0);
+      if (response?.result?.length) {
+        const temp = response.result[0]
+        const slotFieldId = temp.fieldId || "";
+        setFieldId(slotFieldId);
+      }
+    } catch (error) {
+      console.error("No School field found", error);
+      setLoading(false);
+    }
+  };
+
+  const fetchSlotData = async () => {
     try {
       setLoading(true);
       const limit = pageLimit;
@@ -219,21 +223,11 @@ const State: React.FC = () => {
         optionName: searchKeyword || "",
         sort: sortBy,
       };
-
-      console.log("fetchStateData", data);
-
       const resp = await getStateBlockDistrictList(data);
-
       if (resp?.result?.fieldId) {
-        setFieldId(resp.result.fieldId);
         setSlotData(resp.result.values);
-
         const totalCount = resp?.result?.totalCount || 0;
-
         setPaginationCount(totalCount);
-
-        console.log("totalCount", totalCount);
-
         setPagination(totalCount > 10);
         setPageSizeArray(
           totalCount > 15
@@ -250,28 +244,37 @@ const State: React.FC = () => {
         console.error("Unexpected fieldId:", resp?.result?.fieldId);
       }
     } catch (error) {
-      console.error("Error fetching state data", error);
+      console.error("Error fetching slot data", error);
       setSlotData([]);
     } finally {
       setLoading(false);
     }
   };
   useEffect(() => {
-    fetchStateData();
+    fetchSlotData();
   }, [searchKeyword,pageLimit, pageOffset, sortBy]);
 
   return (
+    <React.Fragment>
+      <AddSlotModal
+        open={addSlotModalOpen}
+        onClose={() => setAddSlotModalOpen(false)}
+        onSubmit={(name: string, value: string) =>
+          handleAddSlotSubmit(name, value)
+        }
+        initialValues={{}}
+      />
     <HeaderComponent
       userType={t("MASTER.SLOTS")}
       searchPlaceHolder={t("MASTER.SEARCHBAR_PLACEHOLDER_SLOT")}
       showStateDropdown={false}
       handleSortChange={handleSortChange}
-      showAddNew={false}
+      showAddNew={true}
       showSort={true}
       selectedSort={selectedSort}
       showFilter={false}
       handleSearch={handleSearch}
-      handleAddUserClick={handleAddStateClick}
+      handleAddUserClick={handleAddSlotClick}
     >
       {slotData.length === 0 && !loading ? (
         <Box display="flex" marginLeft="40%" gap="20px">
@@ -315,6 +318,7 @@ const State: React.FC = () => {
         </div>
       )}
     </HeaderComponent>
+    </React.Fragment>
   );
 };
 
