@@ -18,6 +18,7 @@ import { useTranslation } from "next-i18next";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import cardData from "@/data/cardData";
 import Loader from "@/components/Loader";
+import { getChannelDetails } from "@/services/coursePlanner";
 
 const Foundation = () => {
   const router = useRouter();
@@ -38,11 +39,29 @@ const Foundation = () => {
     const fetchData = async () => {
       setTimeout(() => {
         setLoading(false);
-      }, 2000);
+      }, 1000);
     };
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchChannelDetails = async () => {
+      try {
+        const data = await getChannelDetails();
+       console.log(data?.result?.channel?.frameworks);
+       localStorage.setItem("channelDetails", JSON.stringify(data?.result?.channel?.frameworks))
+      } catch (err) {
+        console.log(err);
+        
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchChannelDetails();
+  }, []);
+
 
   const handleCardClick = (id: any) => {
     router.push(`/stateDetails?cardId=${id}`);

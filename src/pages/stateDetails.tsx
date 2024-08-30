@@ -23,7 +23,7 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 
 const StateDetails = () => {
   const router = useRouter();
-  const { cardId } = router.query;
+  const { boardId, cardId } = router.query;
   const { t } = useTranslation();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -35,14 +35,28 @@ const StateDetails = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
   const [card, setCard] = useState<any>(null);
+  const [boards, setBoards] = useState<any>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       setTimeout(() => {
         const foundCard = cardData.find((c) => c.id === cardId);
         setCard(foundCard);
+        
+
+        if (typeof window !== 'undefined') {
+          const channel = localStorage.getItem('channelDetails');
+          
+          if (channel) {
+            const parsedBoards = JSON.parse(channel);
+            setBoards(parsedBoards);
+          } else {
+            console.error('No channel details found in localStorage.');
+          }
+        }
+
         setLoading(false);
-      }, 2000);
+      }, 1000);
     };
 
     fetchData();
@@ -129,85 +143,80 @@ const StateDetails = () => {
         </Box>
       </Box>
       <Grid spacing={2} container sx={{ marginTop: "16px" }}>
-        {card.boards?.map((board: string, index: number) => (
-          <Grid item xs={12} md={4}>
-            <Box
-              key={index}
-              sx={{
-
-                alignItems: "center",
-                cursor: "pointer",
-                border: "1px solid #0000001A",
-                boxShadow: "none",
-                transition: "background-color 0.3s",
-                "&:hover": {
-                  backgroundColor: "#EAF2FF",
-                },
-                marginTop: "8px",
-                padding: "16px",
-                display:'flex',
-                justifyContent:'space-between'
-              }}
-              onClick={() => {
-                if (typeof board === "string") {
-                  handleBoardClick(board);
-                }
-              }}
-            >
-              <Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                  }}
-                >
-                  <FolderOutlinedIcon />
-                  <Typography variant="h6" sx={{ fontSize: "16px" }}>
-                    {board}
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "16px",
-                  }}
-                >
-                  <Box sx={{ width: "40px", height: "40px" }}>
-                    <CircularProgressbar
-                      value={(card.boardsUploaded / card.totalBoards) * 100}
-                      strokeWidth={10}
-                      styles={buildStyles({
-                        pathColor: "#06A816",
-                        trailColor: "#E6E6E6",
-                        strokeLinecap: "round",
-                      })}
-                    />
-                  </Box>
-                  <Typography sx={{ fontSize: "14px" }}>
-                    {card.boardsUploaded} / {card.totalBoards}{" "}
-                    {t("COURSE_PLANNER.SUBJECTS_UPLOADED")}
-                  </Typography>
-                </Box>
-              </Box>
-              <Box sx={{ display: "flex", justifyContent: "center" }}>
-                <Button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (typeof board === "string") {
-                      handleCopyLink(board);
-                    }
-                  }}
-                  sx={{ minWidth: "auto", padding: 0 }}
-                >
-                  <InsertLinkOutlinedIcon />
-                </Button>
-              </Box>
+  {boards.map((board: any, index: number) => (
+    <Grid item xs={12} md={4} key={index}>
+      <Box
+        sx={{
+          alignItems: "center",
+          cursor: "pointer",
+          border: "1px solid #0000001A",
+          boxShadow: "none",
+          transition: "background-color 0.3s",
+          "&:hover": {
+            backgroundColor: "#EAF2FF",
+          },
+          marginTop: "8px",
+          padding: "16px",
+          display: 'flex',
+          justifyContent: 'space-between'
+        }}
+        onClick={() => {
+          handleBoardClick(board?.identifier);
+        }}
+      >
+        <Box>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <FolderOutlinedIcon />
+            <Typography variant="h6" sx={{ fontSize: "16px" }}>
+              {board?.name}
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "16px",
+            }}
+          >
+            <Box sx={{ width: "40px", height: "40px" }}>
+              <CircularProgressbar
+                value={(card.boardsUploaded / card.totalBoards) * 100}
+                strokeWidth={10}
+                styles={buildStyles({
+                  pathColor: "#06A816",
+                  trailColor: "#E6E6E6",
+                  strokeLinecap: "round",
+                })}
+              />
             </Box>
-          </Grid>
-        ))}{" "}
-      </Grid>
+            <Typography sx={{ fontSize: "14px" }}>
+              {card.boardsUploaded} / {card.totalBoards}{" "}
+              {t("COURSE_PLANNER.SUBJECTS_UPLOADED")}
+            </Typography>
+          </Box>
+        </Box>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCopyLink(board?.identifier);
+            }}
+            sx={{ minWidth: "auto", padding: 0 }}
+          >
+            <InsertLinkOutlinedIcon />
+          </Button>
+        </Box>
+      </Box>
+    </Grid>
+  ))}
+</Grid>
+
     </Box>
   );
 };

@@ -32,7 +32,7 @@ const FileDetails = () => {
           setSelectedFile({ name: fileName } as File);
         }
         setLoading(false);
-      }, 2000); // Simulated loading time
+      }, 1000); // Simulated loading time
     };
 
     fetchFileData();

@@ -66,7 +66,7 @@ const ImportCsv = () => {
           }
         }
         setLoading(false);
-      }, 2000); // Simulated loading time
+      }, 1000); // Simulated loading time
     };
 
     fetchData();
@@ -77,13 +77,12 @@ const ImportCsv = () => {
     try {
       setLoading(true);
       const response = await getTargetedSolutions({
-        subject: 'Marathi',
-        class: '10',
+        subject: 'Assamese',
+        class: '6',
         state: 'Maharashtra',
-        board: 'ISEB',
+        board: 'AAKR',
         type: 'mainCourse',
-        role: 'Teacher',
-        medium: 'Hindi',
+        medium: 'Assamese',
       });
   
       const courseData = response.result.data[0];
@@ -116,13 +115,12 @@ const ImportCsv = () => {
       });
   
       const updatedResponse = await getTargetedSolutions({
-        subject: 'Marathi',
-        class: '10',
+        subject: 'Assamese',
+        class: '6',
         state: 'Maharashtra',
-        board: 'ISEB',
+        board: 'AAKR',
         type: 'mainCourse',
-        role: 'Teacher',
-        medium: 'Hindi',
+        medium: 'Assamese',
       });
       setLoading(false);
       return updatedResponse.result.data[0]._id;
@@ -177,13 +175,12 @@ const ImportCsv = () => {
   const handleUpload = async () => {
     if (selectedFile) {
       const metaData: CoursePlannerMetaData = {
-        subject: "Marathi",
-        class: "10",
-        state: "Maharashtra",
-        board: "ISEB",
-        type: "mainCourse",
-        role: "Teacher",
-        medium: "Hindi",
+        subject: 'Assamese',
+        class: '6',
+        state: 'Maharashtra',
+        board: 'AAKR',
+        type: 'mainCourse',
+        medium: 'Assamese',
       };
 
       const result = await uploadCoursePlanner(selectedFile, metaData)
@@ -321,7 +318,6 @@ const ImportCsv = () => {
         showGradeMedium={false}
         showFoundaitonCourse={false}
       />
-
       <Box
         sx={{
           padding: "16px",
