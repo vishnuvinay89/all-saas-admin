@@ -7,6 +7,7 @@ import {
   getStateBlockDistrictList,
   deleteOption,
   createOrUpdateOption,
+  fieldSearch
 } from "@/services/MasterDataService";
 import Loader from "@/components/Loader";
 import { AddClassModal } from "@/components/AddClassModal";
@@ -78,6 +79,25 @@ const State: React.FC = () => {
   const handleEdit = (rowData: ClassDetail) => {
     setSelectedStateForEdit(rowData);
     setAddClassModalOpen(true);
+  };
+
+
+  useEffect(() => {
+    getClassFieldId();
+  });
+
+  const getClassFieldId = async () => {
+    try {
+      const response = await fieldSearch({name: "classes"}, 1, 0);
+      if (response?.result?.length) {
+        const temp = response.result[0]
+        const classFieldId = temp.fieldId || "";
+        setFieldId(classFieldId);
+      }
+    } catch (error) {
+      console.error("No Class field found", error);
+      setLoading(false);
+    }
   };
 
   const handleDelete = (rowData: ClassDetail) => {
@@ -208,15 +228,9 @@ const State: React.FC = () => {
       const resp = await getStateBlockDistrictList(data);
 
       if (resp?.result?.fieldId) {
-        setFieldId(resp.result.fieldId);
         setClassData(resp.result.values);
-
         const totalCount = resp?.result?.totalCount || 0;
-
         setPaginationCount(totalCount);
-
-        console.log("totalCount", totalCount);
-
         setPagination(totalCount > 10);
         setPageSizeArray(
           totalCount > 15
