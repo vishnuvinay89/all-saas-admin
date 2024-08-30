@@ -30,6 +30,7 @@
     "@tanstack/react-query": "^5.51.23",
     "axios": "^1.7.2",
     "date-fns": "^3.6.0",
+    "dayjs": "^1.11.13",
     "feather-icons-react": "^0.7.0",
     "fingerprintjs2": "^2.1.4",
     "i18next": "^23.11.5",
