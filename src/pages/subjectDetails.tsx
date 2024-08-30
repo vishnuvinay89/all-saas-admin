@@ -16,6 +16,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import FilterSearchBar from "@/components/FilterSearchBar";
 import Loader from "@/components/Loader";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import { getFrameworkDetails } from "@/services/coursePlanner";
 
 // Define Card interface
 interface Card {
@@ -43,6 +44,9 @@ const SubjectDetails = () => {
 
   const [loading, setLoading] = useState(true);
   const [card, setCard] = useState<Card | null>(null);
+  const [subject, setSubject] = useState<any>();
+  const [medium, setMedium] = useState<any>([]);
+  const [grade, setGrade] = useState<any>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,11 +64,36 @@ const SubjectDetails = () => {
           setCard(null);
         }
         setLoading(false);
-      }, 2000);
+      }, 1000);
     };
 
     fetchData();
   }, [cardId]);
+
+
+  useEffect(() => {
+    const fetchFrameworkDetails = async () => {
+      if (typeof boardId === 'string') {
+        try {
+          const data = await getFrameworkDetails(boardId);
+          console.log(data?.result?.framework);
+          setSubject(data?.result?.framework?.categories[0]);
+          setMedium(data?.result?.framework?.categories[1]);
+          setGrade(data?.result?.framework?.categories[2]);
+        } catch (err) {
+          console.error('Failed to fetch framework details');
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        console.error('Invalid boardId');
+        setLoading(false);
+      }
+    };
+  
+    fetchFrameworkDetails();
+  }, [boardId]);
+  
 
   if (loading) {
     return <Loader showBackdrop={true} loadingText="Loading..." />;
@@ -83,7 +112,7 @@ const SubjectDetails = () => {
   const handleCardClick = (subject: string) => {
     router.push(`/importCsv?subject=${encodeURIComponent(subject)}`);
   };
-
+ 
   return (
     <Box>
       <FilterSearchBar
@@ -128,69 +157,70 @@ const SubjectDetails = () => {
         </Typography>
       </Box>
       <Box sx={{ marginTop: "16px" }}>
-        {card.subjects?.map((subject, index) => (
-          <MuiCard
-            key={index}
-            sx={{
-              display: "grid",
-              gridTemplateColumns: "1fr 2fr 1fr",
-              padding: "14px",
-              cursor: "pointer",
-              border: "1px solid #0000001A",
-              boxShadow: "none",
-              transition: "background-color 0.3s",
-              "&:hover": {
-                backgroundColor: "#EAF2FF",
-              },
-              marginTop: "8px",
-            }}
-            onClick={() => handleCardClick(subject)}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <FolderOutlinedIcon />
-              <Typography variant="h6">{subject}</Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-              }}
-            >
-              <CircularProgress
-                variant="determinate"
-                sx={{
-                  color: "#06A816",
-                  "& .MuiCircularProgress-circle": {
-                    strokeLinecap: "round",
-                    stroke: "#06A816",
-                  },
-                }}
-              />
-              <Typography sx={{ fontSize: "14px" }}>
-                {/* {subject.uploaded} / {subject.total} {"topics uploaded"} */}
-              </Typography>
-            </Box>
-            <Box sx={{ display: "flex", justifyContent: "center" }}>
-              <Button
-                onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                  e.stopPropagation();
-                  handleCopyLink(subject);
-                }}
-                sx={{ minWidth: "auto", padding: 0 }}
-              >
-                <InsertLinkOutlinedIcon />
-              </Button>
-            </Box>
-          </MuiCard>
-        ))}
+      {subject?.terms?.map((subj:any, index:any) => (
+     <MuiCard
+      key={index}
+      sx={{
+        display: "grid",
+        gridTemplateColumns: "1fr 2fr 1fr",
+        padding: "14px",
+        cursor: "pointer",
+        border: "1px solid #0000001A",
+        boxShadow: "none",
+        transition: "background-color 0.3s",
+        "&:hover": {
+          backgroundColor: "#EAF2FF",
+        },
+        marginTop: "8px",
+      }}
+      onClick={() => handleCardClick(subj)}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+        }}
+      >
+        <FolderOutlinedIcon />
+        <Typography variant="h6">{subj?.name}</Typography> {/* Use subj.name */}
       </Box>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: "16px",
+        }}
+      >
+        <CircularProgress
+          variant="determinate"
+          sx={{
+            color: "#06A816",
+            "& .MuiCircularProgress-circle": {
+              strokeLinecap: "round",
+              stroke: "#06A816",
+            },
+          }}
+        />
+        <Typography sx={{ fontSize: "14px" }}>
+          {/* {subj.uploaded} / {subj.total} {"topics uploaded"} */}
+        </Typography>
+      </Box>
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Button
+          onClick={(e: MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            handleCopyLink(subj);
+          }}
+          sx={{ minWidth: "auto", padding: 0 }}
+        >
+          <InsertLinkOutlinedIcon />
+        </Button>
+      </Box>
+    </MuiCard>
+  ))}
+</Box>
+
     </Box>
   );
 };

@@ -82,7 +82,7 @@ export interface CoursePlannerMetaData {
   state: any;
   board: string;
   type: string;
-  role: string;
+
   medium: string;
 }
 
@@ -90,7 +90,7 @@ export interface CoursePlannerMetaData {
 export interface GetTargetedSolutionsParams {
   subject:string,
   state: string;
-  role: string;
+ 
   medium: string
   class: string;
   board: string;

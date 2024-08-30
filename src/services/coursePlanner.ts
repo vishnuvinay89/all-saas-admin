@@ -2,6 +2,32 @@ import { CoursePlannerMetaData, GetSolutionDetailsParams, GetTargetedSolutionsPa
 import { post } from "./RestClient";
 import axios from 'axios';
 
+
+
+export const getChannelDetails = async (): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_SUNBIRDSAAS_API_URL}/api/channel/v1/read/01369885294383923244`;
+
+  try {
+    const response = await axios.get(apiUrl);
+    return response?.data;
+  } catch (error) {
+    console.error('Error in getting Channel Details', error);
+    return error;
+  }
+};
+
+export const getFrameworkDetails = async (frameworkId: string): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_SUNBIRDSAAS_API_URL}/api/framework/v1/read/${frameworkId}?categories=gradeLevel,medium,class,subject`;
+
+  try {
+    const response = await axios.get(apiUrl);
+    return response?.data;
+  } catch (error) {
+    console.error('Error in getting Framework Details', error);
+    return error;
+  }
+};
+
 export const uploadCoursePlanner = async (file: File, metaData: CoursePlannerMetaData): Promise<any> => {
     const apiUrl: string = `${process.env.NEXT_PUBLIC_TELEMETRY_URL}/user/v1/course-planner/upload`;
     const formData = new FormData();
@@ -22,7 +48,7 @@ export const uploadCoursePlanner = async (file: File, metaData: CoursePlannerMet
   export const getTargetedSolutions = async ({
     subject,
     state,
-    role,
+
     medium,
     class: className,
     board,
@@ -38,7 +64,7 @@ export const uploadCoursePlanner = async (file: File, metaData: CoursePlannerMet
     const data = {
       subject,
       state,
-      role,
+     
       medium,
       class: className,
       board,
