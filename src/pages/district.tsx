@@ -86,7 +86,7 @@ const District: React.FC = () => {
   const [cohortIdForEdit, setCohortIdForEdit] = useState<any>();
   const [districtValueForDelete, setDistrictValueForDelete] = useState<any>("");
   const [countOfBlocks, setCountOfBlocks] = useState<number>(0);
-  const [cohortIdofState,setCohortIdofState] = useState<any>("");
+  const [cohortIdofState, setCohortIdofState] = useState<any>("");
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -142,19 +142,21 @@ const District: React.FC = () => {
     fetchDistricts();
   }, [stateCode]);
 
-// get cohort id of state
+  // get cohort id of state
   const getStatecohorts = async () => {
     let userId: any;
     try {
       if (typeof window !== "undefined" && window.localStorage) {
         userId = localStorage.getItem(Storage.USER_ID);
       }
-  
-      const response: any = await getMyCohorts(userId);      
+
+      const response: any = await getMyCohorts(userId);
       const cohortData = response?.result?.cohortData;
       if (Array.isArray(cohortData)) {
-        const stateCohort = cohortData.find(cohort => cohort.type === "STATE");
-  
+        const stateCohort = cohortData.find(
+          (cohort) => cohort.type === "STATE"
+        );
+
         if (stateCohort) {
           const cohortIdOfState = stateCohort.cohortId;
           setCohortIdofState(cohortIdOfState);
@@ -164,19 +166,16 @@ const District: React.FC = () => {
       } else {
         console.error("cohortData is not an array or is undefined");
       }
-  
     } catch (error) {
       console.error("Error fetching and filtering cohort districts", error);
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     getStatecohorts();
   }, []);
 
-  
-  
   const getFilteredCohortData = async () => {
     try {
       const reqParams = {
@@ -204,14 +203,12 @@ const District: React.FC = () => {
             createdBy: any;
             updatedBy: any;
           }) => {
-            const transformedName = districtDetail.name
-            
+            const transformedName = districtDetail.name;
 
             const matchingDistrict = districtsOptionRead.find(
               (district: { label: string }) =>
                 district.label === transformedName
             );
-
 
             return {
               label: transformedName,
@@ -259,9 +256,9 @@ const District: React.FC = () => {
         sort: sortBy,
       };
 
-      const response:any = await getCohortList(reqParams);
- 
-      const activeBlocks =  response?.results?.cohortDetails || [];
+      const response: any = await getCohortList(reqParams);
+
+      const activeBlocks = response?.results?.cohortDetails || [];
       console.log("activeBlocks", activeBlocks);
 
       const activeBlocksCount = activeBlocks.filter(
@@ -274,7 +271,6 @@ const District: React.FC = () => {
       setLoading(false);
     }
   };
-
 
   useEffect(() => {
     if (districtValueForDelete) {
@@ -375,7 +371,6 @@ const District: React.FC = () => {
 
       if (response) {
         await fetchDistricts();
-        await getFilteredCohortData();
       }
     } catch (error) {
       console.error("Error adding district:", error);
@@ -397,7 +392,7 @@ const District: React.FC = () => {
     try {
       const cohortCreateResponse = await createCohort(queryParameters);
       if (cohortCreateResponse) {
-        filteredCohortOptionData()
+        filteredCohortOptionData();
         showToastMessage(t("COMMON.DISTRICT_ADDED_SUCCESS"), "success");
       } else if (cohortCreateResponse.responseCode === 409) {
         showToastMessage(t("COMMON.DISTRICT_DUPLICATION_FAILURE"), "error");
@@ -431,8 +426,7 @@ const District: React.FC = () => {
       const response = await createOrUpdateOption(districtFieldId, newDistrict);
 
       if (response) {
-        await fetchDistricts();
-        await getFilteredCohortData();
+       filteredCohortOptionData()
       }
     } catch (error) {
       console.error("Error adding district:", error);
@@ -448,7 +442,8 @@ const District: React.FC = () => {
         queryParameters
       );
       if (cohortCreateResponse) {
-        filteredCohortOptionData()
+        await fetchDistricts();
+        filteredCohortOptionData();
         showToastMessage(t("COMMON.DISTRICT_UPDATED_SUCCESS"), "success");
       } else if (cohortCreateResponse.responseCode === 409) {
         showToastMessage(t("COMMON.DISTRICT_DUPLICATION_FAILURE"), "error");
@@ -482,26 +477,25 @@ const District: React.FC = () => {
   };
 
   function transformLabels(label: string) {
-    if (!label || typeof label !== 'string') return ''; 
+    if (!label || typeof label !== "string") return "";
     return label
-      .toLowerCase() 
-      .replace(/_/g, " ") 
-      .replace(/\b\w/g, (char) => char.toUpperCase()); 
+      .toLowerCase()
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
   }
-  
-  
+
   const filteredCohortOptionData = () => {
     const startIndex = pageOffset * pageLimit;
     const endIndex = startIndex + pageLimit;
-    
-    const transformedData = districtData.map(item => ({
+
+    const transformedData = districtData.map((item) => ({
       ...item,
-      label: transformLabels(item.label) 
+      label: transformLabels(item.label),
     }));
-    
+
     return transformedData.slice(startIndex, endIndex);
   };
-    const PagesSelector = () => (
+  const PagesSelector = () => (
     <>
       <Box sx={{ display: { xs: "block" } }}>
         <Pagination

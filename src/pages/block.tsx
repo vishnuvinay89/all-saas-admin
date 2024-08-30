@@ -608,7 +608,7 @@ const Block: React.FC = () => {
     controllingField: string,
     cohortId?: string,
     DistrictId?: string,
-    extraArgument?: any,
+    extraArgument?: any
   ) => {
     const newDistrict = {
       options: [
@@ -625,7 +625,7 @@ const Block: React.FC = () => {
 
       if (response) {
         await fetchBlocks();
-      }
+       }
     } catch (error) {
       console.error("Error adding district:", error);
     }
@@ -646,14 +646,13 @@ const Block: React.FC = () => {
           value: [controllingField], // district code
         },
       ],
-    };
+    }; 
 
     console.log("queryParameters", queryParameters);
     try {
       const cohortCreateResponse = await createCohort(queryParameters);
       if (cohortCreateResponse) {
-        await getCohortSearchBlock(selectedDistrict);
-        filteredCohortOptionData();
+        filteredCohortOptionData()
         showToastMessage(t("COMMON.BLOCK_ADDED_SUCCESS"), "success");
       } else if (cohortCreateResponse.responseCode === 409) {
         showToastMessage(t("COMMON.BLOCK_DUPLICATION_FAILURE"), "error");
@@ -687,7 +686,7 @@ const Block: React.FC = () => {
       const response = await createOrUpdateOption(blocksFieldId, newDistrict);
 
       if (response) {
-        await fetchBlocks();
+        filteredCohortOptionData();
       }
     } catch (error) {
       console.error("Error adding district:", error);
@@ -703,9 +702,9 @@ const Block: React.FC = () => {
         queryParameters
       );
       if (cohortCreateResponse) {
-        await getCohortSearchBlock(selectedDistrict);
 
-        filteredCohortOptionData();
+       await fetchBlocks();
+       await getCohortSearchBlock(selectedDistrict);
         showToastMessage(t("COMMON.BLOCK_UPDATED_SUCCESS"), "success");
       } else if (cohortCreateResponse.responseCode === 409) {
         showToastMessage(t("COMMON.BLOCK_DUPLICATION_FAILURE"), "error");
@@ -723,7 +722,12 @@ const Block: React.FC = () => {
       <AddBlockModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSubmit={(name: string, value: string, controllingField: string, cohortId?: string) => {
+        onSubmit={(
+          name: string,
+          value: string,
+          controllingField: string,
+          cohortId?: string
+        ) => {
           if (selectedStateForEdit) {
             handleUpdateCohortSubmit(
               name,
@@ -738,7 +742,7 @@ const Block: React.FC = () => {
               value,
               controllingField,
               cohortId,
-              blocksFieldId,
+              blocksFieldId
             );
           }
         }}
