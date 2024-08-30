@@ -1,13 +1,13 @@
 let state;
 
 if (typeof window !== 'undefined') {
-  state = localStorage.getItem('stateName');
+  state = 'Maharashtra'
 }
 const cardData = [
   {
     id: "1",
     state: state,
-    boardsUploaded: 1,
+    boardsUploaded: 0,
     totalBoards: 1,
     details:
       "Maharashtra is a state in the southeastern coastal region of India.",

@@ -73,60 +73,7 @@ const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
           </Typography>
         </Box>
       )}
-      {showGradeMedium && (
-        <Box
-          sx={{
-            p: 1,
-            display: "flex",
-            mb: 2,
-            gap: 2,
-            flexWrap: "wrap",
-          }}
-        >
-          <FormControl
-            variant="outlined"
-            size="small"
-            sx={{
-              minWidth: isSmallScreen ? "100px" : "120px",
-            }}
-          >
-            <InputLabel id="grade-label">
-              {t("COURSE_PLANNER.GRADE")}
-            </InputLabel>
-            <Select
-              labelId="grade-label"
-              value={grade}
-              onChange={handleGradeChange}
-              label="Grade"
-            >
-              <MenuItem value="grade1">Grade 1</MenuItem>
-              <MenuItem value="grade2">Grade 2</MenuItem>
-              <MenuItem value="grade3">Grade 3</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl
-            variant="outlined"
-            size="small"
-            sx={{
-              minWidth: isSmallScreen ? "100px" : "120px",
-            }}
-          >
-            <InputLabel id="medium-label">
-              {t("COURSE_PLANNER.MEDIUM")}
-            </InputLabel>
-            <Select
-              labelId="medium-label"
-              value={medium}
-              onChange={handleMediumChange}
-              label="Medium"
-            >
-              <MenuItem value="english">English</MenuItem>
-              <MenuItem value="hindi">Hindi</MenuItem>
-              <MenuItem value="marathi">Marathi</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-      )}
+     
 
       {card && (
         <Box

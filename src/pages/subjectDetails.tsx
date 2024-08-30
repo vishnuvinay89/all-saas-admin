@@ -99,9 +99,7 @@ const SubjectDetails = () => {
     return <Loader showBackdrop={true} loadingText="Loading..." />;
   }
 
-  if (!card) {
-    return <Typography>Card not found</Typography>;
-  }
+  
 
   const handleBackClick = () => {
     router.back();
@@ -139,22 +137,12 @@ const SubjectDetails = () => {
         <IconButton onClick={handleBackClick}>
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h4">{card.state}</Typography>
+        <Typography variant="h4">{card?.state}</Typography>
 
         <Box sx={{ width: "40px", height: "40px" }}>
-          <CircularProgressbar
-            value={(card.boardsUploaded / card.totalBoards) * 100}
-            strokeWidth={10}
-            styles={buildStyles({
-              pathColor: "#06A816",
-              trailColor: "#E6E6E6",
-              strokeLinecap: "round",
-            })}
-          />
+         
         </Box>
-        <Typography sx={{ fontSize: "14px" }}>
-          {card.boardsUploaded} / {card.totalBoards} {"boards fully uploaded"}
-        </Typography>
+       
       </Box>
       <Box sx={{ marginTop: "16px" }}>
       {subject?.terms?.map((subj:any, index:any) => (

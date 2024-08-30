@@ -77,12 +77,12 @@ const ImportCsv = () => {
     try {
       setLoading(true);
       const response = await getTargetedSolutions({
-        subject: 'Assamese',
-        class: '6',
+        subject: 'Tamil',
+        class: '4',
         state: 'Maharashtra',
-        board: 'AAKR',
+        board: 'TQKR',
         type: 'mainCourse',
-        medium: 'Assamese',
+        medium: 'Telugu',
       });
   
       const courseData = response.result.data[0];
@@ -115,12 +115,12 @@ const ImportCsv = () => {
       });
   
       const updatedResponse = await getTargetedSolutions({
-        subject: 'Assamese',
-        class: '6',
+        subject: 'Tamil',
+        class: '4',
         state: 'Maharashtra',
-        board: 'AAKR',
+        board: 'TQKR',
         type: 'mainCourse',
-        medium: 'Assamese',
+        medium: 'Telugu',
       });
       setLoading(false);
       return updatedResponse.result.data[0]._id;
@@ -175,12 +175,12 @@ const ImportCsv = () => {
   const handleUpload = async () => {
     if (selectedFile) {
       const metaData: CoursePlannerMetaData = {
-        subject: 'Assamese',
-        class: '6',
+        subject: 'Tamil',
+        class: '4',
         state: 'Maharashtra',
-        board: 'AAKR',
+        board: 'TQKR',
         type: 'mainCourse',
-        medium: 'Assamese',
+        medium: 'Telugu',
       };
 
       const result = await uploadCoursePlanner(selectedFile, metaData)
