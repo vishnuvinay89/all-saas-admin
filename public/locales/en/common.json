@@ -127,7 +127,21 @@
     "CENTERS_REASSIGN_FAILED": "Class Assignment fails",
     "BLOCKS_REASSIGN_FAILED": "Block Assignment fails",
     "USER_COHORTS": "{{name}} belongs to below cohorts",
-    "DELETE_COHORT_WARNING": "Do you want to delete user from cohort?"
+    "DELETE_COHORT_WARNING": "Do you want to delete user from cohort?",
+
+    "SLOT_NAME":"Slot",
+    "SLOT_CODE":"Slot Code",
+    "ADD_SLOT": "Add New Slot",
+    "UPDATE_SLOT": "Update Slot",
+    "SLOT_UPDATED_SUCCESS": "Slot Updated Successfully!",
+    "SLOT_ADDED_SUCCESS":"Slot Added Successfully!",
+    "CLASS_NAME":"Class",
+    "CLASS_CODE":"Class Code",
+    "ADD_CLASS": "Add New Class",
+    "UPDATE_CLASS": "Update Class",
+    "CLASS_UPDATED_SUCCESS": "Class Updated Successfully!",
+    "CLASS_ADDED_SUCCESS":"Class Added Successfully!",
+    "CLASS_NOT_FOUND":"Class not found"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -239,11 +253,15 @@
     "SEARCHBAR_PLACEHOLDER_CLUSTER": "Search Cluster",
     "CLUSTER": "Cluster",
     "CLUSTERS": "Clusters",
-    "SCHOOL": "School",
-    "SCHOOLS": "Schools",
-    "SEARCHBAR_PLACEHOLDER_SCHOOL": "Search School",
-    "SEARCHBAR_PLACEHOLDER_CLASS": "Search Class",
-    "CLASSES": "Classes"
+   
+    "SCHOOL":"School",
+    "SCHOOLS":"Schools",
+    "SEARCHBAR_PLACEHOLDER_SCHOOL":"Search School",
+    "SEARCHBAR_PLACEHOLDER_CLASS":"Search Class",
+    "CLASSES":"Classes",
+    "SLOT":"Slot",
+    "SLOTS":"Slots",
+    "SEARCHBAR_PLACEHOLDER_SLOT":"Search Slot"
   },
   "CENTERS": {
     "CENTER": "Class",

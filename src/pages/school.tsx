@@ -280,12 +280,12 @@ const Block: React.FC = () => {
       dataType: DataType.String,
       width: "130",
     },
-    {
-      key: "actions",
-      title: t("MASTER.ACTIONS"),
-      dataType: DataType.String,
-      width: "130",
-    },
+    // {
+    //   key: "actions",
+    //   title: t("MASTER.ACTIONS"),
+    //   dataType: DataType.String,
+    //   width: "130",
+    // },
   ];
 
   const handleSortChange = async (event: SelectChangeEvent) => {
