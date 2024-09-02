@@ -152,6 +152,7 @@ const District: React.FC = () => {
 
       const response: any = await getMyCohorts(userId);
       const cohortData = response?.result?.cohortData;
+      console.log("cohortData", cohortData);
       if (Array.isArray(cohortData)) {
         const stateCohort = cohortData.find(
           (cohort) => cohort.type === "STATE"
@@ -178,6 +179,7 @@ const District: React.FC = () => {
 
   const getFilteredCohortData = async () => {
     try {
+      setLoading(true);
       const reqParams = {
         limit: 0,
         offset: 0,
@@ -232,6 +234,7 @@ const District: React.FC = () => {
       const totalCount = filteredDistrictData.length;
       setPaginationCount(totalCount);
       setPageCount(Math.ceil(totalCount / pageLimit));
+      setLoading(false)
     } catch (error) {
       console.error("Error fetching and filtering cohort districts", error);
       setDistrictData([]);

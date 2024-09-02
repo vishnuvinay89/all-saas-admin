@@ -175,6 +175,7 @@ const Block: React.FC = () => {
 
   const getFilteredCohortData = async () => {
     try {
+      setLoading(true);
       const reqParams = {
         limit: 0,
         offset: 0,
@@ -225,8 +226,10 @@ const Block: React.FC = () => {
       }
       console.log("cohortIds", selectedCohortId);
       setDistrictData(filteredDistrictData);
+      setLoading(false)
     } catch (error) {
       console.error("Error fetching and filtering cohort districts", error);
+    }finally{
       setLoading(false);
     }
   };
@@ -238,7 +241,6 @@ const Block: React.FC = () => {
 
   const fetchBlocks = async () => {
     try {
-      setLoading(true);
       const response = await getBlocksForDistricts({
         controllingfieldfk: selectedDistrict || "",
         fieldName: "blocks",
@@ -258,9 +260,7 @@ const Block: React.FC = () => {
       setBlocksFieldId(blockFieldID);
     } catch (error) {
       console.error("Error fetching blocks", error);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   useEffect(() => {
@@ -864,16 +864,7 @@ const Block: React.FC = () => {
             </Box>
 
             <Box sx={{ marginTop: 2 }}>
-              {loading ? (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  height="20vh"
-                >
-                  <Loader showBackdrop={false} loadingText="Loading..." />
-                </Box>
-              ) : blockData.length > 0 ? (
+              {filteredCohortOptionData().length > 0 ? (
                 <KaTableComponent
                   columns={columns}
                   data={filteredCohortOptionData()}
@@ -887,19 +878,20 @@ const Block: React.FC = () => {
                   pagination={pagination}
                   onDelete={handleDelete}
                   extraActions={[]}
-                  noDataMessage={t("COMMON.BLOCKS_NOT_FOUND")}
                 />
               ) : (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  height="20vh"
-                >
-                  <Typography marginTop="10px" textAlign="center">
-                    {t("COMMON.BLOCKS_NOT_FOUND")}
-                  </Typography>
-                </Box>
+                !loading && (
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    height="20vh"
+                  >
+                    <Typography marginTop="10px" textAlign="center">
+                      {t("COMMON.BLOCKS_NOT_FOUND")}
+                    </Typography>
+                  </Box>
+                )
               )}
             </Box>
           </>
