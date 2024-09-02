@@ -115,6 +115,7 @@ const Block: React.FC = () => {
   const [cohortIds, setCohortIds] = useState<any>([]);
   const [selectedCohortId, setSelectedCohortId] = useState<string | null>(null);
   const [parentIdBlock, setParentIdBlock] = useState<string | null>(null);
+  const [showAllBlocks, setShowAllBlocks] = useState("All");
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -329,6 +330,7 @@ const Block: React.FC = () => {
       console.log("Filtered Block Data:", filteredBlockData);
 
       setBlockData(filteredBlockData);
+      setShowAllBlocks(filteredBlockData)
 
       const totalCount = filteredBlockData.length;
       setPaginationCount(totalCount);
@@ -410,12 +412,12 @@ const Block: React.FC = () => {
       dataType: DataType.String,
       width: "130",
     },
-    {
-      key: "status",
-      title: t("Status"),
-      dataType: DataType.String,
-      width: "130",
-    },
+    // {
+    //   key: "status",
+    //   title: t("Status"),
+    //   dataType: DataType.String,
+    //   width: "130",
+    // },
     {
       key: "createdBy",
       title: t("MASTER.CREATED_BY"),
@@ -464,6 +466,9 @@ const Block: React.FC = () => {
   const handleDistrictChange = async (event: SelectChangeEvent<string>) => {
     const selectedDistrict = event.target.value;
     setSelectedDistrict(selectedDistrict);
+    setShowAllBlocks("")
+    console.log("selectedDistrict", selectedDistrict);
+
 
     const selectedDistrictData = districtData.find(
       (district) => district.value === selectedDistrict
@@ -601,7 +606,7 @@ const Block: React.FC = () => {
     showStateDropdown: false,
     userType: t("MASTER.BLOCKS"),
     searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK"),
-    showFilter: false,
+    showFilter: true,
   };
 
   const handleAddNewBlock = () => {
@@ -836,47 +841,48 @@ const Block: React.FC = () => {
                 </Select>
               </FormControl>
 
-<FormControl
-  sx={{
-    width: "25%",
-    "@media (max-width: 580px)": {
-      width: "100%",
-      marginLeft: 2,
-    },
-  }}
->
-  <InputLabel
-    sx={{ backgroundColor: "white", padding: "2px 8px" }}
-    id="district-select-label"
-  >
-    {t("MASTER.DISTRICTS")}
-  </InputLabel>
-  <Select
-    labelId="district-select-label"
-    id="district-select"
-    value={selectedDistrict}
-    onChange={handleDistrictChange}
-    MenuProps={{
-      PaperProps: {
-        sx: {
-          maxHeight: 400, 
-        },
-      },
-    }}
-  >
-    {districtData.map((districtDetail) => (
-      <MenuItem
-        key={districtDetail.value}
-        value={districtDetail.value}
-        sx={{
-          height: "40px", 
-        }}
-      >
-        {transformLabels(districtDetail.label)}
-      </MenuItem>
-    ))}
-  </Select>
-</FormControl>
+              <FormControl
+                sx={{
+                  width: "25%",
+                  "@media (max-width: 580px)": {
+                    width: "100%",
+                    marginLeft: 2,
+                  },
+                }}
+              >
+                <InputLabel
+                  sx={{ backgroundColor: "white", padding: "2px 8px" }}
+                  id="district-select-label"
+                >
+                  {t("MASTER.DISTRICTS")}
+                </InputLabel>
+                <Select
+                  labelId="district-select-label"
+                  id="district-select"
+                  value={selectedDistrict}
+                  onChange={handleDistrictChange}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        maxHeight: 400,
+                      },
+                    },
+                  }}
+                >
+                  <MenuItem value="All">{t("COMMON.ALL")}</MenuItem>
+                  {districtData.map((districtDetail) => (
+                    <MenuItem
+                      key={districtDetail.value}
+                      value={districtDetail.value}
+                      sx={{
+                        height: "40px",
+                      }}
+                    >
+                      {transformLabels(districtDetail.label)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Box>
 
             <Box sx={{ marginTop: 2 }}>
