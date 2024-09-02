@@ -28,7 +28,6 @@ import {
   createCohort,
   getCohortList,
 } from "@/services/CohortService/cohortService";
-import useStore from "@/store/store";
 import { getUserDetailsInfo } from "@/services/UserList";
 import { getCohortList as getMyCohorts } from "@/services/GetCohortList";
 

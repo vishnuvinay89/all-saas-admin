@@ -8,15 +8,15 @@ const useStore = create(
       // state: "",
       // district: "",
       // block: "",
-      setPid: (newPid) => set((state) => ({ pid: newPid })),
+      // setPid: (newPid) => set((state) => ({ pid: newPid })),
       // setPid: (newPid) => set((state) => ({ pid: newPid })),
       // setPid: (newPid) => set((state) => ({ pid: newPid })),
       // setPid: (newPid) => set((state) => ({ pid: newPid })),
     }),
-    {
-      name: "adminApp",
-      getStorage: () => localStorage,
-    }
+    // {
+    //   name: "adminApp",
+    //   getStorage: () => localStorage,
+    // }
   )
 );
 

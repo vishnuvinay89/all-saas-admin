@@ -31,7 +31,7 @@
     "CANCEL": "Cancel",
     "ARE_YOU_SURE_DELETE": "There are {{block}} Active blocks in this district you cannot delete it.",
     "NO_ACTIVE_BLOCKS_DELETE": "There are no active blocks in this district. Do you want to delete it?",
-    "ARE_YOU_SURE_DELETE_BLOCK": "There are Active centers in this block you cannot delete it",
+    "ARE_YOU_SURE_DELETE_BLOCK": "There are {{centers}} Active centers in this block you cannot delete it",
     "NO_ACTIVE_CENTERS_DELETE": "There are no active centers in this block. Do you want to delete it?",
     "CONFIRM_DELETE": "Confirm Delete",
     "ADD_STATE": "Add New State",
@@ -212,7 +212,7 @@
 
   },
   "MASTER": {
-    "STATE": "State",
+    "STATE": "States",
     "STATE_NAMES": "State Name",
     "SORT": "Sort",
     "DISTRICT_NAMES": "District Name",

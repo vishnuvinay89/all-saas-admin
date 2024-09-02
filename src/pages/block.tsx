@@ -48,6 +48,7 @@ type DistrictDetail = {
 };
 
 type BlockDetail = {
+  code: any;
   parentId(parentId: any): unknown;
   status: Status;
   cohortId(cohortId: any): unknown;
@@ -226,10 +227,10 @@ const Block: React.FC = () => {
       }
       console.log("cohortIds", selectedCohortId);
       setDistrictData(filteredDistrictData);
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching and filtering cohort districts", error);
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
@@ -260,7 +261,9 @@ const Block: React.FC = () => {
       setBlocksFieldId(blockFieldID);
     } catch (error) {
       console.error("Error fetching blocks", error);
-    } 
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -347,7 +350,7 @@ const Block: React.FC = () => {
         limit: 0,
         offset: 0,
         filters: {
-          parentId: parentIdBlock, //cohort id of block
+          blocks: parentIdBlock, //cohort id of block
         },
       };
 
@@ -503,7 +506,7 @@ const Block: React.FC = () => {
     setCohortIdForDelete(rowData.cohortId);
     setConfirmationDialogOpen(true);
 
-    setParentIdBlock(rowData.parentId as any | null);
+    setParentIdBlock(rowData.code as any | null);
     const blockValue = rowData.value;
     setBlockValueForDelete(blockValue);
   };
@@ -767,7 +770,9 @@ const Block: React.FC = () => {
         modalOpen={confirmationDialogOpen}
         message={
           countOfCenter > 0
-            ? t("COMMON.ARE_YOU_SURE_DELETE_BLOCK")
+            ? t("COMMON.ARE_YOU_SURE_DELETE_BLOCK", {
+                centers: `${countOfCenter}`,
+              })
             : t("COMMON.NO_ACTIVE_CENTERS_DELETE")
         }
         handleAction={handleConfirmDelete}
@@ -804,7 +809,7 @@ const Block: React.FC = () => {
                 gap: 3,
                 marginTop: 2,
                 "@media (max-width: 580px)": {
-                  width: "100%",
+                  width: "90%",
                   flexDirection: "column",
                 },
               }}
@@ -831,36 +836,47 @@ const Block: React.FC = () => {
                 </Select>
               </FormControl>
 
-              <FormControl
-                sx={{
-                  width: "25%",
-                  "@media (max-width: 580px)": {
-                    width: "100%",
-                  },
-                }}
-              >
-                <InputLabel
-                  sx={{ backgroundColor: "white", padding: "2px 8px" }}
-                  id="district-select-label"
-                >
-                  {t("MASTER.DISTRICTS")}
-                </InputLabel>
-                <Select
-                  labelId="district-select-label"
-                  id="district-select"
-                  value={selectedDistrict}
-                  onChange={handleDistrictChange}
-                >
-                  {districtData.map((districtDetail) => (
-                    <MenuItem
-                      key={districtDetail.value}
-                      value={districtDetail.value}
-                    >
-                      {transformLabels(districtDetail.label)}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+<FormControl
+  sx={{
+    width: "25%",
+    "@media (max-width: 580px)": {
+      width: "100%",
+      marginLeft: 2,
+    },
+  }}
+>
+  <InputLabel
+    sx={{ backgroundColor: "white", padding: "2px 8px" }}
+    id="district-select-label"
+  >
+    {t("MASTER.DISTRICTS")}
+  </InputLabel>
+  <Select
+    labelId="district-select-label"
+    id="district-select"
+    value={selectedDistrict}
+    onChange={handleDistrictChange}
+    MenuProps={{
+      PaperProps: {
+        sx: {
+          maxHeight: 400, // Adjust this value to fit 10 districts
+        },
+      },
+    }}
+  >
+    {districtData.map((districtDetail) => (
+      <MenuItem
+        key={districtDetail.value}
+        value={districtDetail.value}
+        sx={{
+          height: "40px", // Adjust the height of each MenuItem
+        }}
+      >
+        {transformLabels(districtDetail.label)}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
             </Box>
 
             <Box sx={{ marginTop: 2 }}>
