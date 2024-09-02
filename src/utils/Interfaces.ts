@@ -79,10 +79,32 @@ export interface CohortMemberList {
 export interface CoursePlannerMetaData {
   subject: string;
   class: string;
-  state: string;
+  state: any;
   board: string;
   type: string;
-  role: string;
+
   medium: string;
+}
+
+
+export interface GetTargetedSolutionsParams {
+  subject:string,
+  state: string;
+ 
+  medium: string
+  class: string;
+  board: string;
+  type: string;
+}
+
+export interface GetSolutionDetailsParams {
+  id: string;
+  role: string;
+}
+
+export interface GetUserProjectTemplateParams {
+  templateId: string;
+  solutionId: string;
+  role: string;
 }
 

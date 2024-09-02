@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -7,6 +7,9 @@ import {
   CircularProgress,
   useMediaQuery,
   useTheme,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import FilterSearchBar from "@/components/FilterSearchBar";
@@ -18,8 +21,16 @@ import FileUploadDialog from "@/components/FileUploadDialog";
 import { useTranslation } from "react-i18next";
 import Loader from "@/components/Loader";
 import { CoursePlannerMetaData } from "@/utils/Interfaces";
-import { uploadCoursePlanner } from "@/services/coursePlanner";
+import { getSolutionDetails, getTargetedSolutions, getUserProjectDetails, getUserProjectTemplate, uploadCoursePlanner } from "@/services/coursePlanner";
 import { showToastMessage } from "@/components/Toastify";
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import KeyboardBackspaceOutlinedIcon from '@mui/icons-material/KeyboardBackspaceOutlined';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import dayjs from 'dayjs';
+import { Role } from "@/utils/app.constant";
 
 const ImportCsv = () => {
   const router = useRouter();
@@ -29,7 +40,15 @@ const ImportCsv = () => {
   const [open, setOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(true);
-
+  const [expandedPanels, setExpandedPanels] = useState<{
+    [key: string]: boolean;
+  }>({
+    'panel0-header': true,
+    'panel1-header': true,
+    'panel2-header': true,
+    'panel3-header': true,
+  });
+  const [userProjectDetails, setUserProjectDetails] = useState([]);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -47,11 +66,88 @@ const ImportCsv = () => {
           }
         }
         setLoading(false);
-      }, 2000); // Simulated loading time
+      }, 1000); // Simulated loading time
     };
 
     fetchData();
   }, [subject]);
+
+
+  const fetchCourseDetails = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await getTargetedSolutions({
+        subject: 'Tamil',
+        class: '4',
+        state: 'Maharashtra',
+        board: 'TQKR',
+        type: 'mainCourse',
+        medium: 'Telugu',
+      });
+  
+      const courseData = response.result.data[0];
+      let courseId = courseData._id;
+  
+      if (!courseId) {
+        courseId = await fetchCourseIdFromSolution(courseData.solutionId);
+      }
+  
+      await fetchAndSetUserProjectDetails(courseId);
+      
+    } catch (error) {
+      console.error('Error fetching course planner:', error);
+    }
+  }, [open]);
+
+  const fetchCourseIdFromSolution = async (solutionId: string): Promise<string> => {
+    try {
+      const solutionResponse = await getSolutionDetails({
+        id: solutionId,
+        role: 'Teacher',
+      });
+  
+      const externalId = solutionResponse?.result?.externalId;
+  
+      const templateResponse = await getUserProjectTemplate({
+        templateId: externalId,
+        solutionId,
+        role: Role.TEACHER,
+      });
+  
+      const updatedResponse = await getTargetedSolutions({
+        subject: 'Tamil',
+        class: '4',
+        state: 'Maharashtra',
+        board: 'TQKR',
+        type: 'mainCourse',
+        medium: 'Telugu',
+      });
+      setLoading(false);
+      return updatedResponse.result.data[0]._id;
+    } catch (error) {
+      console.error('Error fetching solution details:', error);
+      throw error;
+    }
+  };
+
+  const fetchAndSetUserProjectDetails = async (courseId: string) => {
+    try {
+      setLoading(true);
+      const userProjectDetailsResponse = await getUserProjectDetails({
+        id: courseId,
+      });
+      setUserProjectDetails(userProjectDetailsResponse.result.tasks);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching user project details:', error);
+    }
+  };
+  
+
+
+  useEffect(() => {
+    fetchCourseDetails();
+  }, [fetchCourseDetails]);
 
   const handleBackClick = () => {
     router.back();
@@ -79,13 +175,12 @@ const ImportCsv = () => {
   const handleUpload = async () => {
     if (selectedFile) {
       const metaData: CoursePlannerMetaData = {
-        subject: "Gujarati",
-        class: "10",
-        state: "Punjab",
-        board: "PSEB",
-        type: "mainCourse",
-        role: "Teacher",
-        medium: "Hindi",
+        subject: 'Tamil',
+        class: '4',
+        state: 'Maharashtra',
+        board: 'TQKR',
+        type: 'mainCourse',
+        medium: 'Telugu',
       };
 
       const result = await uploadCoursePlanner(selectedFile, metaData)
@@ -133,9 +228,13 @@ const ImportCsv = () => {
     return <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />;
   }
 
-  if (!subjectDetails) {
-    return <Typography>{t("COURSE_PLANNER.CARD_NOT_FOUND")}</Typography>;
-  }
+  const getAbbreviatedMonth = (dateString: string | number | Date) => {
+    const date = new Date(dateString);
+    const months = Array.from({ length: 12 }, (_, i) =>
+      dayjs().month(i).format('MMM')
+    );
+    return months[date.getMonth()];
+  };
 
   return (
     <Box sx={{ padding: isSmallScreen ? "16px" : "32px" }}>
@@ -154,7 +253,7 @@ const ImportCsv = () => {
             <ArrowBackIcon />
           </IconButton>
           <Typography variant={isSmallScreen ? "h5" : "h4"}>
-            {subjectDetails.subject}
+            {subjectDetails?.subject}
           </Typography>
         </Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
@@ -219,13 +318,8 @@ const ImportCsv = () => {
         showGradeMedium={false}
         showFoundaitonCourse={false}
       />
-
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: isSmallScreen ? "50vh" : "calc(75vh - 200px)",
           padding: "16px",
         }}
       >
@@ -240,6 +334,171 @@ const ImportCsv = () => {
           {t("COURSE_PLANNER.IMPORT_PLANNER_TO_UPLOADING")}
         </Typography>
       </Box>
+
+      <div>
+{loading ? (
+  <Loader showBackdrop={true} loadingText={t('COMMON.LOADING')} />
+) : (
+  <>
+      <Box mt={2}>
+        {userProjectDetails.map((topic: any, index) => (
+          <Box key={topic._id} sx={{ borderRadius: '8px', mb: 2 }}>
+            <Accordion
+              expanded={expandedPanels[`panel${index}-header`] || false}
+              onChange={() =>
+                setExpandedPanels((prev) => ({
+                  ...prev,
+                  [`panel${index}-header`]: !prev[`panel${index}-header`],
+                }))
+              }
+              sx={{
+                boxShadow: 'none',
+                background: '#F1E7D9',
+                border: 'none',
+                transition: '0.3s',
+              }}
+            >
+              <AccordionSummary
+                expandIcon={
+                  <ArrowDropDownIcon
+                    sx={{ color: 'black' }}
+                  />
+                }
+                aria-controls={`panel${index}-content`}
+                id={`panel${index}-header`}
+                className="accordion-summary"
+                sx={{
+                  px: '16px',
+                  m: 0,
+                  '&.Mui-expanded': {
+                    minHeight: '48px',
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                    pr: '5px',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: '5px',
+                    }}
+                  >
+                    <RadioButtonUncheckedIcon sx={{ fontSize: '15px' }} />
+                    <Typography
+                      fontWeight="500"
+                      fontSize="14px"
+                      color='black'
+                    >
+                      {`Topic ${index + 1} - ${topic.name}`}
+                    </Typography>
+                  </Box>
+                  <Typography fontWeight="600" fontSize="12px" color="#7C766F">
+                    {getAbbreviatedMonth(topic?.metaInformation?.startDate)},{' '}
+                    {getAbbreviatedMonth(topic?.metaInformation?.endDate)}
+                  </Typography>
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails
+                sx={{ padding: '0', transition: 'max-height 0.3s ease-out' }}
+              >
+                {topic.children.map((subTopic: any) => (
+                  <Box
+                    key={subTopic._id}
+                    sx={{
+                      borderBottom: `1px solid black`,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        py: '10px',
+                        px: '16px',
+                        background: 'white',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          gap: '20px',
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            fontSize: '16px',
+                            fontWeight: '400',
+                            color: 'black',
+                            cursor: 'pointer',
+                          }}
+                         
+                        >
+                          {subTopic.name}
+                        </Box>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            gap: '6px',
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              padding: '5px',
+                              background: '  #C1D6FF',
+                              fontSize: '12px',
+                              fontWeight: '500',
+                              color: '#4D4639',
+                              borderRadius: '8px',
+                            }}
+                          >
+                            {getAbbreviatedMonth(
+                              subTopic?.metaInformation?.startDate
+                            )}
+                          </Box>
+                          <CheckCircleIcon
+                          />
+                        </Box>
+                      </Box>
+                      <Box
+                        sx={{
+                          color: theme.palette.secondary.main,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          mt: 0.8,
+                          cursor: 'pointer',
+                        }}
+                      
+                      >
+                        <Box
+                          sx={{ fontSize: '12px', fontWeight: '500' }}
+                          
+                        >
+                          {`${subTopic?.learningResources?.length} ${t('COURSE_PLANNER.RESOURCES')}`}
+                        </Box>
+                        <ArrowForwardIcon sx={{ fontSize: '16px' }} />
+                      </Box>
+                    </Box>
+                  </Box>
+                ))}
+              </AccordionDetails>
+            </Accordion>
+          </Box>
+        ))}
+      </Box>
+      </>
+      )}
+    </div>
 
       <FileUploadDialog
         open={open}

@@ -55,7 +55,7 @@ export const generateUsernameAndPassword = (
   const rolePrefixes: Record<string, string> = {
     [FormContextType.TEACHER]: "FSC",
     [FormContextType.STUDENT]: "SC",
-    [FormContextType.TEAM_LEADER]: "TL",
+    [FormContextType.TEAM_LEADER]: "TLSC",
   };
 
   if (!(role in rolePrefixes)) {
