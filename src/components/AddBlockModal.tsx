@@ -120,7 +120,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
         offset: 0,
         filters: {
           name: "",
-          states: "MH",
+          states: "",
           type: "DISTRICT",
         },
         sort: ["name", "asc"],
@@ -303,7 +303,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           MenuProps={{
             PaperProps: {
               sx: {
-                maxHeight: 400, // Adjust this value to fit 10 districts
+                maxHeight: 400, 
               },
             },
           }}      
