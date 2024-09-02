@@ -859,7 +859,7 @@ const Block: React.FC = () => {
     MenuProps={{
       PaperProps: {
         sx: {
-          maxHeight: 400, // Adjust this value to fit 10 districts
+          maxHeight: 400, 
         },
       },
     }}
@@ -869,7 +869,7 @@ const Block: React.FC = () => {
         key={districtDetail.value}
         value={districtDetail.value}
         sx={{
-          height: "40px", // Adjust the height of each MenuItem
+          height: "40px", 
         }}
       >
         {transformLabels(districtDetail.label)}
