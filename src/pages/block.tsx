@@ -24,7 +24,7 @@ import { showToastMessage } from "@/components/Toastify";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { AddBlockModal } from "@/components/AddBlockModal";
 import PageSizeSelector from "@/components/PageSelector";
-import { SORT, Status, Storage } from "@/utils/app.constant";
+import { CohortTypes, SORT, Status, Storage } from "@/utils/app.constant";
 import { getUserDetailsInfo } from "@/services/UserList";
 import {
   createCohort,
@@ -116,6 +116,16 @@ const Block: React.FC = () => {
   const [selectedCohortId, setSelectedCohortId] = useState<string | null>(null);
   const [parentIdBlock, setParentIdBlock] = useState<string | null>(null);
   const [showAllBlocks, setShowAllBlocks] = useState("All");
+  const [statusValue, setStatusValue] = useState(Status.ACTIVE);
+  const [pageSize, setPageSize] = React.useState<string | number>(10);
+  
+  const [filters, setFilters] = useState({
+    name: searchKeyword,
+    states: stateCode,
+    districts: selectedDistrict,
+    type: CohortTypes.BLOCK,
+    status: [statusValue],
+  });
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -277,12 +287,7 @@ const Block: React.FC = () => {
       const reqParams = {
         limit: 0,
         offset: 0,
-        filters: {
-          name: searchKeyword,
-          states: stateCode,
-          districts: selectedDistrict,
-          type: "BLOCK",
-        },
+        filters: filters,
         sort: sortBy,
       };
 
@@ -345,7 +350,7 @@ const Block: React.FC = () => {
     if (selectedDistrict) {
       getCohortSearchBlock(selectedDistrict);
     }
-  }, [blockNameArr, searchKeyword, pageLimit, pageOffset, sortBy]);
+  }, [filters, blockNameArr, searchKeyword, pageLimit, pageOffset, sortBy]);
 
   const getCohortDataCohort = async () => {
     try {
@@ -522,6 +527,43 @@ const Block: React.FC = () => {
     setSearchKeyword(keyword);
   };
 
+  const handleFilterChange = async (
+    event: React.SyntheticEvent,
+    newValue: any
+  ) => {
+    setStatusValue(newValue);
+
+    setSelectedFilter(newValue);
+    setPageSize(Numbers.TEN);
+    setPageLimit(Numbers.TEN);
+    setPageOffset(Numbers.ZERO);
+    setPageCount(Numbers.ONE);
+    console.log("newValue", newValue);
+    if (newValue === Status.ACTIVE) {
+      setFilters((prevFilters: any) => ({
+        ...prevFilters,
+        status: [Status.ACTIVE],
+      }));
+    } else if (newValue === Status.ARCHIVED) {
+      setFilters((prevFilters: any) => ({
+        ...prevFilters,
+        status: [Status.ARCHIVED],
+      }));
+    } else if (newValue === Status.ALL_LABEL) {
+      setFilters((prevFilters: any) => ({
+        ...prevFilters,
+        status: "",
+      }));
+    } else {
+      setFilters((prevFilters: any) => {
+        const { status, ...restFilters } = prevFilters;
+        return {
+          ...restFilters,
+        };
+      });
+    }
+  };
+
   const handleConfirmDelete = async () => {
     if (selectedStateForDelete) {
       try {
@@ -562,12 +604,9 @@ const Block: React.FC = () => {
     setConfirmationDialogOpen(false);
   };
 
-  const handleChangePageSize = (event: SelectChangeEvent<number>) => {
-    const newSize = Number(event.target.value);
-    setPageSizeArray((prev) =>
-      prev.includes(newSize) ? prev : [...prev, newSize]
-    );
-    setPageLimit(newSize);
+  const handleChangePageSize = (event: SelectChangeEvent<typeof pageSize>) => {
+    setPageSize(event.target.value);
+    setPageLimit(Number(event.target.value));
   };
 
   const handlePaginationChange = (
@@ -596,7 +635,7 @@ const Block: React.FC = () => {
     <Box mt={2}>
       <PageSizeSelector
         handleChange={handleChangePageSize}
-        pageSize={pageLimit}
+        pageSize={pageSize}
         options={pageSizeArray}
       />
     </Box>
@@ -608,6 +647,9 @@ const Block: React.FC = () => {
     userType: t("MASTER.BLOCKS"),
     searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK"),
     showFilter: true,
+    statusValue: statusValue,
+    setStatusValue: setStatusValue,
+    handleFilterChange: handleFilterChange,
   };
 
   const handleAddNewBlock = () => {
