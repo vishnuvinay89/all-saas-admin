@@ -255,7 +255,10 @@ const Block: React.FC = () => {
   const fetchBlocks = async () => {
     try {
       const response = await getBlocksForDistricts({
-        controllingfieldfk: selectedDistrict === "All" ? "" : selectedDistrict || "All",
+        controllingfieldfk:
+          selectedDistrict === t("COMMON.ALL")
+            ? ""
+            : selectedDistrict || t("COMMON.ALL"),
         fieldName: "blocks",
       });
       console.log("selectedDistrict block", selectedDistrict);
@@ -290,7 +293,10 @@ const Block: React.FC = () => {
         filters: {
           name: searchKeyword,
           states: stateCode,
-          districts: selectedDistrict === "All" ? "" : selectedDistrict || "All",
+          districts:
+            selectedDistrict === t("COMMON.ALL")
+              ? ""
+              : selectedDistrict || t("COMMON.ALL"),
           type: CohortTypes.BLOCK,
           status: [statusValue],
         },
