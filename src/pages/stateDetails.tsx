@@ -20,6 +20,7 @@ import CustomStepper from "@/components/Steper";
 import { useTranslation } from "next-i18next";
 import Loader from "@/components/Loader";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import coursePlannerStore from "@/store/coursePlannerStore";
 
 const StateDetails = () => {
   const router = useRouter();
@@ -36,6 +37,7 @@ const StateDetails = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [card, setCard] = useState<any>(null);
   const [boards, setBoards] = useState<any>([]);
+  const setBoardname = coursePlannerStore((state) => state.setBoardname);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,11 +84,12 @@ const StateDetails = () => {
     setSelectedOption(event.target.value);
   };
 
-  const handleBoardClick = (board: string) => {
+  const handleBoardClick = (board: string, boardName: string) => {
     router.push({
       pathname: "/subjectDetails",
       query: { boardId: board, cardId: card.id },
     });
+    setBoardname(boardName)
   };
 
   const handleCopyLink = (state: string) => {
@@ -161,7 +164,7 @@ const StateDetails = () => {
           justifyContent: 'space-between'
         }}
         onClick={() => {
-          handleBoardClick(board?.identifier);
+          handleBoardClick(board?.identifier, board?.name);
         }}
       >
         <Box>
