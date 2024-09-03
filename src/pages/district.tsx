@@ -86,6 +86,27 @@ const District: React.FC = () => {
   const [districtValueForDelete, setDistrictValueForDelete] = useState<any>("");
   const [countOfBlocks, setCountOfBlocks] = useState<number>(0);
   const [cohortIdofState, setCohortIdofState] = useState<any>("");
+  const [previousSearch,setPreviouseSearch] = useState<any>({});
+  // useEffect(() => {
+  //   const fetchUserDetail = () => {
+  //     if (typeof window !== "undefined" && window.localStorage) {
+  //       const storedUserData = JSON.parse(
+  //         localStorage.getItem("adminInfo") || "{}"
+  //       );
+
+  //       const stateCodes = storedUserData?.customFields?.[0].code;
+  //       const stateNames = storedUserData?.customFields?.[0].value;
+  //       const stateField = storedUserData?.customFields[0].fieldId;
+
+  //       if (stateField) {
+  //         setStateFieldId(stateField);
+  //         setStateCode(stateCodes);
+  //         setStateValue(stateNames);
+  //       }
+  //     }
+  //   };
+  //   fetchUserDetail();
+  // }, [stateFieldId]);
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -139,7 +160,7 @@ const District: React.FC = () => {
 
   useEffect(() => {
     fetchDistricts();
-  }, [stateCode]);
+  }, [stateCode, stateValue]);
 
   // get cohort id of state
   const getStatecohorts = async () => {
@@ -205,6 +226,7 @@ const District: React.FC = () => {
             updatedBy: any;
           }) => {
             const transformedName = districtDetail.name;
+            console.log(districtsOptionRead);
 
             const matchingDistrict = districtsOptionRead.find(
               (district: { label: string }) =>
@@ -233,7 +255,7 @@ const District: React.FC = () => {
       const totalCount = filteredDistrictData.length;
       setPaginationCount(totalCount);
       setPageCount(Math.ceil(totalCount / pageLimit));
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching and filtering cohort districts", error);
       setDistrictData([]);
@@ -241,10 +263,10 @@ const District: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (stateCode) {
+    if (stateCode && stateValue) {
       getFilteredCohortData();
     }
-  }, [searchKeyword, pageLimit, pageOffset, stateCode, sortBy]);
+  }, [searchKeyword, pageLimit, pageOffset, stateCode, sortBy, stateValue]);
 
   const getBlockDataCohort = async () => {
     try {
@@ -306,9 +328,12 @@ const District: React.FC = () => {
   };
   console.log("cohort id for delte", cohotIdForDelete);
   const handleSearch = (keyword: string) => {
+    setPageOffset(Numbers.ZERO);
+    setPageCount(Numbers.ONE);
     setSearchKeyword(keyword);
   };
 
+  
   const handleConfirmDelete = async () => {
     if (selectedStateForDelete) {
       try {
@@ -428,7 +453,7 @@ const District: React.FC = () => {
       const response = await createOrUpdateOption(districtFieldId, newDistrict);
 
       if (response) {
-       filteredCohortOptionData()
+        filteredCohortOptionData();
       }
     } catch (error) {
       console.error("Error adding district:", error);

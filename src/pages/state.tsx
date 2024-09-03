@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -159,12 +158,20 @@ const State: React.FC = () => {
       console.error("Error fetching and filtering cohort states", error);
     }
   };
+
+  
   useEffect(() => {
     if (stateDataOption.length > 0 && stateNameArray.length > 0) {
-        getStatecohorts();
+      getStatecohorts();
     }
-}, [stateDataOption, stateNameArray, searchKeyword, pageLimit, pageOffset, sortBy]);
-
+  }, [
+    stateDataOption,
+    stateNameArray,
+    searchKeyword,
+    pageLimit,
+    pageOffset,
+    sortBy,
+  ]);
 
   const handleEdit = (rowData: StateDetail) => {
     setSelectedStateForEdit(rowData);
@@ -289,6 +296,7 @@ const State: React.FC = () => {
       handleSortChange={handleSortChange}
       showAddNew={false}
       showSort={true}
+      shouldFetchDistricts={false}
       selectedSort={selectedSort}
       showFilter={false}
       handleSearch={handleSearch}
@@ -339,7 +347,3 @@ export const getServerSideProps = async ({ locale }: { locale: string }) => {
     },
   };
 };
-
-
-
-

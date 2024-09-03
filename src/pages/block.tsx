@@ -146,10 +146,11 @@ const Block: React.FC = () => {
     fetchUserDetail();
   }, []);
 
+  console.log("stateCode", stateCode);
   const fetchDistricts = async () => {
     try {
       const data = await getDistrictsForState({
-        controllingfieldfk: stateCode || "",
+        controllingfieldfk: stateCode,
         fieldName: "districts",
       });
 
@@ -330,7 +331,7 @@ const Block: React.FC = () => {
       console.log("Filtered Block Data:", filteredBlockData);
 
       setBlockData(filteredBlockData);
-      setShowAllBlocks(filteredBlockData)
+      setShowAllBlocks(filteredBlockData);
 
       const totalCount = filteredBlockData.length;
       setPaginationCount(totalCount);
@@ -466,9 +467,8 @@ const Block: React.FC = () => {
   const handleDistrictChange = async (event: SelectChangeEvent<string>) => {
     const selectedDistrict = event.target.value;
     setSelectedDistrict(selectedDistrict);
-    setShowAllBlocks("")
+    setShowAllBlocks("");
     console.log("selectedDistrict", selectedDistrict);
-
 
     const selectedDistrictData = districtData.find(
       (district) => district.value === selectedDistrict
@@ -515,9 +515,10 @@ const Block: React.FC = () => {
     const blockValue = rowData.value;
     setBlockValueForDelete(blockValue);
   };
-  console.log("cohortIdForDelete", cohortIdForDelete);
 
   const handleSearch = (keyword: string) => {
+    setPageOffset(Numbers.ZERO);
+    setPageCount(Numbers.ONE);
     setSearchKeyword(keyword);
   };
 
@@ -776,7 +777,7 @@ const Block: React.FC = () => {
         message={
           countOfCenter > 0
             ? t("COMMON.ARE_YOU_SURE_DELETE_BLOCK", {
-                centers: `${countOfCenter}`,
+                centerCount: `${countOfCenter}`,
               })
             : t("COMMON.NO_ACTIVE_CENTERS_DELETE")
         }
@@ -796,6 +797,7 @@ const Block: React.FC = () => {
         selectedSort={selectedSort}
         handleSortChange={handleSortChange}
         showSort={true}
+        shouldFetchDistricts={false}
       >
         {loading ? (
           <Box
@@ -869,7 +871,7 @@ const Block: React.FC = () => {
                     },
                   }}
                 >
-                  <MenuItem value="All">{t("COMMON.ALL")}</MenuItem>
+                  {/* <MenuItem value="All">{t("COMMON.ALL")}</MenuItem> */}
                   {districtData.map((districtDetail) => (
                     <MenuItem
                       key={districtDetail.value}

@@ -71,7 +71,7 @@ const HeaderComponent = ({
   selectedCenter,
   handleCenterChange,
   statusValue,
-
+  shouldFetchDistricts=true,
   setStatusValue,
 }: any) => {
   const { t } = useTranslation();
@@ -226,8 +226,10 @@ const HeaderComponent = ({
       }
     };
 
-    fetchData();
-  }, []);
+    if (shouldFetchDistricts) {
+      fetchData();
+    }
+  }, [shouldFetchDistricts]);
   const handleChange = (event: React.SyntheticEvent, newValue: any) => {
     console.log(newValue);
     setStatusValue(newValue);
