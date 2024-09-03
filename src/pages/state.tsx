@@ -77,7 +77,6 @@ const State: React.FC = () => {
   const [stateDataOption, setStateDataOptinon] = useState<any>([]);
   const [stateCodArrray, setStateCodeArr] = useState<any>([]);
   const [stateNameArray, setStateNameArr] = useState<any>([]);
-  const setPid = useStore((state) => state.setPid);
   const columns = [
     { key: "label", title: t("MASTER.STATE"), width: "160" },
     { key: "value", title: t("MASTER.CODE"), width: "160" },

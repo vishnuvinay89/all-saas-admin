@@ -48,6 +48,7 @@ type DistrictDetail = {
 };
 
 type BlockDetail = {
+  code: any;
   parentId(parentId: any): unknown;
   status: Status;
   cohortId(cohortId: any): unknown;
@@ -114,6 +115,7 @@ const Block: React.FC = () => {
   const [cohortIds, setCohortIds] = useState<any>([]);
   const [selectedCohortId, setSelectedCohortId] = useState<string | null>(null);
   const [parentIdBlock, setParentIdBlock] = useState<string | null>(null);
+  const [showAllBlocks, setShowAllBlocks] = useState("All");
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -175,6 +177,7 @@ const Block: React.FC = () => {
 
   const getFilteredCohortData = async () => {
     try {
+      setLoading(true);
       const reqParams = {
         limit: 0,
         offset: 0,
@@ -225,8 +228,10 @@ const Block: React.FC = () => {
       }
       console.log("cohortIds", selectedCohortId);
       setDistrictData(filteredDistrictData);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching and filtering cohort districts", error);
+    } finally {
       setLoading(false);
     }
   };
@@ -238,7 +243,6 @@ const Block: React.FC = () => {
 
   const fetchBlocks = async () => {
     try {
-      setLoading(true);
       const response = await getBlocksForDistricts({
         controllingfieldfk: selectedDistrict || "",
         fieldName: "blocks",
@@ -326,6 +330,7 @@ const Block: React.FC = () => {
       console.log("Filtered Block Data:", filteredBlockData);
 
       setBlockData(filteredBlockData);
+      setShowAllBlocks(filteredBlockData)
 
       const totalCount = filteredBlockData.length;
       setPaginationCount(totalCount);
@@ -347,7 +352,7 @@ const Block: React.FC = () => {
         limit: 0,
         offset: 0,
         filters: {
-          parentId: parentIdBlock, //cohort id of block
+          blocks: parentIdBlock, //cohort id of block
         },
       };
 
@@ -407,12 +412,12 @@ const Block: React.FC = () => {
       dataType: DataType.String,
       width: "130",
     },
-    {
-      key: "status",
-      title: t("Status"),
-      dataType: DataType.String,
-      width: "130",
-    },
+    // {
+    //   key: "status",
+    //   title: t("Status"),
+    //   dataType: DataType.String,
+    //   width: "130",
+    // },
     {
       key: "createdBy",
       title: t("MASTER.CREATED_BY"),
@@ -461,6 +466,9 @@ const Block: React.FC = () => {
   const handleDistrictChange = async (event: SelectChangeEvent<string>) => {
     const selectedDistrict = event.target.value;
     setSelectedDistrict(selectedDistrict);
+    setShowAllBlocks("")
+    console.log("selectedDistrict", selectedDistrict);
+
 
     const selectedDistrictData = districtData.find(
       (district) => district.value === selectedDistrict
@@ -503,7 +511,7 @@ const Block: React.FC = () => {
     setCohortIdForDelete(rowData.cohortId);
     setConfirmationDialogOpen(true);
 
-    setParentIdBlock(rowData.parentId as any | null);
+    setParentIdBlock(rowData.code as any | null);
     const blockValue = rowData.value;
     setBlockValueForDelete(blockValue);
   };
@@ -598,7 +606,7 @@ const Block: React.FC = () => {
     showStateDropdown: false,
     userType: t("MASTER.BLOCKS"),
     searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK"),
-    showFilter: false,
+    showFilter: true,
   };
 
   const handleAddNewBlock = () => {
@@ -767,7 +775,9 @@ const Block: React.FC = () => {
         modalOpen={confirmationDialogOpen}
         message={
           countOfCenter > 0
-            ? t("COMMON.ARE_YOU_SURE_DELETE_BLOCK")
+            ? t("COMMON.ARE_YOU_SURE_DELETE_BLOCK", {
+                centers: `${countOfCenter}`,
+              })
             : t("COMMON.NO_ACTIVE_CENTERS_DELETE")
         }
         handleAction={handleConfirmDelete}
@@ -804,7 +814,7 @@ const Block: React.FC = () => {
                 gap: 3,
                 marginTop: 2,
                 "@media (max-width: 580px)": {
-                  width: "100%",
+                  width: "90%",
                   flexDirection: "column",
                 },
               }}
@@ -836,6 +846,7 @@ const Block: React.FC = () => {
                   width: "25%",
                   "@media (max-width: 580px)": {
                     width: "100%",
+                    marginLeft: 2,
                   },
                 }}
               >
@@ -850,11 +861,22 @@ const Block: React.FC = () => {
                   id="district-select"
                   value={selectedDistrict}
                   onChange={handleDistrictChange}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        maxHeight: 400,
+                      },
+                    },
+                  }}
                 >
+                  <MenuItem value="All">{t("COMMON.ALL")}</MenuItem>
                   {districtData.map((districtDetail) => (
                     <MenuItem
                       key={districtDetail.value}
                       value={districtDetail.value}
+                      sx={{
+                        height: "40px",
+                      }}
                     >
                       {transformLabels(districtDetail.label)}
                     </MenuItem>
@@ -864,16 +886,7 @@ const Block: React.FC = () => {
             </Box>
 
             <Box sx={{ marginTop: 2 }}>
-              {loading ? (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  height="20vh"
-                >
-                  <Loader showBackdrop={false} loadingText="Loading..." />
-                </Box>
-              ) : blockData.length > 0 ? (
+              {filteredCohortOptionData().length > 0 ? (
                 <KaTableComponent
                   columns={columns}
                   data={filteredCohortOptionData()}
@@ -887,19 +900,20 @@ const Block: React.FC = () => {
                   pagination={pagination}
                   onDelete={handleDelete}
                   extraActions={[]}
-                  noDataMessage={t("COMMON.BLOCKS_NOT_FOUND")}
                 />
               ) : (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  height="20vh"
-                >
-                  <Typography marginTop="10px" textAlign="center">
-                    {t("COMMON.BLOCKS_NOT_FOUND")}
-                  </Typography>
-                </Box>
+                !loading && (
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    height="20vh"
+                  >
+                    <Typography marginTop="10px" textAlign="center">
+                      {t("COMMON.BLOCKS_NOT_FOUND")}
+                    </Typography>
+                  </Box>
+                )
               )}
             </Box>
           </>

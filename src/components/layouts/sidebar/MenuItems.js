@@ -48,15 +48,15 @@ const Menuitems = [
     // href: "/",
     subOptions: [
       {
-        title: "State",
+        title: "MASTER.STATE",
         href: "/state",
       },
       {
-        title: "District",
+        title: "MASTER.DISTRICTS",
         href: "/district",
       },
       {
-        title: "Block",
+        title: "MASTER.BLOCKS",
         href: "/block",
       },
     ],

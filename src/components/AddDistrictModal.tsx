@@ -93,9 +93,9 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
       value: initialValues.value ?? "",
       controllingField: initialValues.controllingField ?? stateCode,
     });
-    setErrors({});
+    setErrors({}); 
   }, [initialValues, stateCode]);
-
+  
   const isValidName = (input: string) =>
     /^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/.test(input);
 
@@ -112,31 +112,14 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
 
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-    if (value === "") {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: t(
-          field === "name"
-            ? "COMMON.DISTRICT_NAME_REQUIRED"
-            : field === "controllingField"
-              ? "COMMON.STATE_NAME_REQUIRED"
-              : "COMMON.CODE_REQUIRED"
-        ),
-      }));
-    } else if (field === "name" && !isValidName(value.trim())) {
-      setErrors((prev) => ({ ...prev, [field]: t("COMMON.INVALID_INPUT") }));
-    } else if (field === "value" && !isValidCode(value)) {
-      setErrors((prev) => ({ ...prev, [field]: t("COMMON.INVALID_TEXT") }));
-    } else {
-      setErrors((prev) => ({ ...prev, [field]: null }));
-    }
+    setErrors((prev) => ({ ...prev, [field]: null }));
   };
 
   const validateForm = () => {
     const newErrors: { name?: string; value?: string } = {};
 
     if (!formData.name) {
-      newErrors.name = t("COMMON.STATE_NAME_REQUIRED");
+      newErrors.name = t("COMMON.DISTRICT_NAME_REQUIRED");
     } else if (!isValidName(formData.name.trim())) {
       newErrors.name = t("COMMON.INVALID_TEXT");
     }

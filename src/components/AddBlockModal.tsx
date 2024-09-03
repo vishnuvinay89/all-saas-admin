@@ -53,7 +53,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [districts, setDistricts] = useState<
-    { value: string; label: string; cohortId: string | null}[]
+    { value: string; label: string; cohortId: string | null }[]
   >([]);
 
   const [districtsOptionRead, setDistrictsOptionRead] = useState<any>([]);
@@ -185,9 +185,11 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     value: string,
     requiredMessage: string
   ) => {
-    if (!value) return requiredMessage;
-    if (field !== "controllingField" && !/^[a-zA-Z\s]+$/.test(value))
+    if (!value) return null; 
+
+    if (field !== "controllingField" && !/^[a-zA-Z\s]+$/.test(value)) {
       return t("COMMON.INVALID_TEXT");
+    }
 
     const isUnique = (fieldName: string, value: string) => {
       return true;
@@ -215,35 +217,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
 
       setFormData((prev) => ({ ...prev, [field]: value }));
 
-      let errorMessage: string | null = null;
-
-      if (field === "name") {
-        errorMessage = validateField(
-          field,
-          value,
-          t("COMMON.BLOCK_NAME_REQUIRED")
-        );
-      } else if (field === "value") {
-        errorMessage = validateField(
-          field,
-          value,
-          t("COMMON.BLOCK_CODE_REQUIRED")
-        );
-      } else if (field === "controllingField") {
-        errorMessage = validateField(
-          field,
-          value,
-          t("COMMON.DISTRICT_NAME_REQUIRED")
-        );
-
-        const selectedDistrict = districts.find(
-          (district) => district.value === value
-        );
-        setCohortIdAddNewDropdown(selectedDistrict?.cohortId || null);
-
-        console.log("Selected District:", selectedDistrict); 
-        console.log("Cohort ID Set:", selectedDistrict?.cohortId); 
-      }
+      let errorMessage: string | null = validateField(field, value, "");
 
       setErrors((prev) => ({
         ...prev,
@@ -253,21 +227,24 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
 
   const validateForm = () => {
     const newErrors = {
-      name: validateField(
-        "name",
-        formData.name,
-        t("COMMON.BLOCK_NAME_REQUIRED")
-      ),
-      value: validateField(
-        "value",
-        formData.value,
-        t("COMMON.BLOCK_CODE_REQUIRED")
-      ),
-      controllingField: validateField(
-        "controllingField",
-        formData.controllingField,
-        t("COMMON.DISTRICT_NAME_REQUIRED")
-      ),
+      name:
+        validateField("name", formData.name, t("COMMON.BLOCK_NAME_REQUIRED")) ||
+        (!formData.name ? t("COMMON.BLOCK_NAME_REQUIRED") : null),
+      value:
+        validateField(
+          "value",
+          formData.value,
+          t("COMMON.BLOCK_CODE_REQUIRED")
+        ) || (!formData.value ? t("COMMON.BLOCK_CODE_REQUIRED") : null),
+      controllingField:
+        validateField(
+          "controllingField",
+          formData.controllingField,
+          t("COMMON.DISTRICT_NAME_REQUIRED")
+        ) ||
+        (!formData.controllingField
+          ? t("COMMON.DISTRICT_NAME_REQUIRED")
+          : null),
     };
 
     setErrors(newErrors);
@@ -293,7 +270,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
         formData.controllingField,
         currentCohortId,
         fieldId,
-        districtId,
+        districtId
       );
 
       setFormData({
@@ -323,6 +300,13 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
               e as React.ChangeEvent<HTMLInputElement>
             )
           }
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                maxHeight: 400, 
+              },
+            },
+          }}      
           fullWidth
           displayEmpty
           variant="outlined"
