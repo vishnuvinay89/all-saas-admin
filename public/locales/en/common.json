@@ -5,11 +5,12 @@
     "ADD_NEW": "Add New",
     "PAGE_SIZE": "Page Size",
     "DELETE_USER": "Delete User Permanently",
+    "REMOVE_USER_FROM_CLASS": "Remove user from class",
     "DELETE_USER_WITH_REASON": "Delete User",
     "USER_DELETED_PERMANENTLY": "User Successfully Deleted!",
     "OTHER_REASON": "Other Reason",
     "OTHER_REASON_PLACEHOLDER": "Enter Other Reason",
-    "REASON_FOR_DELETION": "Reason for Deletion",
+    "REASON_FOR_DELETION": "Reason",
     "INCORRECT_DATA_ENTRY": "Incorrect Data Entry",
     "DUPLICATED_USER": "Duplicate User",
     "NO_USER_FOUND": "User not found",
@@ -31,8 +32,8 @@
     "CANCEL": "Cancel",
     "ARE_YOU_SURE_DELETE": "There are {{block}} Active blocks in this district you cannot delete it.",
     "NO_ACTIVE_BLOCKS_DELETE": "There are no active blocks in this district. Do you want to delete it?",
-    "ARE_YOU_SURE_DELETE_BLOCK": "There are Active centers in this block you cannot delete it",
-    "NO_ACTIVE_CENTERS_DELETE": "There are no active centers in this block. Do you want to delete it?",
+    "ARE_YOU_SURE_DELETE_BLOCK": "There are Active Classes in this block you cannot delete it",
+    "NO_ACTIVE_CENTERS_DELETE": "There are no active Classes in this block. Do you want to delete it?",
     "CONFIRM_DELETE": "Confirm Delete",
     "ADD_STATE": "Add New State",
     "ADD_STATE_CODE": "Code",
@@ -121,27 +122,27 @@
     "REASSIGN_CENTERS": "Assign Class",
     "REASSIGN_BLOCKS": "Assign Blocks",
     "REASSIGN": "Assign",
-    "COHORT_ID_NOT_FOUND": "Could not found cohort Id for {{block}} ",
+    "COHORT_ID_NOT_FOUND": "Could not found class Id for {{block}} ",
     "CENTERS_REASSIGN_SUCCESSFULLY": "Class Assign successfully",
     "BLOCKS_REASSIGN_SUCCESSFULLY": "Block Assign successfully",
     "CENTERS_REASSIGN_FAILED": "Class Assignment fails",
     "BLOCKS_REASSIGN_FAILED": "Block Assignment fails",
-    "USER_COHORTS": "{{name}} belongs to below cohorts",
-    "DELETE_COHORT_WARNING": "Do you want to delete user from cohort?",
+    "USER_COHORTS": "{{name}} belongs to below classes",
+    "DELETE_COHORT_WARNING": "Do you want to delete user from class?", 
 
-    "SLOT_NAME":"Slot",
-    "SLOT_CODE":"Slot Code",
+    "SLOT_NAME": "Slot",
+    "SLOT_CODE": "Slot Code",
     "ADD_SLOT": "Add New Slot",
     "UPDATE_SLOT": "Update Slot",
     "SLOT_UPDATED_SUCCESS": "Slot Updated Successfully!",
-    "SLOT_ADDED_SUCCESS":"Slot Added Successfully!",
-    "CLASS_NAME":"Class",
-    "CLASS_CODE":"Class Code",
+    "SLOT_ADDED_SUCCESS": "Slot Added Successfully!",
+    "CLASS_NAME": "Class",
+    "CLASS_CODE": "Class Code",
     "ADD_CLASS": "Add New Class",
     "UPDATE_CLASS": "Update Class",
     "CLASS_UPDATED_SUCCESS": "Class Updated Successfully!",
-    "CLASS_ADDED_SUCCESS":"Class Added Successfully!",
-    "CLASS_NOT_FOUND":"Class not found"
+    "CLASS_ADDED_SUCCESS": "Class Added Successfully!",
+    "CLASS_NOT_FOUND": "Class not found"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -175,8 +176,8 @@
     "BLOCK": "Block",
     "NEW_FACILITATOR": "New Teacher",
     "SEARCHBAR_PLACEHOLDER": "Search Teacher..",
-    "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher is created, and credentials sent successfully!",
-    "USER_CREDENTIALS_WILL_BE_SEND_SOON": "Teacher is created ,credentials will be sent soon",
+    "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher is created successfully!",
+    "USER_CREDENTIALS_WILL_BE_SEND_SOON": "Teacher is created successfully",
 
     "FACILITATOR_UPDATED_SUCCESSFULLY": "Teacher has been successfully updated!",
     "EDIT_FACILITATOR": "Edit Teacher"
@@ -189,7 +190,7 @@
     "NEW_LEARNER": "New Students",
     "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
     "LEARNER_CREATED_SUCCESSFULLY": "Student has been successfully created!",
-    "USER_CREDENTIALS_WILL_BE_SEND_SOON": "Student is created, credentials will be sent soon",
+    "USER_CREDENTIALS_WILL_BE_SEND_SOON": "Student is created",
 
     "LEARNER_UPDATED_SUCCESSFULLY": "Student has been successfully updated!",
     "EDIT_LEARNER": "Edit Students"
@@ -198,8 +199,8 @@
     "SEARCHBAR_PLACEHOLDER": "Search Team leaders..",
     "NEW_TEAM_LEADER": "New Team Leader",
     "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
-    "TEAM_LEADER_CREATED_SUCCESSFULLY": "Team Leader is created, and credentials sent successfully!",
-    "USER_CREDENTIALS_WILL_BE_SEND_SOON": "Team Leader is created ,credentials will be sent soon",
+    "TEAM_LEADER_CREATED_SUCCESSFULLY": "Team Leader is created successfully!",
+    "USER_CREDENTIALS_WILL_BE_SEND_SOON": "Team Leader is created ",
 
     "TEAM_LEADER_UPDATED_SUCCESSFULLY": "Team Leader has been successfully updated!",
     "EDIT_TEAM_LEADER": "Edit Team Leader"
@@ -253,15 +254,15 @@
     "SEARCHBAR_PLACEHOLDER_CLUSTER": "Search Cluster",
     "CLUSTER": "Cluster",
     "CLUSTERS": "Clusters",
-   
-    "SCHOOL":"School",
-    "SCHOOLS":"Schools",
-    "SEARCHBAR_PLACEHOLDER_SCHOOL":"Search School",
-    "SEARCHBAR_PLACEHOLDER_CLASS":"Search Class",
-    "CLASSES":"Classes",
-    "SLOT":"Slot",
-    "SLOTS":"Slots",
-    "SEARCHBAR_PLACEHOLDER_SLOT":"Search Slot"
+
+    "SCHOOL": "School",
+    "SCHOOLS": "Schools",
+    "SEARCHBAR_PLACEHOLDER_SCHOOL": "Search School",
+    "SEARCHBAR_PLACEHOLDER_CLASS": "Search Class",
+    "CLASSES": "Classes",
+    "SLOT": "Slot",
+    "SLOTS": "Slots",
+    "SEARCHBAR_PLACEHOLDER_SLOT": "Search Slot"
   },
   "CENTERS": {
     "CENTER": "Class",
@@ -285,7 +286,6 @@
     "SEND_REQUEST": "Send Request",
     "SURE_DELETE_CENTER": "Are you sure you want to Delete ",
     "YOU_CANT_DELETE_CENTER_HAS_ACTIVE_LEARNERS": "You can't delete the Class because it has {{activeMembers}} Active Students",
-
     "CENTER_UPDATE_SUCCESSFULLY": "Class has been Successfully Updated",
     "CENTER_DELETE_SUCCESSFULLY": "Class has been Successfully Deleted",
     "CENTER_CREATED_SUCCESSFULLY": "Class Created Successfully",
@@ -295,7 +295,11 @@
     "ACTIVE_MEMBERS": "Active Members",
     "ARCHIVED_LEARNERS": "Archived Students",
     "ACTIVE_LEARNERS": "Active Students",
-    "YOU_CANT_DELETE_CENTER_HAS_ACTIVE_LEARNERS": "You can't delete the center because it has {{activeMembers}} Active Students"
+    "LONG_ABSENTEE": "Long Absentee",
+    "TAKEN_TC": "Taken TC",
+    "ALLOCATION_CHANGE": "Allocation  Change",
+    "INCORRECT_ENTRY": "Incorrect Entry",
+    "DUPLICATION_ENTRY": "Duplicate Entry"
   },
   "FORM": {
     "FULL_NAME": "Full Name",

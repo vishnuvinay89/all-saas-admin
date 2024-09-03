@@ -44,8 +44,11 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
   const { t } = useTranslation();
   const theme = useTheme<any>();
   const reasons = [
-    { value: "Incorrect Data Entry", label: t("COMMON.INCORRECT_DATA_ENTRY") },
-    { value: "Duplicated User", label: t("COMMON.DUPLICATED_USER") },
+    {value:t("CENTERS.LONG_ABSENTEE"), label:t("CENTERS.LONG_ABSENTEE")},
+    { value:t("CENTERS.TAKEN_TC"),label:t("CENTERS.TAKEN_TC")},
+    { value:t("CENTERS.ALLOCATION_CHANGE"),label:t("CENTERS.ALLOCATION_CHANGE")},
+    { value:t("CENTERS.INCORRECT_ENTRY"),label:t("CENTERS.INCORRECT_ENTRY")},
+    {value:t("CENTERS.DUPLICATION_ENTRY"), label : t("CENTERS.DUPLICATION_ENTRY")},
   ];
   const [checkedCohortDeletion, setCheckedCohortDeletion] = useState<boolean>(centers === "-" ? true : false);
 
@@ -88,7 +91,7 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
     <CustomModal
       open={open}
       handleClose={handleClose}
-      title={t("COMMON.DELETE_USER")}
+      title={t("COMMON.REMOVE_USER_FROM_CLASS")}
       primaryBtnText={t("COMMON.DELETE_USER_WITH_REASON")}
       primaryBtnClick={wrappedHandleDeleteAction}
       primaryBtnDisabled={confirmButtonDisable}
