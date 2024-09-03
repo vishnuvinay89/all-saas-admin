@@ -59,10 +59,23 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   const [districtsOptionRead, setDistrictsOptionRead] = useState<any>([]);
   const [districtCodeArr, setDistrictCodeArr] = useState<any>([]);
   const [districtNameArr, setDistrictNameArr] = useState<any>([]);
-
   const [cohortIdAddNewDropdown, setCohortIdAddNewDropdown] = useState<any>("");
+  const [stateCode, setStateCode] = useState<any>("");
+  const [stateName, setStateName] = useState<any>("");
 
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const storedUserData = JSON.parse(
+      localStorage.getItem("adminInfo") || "{}"
+    );
+    const stateCodes = storedUserData?.customFields[0]?.code;
+    const stateNames = storedUserData?.customFields[0]?.value;
+    setStateCode(stateCodes);
+    setStateName(stateNames);
+  }, [open]);
+
+  console.log("state", stateCode, stateName);
 
   useEffect(() => {
     setFormData({
@@ -88,6 +101,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   const fetchDistricts = async () => {
     try {
       const data = await getDistrictsForState({
+        controllingfieldfk: stateCode || "",
         fieldName: "districts",
       });
 
@@ -119,11 +133,9 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
         limit: 0,
         offset: 0,
         filters: {
-          name: "",
-          states: "",
+          states: stateCode,
           type: "DISTRICT",
         },
-        sort: ["name", "asc"],
       };
 
       const response = await getCohortList(reqParams);
@@ -185,7 +197,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     value: string,
     requiredMessage: string
   ) => {
-    if (!value) return null; 
+    if (!value) return null;
 
     if (field !== "controllingField" && !/^[a-zA-Z\s]+$/.test(value)) {
       return t("COMMON.INVALID_TEXT");
@@ -303,10 +315,10 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
           MenuProps={{
             PaperProps: {
               sx: {
-                maxHeight: 400, 
+                maxHeight: 400,
               },
             },
-          }}      
+          }}
           fullWidth
           displayEmpty
           variant="outlined"
