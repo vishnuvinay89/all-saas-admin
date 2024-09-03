@@ -118,11 +118,11 @@ const Block: React.FC = () => {
   const [showAllBlocks, setShowAllBlocks] = useState("All");
   const [statusValue, setStatusValue] = useState(Status.ACTIVE);
   const [pageSize, setPageSize] = React.useState<string | number>(10);
-  
+
   const [filters, setFilters] = useState({
     name: searchKeyword,
     states: stateCode,
-    districts: selectedDistrict,
+    districts: selectedDistrict || "",
     type: CohortTypes.BLOCK,
     status: [statusValue],
   });
@@ -255,7 +255,10 @@ const Block: React.FC = () => {
   const fetchBlocks = async () => {
     try {
       const response = await getBlocksForDistricts({
-        controllingfieldfk: selectedDistrict || "",
+        controllingfieldfk:
+          selectedDistrict === t("COMMON.ALL")
+            ? ""
+            : selectedDistrict || t("COMMON.ALL"),
         fieldName: "blocks",
       });
       console.log("selectedDistrict block", selectedDistrict);
@@ -287,7 +290,16 @@ const Block: React.FC = () => {
       const reqParams = {
         limit: 0,
         offset: 0,
-        filters: filters,
+        filters: {
+          name: searchKeyword,
+          states: stateCode,
+          districts:
+            selectedDistrict === t("COMMON.ALL")
+              ? ""
+              : selectedDistrict || t("COMMON.ALL"),
+          type: CohortTypes.BLOCK,
+          status: [statusValue],
+        },
         sort: sortBy,
       };
 
@@ -913,7 +925,7 @@ const Block: React.FC = () => {
                     },
                   }}
                 >
-                  {/* <MenuItem value="All">{t("COMMON.ALL")}</MenuItem> */}
+                  <MenuItem value={t("COMMON.ALL")}>{t("COMMON.ALL")}</MenuItem>
                   {districtData.map((districtDetail) => (
                     <MenuItem
                       key={districtDetail.value}
