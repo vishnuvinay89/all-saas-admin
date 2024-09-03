@@ -17,6 +17,7 @@ import FilterSearchBar from "@/components/FilterSearchBar";
 import Loader from "@/components/Loader";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import { getFrameworkDetails } from "@/services/coursePlanner";
+import coursePlannerStore from "@/store/coursePlannerStore";
 
 // Define Card interface
 interface Card {
@@ -47,7 +48,8 @@ const SubjectDetails = () => {
   const [subject, setSubject] = useState<any>();
   const [medium, setMedium] = useState<any>([]);
   const [grade, setGrade] = useState<any>([]);
-
+  const setTaxanomySubject = coursePlannerStore((state) => state.setTaxanomySubject);
+  
   useEffect(() => {
     const fetchData = async () => {
       setTimeout(() => {
@@ -105,12 +107,13 @@ const SubjectDetails = () => {
     router.back();
   };
 
-  const handleCopyLink = (subject: string) => {};
+  const handleCopyLink = (subject: any) => {};
 
-  const handleCardClick = (subject: string) => {
-    router.push(`/importCsv?subject=${encodeURIComponent(subject)}`);
+  const handleCardClick = (subject: any) => {
+    router.push(`/importCsv?subject=${encodeURIComponent(subject?.name)}`);
+    setTaxanomySubject(subject?.name);
   };
- 
+
   return (
     <Box>
       <FilterSearchBar

@@ -31,9 +31,11 @@ import KeyboardBackspaceOutlinedIcon from '@mui/icons-material/KeyboardBackspace
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import dayjs from 'dayjs';
 import { Role } from "@/utils/app.constant";
+import coursePlannerStore from "@/store/coursePlannerStore";
 
 const ImportCsv = () => {
   const router = useRouter();
+  const store = coursePlannerStore();
   const { subject } = router.query;
   const { t } = useTranslation();
   const [subjectDetails, setSubjectDetails] = useState<any | null>(null);
@@ -77,10 +79,10 @@ const ImportCsv = () => {
     try {
       setLoading(true);
       const response = await getTargetedSolutions({
-        subject: 'Tamil',
+        subject: store?.taxanomySubject,
         class: '4',
         state: 'Maharashtra',
-        board: 'TQKR',
+        board: store?.boardName,
         type: 'mainCourse',
         medium: 'Telugu',
       });
@@ -115,10 +117,10 @@ const ImportCsv = () => {
       });
   
       const updatedResponse = await getTargetedSolutions({
-        subject: 'Tamil',
+        subject: store?.taxanomySubject,
         class: '4',
         state: 'Maharashtra',
-        board: 'TQKR',
+        board: store?.boardName,
         type: 'mainCourse',
         medium: 'Telugu',
       });
@@ -175,10 +177,10 @@ const ImportCsv = () => {
   const handleUpload = async () => {
     if (selectedFile) {
       const metaData: CoursePlannerMetaData = {
-        subject: 'Tamil',
+        subject: store?.taxanomySubject,
         class: '4',
         state: 'Maharashtra',
-        board: 'TQKR',
+        board: store?.boardName,
         type: 'mainCourse',
         medium: 'Telugu',
       };
