@@ -925,7 +925,7 @@ const Block: React.FC = () => {
                     },
                   }}
                 >
-                  <MenuItem value="All">{t("COMMON.ALL")}</MenuItem>
+                  <MenuItem value={t("COMMON.ALL")}>{t("COMMON.ALL")}</MenuItem>
                   {districtData.map((districtDetail) => (
                     <MenuItem
                       key={districtDetail.value}
