@@ -270,9 +270,9 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
           setShowForm={setShowForm}
         />
       </>
-      {dynamicFormForBlock && schema && uiSchema && selectedBlockCohortId && (
+      {dynamicFormForBlock && schema && uiSchema && selectedBlockCohortId &&  (
         <>
-          {showForm && (
+          {showForm ? (
             <DynamicForm
               schema={schema}
               uiSchema={uiSchema}
@@ -327,7 +327,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
                 </Button>
               </Box>
             </DynamicForm>
-          )}
+          ) : null}
         </>
       )}
       {!selectedBlockCohortId && selectedBlockCohortId !== "" && (
