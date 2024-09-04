@@ -234,10 +234,12 @@ const Block: React.FC = () => {
         .filter((district: { label: any }) =>
           districtNameArr.includes(district.label)
         );
-      if (filteredDistrictData.length > 0) {
+      if (
+        filteredDistrictData.length > 0 &&
+        selectedDistrict !== t("COMMON.ALL")
+      ) {
         setSelectedDistrict(filteredDistrictData[0].value);
       }
-      console.log("cohortIds", selectedCohortId);
       setDistrictData(filteredDistrictData);
       setLoading(false);
     } catch (error) {
@@ -406,15 +408,12 @@ const Block: React.FC = () => {
   }
 
   const filteredCohortOptionData = () => {
-    const startIndex = pageOffset * pageLimit;
-    const endIndex = startIndex + pageLimit;
-
-    const transformedData = blockData.map((item) => ({
+    const transformedData = blockData?.map((item) => ({
       ...item,
-      label: transformLabels(item.label),
+      label: transformLabels(item?.label),
     }));
 
-    return transformedData.slice(startIndex, endIndex);
+    return transformedData;
   };
 
   const columns = [
@@ -482,10 +481,13 @@ const Block: React.FC = () => {
   };
 
   const handleDistrictChange = async (event: SelectChangeEvent<string>) => {
+    setPageOffset(Numbers.ZERO);
+    setPageCount(Numbers.ONE);
+
+    setLoading(true);
     const selectedDistrict = event.target.value;
     setSelectedDistrict(selectedDistrict);
     setShowAllBlocks("");
-    console.log("selectedDistrict", selectedDistrict);
 
     const selectedDistrictData = districtData.find(
       (district) => district.value === selectedDistrict
@@ -496,6 +498,7 @@ const Block: React.FC = () => {
     setSelectedCohortId(cohortId);
 
     await getCohortSearchBlock(selectedDistrict);
+    setLoading(false);
   };
 
   console.log("selectedCohortId", selectedCohortId);
@@ -513,7 +516,7 @@ const Block: React.FC = () => {
     const initialValues: StateDetail = {
       name: rowData.name || "",
       value: rowData.code || "",
-      selectedDistrict: selectedDistrict || "",
+      selectedDistrict: selectedDistrict || "All",
       controllingField: "",
       block: "",
       label: "",

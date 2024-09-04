@@ -268,14 +268,6 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
       const currentCohortId: any = cohortIdAddNewDropdown;
       console.log("Cohort ID on Submit:", currentCohortId);
 
-      if (!currentCohortId) {
-        setErrors((prev) => ({
-          ...prev,
-          controllingField: t("COMMON.DISTRICT_NOT_VALID"),
-        }));
-        return;
-      }
-
       onSubmit(
         formData.name,
         formData.value,
@@ -305,38 +297,39 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
       <DialogTitle sx={{ fontSize: "14px" }}>{dialogTitle}</DialogTitle>
       <Divider />
       <DialogContent>
-        <Select
-          value={formData.controllingField}
-          onChange={(e) =>
-            handleChange("controllingField")(
-              e as React.ChangeEvent<HTMLInputElement>
-            )
-          }
-          MenuProps={{
-            PaperProps: {
-              sx: {
-                maxHeight: 400,
+        {isEditing && !(formData.controllingField === "All") && (
+          <Select
+            value={formData.controllingField}
+            onChange={(e) =>
+              handleChange("controllingField")(
+                e as React.ChangeEvent<HTMLInputElement>
+              )
+            }
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  maxHeight: 400,
+                },
               },
-            },
-          }}
-          fullWidth
-          displayEmpty
-          variant="outlined"
-          margin="dense"
-          error={!!errors.controllingField}
-          disabled={isEditing}
-        >
-          <MenuItem value="">{t("COMMON.SELECT_DISTRICT")}</MenuItem>
-          {districts.length > 0 ? (
-            districts.map((district: any) => (
-              <MenuItem key={district.value} value={district.value}>
-                {transformLabels(district.label)}
-              </MenuItem>
-            ))
-          ) : (
-            <MenuItem disabled>{t("COMMON.NO_DISTRICTS")}</MenuItem>
-          )}
-        </Select>
+            }}
+            fullWidth
+            displayEmpty
+            variant="outlined"
+            margin="dense"
+            disabled={isEditing}
+          >
+            <MenuItem value="">{t("COMMON.SELECT_DISTRICT")}</MenuItem>
+            {districts.length > 0 ? (
+              districts.map((district: any) => (
+                <MenuItem key={district.value} value={district.value}>
+                  {transformLabels(district.label)}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem disabled>{t("COMMON.NO_DISTRICTS")}</MenuItem>
+            )}
+          </Select>
+        )}
         {errors.controllingField && (
           <Typography variant="caption" color="error">
             {errors.controllingField}
