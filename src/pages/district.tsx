@@ -263,7 +263,7 @@ const District: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (stateCode && stateValue) {
+    if (districtData) {
       getFilteredCohortData();
     }
   }, [searchKeyword, pageLimit, pageOffset, stateCode, sortBy, stateValue]);
@@ -606,6 +606,7 @@ const District: React.FC = () => {
         handleSortChange={handleSortChange}
         showSort={true}
         selectedSort={selectedSort}
+        shouldFetchDistricts={false}
         handleSearch={handleSearch}
         showFilter={false}
         handleAddUserClick={() => {
