@@ -118,6 +118,7 @@ const Block: React.FC = () => {
   const [showAllBlocks, setShowAllBlocks] = useState("All");
   const [statusValue, setStatusValue] = useState(Status.ACTIVE);
   const [pageSize, setPageSize] = React.useState<string | number>(10);
+  const [isFirstVisit, setIsFirstVisit] = useState(true);
 
   const [filters, setFilters] = useState({
     name: searchKeyword,
@@ -234,11 +235,14 @@ const Block: React.FC = () => {
         .filter((district: { label: any }) =>
           districtNameArr.includes(district.label)
         );
-      if (
-        filteredDistrictData.length > 0 &&
-        selectedDistrict !== t("COMMON.ALL")
-      ) {
-        setSelectedDistrict(filteredDistrictData[0].value);
+      if (isFirstVisit) {
+        if (
+          filteredDistrictData.length > 0 &&
+          selectedDistrict !== t("COMMON.ALL")
+        ) {
+          setSelectedDistrict(filteredDistrictData[0].value);
+        }
+        setIsFirstVisit(false); 
       }
       setDistrictData(filteredDistrictData);
       setLoading(false);
@@ -252,7 +256,7 @@ const Block: React.FC = () => {
     if (stateCode) {
       getFilteredCohortData();
     }
-  }, [searchKeyword, pageLimit, pageOffset, stateCode]);
+  }, [isFirstVisit,searchKeyword, pageLimit, pageOffset, stateCode]);
 
   const fetchBlocks = async () => {
     try {
@@ -486,7 +490,6 @@ const Block: React.FC = () => {
     setPageOffset(Numbers.ZERO);
     setPageCount(Numbers.ONE);
 
-    setLoading(true);
     const selectedDistrict = event.target.value;
     setSelectedDistrict(selectedDistrict);
     setShowAllBlocks("");
@@ -500,7 +503,6 @@ const Block: React.FC = () => {
     setSelectedCohortId(cohortId);
 
     await getCohortSearchBlock(selectedDistrict);
-    setLoading(false);
   };
 
   console.log("selectedCohortId", selectedCohortId);
