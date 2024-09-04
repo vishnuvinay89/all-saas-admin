@@ -47,8 +47,8 @@ const DependentFields: React.FC<DependentFieldsProps> = ({
     const fieldsOfInterest = ['board', 'medium', 'grade', 'subject'];
     const fieldIds: { [key: string]: string } = {};
 
-    data.fields.forEach((field: { name: string; fieldId: string }) => {
-      if (fieldsOfInterest.includes(field.name)) {
+    data?.fields?.forEach((field: { name: string; fieldId: string }) => {
+      if (fieldsOfInterest?.includes(field.name)) {
         fieldIds[field.name] = field.fieldId;
       }
     });
@@ -62,19 +62,19 @@ const DependentFields: React.FC<DependentFieldsProps> = ({
     if (fieldIds) {
       const arrangedData = {
         board: {
-          fieldId: fieldIds.board,
+          fieldId: fieldIds?.board,
           boardName: selectedBoard,
         },
         medium: {
-          fieldId: fieldIds.medium,
+          fieldId: fieldIds?.medium,
           mediumName: selectedMedium,
         },
         grade: {
-          fieldId: fieldIds.grade,
+          fieldId: fieldIds?.grade,
           gradeName: selectedGrade,
         },
         subject: {
-          fieldId: fieldIds.subject,
+          fieldId: fieldIds?.subject,
           subjectName: selectedSubjectLabel,
         },
       };
