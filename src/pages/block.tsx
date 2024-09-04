@@ -408,14 +408,16 @@ const Block: React.FC = () => {
   }
 
   const filteredCohortOptionData = () => {
+    const startIndex = pageOffset * pageLimit;
+    const endIndex = startIndex + pageLimit;
+
     const transformedData = blockData?.map((item) => ({
       ...item,
-      label: transformLabels(item?.label),
+      label: transformLabels(item.label),
     }));
 
-    return transformedData;
+    return transformedData.slice(startIndex, endIndex);
   };
-
   const columns = [
     {
       key: "name",
