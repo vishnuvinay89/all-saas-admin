@@ -55,6 +55,9 @@ export enum DataKey {
   NAME = "name",
   ACTIVE_MEMBER = "totalActiveMembers",
   ARCHIVED_MEMBERS = "totalArchivedMembers",
+  CENTERS = "centers",
+  MOBILE = "mobile",
+  CLASS_NAME = "className",
 }
 
 export enum DateFormat {
@@ -88,4 +91,8 @@ export enum InputTypes {
 }
 export enum apiCatchingDuration {
   GETREADFORM = 36000000,
+}
+
+export enum passwordKeys {
+  OBLF = "@oblf",
 }

@@ -232,7 +232,7 @@ const Center: React.FC = () => {
 
           console.log("cohortType", cohortType);
           const requiredData = {
-            name: item?.name,
+            className: item?.name,
             status: item?.status,
             updatedBy: item?.updatedBy,
             createdBy: item?.createdBy,
@@ -612,8 +612,8 @@ const Center: React.FC = () => {
   };
 
   const handleAddFacilitator = () => {
-    console.log("handleAddFacilitator clicked")
-  }
+    console.log("handleAddFacilitator clicked");
+  };
 
   // add  extra buttons
   const extraActions: any = [
@@ -881,34 +881,51 @@ const Center: React.FC = () => {
     const formData = data?.formData;
     console.log("formData", centerFormData);
 
-    const schoolFieldOptions = centerFormData.fields.find((item:any) => item.name === 'nondependantschools');
-    const schoolField = schoolFieldOptions.options.find((item:any) => item.value === formData.nondependantschools);
-    
-    const classFieldOptions = centerFormData.fields.find((item:any) => item.name === 'classes');
-    const classField = classFieldOptions.options.find((item:any) => item.value === formData.classes);
-    
-    const slotFieldOptions = centerFormData.fields.find((item:any) => item.name === 'slots');
-    const slotField = slotFieldOptions.options.find((item:any) => item.value === formData.slots);
+    const schoolFieldOptions = centerFormData.fields.find(
+      (item: any) => item.name === "nondependantschools"
+    );
+    const schoolField = schoolFieldOptions.options.find(
+      (item: any) => item.value === formData.nondependantschools
+    );
 
-    
-    console.log("cohortName", schoolField.label, classField.label, slotField.label);
+    const classFieldOptions = centerFormData.fields.find(
+      (item: any) => item.name === "classes"
+    );
+    const classField = classFieldOptions.options.find(
+      (item: any) => item.value === formData.classes
+    );
+
+    const slotFieldOptions = centerFormData.fields.find(
+      (item: any) => item.name === "slots"
+    );
+    const slotField = slotFieldOptions.options.find(
+      (item: any) => item.value === formData.slots
+    );
+
+    console.log(
+      "cohortName",
+      schoolField.label,
+      classField.label,
+      slotField.label
+    );
 
     const reqParams = {
-      limit:1, 
+      limit: 1,
       offset: 0,
       filters: {
         name: schoolField.label,
-        type: "SCHOOL"
-      }    
+        type: "SCHOOL",
+      },
     };
 
     const response = await getCohortList(reqParams);
     const parentCohort = response?.results?.cohortDetails[0];
 
     const { timePlus5, timeMinus5 } = getModifiedTimes(slotField.label);
-    
+
     const newClassCohort = {
-      name: schoolField.label + ", " + classField.label + ", " + slotField.label,
+      name:
+        schoolField.label + ", " + classField.label + ", " + slotField.label,
       type: "COHORT",
       parentId: parentCohort.cohortId,
       params: {
@@ -943,37 +960,37 @@ const Center: React.FC = () => {
     }
     fetchUserList();
   };
- 
-  const convertTo24HourFormat = (time12h:any) => {
-    const [time, modifier] = time12h.split(' ');
 
-    let [hours, minutes] = time.split(':');
+  const convertTo24HourFormat = (time12h: any) => {
+    const [time, modifier] = time12h.split(" ");
+
+    let [hours, minutes] = time.split(":");
     hours = parseInt(hours, 10);
 
-    if (modifier === 'PM' && hours !== 12) {
+    if (modifier === "PM" && hours !== 12) {
       hours += 12;
     }
-    if (modifier === 'AM' && hours === 12) {
+    if (modifier === "AM" && hours === 12) {
       hours = 0;
     }
 
-    return `${hours.toString().padStart(2, '0')}:${minutes}`;
+    return `${hours.toString().padStart(2, "0")}:${minutes}`;
   };
 
-  const addMinutes = (time:any, minutesToAdd:any) => {
-    const [hours, minutes] = time.split(':').map(Number);
+  const addMinutes = (time: any, minutesToAdd: any) => {
+    const [hours, minutes] = time.split(":").map(Number);
     const date = new Date();
     date.setHours(hours);
     date.setMinutes(minutes + minutesToAdd);
 
-    const hours24 = date.getHours().toString().padStart(2, '0');
-    const minutes24 = date.getMinutes().toString().padStart(2, '0');
+    const hours24 = date.getHours().toString().padStart(2, "0");
+    const minutes24 = date.getMinutes().toString().padStart(2, "0");
 
     return `${hours24}:${minutes24}`;
   };
 
-  const getModifiedTimes = (timeRange:any) => {
-    const startTime12h = timeRange.split(' - ')[0];
+  const getModifiedTimes = (timeRange: any) => {
+    const startTime12h = timeRange.split(" - ")[0];
     const startTime24h = convertTo24HourFormat(startTime12h);
 
     const timePlus5 = addMinutes(startTime24h, 5);
@@ -1068,7 +1085,7 @@ const Center: React.FC = () => {
             height="20vh"
           >
             <Typography marginTop="10px" textAlign={"center"}>
-              {t("COMMON.NO_CENTER_FOUND")}
+              {t("COMMON.NO_CLASSES_FOUND")}
             </Typography>
           </Box>
         )}
@@ -1085,7 +1102,7 @@ const Center: React.FC = () => {
           open={isEditForm}
           onClose={onCloseEditForm}
           showFooter={false}
-          modalTitle={t("COMMON.UPDATE_CENTER")}
+          modalTitle={t("COMMON.UPDATE_CLASSES")}
         >
           {schema && uiSchema && (
             <DynamicForm

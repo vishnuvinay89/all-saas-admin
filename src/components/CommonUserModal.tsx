@@ -17,6 +17,7 @@ import {
   RoleId,
   Role,
   apiCatchingDuration,
+  passwordKeys,
 } from "@/utils/app.constant";
 import { useLocationState } from "@/utils/useLocationState";
 import useSubmittedButtonStore from "@/utils/useSharedState";
@@ -25,7 +26,7 @@ import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
-import { tenantId } from "../../app.config";
+import { addCustomCredentional, tenantId } from "../../app.config";
 import { transformArray } from "../utils/Helper";
 import AreaSelection from "./AreaSelection";
 import { showToastMessage } from "./Toastify";
@@ -254,8 +255,10 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           : formData?.name.toLowerCase();
 
       let apiBody: any = {
-        username: getUsername,
-        password: getUsername + "@oblf",
+        username: addCustomCredentional ? getUsername : username,
+        password: addCustomCredentional
+          ? getUsername + passwordKeys.OBLF
+          : password,
         tenantCohortRoleMapping: [
           {
             tenantId: tenantId,
@@ -495,8 +498,10 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           : formData?.name.toLowerCase();
 
       let apiBody: any = {
-        username: getUsername,
-        password: getUsername + "@oblf",
+        username: addCustomCredentional ? getUsername : username,
+        password: addCustomCredentional
+          ? getUsername + passwordKeys.OBLF
+          : password,
         tenantCohortRoleMapping: [
           {
             tenantId: tenantId,
@@ -849,7 +854,9 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                 schema={schema}
                 uiSchema={uiSchema}
                 onSubmit={
-                  userType === "TEACHER" ? handleSubmit : handleSubmitLearners
+                  userType === FormContextType.TEACHER
+                    ? handleSubmit
+                    : handleSubmitLearners
                 }
                 // onChange={handleChangeFormCreate}
                 // onError={handleErrorCreate}
@@ -914,7 +921,9 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                 schema={schema}
                 uiSchema={uiSchema}
                 onSubmit={
-                  userType === "Teachers" ? handleSubmit : handleSubmitLearners
+                  userType === FormContextType.TEACHER
+                    ? handleSubmit
+                    : handleSubmitLearners
                 }
                 onChange={handleChange}
                 onError={handleError}

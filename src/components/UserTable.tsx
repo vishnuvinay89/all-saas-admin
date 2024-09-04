@@ -612,184 +612,185 @@ const UserTable: React.FC<UserTableProps> = ({
     }));
   };
 
-  useEffect(() => {
-    const fetchUserList = async () => {
-      setLoading(true);
-      try {
-        const fields = ["age", "districts", "states", "blocks", "gender"];
-        let limit = pageLimit;
-        let offset = pageOffset * limit;
-        // const filters = { role: role , status:"active"};
-        const sort = enableCenterFilter ? sortByForCohortMemberList : sortBy;
-        console.log("filters", filters);
-        if (filters.name) {
-          offset = 0;
-        }
-        let resp;
-        if (enableCenterFilter) {
-          resp = await cohortMemberList({
-            limit,
-            filters,
-            sort,
-            offset,
-            fields,
-          });
-        } else {
-          resp = await userList({ limit, filters, sort, offset, fields });
-        }
-        console.log(resp?.getUserDetails);
-        const result = enableCenterFilter
-          ? resp?.userDetails
-          : resp?.getUserDetails;
-        console.log(result);
-        console.log(resp?.totalCount);
-        if (resp?.totalCount >= 15) {
-          setPagination(true);
-
-          setPageSizeArray([5, 10, 15]);
-        } else if (resp?.totalCount >= 10) {
-          setPagination(true);
-
-          // setPageSize(resp?.totalCount);
-          setPageSizeArray([5, 10]);
-        } else if (resp?.totalCount > 5) {
-          setPagination(false);
-
-          setPageSizeArray([5]);
-        } else if (resp?.totalCount <= 5) {
-          setPagination(false);
-          // setPageSize(resp?.totalCount);
-          //PageSizeSelectorFunction();
-        }
-
-        setPageCount(Math.ceil(resp?.totalCount / pageLimit));
-        console.log(result);
-        let finalResult;
-        if (enableCenterFilter) {
-          finalResult = result?.map((user: any) => {
-            const ageField = user?.customField?.find(
-              (field: any) => field?.fieldname === "AGE"
-            );
-            const genderField = user?.customField?.find(
-              (field: any) => field?.fieldname === "GENDER"
-            );
-            const blockField = user?.customField?.find(
-              (field: any) => field?.fieldname === "BLOCKS"
-            );
-            const districtField = user?.customField?.find(
-              (field: any) => field?.fieldname === "DISTRICTS"
-            );
-            const stateField = user?.customField?.find(
-              (field: any) => field?.fieldname === "STATES"
-            );
-            return {
-              userId: user?.userId,
-              username: user?.username,
-              status: user?.status,
-              name:
-                user?.name?.charAt(0).toUpperCase() +
-                user?.name?.slice(1).toLowerCase(),
-              role: user.role,
-              //  gender: user.gender,
-              mobile: user.mobile === "NaN" ? "-" : user.mobile,
-              age: ageField ? ageField?.fieldvalues : "-",
-              district: districtField
-                ? districtField?.fieldvalues + " , " + blockField?.fieldvalues
-                : "-",
-              state: stateField ? stateField?.fieldvalues : "-",
-              blocks: blockField ? blockField?.fieldvalues : "-",
-              gender: genderField
-                ? genderField.fieldvalues?.charAt(0)?.toUpperCase() +
-                  genderField.fieldvalues.slice(1).toLowerCase()
-                : "-",
-              //  createdAt: user?.createdAt,
-              //  updatedAt: user?.updatedAt,
-              createdBy: user?.createdBy,
-              updatedBy: user?.updatedBy,
-              // // centers: null,
-              // Programs: null,
-            };
-          });
-        } else {
-          finalResult = result?.map((user: any) => {
-            const ageField = user?.customFields?.find(
-              (field: any) => field?.label === "AGE"
-            );
-            const genderField = user?.customFields?.find(
-              (field: any) => field?.label === "GENDER"
-            );
-            const blockField = user?.customFields?.find(
-              (field: any) => field?.label === "BLOCKS"
-            );
-            const districtField = user?.customFields?.find(
-              (field: any) => field?.label === "DISTRICTS"
-            );
-            const stateField = user?.customFields?.find(
-              (field: any) => field?.label === "STATES"
-            );
-
-            return {
-              userId: user.userId,
-              username: user.username,
-              status: user.status,
-              name:
-                user.name.charAt(0).toUpperCase() +
-                user.name.slice(1).toLowerCase(),
-              role: user.role,
-              //  gender: user.gender,
-              mobile: user.mobile === "NaN" ? "-" : user.mobile,
-              age: ageField ? ageField.value : "-",
-              district: districtField
-                ? districtField.value + " , " + blockField.value
-                : "-",
-              state: stateField ? stateField.value : "-",
-              blocks: blockField ? blockField.value : "-",
-              gender: genderField
-                ? genderField.value?.charAt(0)?.toUpperCase() +
-                  genderField.value.slice(1).toLowerCase()
-                : "-",
-              createdAt: user.createdAt,
-              updatedAt: user.updatedAt,
-              createdBy: user.createdBy,
-              updatedBy: user.updatedBy,
-              stateCode: stateField?.code,
-              districtCode: districtField?.code,
-              blockCode: blockField?.code,
-              // centers: null,
-              // Programs: null,
-            };
-          });
-        }
-        console.log(finalResult);
-
-        if (filters?.name) {
-          const prioritizedResult = finalResult.sort((a: any, b: any) => {
-            const aStartsWith = a.name.toLowerCase().startsWith(filters?.name);
-            const bStartsWith = b.name.toLowerCase().startsWith(filters?.name);
-
-            if (aStartsWith && !bStartsWith) return -1;
-            if (!aStartsWith && bStartsWith) return 1;
-            return 0;
-          });
-
-          setData(prioritizedResult);
-        } else {
-          setData(finalResult);
-        }
-
-        setLoading(false);
-        setCohortsFetched(false);
-      } catch (error: any) {
-        setLoading(false);
-
-        if (error?.response && error?.response.status === 404) {
-          setData([]);
-          //showToastMessage("No data found", "info");
-        }
-
-        console.log(error);
+  const fetchUserList = async () => {
+    setLoading(true);
+    try {
+      const fields = ["age", "districts", "states", "blocks", "gender"];
+      let limit = pageLimit;
+      let offset = pageOffset * limit;
+      // const filters = { role: role , status:"active"};
+      const sort = enableCenterFilter ? sortByForCohortMemberList : sortBy;
+      console.log("filters", filters);
+      if (filters.name) {
+        offset = 0;
       }
-    };
+      let resp;
+      if (enableCenterFilter) {
+        resp = await cohortMemberList({
+          limit,
+          filters,
+          sort,
+          offset,
+          fields,
+        });
+      } else {
+        resp = await userList({ limit, filters, sort, offset, fields });
+      }
+      console.log(resp?.getUserDetails);
+      const result = enableCenterFilter
+        ? resp?.userDetails
+        : resp?.getUserDetails;
+      console.log(result);
+      console.log(resp?.totalCount);
+      if (resp?.totalCount >= 15) {
+        setPagination(true);
+
+        setPageSizeArray([5, 10, 15]);
+      } else if (resp?.totalCount >= 10) {
+        setPagination(true);
+
+        // setPageSize(resp?.totalCount);
+        setPageSizeArray([5, 10]);
+      } else if (resp?.totalCount > 5) {
+        setPagination(false);
+
+        setPageSizeArray([5]);
+      } else if (resp?.totalCount <= 5) {
+        setPagination(false);
+        // setPageSize(resp?.totalCount);
+        //PageSizeSelectorFunction();
+      }
+
+      setPageCount(Math.ceil(resp?.totalCount / pageLimit));
+      console.log(result);
+      let finalResult;
+      if (enableCenterFilter) {
+        finalResult = result?.map((user: any) => {
+          const ageField = user?.customField?.find(
+            (field: any) => field?.fieldname === "AGE"
+          );
+          const genderField = user?.customField?.find(
+            (field: any) => field?.fieldname === "GENDER"
+          );
+          const blockField = user?.customField?.find(
+            (field: any) => field?.fieldname === "BLOCKS"
+          );
+          const districtField = user?.customField?.find(
+            (field: any) => field?.fieldname === "DISTRICTS"
+          );
+          const stateField = user?.customField?.find(
+            (field: any) => field?.fieldname === "STATES"
+          );
+          return {
+            userId: user?.userId,
+            username: user?.username,
+            status: user?.status,
+            name:
+              user?.name?.charAt(0).toUpperCase() +
+              user?.name?.slice(1).toLowerCase(),
+            role: user.role,
+            //  gender: user.gender,
+            mobile: user.mobile === "NaN" ? "-" : user.mobile,
+            age: ageField ? ageField?.fieldvalues : "-",
+            district: districtField
+              ? districtField?.fieldvalues + " , " + blockField?.fieldvalues
+              : "-",
+            state: stateField ? stateField?.fieldvalues : "-",
+            blocks: blockField ? blockField?.fieldvalues : "-",
+            gender: genderField
+              ? genderField.fieldvalues?.charAt(0)?.toUpperCase() +
+                genderField.fieldvalues.slice(1).toLowerCase()
+              : "-",
+            //  createdAt: user?.createdAt,
+            //  updatedAt: user?.updatedAt,
+            createdBy: user?.createdBy,
+            updatedBy: user?.updatedBy,
+            // // centers: null,
+            // Programs: null,
+          };
+        });
+      } else {
+        finalResult = result?.map((user: any) => {
+          const ageField = user?.customFields?.find(
+            (field: any) => field?.label === "AGE"
+          );
+          const genderField = user?.customFields?.find(
+            (field: any) => field?.label === "GENDER"
+          );
+          const blockField = user?.customFields?.find(
+            (field: any) => field?.label === "BLOCKS"
+          );
+          const districtField = user?.customFields?.find(
+            (field: any) => field?.label === "DISTRICTS"
+          );
+          const stateField = user?.customFields?.find(
+            (field: any) => field?.label === "STATES"
+          );
+
+          return {
+            userId: user.userId,
+            username: user.username,
+            status: user.status,
+            name:
+              user.name.charAt(0).toUpperCase() +
+              user.name.slice(1).toLowerCase(),
+            role: user.role,
+            //  gender: user.gender,
+            mobile: user.mobile === "NaN" ? "-" : user.mobile,
+            age: ageField ? ageField.value : "-",
+            district: districtField
+              ? districtField.value + " , " + blockField.value
+              : "-",
+            state: stateField ? stateField.value : "-",
+            blocks: blockField ? blockField.value : "-",
+            gender: genderField
+              ? genderField.value?.charAt(0)?.toUpperCase() +
+                genderField.value.slice(1).toLowerCase()
+              : "-",
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+            createdBy: user.createdBy,
+            updatedBy: user.updatedBy,
+            stateCode: stateField?.code,
+            districtCode: districtField?.code,
+            blockCode: blockField?.code,
+            // centers: null,
+            // Programs: null,
+          };
+        });
+      }
+      console.log(finalResult);
+
+      if (filters?.name) {
+        const prioritizedResult = finalResult.sort((a: any, b: any) => {
+          const aStartsWith = a.name.toLowerCase().startsWith(filters?.name);
+          const bStartsWith = b.name.toLowerCase().startsWith(filters?.name);
+
+          if (aStartsWith && !bStartsWith) return -1;
+          if (!aStartsWith && bStartsWith) return 1;
+          return 0;
+        });
+
+        setData(prioritizedResult);
+      } else {
+        setData(finalResult);
+      }
+
+      setLoading(false);
+      setCohortsFetched(false);
+    } catch (error: any) {
+      setLoading(false);
+
+      if (error?.response && error?.response.status === 404) {
+        setData([]);
+        //showToastMessage("No data found", "info");
+      }
+
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
     fetchUserList();
   }, [
     pageOffset,
@@ -841,7 +842,8 @@ const UserTable: React.FC<UserTableProps> = ({
 
             let finalArray;
             if (cohortNames?.length >= 1) {
-              finalArray = capitalizeFirstLetterOfEachWordInArray(cohortNames);
+              // finalArray = capitalizeFirstLetterOfEachWordInArray(cohortNames);
+              finalArray = cohortNames;
             }
             //   const finalArray=capitalizeFirstLetterOfEachWordInArray(cohortNames)
             // console.log(finalArray)
@@ -850,7 +852,8 @@ const UserTable: React.FC<UserTableProps> = ({
               centerMembershipIdList: centerMembershipIdList,
               blockMembershipIdList: blockMembershipIdList,
 
-              centers: finalArray ? finalArray?.join(" , ") : "-",
+              // centers: finalArray ? finalArray?.join(" , ") : "-",
+              centers: finalArray,
             };
           })
         );
@@ -922,7 +925,7 @@ const UserTable: React.FC<UserTableProps> = ({
     setSelectedUserId("");
     setBlock("");
     setPreviousCenters([]);
-
+    // fetchUserList();
     // setConfirmButtonDisable(true);
   };
 
@@ -1121,6 +1124,7 @@ const UserTable: React.FC<UserTableProps> = ({
         userId={selectedUserId}
         blockName={block}
         previousCenters={previousCenters}
+        fetchUserList={fetchUserList}
       />
 
       <CommonUserModal

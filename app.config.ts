@@ -17,3 +17,7 @@ export const showBlock = false
 export const showDistrict = false
 export const showActiveMembers = false 
 export const showArchievedMembers = false
+
+
+// add custom userName and password
+export const addCustomCredentional = true 
