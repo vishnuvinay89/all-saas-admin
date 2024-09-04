@@ -488,7 +488,7 @@ const Center: React.FC = () => {
       const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
       console.log(resp);
       if (resp?.responseCode === 200) {
-        showToastMessage(t("CENTERS.CENTER_DELETE_SUCCESSFULLY"), "success");
+        showToastMessage(t("CENTERS.CLASS_DELETE_SUCCESSFULLY"), "success");
         const cohort = cohortData?.find(
           (item: any) => item.cohortId == selectedCohortId
         );
@@ -713,11 +713,11 @@ const Center: React.FC = () => {
   //       showToastMessage(t("CENTERS.CENTER_UPDATE_SUCCESSFULLY"), "success");
   //       setLoading(false);
   //     } else {
-  //       showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
+  //       showToastMessage(t("CENTERS.CLASS_UPDATE_FAILED"), "error");
   //     }
   //   } catch (error) {
   //     console.error("Error updating cohort:", error);
-  //     showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
+  //     showToastMessage(t("CENTERS.CLASS_UPDATE_FAILED"), "error");
   //   } finally {
   //     setLoading(false);
   //     setConfirmButtonDisable(false);
@@ -781,13 +781,13 @@ const Center: React.FC = () => {
       }
       const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
-        showToastMessage(t("CENTERS.CENTER_UPDATE_SUCCESSFULLY"), "success");
+        showToastMessage(t("CENTERS.CLASS_UPDATE_SUCCESSFULLY"), "success");
       } else {
-        showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
+        showToastMessage(t("CENTERS.CLASS_UPDATE_FAILED"), "error");
       }
     } catch (error) {
       console.error("Error updating cohort:", error);
-      showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
+      showToastMessage(t("CENTERS.CLASS_UPDATE_FAILED"), "error");
     } finally {
       setLoading(false);
       setConfirmButtonDisable(false);
@@ -1031,10 +1031,10 @@ const Center: React.FC = () => {
       <ConfirmationModal
         message={
           selectedRowData?.totalActiveMembers > 0
-            ? t("CENTERS.YOU_CANT_DELETE_CENTER_HAS_ACTIVE_LEARNERS", {
+            ? t("CENTERS.YOU_CANT_DELETE_CLASS_HAS_ACTIVE_LEARNERS", {
                 activeMembers: `${selectedRowData?.totalActiveMembers}`,
               })
-            : t("CENTERS.SURE_DELETE_CENTER") +
+            : t("CENTERS.SURE_DELETE_CLASS") +
               inputName +
               " " +
               t("CENTERS.CENTER") +
@@ -1167,7 +1167,7 @@ const Center: React.FC = () => {
           open={openAddNewCohort}
           onClose={handleCloseAddLearnerModal}
           showFooter={false}
-          modalTitle={t("CENTERS.NEW_CENTER")}
+          modalTitle={t("CENTERS.NEW_CLASS")}
         >
           <Box
             sx={{

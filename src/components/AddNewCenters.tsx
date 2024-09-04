@@ -187,7 +187,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
       open={open}
       onClose={onClose}
       showFooter={false}
-      modalTitle={t("CENTERS.NEW_CENTER")}
+      modalTitle={t("CENTERS.NEW_CLASS")}
     >
       <Box
         sx={{

@@ -232,7 +232,7 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
       title={
         userType === Role.TEAM_LEADERS
           ? t("COMMON.REASSIGN_BLOCKS")
-          : t("COMMON.REASSIGN_CENTERS")
+          : t("COMMON.REASSIGN_CLASSES")
       }
       primaryBtnText={t("COMMON.REASSIGN")}
       primaryBtnClick={handleReassign}

@@ -1065,7 +1065,7 @@ const UserTable: React.FC<UserTableProps> = ({
           reassignType={
             userType === Role.TEAM_LEADERS
               ? t("COMMON.REASSIGN_BLOCKS")
-              : t("COMMON.REASSIGN_CENTERS")
+              : t("COMMON.REASSIGN_CLASSES")
           }
         />
       ) : (
