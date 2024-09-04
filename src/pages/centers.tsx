@@ -748,7 +748,7 @@ const Center: React.FC = () => {
           attendance_ends_at: formData?.attendance_ends_at,
           back_dated_attendance: 0,
           back_dated_attendance_allowed_days: 0,
-          update_once_marked: 0,
+          can_be_updated: 0,
           capture_geoLocation: 1,
         },
         student: {
@@ -757,7 +757,7 @@ const Center: React.FC = () => {
           restrict_attendance_timings: 0,
           back_dated_attendance: 1,
           back_dated_attendance_allowed_days: 7,
-          update_once_marked: 1,
+          can_be_updated: 1,
           capture_geoLocation: 0,
         },
       },
