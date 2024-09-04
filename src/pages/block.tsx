@@ -118,6 +118,7 @@ const Block: React.FC = () => {
   const [showAllBlocks, setShowAllBlocks] = useState("All");
   const [statusValue, setStatusValue] = useState(Status.ACTIVE);
   const [pageSize, setPageSize] = React.useState<string | number>(10);
+  const [isFirstVisit, setIsFirstVisit] = useState(true);
 
   const [filters, setFilters] = useState({
     name: searchKeyword,
@@ -234,10 +235,15 @@ const Block: React.FC = () => {
         .filter((district: { label: any }) =>
           districtNameArr.includes(district.label)
         );
-      if (filteredDistrictData.length > 0) {
-        setSelectedDistrict(filteredDistrictData[0].value);
+      if (isFirstVisit) {
+        if (
+          filteredDistrictData.length > 0 &&
+          selectedDistrict !== t("COMMON.ALL")
+        ) {
+          setSelectedDistrict(filteredDistrictData[0].value);
+        }
+        setIsFirstVisit(false); 
       }
-      console.log("cohortIds", selectedCohortId);
       setDistrictData(filteredDistrictData);
       setLoading(false);
     } catch (error) {
@@ -250,7 +256,7 @@ const Block: React.FC = () => {
     if (stateCode) {
       getFilteredCohortData();
     }
-  }, [searchKeyword, pageLimit, pageOffset, stateCode]);
+  }, [isFirstVisit,searchKeyword, pageLimit, pageOffset, stateCode]);
 
   const fetchBlocks = async () => {
     try {
@@ -409,14 +415,13 @@ const Block: React.FC = () => {
     const startIndex = pageOffset * pageLimit;
     const endIndex = startIndex + pageLimit;
 
-    const transformedData = blockData.map((item) => ({
+    const transformedData = blockData?.map((item) => ({
       ...item,
       label: transformLabels(item.label),
     }));
 
     return transformedData.slice(startIndex, endIndex);
   };
-
   const columns = [
     {
       key: "name",
@@ -482,10 +487,12 @@ const Block: React.FC = () => {
   };
 
   const handleDistrictChange = async (event: SelectChangeEvent<string>) => {
+    setPageOffset(Numbers.ZERO);
+    setPageCount(Numbers.ONE);
+
     const selectedDistrict = event.target.value;
     setSelectedDistrict(selectedDistrict);
     setShowAllBlocks("");
-    console.log("selectedDistrict", selectedDistrict);
 
     const selectedDistrictData = districtData.find(
       (district) => district.value === selectedDistrict
@@ -513,7 +520,7 @@ const Block: React.FC = () => {
     const initialValues: StateDetail = {
       name: rowData.name || "",
       value: rowData.code || "",
-      selectedDistrict: selectedDistrict || "",
+      selectedDistrict: selectedDistrict || "All",
       controllingField: "",
       block: "",
       label: "",
