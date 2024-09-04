@@ -43,7 +43,6 @@ interface CenterProp {
   name: string;
 }
 const Sort = ["A-Z", "Z-A"];
-const Filter = ["Active", "InActive"];
 
 const HeaderComponent = ({
   children,
@@ -303,7 +302,7 @@ const HeaderComponent = ({
                           : "inherit",
                     }}
                   >
-                    {Status.ACTIVE_LABEL}
+                    {t('COMMON.ACTIVE')}
                   </Box>
                 }
                 value={Status.ACTIVE}
@@ -320,7 +319,7 @@ const HeaderComponent = ({
                           : "inherit",
                     }}
                   >
-                    {Status.INACTIVE}
+                    {t('COMMON.ARCHIVED')}
                   </Box>
                 }
                 value={Status.ARCHIVED}

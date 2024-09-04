@@ -14,7 +14,10 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import { Box, Button, IconButton, Menu, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import useSubmittedButtonStore from "@/utils/useSharedState";
-import LogoutIcon from '@mui/icons-material/Logout';
+import LogoutIcon from "@mui/icons-material/Logout";
+import {
+  firstLetterInUpperCase,
+} from "@/utils/Helper";
 const Profile = () => {
   const [anchorEl4, setAnchorEl4] = React.useState<null | HTMLElement>(null);
   const [profileClick, setProfileClick] = React.useState<boolean>(false);
@@ -233,13 +236,6 @@ const Profile = () => {
             <Typography
               variant="body1"
               fontWeight="400"
-              sx={{ fontSize: "16px" }}
-            >
-              {t("COMMON.HI")}
-            </Typography>
-            <Typography
-              variant="body1"
-              fontWeight="400"
               sx={{
                 ml: 1,
                 maxWidth: "200px",
@@ -249,17 +245,9 @@ const Profile = () => {
                 whiteSpace: "nowrap",
               }}
             >
-              {userName
-                ? userName
-                    .split(" ")
-                    .map(
-                      (name) =>
-                        name.charAt(0).toUpperCase() +
-                        name.slice(1).toLowerCase()
-                    )
-                    .join(" ")
-                : ""}
+              {t("COMMON.HI", { name: firstLetterInUpperCase(userName ?? "")})}
             </Typography>
+
             <FeatherIcon icon="chevron-down" size="20" />
           </Box>
         </Box>
@@ -270,9 +258,8 @@ const Profile = () => {
         open={Boolean(anchorEl4)}
         onClose={handleClose4}
         sx={{
-          paddingTop:"0px",
-         //backgroundColor: "#F8EFE7",
-
+          paddingTop: "0px",
+          //backgroundColor: "#F8EFE7",
         }}
         PaperProps={{
           sx: {
@@ -282,45 +269,40 @@ const Profile = () => {
         }}
       >
         <Box
-            sx={{
-              backgroundColor: "#78590C",
-              width: "50px",
-              height: "50px",
-              borderRadius: "50%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginLeft:"45%",
-
-            }}
+          sx={{
+            backgroundColor: "#78590C",
+            width: "50px",
+            height: "50px",
+            borderRadius: "50%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginLeft: "45%",
+          }}
+        >
+          <Typography
+            variant="h6"
+            color={"white"}
+            sx={{ fontWeight: "bold", fontSize: "18px" }}
           >
-            <Typography
-              variant="h6"
-              color={"white"}
-              sx={{ fontWeight: "bold", fontSize: "18px"}}
-            >
-              {adminInfo?.name
-                ?.split(" ")
-                .map((word: any) => word[0])
-                .join("")}
-            </Typography>
-          </Box>
+            {adminInfo?.name
+              ?.split(" ")
+              .map((word: any) => word[0])
+              .join("")}
+          </Typography>
+        </Box>
         <Box
           sx={{
             position: "relative",
-           // marginTop:"10px",
+            // marginTop:"10px",
             padding: "20px",
-           // borderRadius: "10px",
+            // borderRadius: "10px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            backgroundColor:"white"
+            backgroundColor: "white",
           }}
         >
-          
-
-          
-
           <Typography variant="h5" sx={{ marginBottom: "10px" }}>
             {adminInfo?.name}
           </Typography>
@@ -344,11 +326,11 @@ const Profile = () => {
             variant="contained"
             color="primary"
             onClick={handleLogout}
-          
-            sx={{ fontSize: "16px", backgroundColor:"white",
-            border: "0.6px solid black"  // Replace with your desired border color
-
-          }}
+            sx={{
+              fontSize: "16px",
+              backgroundColor: "white",
+              border: "0.6px solid black", // Replace with your desired border color
+            }}
             endIcon={<LogoutIcon />}
           >
             {t("COMMON.LOGOUT")}

@@ -201,7 +201,7 @@ console.log(columns)
                 return {
                   className: isDisabled ? "disabled-row" : "",
                   style: isDisabled
-                    ? { pointerEvents: "none", opacity: 0.5 }
+                    ? { pointerEvents: "none" }
                     : {},
                 };
               },
