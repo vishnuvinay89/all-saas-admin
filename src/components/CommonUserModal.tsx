@@ -255,7 +255,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
 
       let apiBody: any = {
         username: getUsername,
-        password: password,
+        password: getUsername + "@oblf",
         tenantCohortRoleMapping: [
           {
             tenantId: tenantId,
@@ -355,15 +355,25 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           showToastMessage(t(messageKey), "success");
         } else {
           const response = await createUser(apiBody);
-          console.log(response);
-          if (response) {
+          console.log(
+            "ResponsehandleSubmit",
+            response?.response?.data?.params?.err
+          );
+
+          if (response && response?.userData) {
+            console.log("responseIN", response);
             const messageKey = messageKeyMap[userType];
 
-            if (userType === FormContextType.STUDENT) {
+            if (
+              userType === FormContextType.STUDENT ||
+              userType === FormContextType.TEACHER
+            ) {
               showToastMessage(t(messageKey), "success");
             }
             // if(userType===FormContextType.STUDENT)
             // setOpenModal(true);
+          } else if (response?.response?.data?.responseCode) {
+            showToastMessage(response?.response?.data?.params?.err, "error");
           } else {
             showToastMessage(t("COMMON.SOMETHING_WENT_WRONG"), "error");
           }
@@ -414,43 +424,43 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                 ? [adminInfo?.email]
                 : [formData?.email],
           };
-          if (Object.keys(replacements).length !== 0 && sendTo) {
-            const response = await sendCredentialService({
-              isQueue,
-              context,
-              key,
-              replacements,
-              email: sendTo,
-            });
-            if (userType !== FormContextType.STUDENT) {
-              const messageKey = messageKeyMap[userType];
+          // if (Object.keys(replacements).length !== 0 && sendTo) {
+          //   const response = await sendCredentialService({
+          //     isQueue,
+          //     context,
+          //     key,
+          //     replacements,
+          //     email: sendTo,
+          //   });
+          //   if (userType !== FormContextType.STUDENT) {
+          //     const messageKey = messageKeyMap[userType];
 
-              if (response?.result[0]?.data[0]?.status === "success") {
-                showToastMessage(t(messageKey), "success");
-              } else {
-                const messageKey =
-                  delayCredentialsMessageMap[userType] ||
-                  "TEAM_LEADERS.USER_CREDENTIALS_WILL_BE_SEND_SOON";
+          //     if (response?.result[0]?.data[0]?.status === "success") {
+          //       showToastMessage(t(messageKey), "success");
+          //     } else {
+          //       const messageKey =
+          //         delayCredentialsMessageMap[userType] ||
+          //         "TEAM_LEADERS.USER_CREDENTIALS_WILL_BE_SEND_SOON";
 
-                showToastMessage(t(messageKey), "success");
-              }
-            }
-            if (userType === FormContextType.STUDENT) {
-              if (
-                response?.result[0]?.data[0]?.status === "success" &&
-                !isEditModal
-              ) {
-                setOpenModal(true);
-              } else {
-                showToastMessage(
-                  t("LEARNERS.USER_CREDENTIALS_WILL_BE_SEND_SOON"),
-                  "success"
-                );
-              }
-            }
-          } else {
-            showToastMessage(t("COMMON.SOMETHING_WENT_WRONG"), "error");
-          }
+          //       showToastMessage(t(messageKey), "success");
+          //     }
+          //   }
+          //   if (userType === FormContextType.STUDENT) {
+          //     if (
+          //       response?.result[0]?.data[0]?.status === "success" &&
+          //       !isEditModal
+          //     ) {
+          //       setOpenModal(true);
+          //     } else {
+          //       showToastMessage(
+          //         t("LEARNERS.USER_CREDENTIALS_WILL_BE_SEND_SOON"),
+          //         "success"
+          //       );
+          //     }
+          //   }
+          // } else {
+          //   showToastMessage(t("COMMON.SOMETHING_WENT_WRONG"), "error");
+          // }
         }
       } catch (error) {
         onClose();
@@ -486,7 +496,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
 
       let apiBody: any = {
         username: getUsername,
-        password: password,
+        password: getUsername + "@oblf",
         tenantCohortRoleMapping: [
           {
             tenantId: tenantId,
@@ -586,15 +596,20 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           showToastMessage(t(messageKey), "success");
         } else {
           const response = await createUser(apiBody);
-          console.log(response);
-          if (response) {
+          console.log("ResponsehandleSubmitLearners", response);
+          if (response && response?.userData) {
             const messageKey = messageKeyMap[userType];
 
-            if (userType === FormContextType.STUDENT) {
+            if (
+              userType === FormContextType.STUDENT ||
+              userType === FormContextType.TEACHER
+            ) {
               showToastMessage(t(messageKey), "success");
             }
             // if(userType===FormContextType.STUDENT)
             // setOpenModal(true);
+          } else if (response?.response?.data?.responseCode) {
+            showToastMessage(response?.response?.data?.params?.err, "error");
           } else {
             showToastMessage(t("COMMON.SOMETHING_WENT_WRONG"), "error");
           }
@@ -645,43 +660,43 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                 ? [adminInfo?.email]
                 : [formData?.email],
           };
-          if (Object.keys(replacements).length !== 0 && sendTo) {
-            const response = await sendCredentialService({
-              isQueue,
-              context,
-              key,
-              replacements,
-              email: sendTo,
-            });
-            if (userType !== FormContextType.STUDENT) {
-              const messageKey = messageKeyMap[userType];
+          // if (Object.keys(replacements).length !== 0 && sendTo) {
+          //   const response = await sendCredentialService({
+          //     isQueue,
+          //     context,
+          //     key,k
+          //     replacements,
+          //     email: sendTo,
+          //   });
+          //   if (userType !== FormContextType.STUDENT) {
+          //     const messageKey = messageKeyMap[userType];
 
-              if (response?.result[0]?.data[0]?.status === "success") {
-                showToastMessage(t(messageKey), "success");
-              } else {
-                const messageKey =
-                  delayCredentialsMessageMap[userType] ||
-                  "TEAM_LEADERS.USER_CREDENTIALS_WILL_BE_SEND_SOON";
+          //     if (response?.result[0]?.data[0]?.status === "success") {
+          //       showToastMessage(t(messageKey), "success");
+          //     } else {
+          //       const messageKey =
+          //         delayCredentialsMessageMap[userType] ||
+          //         "TEAM_LEADERS.USER_CREDENTIALS_WILL_BE_SEND_SOON";
 
-                showToastMessage(t(messageKey), "success");
-              }
-            }
-            if (userType === FormContextType.STUDENT) {
-              if (
-                response?.result[0]?.data[0]?.status === "success" &&
-                !isEditModal
-              ) {
-                setOpenModal(true);
-              } else {
-                showToastMessage(
-                  t("LEARNERS.USER_CREDENTIALS_WILL_BE_SEND_SOON"),
-                  "success"
-                );
-              }
-            }
-          } else {
-            showToastMessage(t("COMMON.SOMETHING_WENT_WRONG"), "error");
-          }
+          //       showToastMessage(t(messageKey), "success");
+          //     }
+          //   }
+          //   if (userType === FormContextType.STUDENT) {
+          //     if (
+          //       response?.result[0]?.data[0]?.status === "success" &&
+          //       !isEditModal
+          //     ) {
+          //       setOpenModal(true);
+          //     } else {
+          //       showToastMessage(
+          //         t("LEARNERS.USER_CREDENTIALS_WILL_BE_SEND_SOON"),
+          //         "success"
+          //       );
+          //     }
+          //   }
+          // } else {
+          //   showToastMessage(t("COMMON.SOMETHING_WENT_WRONG"), "error");
+          // }
         }
       } catch (error) {
         onClose();
@@ -834,7 +849,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                 schema={schema}
                 uiSchema={uiSchema}
                 onSubmit={
-                  userType === "Teachers" ? handleSubmit : handleSubmitLearners
+                  userType === "TEACHER" ? handleSubmit : handleSubmitLearners
                 }
                 // onChange={handleChangeFormCreate}
                 // onError={handleErrorCreate}
@@ -898,7 +913,9 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                 id="dynamic-form"
                 schema={schema}
                 uiSchema={uiSchema}
-                onSubmit={ userType === "Teachers" ? handleSubmit : handleSubmitLearners}
+                onSubmit={
+                  userType === "Teachers" ? handleSubmit : handleSubmitLearners
+                }
                 onChange={handleChange}
                 onError={handleError}
                 widgets={{}}
@@ -917,7 +934,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                   id="dynamic-form"
                   schema={schema}
                   uiSchema={uiSchema}
-                  onSubmit={ handleSubmit }
+                  onSubmit={handleSubmit}
                   onChange={handleChange}
                   onError={handleError}
                   // widgets={{}}
@@ -935,7 +952,11 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                   id="dynamic-form"
                   schema={schema}
                   uiSchema={uiSchema}
-                  onSubmit={userType === "Teachers" ? handleSubmit : handleSubmitLearners}
+                  onSubmit={
+                    userType === "Teachers"
+                      ? handleSubmit
+                      : handleSubmitLearners
+                  }
                   onChange={handleChange}
                   onError={handleError}
                   // widgets={{}}

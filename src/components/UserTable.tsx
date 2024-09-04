@@ -920,6 +920,9 @@ const UserTable: React.FC<UserTableProps> = ({
     // setOtherReason("");
     setIsReassignCohortModalOpen(false);
     setSelectedUserId("");
+    setBlock("");
+    setPreviousCenters([]);
+
     // setConfirmButtonDisable(true);
   };
 
