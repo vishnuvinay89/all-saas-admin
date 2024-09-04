@@ -297,7 +297,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
       <DialogTitle sx={{ fontSize: "14px" }}>{dialogTitle}</DialogTitle>
       <Divider />
       <DialogContent>
-        {isEditing && !(formData.controllingField === "All") && (
+        {!(formData.controllingField === "All") && (
           <Select
             value={formData.controllingField}
             onChange={(e) =>
