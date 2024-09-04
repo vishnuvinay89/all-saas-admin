@@ -160,7 +160,7 @@ const District: React.FC = () => {
 
   useEffect(() => {
     fetchDistricts();
-  }, [stateCode, stateValue]);
+  }, []);
 
   // get cohort id of state
   const getStatecohorts = async () => {

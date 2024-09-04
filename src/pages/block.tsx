@@ -242,7 +242,7 @@ const Block: React.FC = () => {
         ) {
           setSelectedDistrict(filteredDistrictData[0].value);
         }
-        setIsFirstVisit(false); 
+        setIsFirstVisit(false);
       }
       setDistrictData(filteredDistrictData);
       setLoading(false);
@@ -256,15 +256,13 @@ const Block: React.FC = () => {
     if (stateCode) {
       getFilteredCohortData();
     }
-  }, [isFirstVisit,searchKeyword, pageLimit, pageOffset, stateCode]);
+  }, [isFirstVisit, searchKeyword, pageLimit, pageOffset, stateCode]);
 
   const fetchBlocks = async () => {
     try {
       const response = await getBlocksForDistricts({
         controllingfieldfk:
-          selectedDistrict === t("COMMON.ALL")
-            ? ""
-            : selectedDistrict || t("COMMON.ALL"),
+          selectedDistrict === t("COMMON.ALL") ? "" : selectedDistrict || "",
         fieldName: "blocks",
       });
       console.log("selectedDistrict block", selectedDistrict);
@@ -300,9 +298,7 @@ const Block: React.FC = () => {
           name: searchKeyword,
           states: stateCode,
           districts:
-            selectedDistrict === t("COMMON.ALL")
-              ? ""
-              : selectedDistrict || t("COMMON.ALL"),
+            selectedDistrict === t("COMMON.ALL") ? "" : selectedDistrict || "",
           type: CohortTypes.BLOCK,
           status: [statusValue],
         },
@@ -501,8 +497,9 @@ const Block: React.FC = () => {
     const cohortId = selectedDistrictData?.cohortId as any | null;
 
     setSelectedCohortId(cohortId);
-
-    await getCohortSearchBlock(selectedDistrict);
+    if (selectedDistrict) {
+      await getCohortSearchBlock(selectedDistrict);
+    }
   };
 
   console.log("selectedCohortId", selectedCohortId);
