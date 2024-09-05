@@ -194,8 +194,7 @@ const ImportCsv = () => {
         header: true,
         skipEmptyLines: true,
         complete: async (results: any) => {
-          console.log("Parsed Results:", results.data);
-  
+
           const data = results.data;
   
           const addTimestamp = (data: any[]) => {
@@ -213,7 +212,7 @@ const ImportCsv = () => {
   
               return newItem;
             });
-            console.log('Updated Data:', updatedData);
+ 
             return updatedData;
           };
   
