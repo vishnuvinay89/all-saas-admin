@@ -26,6 +26,7 @@ interface ReassignCohortModalProps {
   blocks?: any;
   blockName?: any;
   previousCenters?: any;
+  fetchUserList: () => void;
 }
 
 interface Cohort {
@@ -43,6 +44,7 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
   blocks,
   blockName,
   previousCenters,
+  fetchUserList,
 }) => {
   console.log(blocks);
   const { t } = useTranslation();
@@ -102,7 +104,6 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
         };
 
         await bulkCreateCohortMembers(payload);
-        handleClose();
 
         showToastMessage(
           t(
@@ -194,13 +195,16 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
         "error"
       );
     } finally {
-      window.location.reload();
+      handleClose();
+      fetchUserList();
+      // window.location.reload();
     }
   };
 
   const filteredCohorts = cohorts?.filter((cohort) =>
     cohort.name.toLowerCase().includes(searchInput)
   );
+
   // const filteredCBlocks = blocks?.filter((cohort: any) =>
   //   cohort.label.toLowerCase().includes(searchInput)
   // );
@@ -210,6 +214,7 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
       label: cohort.label,
       value: cohort.value,
     }));
+
   const handleToggle2 = (centerName: string) => {
     // If the selected center is already checked, uncheck it
     if (checkedCenters.includes(centerName)) {
@@ -219,102 +224,101 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
       setCheckedCenters([centerName]);
     }
   };
+
   return (
-    <>
-      <CustomModal
-        open={open}
-        handleClose={handleClose}
-        title={
-          userType === Role.TEAM_LEADERS
-            ? t("COMMON.REASSIGN_BLOCKS")
-            : t("COMMON.REASSIGN_CENTERS")
-        }
-        primaryBtnText={t("COMMON.REASSIGN")}
-        primaryBtnClick={handleReassign}
-        primaryBtnDisabled={checkedCenters.length === 0}
-      >
-        <Box sx={{ p: 1 }}>
-          <TextField
-            sx={{
-              backgroundColor: theme.palette.warning["A700"],
-              borderRadius: 8,
-              "& .MuiOutlinedInput-root fieldset": { border: "none" },
-              "& .MuiOutlinedInput-input": { borderRadius: 8 },
-            }}
-            placeholder={
-              userType === Role.TEAM_LEADERS
-                ? t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK")
-                : t("CENTERS.SEARCHBAR_PLACEHOLDER")
-            }
-            value={searchInput}
-            onChange={handleSearchInputChange}
-            fullWidth
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Box>
-        <Box sx={{ p: 3, maxHeight: "300px", overflowY: "auto" }}>
-          {userType !== Role.TEAM_LEADERS
-            ? filteredCohorts?.map((center) => (
-                <Box key={center.id}>
-                  <Box
+    <CustomModal
+      open={open}
+      handleClose={handleClose}
+      title={
+        userType === Role.TEAM_LEADERS
+          ? t("COMMON.REASSIGN_BLOCKS")
+          : t("COMMON.REASSIGN_CLASSES")
+      }
+      primaryBtnText={t("COMMON.REASSIGN")}
+      primaryBtnClick={handleReassign}
+      primaryBtnDisabled={checkedCenters.length === 0}
+    >
+      <Box sx={{ p: 1 }}>
+        <TextField
+          sx={{
+            backgroundColor: theme.palette.warning["A700"],
+            borderRadius: 8,
+            "& .MuiOutlinedInput-root fieldset": { border: "none" },
+            "& .MuiOutlinedInput-input": { borderRadius: 8 },
+          }}
+          placeholder={
+            userType === Role.TEAM_LEADERS
+              ? t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK")
+              : t("CENTERS.SEARCHBAR_PLACEHOLDER")
+          }
+          value={searchInput}
+          onChange={handleSearchInputChange}
+          fullWidth
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Box>
+      <Box sx={{ p: 3, maxHeight: "300px", overflowY: "auto" }}>
+        {userType !== Role.TEAM_LEADERS
+          ? filteredCohorts?.map((center) => (
+              <Box key={center.id}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mb: 2,
+                  }}
+                >
+                  <span style={{ color: "black" }}>{center.name}</span>
+                  <Checkbox
+                    checked={checkedCenters.includes(center.name)}
+                    onChange={() => handleToggle(center.name)}
                     sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      mb: 2,
+                      color: theme.palette.text.primary,
+                      "&.Mui-checked": {
+                        color: "black",
+                      },
+                      verticalAlign: "middle",
+                      marginTop: "-10px",
                     }}
-                  >
-                    <span style={{ color: "black" }}>{center.name}</span>
-                    <Checkbox
-                      checked={checkedCenters.includes(center.name)}
-                      onChange={() => handleToggle(center.name)}
-                      sx={{
-                        color: theme.palette.text.primary,
-                        "&.Mui-checked": {
-                          color: "black",
-                        },
-                        verticalAlign: "middle",
-                        marginTop: "-10px",
-                      }}
-                    />
-                  </Box>
-                  <Divider sx={{ mb: 2 }} />
+                  />
                 </Box>
-              ))
-            : filteredCBlocks?.map((center: any) => (
-                <Box key={center.value}>
-                  <Box
+                <Divider sx={{ mb: 2 }} />
+              </Box>
+            ))
+          : filteredCBlocks?.map((center: any) => (
+              <Box key={center.value}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mb: 2,
+                  }}
+                >
+                  <span style={{ color: "black" }}>{center.label}</span>
+                  <Checkbox
+                    checked={checkedCenters.includes(center.value)}
+                    onChange={() => handleToggle2(center.value)}
                     sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      mb: 2,
+                      color: theme.palette.text.primary,
+                      "&.Mui-checked": {
+                        color: "black",
+                      },
+                      verticalAlign: "middle",
+                      marginTop: "-10px",
                     }}
-                  >
-                    <span style={{ color: "black" }}>{center.label}</span>
-                    <Checkbox
-                      checked={checkedCenters.includes(center.value)}
-                      onChange={() => handleToggle2(center.value)}
-                      sx={{
-                        color: theme.palette.text.primary,
-                        "&.Mui-checked": {
-                          color: "black",
-                        },
-                        verticalAlign: "middle",
-                        marginTop: "-10px",
-                      }}
-                    />
-                  </Box>
-                  <Divider sx={{ mb: 2 }} />
+                  />
                 </Box>
-              ))}
-        </Box>
-      </CustomModal>
-    </>
+                <Divider sx={{ mb: 2 }} />
+              </Box>
+            ))}
+      </Box>
+    </CustomModal>
   );
 };
 

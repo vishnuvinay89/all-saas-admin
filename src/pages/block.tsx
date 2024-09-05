@@ -756,7 +756,7 @@ const Block: React.FC = () => {
         message={
           countOfCenter > 0
             ? t("COMMON.ARE_YOU_SURE_DELETE_BLOCK")
-            : t("COMMON.NO_ACTIVE_CENTERS_DELETE")
+            : t("COMMON.NO_ACTIVE_CLASSES_DELETE")
         }
         handleAction={handleConfirmDelete}
         buttonNames={{

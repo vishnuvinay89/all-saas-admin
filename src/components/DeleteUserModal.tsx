@@ -44,13 +44,24 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
   const { t } = useTranslation();
   const theme = useTheme<any>();
   const reasons = [
-    {value:t("CENTERS.LONG_ABSENTEE"), label:t("CENTERS.LONG_ABSENTEE")},
-    { value:t("CENTERS.TAKEN_TC"),label:t("CENTERS.TAKEN_TC")},
-    { value:t("CENTERS.ALLOCATION_CHANGE"),label:t("CENTERS.ALLOCATION_CHANGE")},
-    { value:t("CENTERS.INCORRECT_ENTRY"),label:t("CENTERS.INCORRECT_ENTRY")},
-    {value:t("CENTERS.DUPLICATION_ENTRY"), label : t("CENTERS.DUPLICATION_ENTRY")},
+    { value: t("CENTERS.LONG_ABSENTEE"), label: t("CENTERS.LONG_ABSENTEE") },
+    { value: t("CENTERS.TAKEN_TC"), label: t("CENTERS.TAKEN_TC") },
+    {
+      value: t("CENTERS.ALLOCATION_CHANGE"),
+      label: t("CENTERS.ALLOCATION_CHANGE"),
+    },
+    {
+      value: t("CENTERS.INCORRECT_ENTRY"),
+      label: t("CENTERS.INCORRECT_ENTRY"),
+    },
+    {
+      value: t("CENTERS.DUPLICATION_ENTRY"),
+      label: t("CENTERS.DUPLICATION_ENTRY"),
+    },
   ];
-  const [checkedCohortDeletion, setCheckedCohortDeletion] = useState<boolean>(centers === "-" ? true : false);
+  const [checkedCohortDeletion, setCheckedCohortDeletion] = useState<boolean>(
+    centers === "-" ? true : false
+  );
 
   useEffect(() => {
     if (centers === "-") {
@@ -111,7 +122,7 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
             variant="body1"
             sx={{ marginBottom: "12px", fontWeight: "bold", color: "#333" }}
           >
-            {t("COMMON.USER_COHORTS", { name: userName })}
+            {t("COMMON.USER_CLASSES", { name: userName })}
           </Typography>
 
           <Box
@@ -136,7 +147,7 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
                 color="primary"
               />
             }
-            label={t("COMMON.DELETE_COHORT_WARNING")}
+            label={t("COMMON.DELETE_CLASS_WARNING")}
             sx={{ marginTop: "12px", color: "#555" }}
           />
         </Box>
@@ -144,7 +155,7 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
       {checkedCohortDeletion && (
         <Box padding={"0 1rem"}>
           <Typography id="modal-subtitle" variant="h2" marginTop="10px">
-            {t("COMMON.REASON_FOR_DELETION")}
+            {t("COMMON.REASON")}
           </Typography>
 
           {reasons?.map((option) => (
