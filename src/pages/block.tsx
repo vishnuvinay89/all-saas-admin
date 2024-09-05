@@ -280,8 +280,6 @@ const Block: React.FC = () => {
       setBlocksFieldId(blockFieldID);
     } catch (error) {
       console.error("Error fetching blocks", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -291,6 +289,16 @@ const Block: React.FC = () => {
 
   const getCohortSearchBlock = async (selectedDistrict: string) => {
     try {
+      setLoading(true);
+
+      if (!blocksOptionRead.length || !blockNameArr.length) {
+        console.warn(
+          "districtsOptionRead or districtNameArr is empty, waiting for data..."
+        );
+        setLoading(false);
+        return;
+      }
+
       const reqParams = {
         limit: 0,
         offset: 0,
@@ -355,8 +363,11 @@ const Block: React.FC = () => {
       const totalCount = filteredBlockData.length;
       setPaginationCount(totalCount);
       setPageCount(Math.ceil(totalCount / pageLimit));
+
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching and filtering cohort blocks", error);
+      setLoading(false);
     }
   };
 
@@ -364,7 +375,15 @@ const Block: React.FC = () => {
     if (selectedDistrict) {
       getCohortSearchBlock(selectedDistrict);
     }
-  }, [filters, blockNameArr, searchKeyword, pageLimit, pageOffset, sortBy]);
+  }, [
+    filters,
+    searchKeyword,
+    pageLimit,
+    pageOffset,
+    sortBy,
+    blocksOptionRead,
+    blockNameArr,
+  ]);
 
   const getCohortDataCohort = async () => {
     try {
@@ -421,50 +440,50 @@ const Block: React.FC = () => {
   const columns = [
     {
       key: "name",
-      title: t("COMMON.BLOCK"),
+      title: t("COMMON.BLOCK").toUpperCase(),
       dataType: DataType.String,
       width: "130",
     },
     {
       key: "code",
-      title: t("MASTER.CODE"),
+      title: t("MASTER.CODE").toUpperCase(),
       dataType: DataType.String,
       width: "130",
     },
     // {
     //   key: "status",
-    //   title: t("Status"),
+    //   title: t("Status").toUpperCase(),
     //   dataType: DataType.String,
     //   width: "130",
     // },
     {
       key: "createdBy",
-      title: t("MASTER.CREATED_BY"),
+      title: t("MASTER.CREATED_BY").toUpperCase(),
       dataType: DataType.String,
       width: "160",
     },
     {
       key: "updatedBy",
-      title: t("MASTER.UPDATED_BY"),
+      title: t("MASTER.UPDATED_BY").toUpperCase(),
       dataType: DataType.String,
       width: "160",
     },
 
     {
       key: "createdAt",
-      title: t("MASTER.CREATED_AT"),
+      title: t("MASTER.CREATED_AT").toUpperCase(),
       dataType: DataType.String,
       width: "130",
     },
     {
       key: "updatedAt",
-      title: t("MASTER.UPDATED_AT"),
+      title: t("MASTER.UPDATED_AT").toUpperCase(),
       dataType: DataType.String,
       width: "130",
     },
     {
       key: "actions",
-      title: t("MASTER.ACTIONS"),
+      title: t("MASTER.ACTIONS").toUpperCase(),
       dataType: DataType.String,
       width: "130",
     },

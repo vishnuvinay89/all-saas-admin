@@ -2,6 +2,7 @@ import FingerprintJS from "fingerprintjs2";
 import { getUserDetailsInfo } from "../services/UserList";
 import { Role, FormContextType, FormValues, InputTypes } from "./app.constant";
 import { State } from "./Interfaces";
+import { useQueryClient } from '@tanstack/react-query';
 
 export const generateUUID = () => {
   let d = new Date().getTime();
@@ -22,11 +23,10 @@ export const generateUUID = () => {
     return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
   });
 };
-export const getUserName = async (userId: string) => {
+
+export const getUserName = async (userId: string, fieldValue: boolean = true) => {
   try {
-    const id = userId;
-    const fieldValue = true;
-    const userDetails = await getUserDetailsInfo(id, fieldValue);
+    const userDetails = await getUserDetailsInfo(userId, fieldValue);
     console.log("userDetails", userDetails);
     return userDetails?.userData?.name; // Accessing the name property from userData
   } catch (error) {

@@ -89,3 +89,10 @@ export enum InputTypes {
 export enum apiCatchingDuration {
   GETREADFORM = 36000000,
 }
+
+
+export const QueryKeys = {
+  USER_READ: "userRead",
+  FIELD_OPTION_READ: "fieldOptionRead",
+  MY_COHORTS: "myCohorts",
+}
