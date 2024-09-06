@@ -1,5 +1,4 @@
 import HeaderComponent from "@/components/HeaderComponent";
-import Loader from "@/components/Loader";
 import PageSizeSelector from "@/components/PageSelector";
 import { showToastMessage } from "@/components/Toastify";
 import {
@@ -16,9 +15,7 @@ import { transformLabel } from "@/utils/Helper";
 import {
   Box,
   Pagination,
-  SelectChangeEvent,
-  Typography,
-  useMediaQuery,
+  SelectChangeEvent, useMediaQuery
 } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -69,7 +66,6 @@ const State: React.FC = () => {
   );
   const fetchStateData = async () => {
     try {
-      setLoading(true);
       const limit = pageLimit;
       const offset = pageOffset * limit;
       const data = {
@@ -96,10 +92,8 @@ const State: React.FC = () => {
       setStateDataOptinon(states);
       const stateNameArra = states.map((item: any) => item.label);
       setStateNameArr(stateNameArra);
-      console.log("stateNameArray", stateNameArray);
       const stateCodeArra = states.map((item: any) => item.value);
       setStateCodeArr(stateCodeArra);
-      console.log("stateDataOptinon", stateCodeArra);
       if (resp?.result?.fieldId) {
         setFieldId(resp.result.fieldId);
       } else {
@@ -107,8 +101,6 @@ const State: React.FC = () => {
       }
     } catch (error) {
       console.error("Error fetching state data", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -118,6 +110,7 @@ const State: React.FC = () => {
 
   const getStatecohorts = async () => {
     try {
+      setLoading(true);
       const reqParams = {
         limit: 0,
         offset: 0,
@@ -161,9 +154,11 @@ const State: React.FC = () => {
           stateNameArray.includes(state.label)
         );
       setStateData(filteredStateData);
-      console.log(stateData);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching and filtering cohort states", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -237,7 +232,6 @@ const State: React.FC = () => {
           parentId: null,
           customFields: [],
         };
-        console.log("before cohortList");
         if (!isUpdating) {
           await createCohort(queryParameters);
         }
@@ -307,40 +301,21 @@ const State: React.FC = () => {
       handleSearch={handleSearch}
       handleAddUserClick={handleAddStateClick}
     >
-      {stateData.length === 0 && !loading ? (
-        <Box display="flex" marginLeft="40%" gap="20px">
-          <Typography marginTop="10px" variant="h2">
-            {t("COMMON.STATE_NOT_FOUND")}
-          </Typography>
-        </Box>
-      ) : (
-        <div style={{ marginTop: "40px" }}>
-          {loading ? (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              height="100%"
-            >
-              <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
-            </Box>
-          ) : (
-            <KaTableComponent
-              columns={getStateDataMaster(t, isMobile)}
-              data={stateData}
-              limit={pageLimit}
-              offset={pageOffset}
-              paginationEnable={paginationCount >= Numbers.FIVE}
-              PagesSelector={PagesSelector}
-              pagination={pagination}
-              PageSizeSelector={PageSizeSelectorFunction}
-              pageSizes={pageSizeArray}
-              onEdit={handleEdit}
-              extraActions={[]}
-            />
-          )}
-        </div>
-      )}
+      <div style={{ marginTop: "40px" }}>
+        <KaTableComponent
+          columns={getStateDataMaster(t, isMobile)}
+          data={stateData}
+          limit={pageLimit}
+          offset={pageOffset}
+          paginationEnable={paginationCount >= Numbers.FIVE}
+          PagesSelector={PagesSelector}
+          pagination={pagination}
+          PageSizeSelector={PageSizeSelectorFunction}
+          pageSizes={pageSizeArray}
+          onEdit={handleEdit}
+          extraActions={[]}
+        />
+      </div>
     </HeaderComponent>
   );
 };

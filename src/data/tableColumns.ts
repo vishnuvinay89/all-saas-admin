@@ -123,7 +123,6 @@ export const getStateDataMaster = (t: any, isMobile: boolean) => {
       titleKey: t("TABLE_TITLE.UPDATED_DATE").toUpperCase(),
       width: 130,
     },
-    // { key: "actions", titleKey: t("TABLE_TITLE.ACTIONS").toUpperCase(), width: 160 },
   ];
 
   return generateColumns(t, configs, isMobile);
@@ -157,7 +156,11 @@ export const getDistrictTableData = (t: any, isMobile: boolean) => {
       titleKey: t("TABLE_TITLE.UPDATED_DATE").toUpperCase(),
       width: 130,
     },
-    // { key: "actions", titleKey: t("TABLE_TITLE.ACTIONS").toUpperCase(), width: 160 },
+    {
+      key: "actions",
+      titleKey: t("TABLE_TITLE.ACTIONS").toUpperCase(),
+      width: 160,
+    },
   ];
 
   return generateColumns(t, configs, isMobile);
@@ -187,7 +190,11 @@ export const getBlockTableData = (t: any, isMobile: boolean) => {
       titleKey: t("TABLE_TITLE.UPDATED_DATE").toUpperCase(),
       width: 130,
     },
-    // { key: "actions", titleKey: t("TABLE_TITLE.ACTIONS").toUpperCase(), width: 160 },
+    {
+      key: "actions",
+      titleKey: t("TABLE_TITLE.ACTIONS").toUpperCase(),
+      width: 160,
+    },
   ];
 
   return generateColumns(t, configs, isMobile);
