@@ -15,7 +15,8 @@ import {
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
 import { getUserDetailsInfo } from "@/services/UserList";
-import { Storage } from "@/utils/app.constant";
+import { QueryKeys, Storage } from "@/utils/app.constant";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AddDistrictBlockModalProps {
   open: boolean;
@@ -55,6 +56,7 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
   const [stateValue, setStateValue] = useState<string>("");
 
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -63,9 +65,10 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
         if (typeof window !== "undefined" && window.localStorage) {
           userId = localStorage.getItem(Storage.USER_ID);
         }
-        const response = await getUserDetailsInfo(userId);
-        console.log("profile api is triggered", response.userData.customFields);
-
+        const response = await queryClient.fetchQuery({
+          queryKey: [QueryKeys.USER_READ, userId, true],
+          queryFn: () => getUserDetailsInfo(userId, true),
+        });
         const statesField = response.userData.customFields.find(
           (field: { label: string }) => field.label === "STATES"
         );
@@ -93,9 +96,9 @@ const AddDistrictModal: React.FC<AddDistrictBlockModalProps> = ({
       value: initialValues.value ?? "",
       controllingField: initialValues.controllingField ?? stateCode,
     });
-    setErrors({}); 
+    setErrors({});
   }, [initialValues, stateCode]);
-  
+
   const isValidName = (input: string) =>
     /^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/.test(input);
 
