@@ -38,7 +38,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { useEffect, useState } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 
-
 type StateDetail = {
   stateCode: string | undefined;
   controllingField: string | undefined;
@@ -149,7 +148,6 @@ const District: React.FC = () => {
 
       const districtFieldID = data?.result?.fieldId || "";
       setDistrictFieldId(districtFieldID);
-
     } catch (error) {
       console.error("Error fetching districts", error);
     }
@@ -255,7 +253,6 @@ const District: React.FC = () => {
         .filter((district: { label: any }) =>
           districtNameArr.includes(district.label)
         );
-
 
       setDistrictData(filteredDistrictData);
 
@@ -648,8 +645,8 @@ const District: React.FC = () => {
 
             {filteredCohortOptionData().length > 0 ? (
               <KaTableComponent
-              columns={getDistrictTableData(t, isMobile)}
-              data={filteredCohortOptionData()}
+                columns={getDistrictTableData(t, isMobile)}
+                data={filteredCohortOptionData()}
                 limit={pageLimit}
                 offset={pageOffset}
                 paginationEnable={paginationCount >= Numbers.FIVE}

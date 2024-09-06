@@ -13,7 +13,13 @@ import {
 } from "@/services/MasterDataService";
 import { Numbers, QueryKeys, SORT } from "@/utils/app.constant";
 import { transformLabel } from "@/utils/Helper";
-import { Box, Pagination, SelectChangeEvent, Typography, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Pagination,
+  SelectChangeEvent,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { useEffect, useState } from "react";
@@ -21,7 +27,6 @@ import KaTableComponent from "../components/KaTableComponent";
 import { useQueryClient } from "@tanstack/react-query";
 import { getStateDataMaster } from "@/data/tableColumns";
 import { Theme } from "@mui/system";
-
 
 export interface StateDetail {
   updatedAt: any;
@@ -321,7 +326,7 @@ const State: React.FC = () => {
             </Box>
           ) : (
             <KaTableComponent
-            columns={getStateDataMaster(t, isMobile)}
+              columns={getStateDataMaster(t, isMobile)}
               data={stateData}
               limit={pageLimit}
               offset={pageOffset}
