@@ -15,7 +15,8 @@ import { transformLabel } from "@/utils/Helper";
 import {
   Box,
   Pagination,
-  SelectChangeEvent, useMediaQuery
+  SelectChangeEvent,
+  useMediaQuery,
 } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -24,6 +25,7 @@ import KaTableComponent from "../components/KaTableComponent";
 import { useQueryClient } from "@tanstack/react-query";
 import { getStateDataMaster } from "@/data/tableColumns";
 import { Theme } from "@mui/system";
+import Loader from "@/components/Loader";
 
 export interface StateDetail {
   updatedAt: any;
@@ -301,21 +303,32 @@ const State: React.FC = () => {
       handleSearch={handleSearch}
       handleAddUserClick={handleAddStateClick}
     >
-      <div style={{ marginTop: "40px" }}>
-        <KaTableComponent
-          columns={getStateDataMaster(t, isMobile)}
-          data={stateData}
-          limit={pageLimit}
-          offset={pageOffset}
-          paginationEnable={paginationCount >= Numbers.FIVE}
-          PagesSelector={PagesSelector}
-          pagination={pagination}
-          PageSizeSelector={PageSizeSelectorFunction}
-          pageSizes={pageSizeArray}
-          onEdit={handleEdit}
-          extraActions={[]}
-        />
-      </div>
+      {loading ? (
+        <Box
+          width={"100%"}
+          display={"flex"}
+          flexDirection={"column"}
+          alignItems={"center"}
+        >
+          <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
+        </Box>
+      ) : (
+        <div style={{ marginTop: "40px" }}>
+          <KaTableComponent
+            columns={getStateDataMaster(t, isMobile)}
+            data={stateData}
+            limit={pageLimit}
+            offset={pageOffset}
+            paginationEnable={paginationCount >= Numbers.FIVE}
+            PagesSelector={PagesSelector}
+            pagination={pagination}
+            PageSizeSelector={PageSizeSelectorFunction}
+            pageSizes={pageSizeArray}
+            onEdit={handleEdit}
+            extraActions={[]}
+          />
+        </div>
+      )}
     </HeaderComponent>
   );
 };
