@@ -115,7 +115,6 @@ const Block: React.FC = () => {
   const [cohortIdForEdit, setCohortIdForEdit] = useState<any>();
   const [blockValueForDelete, setBlockValueForDelete] = useState<any>();
   const [countOfCenter, setCountOfCenter] = useState<number>(0);
-  const [cohortIds, setCohortIds] = useState<any>([]);
   const [selectedCohortId, setSelectedCohortId] = useState<string | null>(null);
   const [parentIdBlock, setParentIdBlock] = useState<string | null>(null);
   const [showAllBlocks, setShowAllBlocks] = useState("All");
