@@ -878,10 +878,11 @@ const Block: React.FC = () => {
       >
         {loading ? (
           <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            height="20vh"
+            width={"100%"}
+            id="check"
+            display={"flex"}
+            flexDirection={"column"}
+            alignItems={"center"}
           >
             <Loader showBackdrop={false} loadingText="Loading..." />
           </Box>

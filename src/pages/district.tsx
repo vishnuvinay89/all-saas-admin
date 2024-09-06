@@ -13,10 +13,16 @@ import {
   createOrUpdateOption,
   deleteOption,
   getDistrictsForState,
-  updateCohort
+  updateCohort,
 } from "@/services/MasterDataService";
 import { getUserDetailsInfo } from "@/services/UserList";
-import { Numbers, QueryKeys, SORT, Status, Storage } from "@/utils/app.constant";
+import {
+  Numbers,
+  QueryKeys,
+  SORT,
+  Status,
+  Storage,
+} from "@/utils/app.constant";
 import { transformLabel } from "@/utils/Helper";
 import { Pagination, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -139,13 +145,13 @@ const District: React.FC = () => {
 
   const fetchDistricts = async () => {
     try {
-
       const data = await queryClient.fetchQuery({
         queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode || "", "districts"],
-        queryFn: () => getDistrictsForState({
-          controllingfieldfk: stateCode || "",
-          fieldName: "districts",
-        }),
+        queryFn: () =>
+          getDistrictsForState({
+            controllingfieldfk: stateCode || "",
+            fieldName: "districts",
+          }),
       });
 
       const districts = data?.result?.values || [];
@@ -180,7 +186,7 @@ const District: React.FC = () => {
 
       const response = await queryClient.fetchQuery({
         queryKey: [QueryKeys.MY_COHORTS, userId],
-        queryFn: () => getMyCohorts(userId)
+        queryFn: () => getMyCohorts(userId),
       });
 
       const cohortData = response?.result?.cohortData;
@@ -423,7 +429,9 @@ const District: React.FC = () => {
       const response = await createOrUpdateOption(districtFieldId, newDistrict);
 
       if (response) {
-        queryClient.invalidateQueries({ queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode || "", "districts"] });
+        queryClient.invalidateQueries({
+          queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode || "", "districts"],
+        });
         await fetchDistricts();
       }
     } catch (error) {
@@ -641,10 +649,11 @@ const District: React.FC = () => {
       >
         {loading ? (
           <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            height="20vh"
+            width={"100%"}
+            id="check"
+            display={"flex"}
+            flexDirection={"column"}
+            alignItems={"center"}
           >
             <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
           </Box>
