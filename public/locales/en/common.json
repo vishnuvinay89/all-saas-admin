@@ -209,8 +209,9 @@
     "UPLOAD": "Upload",
     "COURSE_CREATED_SUCCESSFULLY":"Course created successfully",
     "COURSE_NOT_CREATED": "Course not created",
-    "RESOURCES": "Resources"
-
+    "RESOURCES": "Resources",
+    "TOPIC": "Topic",
+    "DURATION/MONTH": "Duration/Month"
   },
   "MASTER": {
     "STATE": "States",

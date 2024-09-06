@@ -391,16 +391,15 @@ const ImportCsv = () => {
           <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
         ) : (
           <>
-            <Box>
               <Box>
                 <Typography>
-                  {userProjectDetails?.length} Topics{" "}
+                  {userProjectDetails?.length} {t("COURSE_PLANNER.TOPIC")}{" "}
                   <FiberManualRecordIcon
                     sx={{ fontSize: "10px", color: "#CDC5BD" }}
                   />
                 </Typography>
               </Box>
-            </Box>
+           
             <Box mt={2}>
               {userProjectDetails.map((topic: any, index) => (
                 <Box key={topic._id} sx={{ borderRadius: "8px", mb: 2 }}>
@@ -417,7 +416,7 @@ const ImportCsv = () => {
                       border: "none",
                       transition: "0.3s",
                       "&.Mui-expanded": {
-                        background: "#FFF8F2", // Highlight background when expanded
+                        background: "#FFF8F2",
                       },
                     }}
                   >
@@ -491,9 +490,9 @@ const ImportCsv = () => {
                       }}
                     >
                       <Box sx={{ flex: 1 }}>Sub-topic</Box>
-                      <Box sx={{ flex: 1, textAlign: "center" }}>Resources</Box>
+                      <Box sx={{ flex: 1, textAlign: "center" }}>{t("COURSE_PLANNER.RESOURCES")}</Box>
                       <Box sx={{ flex: 1, textAlign: "right" }}>
-                        Duration/Month
+                      {t("COURSE_PLANNER.DURATION/MONTH")}
                       </Box>
                     </Box>
 
