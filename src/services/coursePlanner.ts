@@ -54,10 +54,10 @@ export const uploadCoursePlanner = async (file: File, metaData: CoursePlannerMet
     board,
     type,
   }: GetTargetedSolutionsParams): Promise<any> => {
-    const apiUrl: string = `${process.env.NEXT_PUBLIC_SHIKSHALOKAM_API_URL}/solutions/targetedSolutions?type=improvementProject&currentScopeOnly=true`;
+    const apiUrl: string = `${process.env.NEXT_PUBLIC_COURSE_PLANNER_API_URL}/solutions/targetedSolutions?type=improvementProject&currentScopeOnly=true`;
   
     const headers = {
-      'X-auth-token': process.env.NEXT_PUBLIC_SHIKSHALOKAM_TOKEN,
+      'X-auth-token': localStorage.getItem('token'),
       'Content-Type': 'application/json',
     };
   
@@ -84,12 +84,12 @@ export const uploadCoursePlanner = async (file: File, metaData: CoursePlannerMet
   }
   
   export const getUserProjectDetails = async ({ id }: GetUserProjectDetailsParams): Promise<any> => {
-    const apiUrl: string = `${process.env.NEXT_PUBLIC_SHIKSHALOKAM_API_URL}/userProjects/details/${id}`;
+    const apiUrl: string = `${process.env.NEXT_PUBLIC_COURSE_PLANNER_API_URL}/userProjects/details/${id}`;
   
     const headers = {
-      'Authorization': process.env.NEXT_PUBLIC_SHIKSHALOKAM_TOKEN,
+      'Authorization': localStorage.getItem('token'),
       'Content-Type': 'application/json',
-      'x-auth-token': process.env.NEXT_PUBLIC_SHIKSHALOKAM_TOKEN,
+      'x-auth-token': localStorage.getItem('token'),
       
     };
   
@@ -104,10 +104,10 @@ export const uploadCoursePlanner = async (file: File, metaData: CoursePlannerMet
   
   
   export const getSolutionDetails = async ({ id, role }: GetSolutionDetailsParams): Promise<any> => {
-    const apiUrl: string = `${process.env.NEXT_PUBLIC_SHIKSHALOKAM_API_URL}/solutions/details/${id}`;
+    const apiUrl: string = `${process.env.NEXT_PUBLIC_COURSE_PLANNER_API_URL}/solutions/details/${id}`;
   
     const headers = {
-      'X-auth-token': process.env.NEXT_PUBLIC_SHIKSHALOKAM_TOKEN,
+      'X-auth-token': localStorage.getItem('token'),
       'Content-Type': 'application/json',
     };
   
@@ -129,10 +129,10 @@ export const uploadCoursePlanner = async (file: File, metaData: CoursePlannerMet
     solutionId,
     role,
   }: GetUserProjectTemplateParams): Promise<any> => {
-    const apiUrl: string = `${process.env.NEXT_PUBLIC_SHIKSHALOKAM_API_URL}/userProjects/details?templateId=${templateId}&solutionId=${solutionId}`;
+    const apiUrl: string = `${process.env.NEXT_PUBLIC_COURSE_PLANNER_API_URL}/userProjects/details?templateId=${templateId}&solutionId=${solutionId}`;
   
     const headers = {
-      'X-auth-token': process.env.NEXT_PUBLIC_SHIKSHALOKAM_TOKEN,
+      'X-auth-token': localStorage.getItem('token'),
       'Content-Type': 'application/json',
     };
   
