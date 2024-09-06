@@ -1,6 +1,5 @@
-import React, { ChangeEvent, useState, useEffect, useCallback } from "react";
+import React, { ChangeEvent, useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
-import { DataType, SortDirection } from "ka-table/enums";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import HeaderComponent from "@/components/HeaderComponent";
 import { useTranslation } from "next-i18next";
@@ -13,24 +12,18 @@ import {
   updateCohortUpdate,
 } from "@/services/CohortService/cohortService";
 import {
-  CohortTypes,
-  FormValues,
-  Numbers,
+  CohortTypes, Numbers,
   SORT,
   Status,
-  Storage,
+  Storage
 } from "@/utils/app.constant";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationModal from "@/components/ConfirmationModal";
-import CustomModal from "@/components/CustomModal";
 import {
   Box,
-  Button,
-  Chip,
-  TextField,
-  Typography,
-  useMediaQuery,
+  Button, Typography,
+  useMediaQuery
 } from "@mui/material";
 import Loader from "@/components/Loader";
 import { getFormRead } from "@/services/CreateUserService";
@@ -49,7 +42,6 @@ import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
 import DynamicForm from "@/components/DynamicForm";
 import useSubmittedButtonStore from "@/utils/useSharedState";
-import { getUserDetailsInfo } from "@/services/UserList";
 
 type cohortFilterDetails = {
   type?: string;
@@ -70,12 +62,6 @@ interface centerData {
   createdAt?: string;
   updatedAt?: string;
   customFieldValues?: string;
-}
-interface CohortDetails {
-  name?: string;
-  type?: string;
-  parentId?: string | null;
-  customFields?: CustomField[];
 }
 
 const Center: React.FC = () => {
@@ -155,7 +141,6 @@ const Center: React.FC = () => {
         const stateField: any = JSON.parse(admin).customFields.find(
           (field: any) => field.label === "STATES"
         );
-        console.log(stateField.value, stateField.code);
         const object = [
           {
             value: stateField.code,
@@ -229,7 +214,6 @@ const Center: React.FC = () => {
             totalArchivedMembers: 0,
           };
 
-          console.log("cohortType", cohortType);
           const requiredData = {
             name: item?.name,
             status: item?.status,
@@ -390,7 +374,6 @@ const Center: React.FC = () => {
       // else setFilters({ role: role });
     } else {
       const stateCodes = code?.join(",");
-      console.log("stateCodes", stateCodes);
       setSelectedStateCode(stateCodes);
       if (filters.status)
         setFilters({
@@ -401,7 +384,6 @@ const Center: React.FC = () => {
       else setFilters({ type: "COHORT", states: stateCodes });
     }
 
-    console.log("Selected categories:", typeof code[0]);
   };
 
   const handleDistrictChange = (selected: string[], code: string[]) => {
@@ -435,7 +417,6 @@ const Center: React.FC = () => {
         });
       }
     }
-    console.log("Selected categories:", selected);
   };
   const handleBlockChange = (selected: string[], code: string[]) => {
     setSelectedBlock(selected);
@@ -470,7 +451,6 @@ const Center: React.FC = () => {
         });
       }
     }
-    console.log("Selected categories:", selected);
   };
 
   const handleCloseModal = () => {
@@ -483,7 +463,6 @@ const Center: React.FC = () => {
         status: Status.ARCHIVED,
       };
       const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
-      console.log(resp);
       if (resp?.responseCode === 200) {
         showToastMessage(t("CENTERS.CENTER_DELETE_SUCCESSFULLY"), "success");
         const cohort = cohortData?.find(
@@ -492,7 +471,6 @@ const Center: React.FC = () => {
         if (cohort) {
           cohort.status = Status.ARCHIVED;
         }
-        console.log(resp?.params?.successmessage);
       } else {
         console.log("Cohort Not Archived");
       }
@@ -640,7 +618,6 @@ const Center: React.FC = () => {
   ) => {
     setLoading(true);
     const formData = data?.formData;
-    console.log("formData", formData);
     const schemaProperties = schema.properties;
 
     let apiBody: any = {
@@ -693,7 +670,6 @@ const Center: React.FC = () => {
       setLoading(true);
       setConfirmButtonDisable(true);
       if (!selectedCohortId) {
-        console.log("No cohort Id Selected");
         showToastMessage(t("CENTERS.NO_COHORT_ID_SELECTED"), "error");
         return;
       }
@@ -740,7 +716,6 @@ const Center: React.FC = () => {
             const stateField = JSON.parse(admin).customFields.find(
               (field: any) => field.label === "STATES"
             );
-            console.log(stateField.value, stateField.code);
             if (!stateField.value.includes(",")) {
               setSelectedState([stateField.value]);
               setSelectedStateCode(stateField.code);
@@ -914,7 +889,6 @@ const Center: React.FC = () => {
                   }}
                   onClick={() => {
                     setSubmittedButtonStatus(true);
-                    console.log("update button was clicked");
                   }}
                 >
                   {t("COMMON.UPDATE")}

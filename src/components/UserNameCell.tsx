@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { firstLetterInUpperCase } from "./../utils/Helper";
 
 const UserNameCell = ({ userId }: { userId: string }) => {
-  console.log(userId);
   const [userName, setUserName] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
@@ -18,7 +17,6 @@ const UserNameCell = ({ userId }: { userId: string }) => {
           queryFn: () => getUserDetailsInfo(userId, false),
         });
 
-        console.log("userDetails", userDetails);
         const name = userDetails?.userData?.name;
         setUserName(name);
       } catch (error) {

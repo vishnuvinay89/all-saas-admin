@@ -65,7 +65,7 @@ export const cohortMemberList = async ({
 
 export const getUserDetailsInfo = async (
   userId?: string | string[],
-  fieldValue: boolean = true,
+  fieldValue: boolean = true
 ): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/read/${userId}?fieldvalue=${fieldValue}`;
   try {

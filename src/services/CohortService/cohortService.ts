@@ -105,7 +105,6 @@ export const fetchCohortMemberList = async ({
       filters,
       // sort: ["username", "asc"],
     });
-    console.log("data", response?.data);
     return response?.data;
   } catch (error) {
     console.error("error in cohort member list API ", error);
