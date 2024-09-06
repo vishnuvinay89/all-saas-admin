@@ -8,16 +8,15 @@ import React, { useEffect } from "react";
 import { getFormRead } from "@/services/CreateUserService";
 import { getUserDetailsInfo } from "@/services/UserList";
 import { Storage } from "@/utils/app.constant";
-import EditIcon from "@mui/icons-material/Edit";
-import MailIcon from "@mui/icons-material/Mail";
-import PhoneIcon from "@mui/icons-material/Phone";
-import { Box, Button, IconButton, Menu, Typography } from "@mui/material";
-import { useRouter } from "next/router";
-import useSubmittedButtonStore from "@/utils/useSharedState";
-import LogoutIcon from "@mui/icons-material/Logout";
 import {
   firstLetterInUpperCase,
 } from "@/utils/Helper";
+import useSubmittedButtonStore from "@/utils/useSharedState";
+import LogoutIcon from "@mui/icons-material/Logout";
+import MailIcon from "@mui/icons-material/Mail";
+import PhoneIcon from "@mui/icons-material/Phone";
+import { Box, Button, Menu, Typography } from "@mui/material";
+import { useRouter } from "next/router";
 const Profile = () => {
   const [anchorEl4, setAnchorEl4] = React.useState<null | HTMLElement>(null);
   const [profileClick, setProfileClick] = React.useState<boolean>(false);
@@ -33,12 +32,6 @@ const Profile = () => {
   console.log(adminInformation);
   const [submitValue, setSubmitValue] = React.useState<boolean>(false);
 
-  const [role, setRole] = React.useState<string | null>("");
-
-  const [mobile, setMobile] = React.useState<string | null>("");
-  const [initials, setInitials] = React.useState<string | null>("");
-
-  const [email, setEmail] = React.useState<string | null>("");
   const { t } = useTranslation();
   const setAdminInformation = useSubmittedButtonStore(
     (state: any) => state.setAdminInformation
@@ -188,9 +181,11 @@ const Profile = () => {
   const handleOpenEditModal = () => {
     setOpenEditModal(true);
   };
+
   useEffect(() => {
     getUserName();
   }, [formdata]);
+  
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
       const admin = localStorage.getItem("adminInfo");

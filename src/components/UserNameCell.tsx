@@ -1,19 +1,32 @@
+import { getUserDetailsInfo } from "@/services/UserList";
+import { QueryKeys } from "@/utils/app.constant";
 import { Box, CircularProgress, Typography } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { firstLetterInUpperCase, getUserName } from "./../utils/Helper";
+import { firstLetterInUpperCase } from "./../utils/Helper";
 
 const UserNameCell = ({ userId }: { userId: string }) => {
-  console.log(userId)
+  console.log(userId);
   const [userName, setUserName] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    const fetchUserName = async () => {
-      const id = userId;
-      const name = await getUserName(id);
-      setUserName(name);
+    const getUserName = async (userId: string) => {
+      try {
+        const userDetails = await queryClient.fetchQuery({
+          queryKey: [QueryKeys.USER_READ, userId],
+          queryFn: () => getUserDetailsInfo(userId, false),
+        });
+
+        console.log("userDetails", userDetails);
+        const name = userDetails?.userData?.name; 
+        setUserName(name);
+      } catch (error) {
+        console.error("Error in fetching user name:", error);
+      }
     };
 
-    fetchUserName();
+    getUserName(userId);
   }, [userId]);
 
   if (userName === null) {

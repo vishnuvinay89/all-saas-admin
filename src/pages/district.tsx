@@ -1,35 +1,35 @@
-import React, { useState, useEffect } from "react";
-import KaTableComponent from "../components/KaTableComponent";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import AddDistrictModal from "@/components/AddDistrictModal";
+import ConfirmationModal from "@/components/ConfirmationModal";
 import HeaderComponent from "@/components/HeaderComponent";
+import Loader from "@/components/Loader";
+import PageSizeSelector from "@/components/PageSelector";
+import { showToastMessage } from "@/components/Toastify";
+import {
+  createCohort,
+  getCohortList,
+} from "@/services/CohortService/cohortService";
+import { getCohortList as getMyCohorts } from "@/services/GetCohortList";
+import {
+  createOrUpdateOption,
+  deleteOption,
+  getDistrictsForState,
+  updateCohort
+} from "@/services/MasterDataService";
+import { getUserDetailsInfo } from "@/services/UserList";
+import { Numbers, QueryKeys, SORT, Status, Storage } from "@/utils/app.constant";
+import { transformLabel } from "@/utils/Helper";
+import { Pagination, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { useTranslation } from "next-i18next";
 import { DataType } from "ka-table/enums";
-import {
-  getStateBlockDistrictList,
-  getDistrictsForState,
-  createOrUpdateOption,
-  deleteOption,
-  updateCohort,
-} from "@/services/MasterDataService";
-import { transformLabel } from "@/utils/Helper";
-import { showToastMessage } from "@/components/Toastify";
-import ConfirmationModal from "@/components/ConfirmationModal";
-import Loader from "@/components/Loader";
-import AddDistrictModal from "@/components/AddDistrictModal";
-import { Chip, Pagination, Typography } from "@mui/material";
-import PageSizeSelector from "@/components/PageSelector";
-import { Numbers, SORT, Status, Storage } from "@/utils/app.constant";
-import {
-  createCohort,
-  getCohortList,
-} from "@/services/CohortService/cohortService";
-import { getUserDetailsInfo } from "@/services/UserList";
-import { getCohortList as getMyCohorts } from "@/services/GetCohortList";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import React, { useEffect, useState } from "react";
+import KaTableComponent from "../components/KaTableComponent";
+import { useQueryClient } from "@tanstack/react-query";
 
 type StateDetail = {
   stateCode: string | undefined;
@@ -73,8 +73,6 @@ const District: React.FC = () => {
   const [stateCode, setStateCode] = useState<any>();
   const [stateValue, setStateValue] = useState<string>("");
   useState<string>("");
-  const [cohortStatus, setCohortStatus] = useState<any>();
-  const [cohortId, setCohortId] = useState<any>();
   const [stateFieldId, setStateFieldId] = useState<string>("");
   const [pagination, setPagination] = useState(true);
   const [cohotIdForDelete, setCohortIdForDelete] = useState<any>("");
@@ -86,7 +84,8 @@ const District: React.FC = () => {
   const [districtValueForDelete, setDistrictValueForDelete] = useState<any>("");
   const [countOfBlocks, setCountOfBlocks] = useState<number>(0);
   const [cohortIdofState, setCohortIdofState] = useState<any>("");
-  const [previousSearch,setPreviouseSearch] = useState<any>({});
+  const queryClient = useQueryClient();
+
   // useEffect(() => {
   //   const fetchUserDetail = () => {
   //     if (typeof window !== "undefined" && window.localStorage) {
@@ -115,7 +114,12 @@ const District: React.FC = () => {
         if (typeof window !== "undefined" && window.localStorage) {
           userId = localStorage.getItem(Storage.USER_ID);
         }
-        const response = await getUserDetailsInfo(userId);
+
+        const response = await queryClient.fetchQuery({
+          queryKey: [QueryKeys.USER_READ, userId, true],
+          queryFn: () => getUserDetailsInfo(userId, true),
+        });
+
         console.log("response my cohorts", response);
         const statesField = response.userData.customFields.find(
           (field: { label: string }) => field.label === "STATES"
@@ -135,9 +139,13 @@ const District: React.FC = () => {
 
   const fetchDistricts = async () => {
     try {
-      const data = await getDistrictsForState({
-        controllingfieldfk: stateCode || "",
-        fieldName: "districts",
+
+      const data = await queryClient.fetchQuery({
+        queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode || "", "districts"],
+        queryFn: () => getDistrictsForState({
+          controllingfieldfk: stateCode || "",
+          fieldName: "districts",
+        }),
       });
 
       const districts = data?.result?.values || [];
@@ -170,7 +178,11 @@ const District: React.FC = () => {
         userId = localStorage.getItem(Storage.USER_ID);
       }
 
-      const response: any = await getMyCohorts(userId);
+      const response = await queryClient.fetchQuery({
+        queryKey: [QueryKeys.MY_COHORTS, userId],
+        queryFn: () => getMyCohorts(userId)
+      });
+
       const cohortData = response?.result?.cohortData;
       console.log("cohortData", cohortData);
       if (Array.isArray(cohortData)) {
@@ -200,6 +212,15 @@ const District: React.FC = () => {
   const getFilteredCohortData = async () => {
     try {
       setLoading(true);
+
+      if (!districtsOptionRead.length || !districtNameArr.length) {
+        console.warn(
+          "districtsOptionRead or districtNameArr is empty, waiting for data..."
+        );
+        setLoading(false);
+        return;
+      }
+
       const reqParams = {
         limit: 0,
         offset: 0,
@@ -226,7 +247,6 @@ const District: React.FC = () => {
             updatedBy: any;
           }) => {
             const transformedName = districtDetail.name;
-            console.log(districtsOptionRead);
 
             const matchingDistrict = districtsOptionRead.find(
               (district: { label: string }) =>
@@ -258,15 +278,23 @@ const District: React.FC = () => {
       setLoading(false);
     } catch (error) {
       console.error("Error fetching and filtering cohort districts", error);
-      setDistrictData([]);
       setLoading(false);
     }
   };
+
   useEffect(() => {
-    if (districtData) {
+    if (districtsOptionRead.length && districtNameArr.length) {
       getFilteredCohortData();
     }
-  }, [searchKeyword, pageLimit, pageOffset, stateCode, sortBy, stateValue]);
+  }, [
+    searchKeyword,
+    pageLimit,
+    pageOffset,
+    stateCode,
+    sortBy,
+    districtsOptionRead,
+    districtNameArr,
+  ]);
 
   const getBlockDataCohort = async () => {
     try {
@@ -291,7 +319,6 @@ const District: React.FC = () => {
       setCountOfBlocks(activeBlocksCount);
     } catch (error) {
       console.error("Error fetching and filtering cohort districts", error);
-      setDistrictData([]);
       setLoading(false);
     }
   };
@@ -333,7 +360,6 @@ const District: React.FC = () => {
     setSearchKeyword(keyword);
   };
 
-  
   const handleConfirmDelete = async () => {
     if (selectedStateForDelete) {
       try {
@@ -397,6 +423,7 @@ const District: React.FC = () => {
       const response = await createOrUpdateOption(districtFieldId, newDistrict);
 
       if (response) {
+        queryClient.invalidateQueries({ queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode || "", "districts"] });
         await fetchDistricts();
       }
     } catch (error) {
@@ -523,19 +550,17 @@ const District: React.FC = () => {
     return transformedData.slice(startIndex, endIndex);
   };
   const PagesSelector = () => (
-    <>
-      <Box sx={{ display: { xs: "block" } }}>
-        <Pagination
-          color="primary"
-          count={pageCount}
-          page={pageOffset + 1}
-          onChange={handlePaginationChange}
-          siblingCount={0}
-          boundaryCount={1}
-          sx={{ marginTop: "10px" }}
-        />
-      </Box>
-    </>
+    <Box sx={{ display: { xs: "block" } }}>
+      <Pagination
+        color="primary"
+        count={pageCount}
+        page={pageOffset + 1}
+        onChange={handlePaginationChange}
+        siblingCount={0}
+        boundaryCount={1}
+        sx={{ marginTop: "10px" }}
+      />
+    </Box>
   );
 
   const PageSizeSelectorFunction = () => (
@@ -644,39 +669,39 @@ const District: React.FC = () => {
                 columns={[
                   {
                     key: "label",
-                    title: t("COMMON.DISTRICT"),
+                    title: t("COMMON.DISTRICT").toUpperCase(),
                     dataType: DataType.String,
                     width: "130",
                   },
                   {
                     key: "value",
-                    title: t("MASTER.CODE"),
+                    title: t("MASTER.CODE").toUpperCase(),
                     dataType: DataType.String,
                     width: "130",
                   },
                   {
                     key: "createdBy",
-                    title: t("MASTER.CREATED_BY"),
+                    title: t("MASTER.CREATED_BY").toUpperCase(),
                     width: "130",
                   },
                   {
                     key: "updatedBy",
-                    title: t("MASTER.UPDATED_BY"),
+                    title: t("MASTER.UPDATED_BY").toUpperCase(),
                     width: "130",
                   },
                   {
                     key: "createdAt",
-                    title: t("MASTER.CREATED_AT"),
+                    title: t("MASTER.CREATED_AT").toUpperCase(),
                     width: "160",
                   },
                   {
                     key: "updatedAt",
-                    title: t("MASTER.UPDATED_AT"),
+                    title: t("MASTER.UPDATED_AT").toUpperCase(),
                     width: "160",
                   },
                   {
                     key: "actions",
-                    title: t("MASTER.ACTIONS"),
+                    title: t("MASTER.ACTIONS").toUpperCase(),
                     dataType: DataType.String,
                     width: "130",
                   },

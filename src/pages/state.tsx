@@ -1,33 +1,25 @@
-import React, { useState, useEffect } from "react";
-import KaTableComponent from "../components/KaTableComponent";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import HeaderComponent from "@/components/HeaderComponent";
-import { useTranslation } from "next-i18next";
-import {
-  getStateBlockDistrictList,
-  deleteOption,
-  createOrUpdateOption,
-} from "@/services/MasterDataService";
 import Loader from "@/components/Loader";
-import { AddStateModal } from "@/components/AddStateModal";
-import ConfirmationModal from "@/components/ConfirmationModal";
-import { showToastMessage } from "@/components/Toastify";
-import { SORT, Numbers, Storage } from "@/utils/app.constant";
-import {
-  Box,
-  Chip,
-  Pagination,
-  SelectChangeEvent,
-  Typography,
-} from "@mui/material";
 import PageSizeSelector from "@/components/PageSelector";
+import { showToastMessage } from "@/components/Toastify";
 import {
   createCohort,
   getCohortList,
 } from "@/services/CohortService/cohortService";
-import { getUserDetailsInfo } from "@/services/UserList";
-import useStore from "@/store/store";
+import {
+  createOrUpdateOption,
+  deleteOption,
+  getStateBlockDistrictList,
+} from "@/services/MasterDataService";
+import { Numbers, QueryKeys, SORT } from "@/utils/app.constant";
 import { transformLabel } from "@/utils/Helper";
+import { Box, Pagination, SelectChangeEvent, Typography } from "@mui/material";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import React, { useEffect, useState } from "react";
+import KaTableComponent from "../components/KaTableComponent";
+import { useQueryClient } from "@tanstack/react-query";
+
 export interface StateDetail {
   updatedAt: any;
   createdAt: any;
@@ -37,19 +29,7 @@ export interface StateDetail {
   name: string;
   value: string;
 }
-type cohortFilterDetails = {
-  type?: string;
-  status?: any;
-  states?: string;
-  districts?: string;
-  blocks?: string;
-  name?: string;
-};
-type Option = {
-  name: string;
-  value: string;
-  controllingfieldfk?: string;
-};
+
 const State: React.FC = () => {
   const { t } = useTranslation();
   const [stateData, setStateData] = useState<StateDetail[]>([]);
@@ -70,19 +50,35 @@ const State: React.FC = () => {
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10]);
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [paginationCount, setPaginationCount] = useState<number>(Numbers.ZERO);
-  const [userName, setUserName] = React.useState<string | null>("");
-  const [statesProfilesData, setStatesProfilesData] = useState<any>([]);
   const [pagination, setPagination] = useState(true);
   const [stateDataOption, setStateDataOptinon] = useState<any>([]);
   const [stateCodArrray, setStateCodeArr] = useState<any>([]);
   const [stateNameArray, setStateNameArr] = useState<any>([]);
+  const queryClient = useQueryClient();
+
   const columns = [
-    { key: "label", title: t("MASTER.STATE"), width: "160" },
-    { key: "value", title: t("MASTER.CODE"), width: "160" },
-    { key: "createdBy", title: t("MASTER.CREATED_BY"), width: "160" },
-    { key: "updatedBy", title: t("MASTER.UPDATED_BY"), width: "160" },
-    { key: "createdAt", title: t("MASTER.CREATED_AT"), width: "160" },
-    { key: "updatedAt", title: t("MASTER.UPDATED_AT"), width: "160" },
+    { key: "label", title: t("MASTER.STATE").toUpperCase(), width: "160" },
+    { key: "value", title: t("MASTER.CODE").toUpperCase(), width: "160" },
+    {
+      key: "createdBy",
+      title: t("MASTER.CREATED_BY").toUpperCase(),
+      width: "160",
+    },
+    {
+      key: "updatedBy",
+      title: t("MASTER.UPDATED_BY").toUpperCase(),
+      width: "160",
+    },
+    {
+      key: "createdAt",
+      title: t("MASTER.CREATED_AT").toUpperCase(),
+      width: "160",
+    },
+    {
+      key: "updatedAt",
+      title: t("MASTER.UPDATED_AT").toUpperCase(),
+      width: "160",
+    },
     // { key: "actions", title: t("MASTER.ACTIONS"), width: "160" },
   ];
   const fetchStateData = async () => {
@@ -97,7 +93,19 @@ const State: React.FC = () => {
         optionName: searchKeyword || "",
         sort: sortBy,
       };
-      const resp = await getStateBlockDistrictList(data);
+
+      const resp = await queryClient.fetchQuery({
+        queryKey: [
+          QueryKeys.FIELD_OPTION_READ,
+          data.limit,
+          data.offset,
+          data.fieldName,
+          data.optionName,
+          data.sort.join(","),
+        ],
+        queryFn: () => getStateBlockDistrictList(data),
+      });
+
       const states = resp?.result?.values || [];
       setStateDataOptinon(states);
       const stateNameArra = states.map((item: any) => item.label);
@@ -117,9 +125,11 @@ const State: React.FC = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchStateData();
   }, []);
+
   const getStatecohorts = async () => {
     try {
       const reqParams = {
@@ -131,7 +141,19 @@ const State: React.FC = () => {
         },
         sort: sortBy,
       };
-      const response = await getCohortList(reqParams);
+
+      const response = await queryClient.fetchQuery({
+        queryKey: [
+          QueryKeys.FIELD_OPTION_READ,
+          reqParams.limit,
+          reqParams.offset,
+          searchKeyword || "",
+          "STATE",
+          reqParams.sort.join(","),
+        ],
+        queryFn: () => getCohortList(reqParams),
+      });
+
       const statecohortDetails = response?.results?.cohortDetails || [];
       const filteredStateData = statecohortDetails
         .map((stateDetail: any) => {
@@ -159,7 +181,6 @@ const State: React.FC = () => {
     }
   };
 
-  
   useEffect(() => {
     if (stateDataOption.length > 0 && stateNameArray.length > 0) {
       getStatecohorts();
@@ -265,19 +286,17 @@ const State: React.FC = () => {
     setPageOffset(value - 1);
   };
   const PagesSelector = () => (
-    <>
-      <Box sx={{ display: { xs: "block" } }}>
-        <Pagination
-          color="primary"
-          count={pageCount}
-          page={pageOffset + 1}
-          onChange={handlePaginationChange}
-          siblingCount={0}
-          boundaryCount={1}
-          sx={{ marginTop: "10px" }}
-        />
-      </Box>
-    </>
+    <Box sx={{ display: { xs: "block" } }}>
+      <Pagination
+        color="primary"
+        count={pageCount}
+        page={pageOffset + 1}
+        onChange={handlePaginationChange}
+        siblingCount={0}
+        boundaryCount={1}
+        sx={{ marginTop: "10px" }}
+      />
+    </Box>
   );
   const PageSizeSelectorFunction = () => (
     <Box mt={2}>
