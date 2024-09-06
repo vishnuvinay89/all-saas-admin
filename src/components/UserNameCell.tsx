@@ -19,7 +19,7 @@ const UserNameCell = ({ userId }: { userId: string }) => {
         });
 
         console.log("userDetails", userDetails);
-        const name = userDetails?.userData?.name; 
+        const name = userDetails?.userData?.name;
         setUserName(name);
       } catch (error) {
         console.error("Error in fetching user name:", error);

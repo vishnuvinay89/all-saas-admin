@@ -35,8 +35,13 @@ export const getUserTableColumns = (t: any, isMobile: boolean) => {
     { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 160 },
     // { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130, sortDirection: SortDirection.Ascend },
     // { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 160, sortDirection: SortDirection.Ascend },
-    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 160},
-    { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 170 , isSortable: false },
+    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 160 },
+    {
+      key: "actions",
+      titleKey: "TABLE_TITLE.ACTIONS",
+      width: 170,
+      isSortable: false,
+    },
   ];
 
   return generateColumns(t, configs, isMobile);
@@ -49,11 +54,16 @@ export const getTLTableColumns = (t: any, isMobile: boolean) => {
     { key: "gender", titleKey: "TABLE_TITLE.GENDER", width: 90 },
     { key: "district", titleKey: "TABLE_TITLE.DISTRICT_BLOCK", width: 150 },
     // { key: "blocks", titleKey: "TABLE_TITLE.BLOCK", width: 130 },
-    { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130,  },
-    { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130,  },
-    { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 160, },
-    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 160, },
-    { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 170 , isSortable: false},
+    { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130 },
+    { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130 },
+    { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 160 },
+    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 160 },
+    {
+      key: "actions",
+      titleKey: "TABLE_TITLE.ACTIONS",
+      width: 170,
+      isSortable: false,
+    },
   ];
 
   return generateColumns(t, configs, isMobile);
@@ -79,6 +89,112 @@ export const getCenterTableData = (t: any, isMobile: boolean) => {
       width: 130,
     },
     { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 },
+  ];
+
+  return generateColumns(t, configs, isMobile);
+};
+
+//master data
+export const getStateDataMaster = (t: any, isMobile: boolean) => {
+  const configs: ColumnConfig[] = [
+    {
+      key: "label",
+      titleKey: t("TABLE_TITLE.STATE").toUpperCase(),
+      width: 130,
+    },
+    { key: "value", titleKey: t("TABLE_TITLE.CODE").toUpperCase(), width: 130 },
+    {
+      key: "createdBy",
+      titleKey: t("TABLE_TITLE.CREATED_BY").toUpperCase(),
+      width: 130,
+    },
+    {
+      key: "updatedBy",
+      titleKey: t("TABLE_TITLE.UPDATED_BY").toUpperCase(),
+      width: 130,
+    },
+    {
+      key: "createdAt",
+      titleKey: t("TABLE_TITLE.CREATED_DATE").toUpperCase(),
+      width: 130,
+    },
+    {
+      key: "updatedAt",
+      titleKey: t("TABLE_TITLE.UPDATED_DATE").toUpperCase(),
+      width: 130,
+    },
+  ];
+
+  return generateColumns(t, configs, isMobile);
+};
+
+export const getDistrictTableData = (t: any, isMobile: boolean) => {
+  const configs: ColumnConfig[] = [
+    {
+      key: "label",
+      titleKey: t("TABLE_TITLE.DISTRICT").toUpperCase(),
+      width: 130,
+    },
+    { key: "value", titleKey: t("TABLE_TITLE.CODE").toUpperCase(), width: 130 },
+    {
+      key: "createdBy",
+      titleKey: t("TABLE_TITLE.CREATED_BY").toUpperCase(),
+      width: 130,
+    },
+    {
+      key: "updatedBy",
+      titleKey: t("TABLE_TITLE.UPDATED_BY").toUpperCase(),
+      width: 130,
+    },
+    {
+      key: "createdAt",
+      titleKey: t("TABLE_TITLE.CREATED_DATE").toUpperCase(),
+      width: 130,
+    },
+    {
+      key: "updatedAt",
+      titleKey: t("TABLE_TITLE.UPDATED_DATE").toUpperCase(),
+      width: 130,
+    },
+    {
+      key: "actions",
+      titleKey: t("TABLE_TITLE.ACTIONS").toUpperCase(),
+      width: 160,
+    },
+  ];
+
+  return generateColumns(t, configs, isMobile);
+};
+
+export const getBlockTableData = (t: any, isMobile: boolean) => {
+  const configs: ColumnConfig[] = [
+    { key: "name", titleKey: t("TABLE_TITLE.BLOCK").toUpperCase(), width: 130 },
+    { key: "code", titleKey: t("TABLE_TITLE.CODE").toUpperCase(), width: 130 },
+    {
+      key: "createdBy",
+      titleKey: t("TABLE_TITLE.CREATED_BY").toUpperCase(),
+      width: 130,
+    },
+    {
+      key: "updatedBy",
+      titleKey: t("TABLE_TITLE.UPDATED_BY").toUpperCase(),
+      width: 130,
+    },
+    {
+      key: "createdAt",
+      titleKey: t("TABLE_TITLE.CREATED_DATE").toUpperCase(),
+      width: 130,
+    },
+    {
+      key: "updatedAt",
+      titleKey: t("TABLE_TITLE.UPDATED_DATE").toUpperCase(),
+      width: 130,
+    },
+    {
+      key: "actions",
+      titleKey: t("TABLE_TITLE.ACTIONS").toUpperCase(),
+      width: 160,
+    },
   ];
 
   return generateColumns(t, configs, isMobile);

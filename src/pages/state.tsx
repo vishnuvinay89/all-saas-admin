@@ -1,5 +1,4 @@
 import HeaderComponent from "@/components/HeaderComponent";
-import Loader from "@/components/Loader";
 import PageSizeSelector from "@/components/PageSelector";
 import { showToastMessage } from "@/components/Toastify";
 import {
@@ -13,12 +12,20 @@ import {
 } from "@/services/MasterDataService";
 import { Numbers, QueryKeys, SORT } from "@/utils/app.constant";
 import { transformLabel } from "@/utils/Helper";
-import { Box, Pagination, SelectChangeEvent, Typography } from "@mui/material";
+import {
+  Box,
+  Pagination,
+  SelectChangeEvent,
+  useMediaQuery,
+} from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { useEffect, useState } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { useQueryClient } from "@tanstack/react-query";
+import { getStateDataMaster } from "@/data/tableColumns";
+import { Theme } from "@mui/system";
+import Loader from "@/components/Loader";
 
 export interface StateDetail {
   updatedAt: any;
@@ -56,34 +63,11 @@ const State: React.FC = () => {
   const [stateNameArray, setStateNameArr] = useState<any>([]);
   const queryClient = useQueryClient();
 
-  const columns = [
-    { key: "label", title: t("MASTER.STATE").toUpperCase(), width: "160" },
-    { key: "value", title: t("MASTER.CODE").toUpperCase(), width: "160" },
-    {
-      key: "createdBy",
-      title: t("MASTER.CREATED_BY").toUpperCase(),
-      width: "160",
-    },
-    {
-      key: "updatedBy",
-      title: t("MASTER.UPDATED_BY").toUpperCase(),
-      width: "160",
-    },
-    {
-      key: "createdAt",
-      title: t("MASTER.CREATED_AT").toUpperCase(),
-      width: "160",
-    },
-    {
-      key: "updatedAt",
-      title: t("MASTER.UPDATED_AT").toUpperCase(),
-      width: "160",
-    },
-    // { key: "actions", title: t("MASTER.ACTIONS"), width: "160" },
-  ];
+  const isMobile = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
   const fetchStateData = async () => {
     try {
-      setLoading(true);
       const limit = pageLimit;
       const offset = pageOffset * limit;
       const data = {
@@ -110,10 +94,8 @@ const State: React.FC = () => {
       setStateDataOptinon(states);
       const stateNameArra = states.map((item: any) => item.label);
       setStateNameArr(stateNameArra);
-      console.log("stateNameArray", stateNameArray);
       const stateCodeArra = states.map((item: any) => item.value);
       setStateCodeArr(stateCodeArra);
-      console.log("stateDataOptinon", stateCodeArra);
       if (resp?.result?.fieldId) {
         setFieldId(resp.result.fieldId);
       } else {
@@ -121,8 +103,6 @@ const State: React.FC = () => {
       }
     } catch (error) {
       console.error("Error fetching state data", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -132,6 +112,7 @@ const State: React.FC = () => {
 
   const getStatecohorts = async () => {
     try {
+      setLoading(true);
       const reqParams = {
         limit: 0,
         offset: 0,
@@ -175,9 +156,11 @@ const State: React.FC = () => {
           stateNameArray.includes(state.label)
         );
       setStateData(filteredStateData);
-      console.log(stateData);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching and filtering cohort states", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -251,7 +234,6 @@ const State: React.FC = () => {
           parentId: null,
           customFields: [],
         };
-        console.log("before cohortList");
         if (!isUpdating) {
           await createCohort(queryParameters);
         }
@@ -321,38 +303,30 @@ const State: React.FC = () => {
       handleSearch={handleSearch}
       handleAddUserClick={handleAddStateClick}
     >
-      {stateData.length === 0 && !loading ? (
-        <Box display="flex" marginLeft="40%" gap="20px">
-          <Typography marginTop="10px" variant="h2">
-            {t("COMMON.STATE_NOT_FOUND")}
-          </Typography>
+      {loading ? (
+        <Box
+          width={"100%"}
+          display={"flex"}
+          flexDirection={"column"}
+          alignItems={"center"}
+        >
+          <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
         </Box>
       ) : (
         <div style={{ marginTop: "40px" }}>
-          {loading ? (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              height="100%"
-            >
-              <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
-            </Box>
-          ) : (
-            <KaTableComponent
-              columns={columns}
-              data={stateData}
-              limit={pageLimit}
-              offset={pageOffset}
-              paginationEnable={paginationCount >= Numbers.FIVE}
-              PagesSelector={PagesSelector}
-              pagination={pagination}
-              PageSizeSelector={PageSizeSelectorFunction}
-              pageSizes={pageSizeArray}
-              onEdit={handleEdit}
-              extraActions={[]}
-            />
-          )}
+          <KaTableComponent
+            columns={getStateDataMaster(t, isMobile)}
+            data={stateData}
+            limit={pageLimit}
+            offset={pageOffset}
+            paginationEnable={paginationCount >= Numbers.FIVE}
+            PagesSelector={PagesSelector}
+            pagination={pagination}
+            PageSizeSelector={PageSizeSelectorFunction}
+            pageSizes={pageSizeArray}
+            onEdit={handleEdit}
+            extraActions={[]}
+          />
         </div>
       )}
     </HeaderComponent>
