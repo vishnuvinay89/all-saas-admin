@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import KaTableComponent from "../components/KaTableComponent";
-import { DataType } from "ka-table/enums";
 import HeaderComponent from "@/components/HeaderComponent";
-import { Chip, Pagination, Typography } from "@mui/material";
+import { Pagination, Typography, useMediaQuery } from "@mui/material";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -12,7 +11,6 @@ import { useTranslation } from "next-i18next";
 import Loader from "@/components/Loader";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import {
-  getStateBlockDistrictList,
   getDistrictsForState,
   getBlocksForDistricts,
   deleteOption,
@@ -24,13 +22,20 @@ import { showToastMessage } from "@/components/Toastify";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { AddBlockModal } from "@/components/AddBlockModal";
 import PageSizeSelector from "@/components/PageSelector";
-import { CohortTypes, SORT, Status, Storage } from "@/utils/app.constant";
+import {
+  CohortTypes,
+  SORT,
+  Status,
+  Storage,
+  Numbers,
+} from "@/utils/app.constant";
 import { getUserDetailsInfo } from "@/services/UserList";
 import {
   createCohort,
   getCohortList,
 } from "@/services/CohortService/cohortService";
-import { Numbers } from "@/utils/app.constant";
+import { getBlockTableData } from "@/data/tableColumns";
+import { Theme } from "@mui/system";
 
 type StateDetail = {
   name: string | undefined;
@@ -94,12 +99,9 @@ const Block: React.FC = () => {
   const [pageSizeArray, setPageSizeArray] = useState<number[]>([5, 10, 20, 50]);
   const [stateCode, setStateCode] = useState<any>("");
   const [stateValue, setStateValue] = useState<string>("");
-  const [cohortStatus, setCohortStatus] = useState<any>();
-  // const [cohortId, setCohortId] = useState<any>();
   const [stateFieldId, setStateFieldId] = useState<string>("");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [pagination, setPagination] = useState(true);
-  const [cohortBlockDetails, setCohortBlockDetails] = useState<any>([]);
   const [blocksOptionRead, setBlocksOptionRead] = useState<any>([]);
   const [blockNameArr, setBlockNameArr] = useState<any>([]);
   const [blockCodeArr, setBlockCodeArr] = useState<any>([]);
@@ -109,7 +111,6 @@ const Block: React.FC = () => {
   const [districtNameArr, setDistrictNameArr] = useState<any>([]);
   const [cohortIdForDelete, setCohortIdForDelete] = useState<any>("");
   const [cohortIdForEdit, setCohortIdForEdit] = useState<any>();
-  const [cohortIdOfDistrict, setCohortIdOfDistrict] = useState<any>();
   const [blockValueForDelete, setBlockValueForDelete] = useState<any>();
   const [countOfCenter, setCountOfCenter] = useState<number>(0);
   const [cohortIds, setCohortIds] = useState<any>([]);
@@ -128,6 +129,10 @@ const Block: React.FC = () => {
     status: [statusValue],
   });
 
+  const isMobile = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
+
   useEffect(() => {
     const fetchUserDetail = async () => {
       let userId: any;
@@ -137,13 +142,9 @@ const Block: React.FC = () => {
         }
         const response = await getUserDetailsInfo(userId);
 
-        console.log("profile api is triggered", response.userData.customFields);
-
         const statesField = response.userData.customFields.find(
           (field: { label: string }) => field.label === "STATES"
         );
-
-        console.log("stateField", statesField);
 
         if (statesField) {
           setStateValue(statesField.value);
@@ -157,7 +158,6 @@ const Block: React.FC = () => {
     fetchUserDetail();
   }, []);
 
-  console.log("stateCode", stateCode);
   const fetchDistricts = async () => {
     try {
       const data = await getDistrictsForState({
@@ -176,8 +176,6 @@ const Block: React.FC = () => {
 
       const districtFieldID = data?.result?.fieldId || "";
       setDistrictFieldId(districtFieldID);
-
-      console.log("districtNameArray", districtNameArray);
     } catch (error) {
       console.error("Error fetching districts", error);
     }
@@ -265,10 +263,8 @@ const Block: React.FC = () => {
           selectedDistrict === t("COMMON.ALL") ? "" : selectedDistrict || "",
         fieldName: "blocks",
       });
-      console.log("selectedDistrict block", selectedDistrict);
       const blocks = response?.result?.values || [];
       setBlocksOptionRead(blocks);
-      console.log("blocks", blocks);
 
       const blockNameArray = blocks.map((item: any) => item.label);
       setBlockNameArr(blockNameArray);
@@ -316,8 +312,6 @@ const Block: React.FC = () => {
       const response = await getCohortList(reqParams);
       const cohortDetails = response?.results?.cohortDetails || [];
 
-      console.log("Cohort Details:", cohortDetails);
-
       const filteredBlockData = cohortDetails
         .map(
           (blockDetail: {
@@ -332,13 +326,10 @@ const Block: React.FC = () => {
             status: string;
           }) => {
             const transformedName = blockDetail.name;
-            console.log("Transformed Name:", transformedName);
 
             const matchingBlock = blocksOptionRead.find(
               (block: BlockOption) => block.label === transformedName
             );
-
-            console.log("Matching Block:", matchingBlock);
 
             return {
               name: transformedName,
@@ -354,8 +345,6 @@ const Block: React.FC = () => {
           }
         )
         .filter((block: { name: string }) => blockNameArr.includes(block.name));
-
-      console.log("Filtered Block Data:", filteredBlockData);
 
       setBlockData(filteredBlockData);
       setShowAllBlocks(filteredBlockData);
@@ -396,10 +385,8 @@ const Block: React.FC = () => {
       };
 
       const response: any = await getCohortList(reqParams);
-      console.log("response", response);
 
       const activeCenters = response?.results?.cohortDetails || [];
-      console.log("activeBlocks", activeCenters);
 
       const activeCentersCount = activeCenters.filter(
         (block: { status: string }) => block.status === "active"
@@ -409,8 +396,6 @@ const Block: React.FC = () => {
       console.error("Error fetching and filtering cohort districts", error);
     }
   };
-
-  console.log("countOfCenter", countOfCenter);
 
   useEffect(() => {
     if (parentIdBlock) {
@@ -437,57 +422,6 @@ const Block: React.FC = () => {
 
     return transformedData.slice(startIndex, endIndex);
   };
-  const columns = [
-    {
-      key: "name",
-      title: t("COMMON.BLOCK").toUpperCase(),
-      dataType: DataType.String,
-      width: "130",
-    },
-    {
-      key: "code",
-      title: t("MASTER.CODE").toUpperCase(),
-      dataType: DataType.String,
-      width: "130",
-    },
-    // {
-    //   key: "status",
-    //   title: t("Status").toUpperCase(),
-    //   dataType: DataType.String,
-    //   width: "130",
-    // },
-    {
-      key: "createdBy",
-      title: t("MASTER.CREATED_BY").toUpperCase(),
-      dataType: DataType.String,
-      width: "160",
-    },
-    {
-      key: "updatedBy",
-      title: t("MASTER.UPDATED_BY").toUpperCase(),
-      dataType: DataType.String,
-      width: "160",
-    },
-
-    {
-      key: "createdAt",
-      title: t("MASTER.CREATED_AT").toUpperCase(),
-      dataType: DataType.String,
-      width: "130",
-    },
-    {
-      key: "updatedAt",
-      title: t("MASTER.UPDATED_AT").toUpperCase(),
-      dataType: DataType.String,
-      width: "130",
-    },
-    {
-      key: "actions",
-      title: t("MASTER.ACTIONS").toUpperCase(),
-      dataType: DataType.String,
-      width: "130",
-    },
-  ];
 
   const handleSortChange = async (event: SelectChangeEvent) => {
     const sortOrder =
@@ -521,7 +455,6 @@ const Block: React.FC = () => {
     }
   };
 
-  console.log("selectedCohortId", selectedCohortId);
   useEffect(() => {
     if (selectedDistrict) {
       getCohortSearchBlock(selectedDistrict);
@@ -541,12 +474,9 @@ const Block: React.FC = () => {
       block: "",
       label: "",
     };
-    console.log("initialValues", initialValues);
     setSelectedStateForEdit(initialValues);
   };
   const handleDelete = (rowData: BlockDetail) => {
-    console.log("deleted data for row", rowData);
-
     setSelectedStateForDelete(rowData);
     setCohortIdForDelete(rowData.cohortId);
     setConfirmationDialogOpen(true);
@@ -573,7 +503,7 @@ const Block: React.FC = () => {
     setPageLimit(Numbers.TEN);
     setPageOffset(Numbers.ZERO);
     setPageCount(Numbers.ONE);
-    console.log("newValue", newValue);
+
     if (newValue === Status.ACTIVE) {
       setFilters((prevFilters: any) => ({
         ...prevFilters,
@@ -651,19 +581,17 @@ const Block: React.FC = () => {
     setPageOffset(value - 1);
   };
   const PagesSelector = () => (
-    <>
-      <Box sx={{ display: { xs: "block" } }}>
-        <Pagination
-          color="primary"
-          count={pageCount}
-          page={pageOffset + 1}
-          onChange={handlePaginationChange}
-          siblingCount={0}
-          boundaryCount={1}
-          sx={{ marginTop: "10px" }}
-        />
-      </Box>
-    </>
+    <Box sx={{ display: { xs: "block" } }}>
+      <Pagination
+        color="primary"
+        count={pageCount}
+        page={pageOffset + 1}
+        onChange={handlePaginationChange}
+        siblingCount={0}
+        boundaryCount={1}
+        sx={{ marginTop: "10px" }}
+      />
+    </Box>
   );
 
   const PageSizeSelectorFunction = () => (
@@ -691,7 +619,6 @@ const Block: React.FC = () => {
     setEditState(null);
     setSelectedStateForEdit(null);
     setModalOpen(true);
-    console.log("insdie add state clicked");
   };
 
   //create cohort
@@ -741,7 +668,6 @@ const Block: React.FC = () => {
       ],
     };
 
-    console.log("queryParameters", queryParameters);
     try {
       const cohortCreateResponse = await createCohort(queryParameters);
       if (cohortCreateResponse) {
@@ -774,7 +700,6 @@ const Block: React.FC = () => {
         },
       ],
     };
-    console.log("newDistrict", newDistrict);
     try {
       const response = await createOrUpdateOption(blocksFieldId, newDistrict);
 
@@ -878,10 +803,11 @@ const Block: React.FC = () => {
       >
         {loading ? (
           <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            height="20vh"
+            width={"100%"}
+            id="check"
+            display={"flex"}
+            flexDirection={"column"}
+            alignItems={"center"}
           >
             <Loader showBackdrop={false} loadingText="Loading..." />
           </Box>
@@ -967,7 +893,7 @@ const Block: React.FC = () => {
             <Box sx={{ marginTop: 2 }}>
               {filteredCohortOptionData().length > 0 ? (
                 <KaTableComponent
-                  columns={columns}
+                  columns={getBlockTableData(t, isMobile)}
                   data={filteredCohortOptionData()}
                   limit={pageLimit}
                   offset={pageOffset}

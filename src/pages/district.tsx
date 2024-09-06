@@ -4,6 +4,7 @@ import HeaderComponent from "@/components/HeaderComponent";
 import Loader from "@/components/Loader";
 import PageSizeSelector from "@/components/PageSelector";
 import { showToastMessage } from "@/components/Toastify";
+import { getDistrictTableData } from "@/data/tableColumns";
 import {
   createCohort,
   getCohortList,
@@ -13,23 +14,29 @@ import {
   createOrUpdateOption,
   deleteOption,
   getDistrictsForState,
-  updateCohort
+  updateCohort,
 } from "@/services/MasterDataService";
 import { getUserDetailsInfo } from "@/services/UserList";
-import { Numbers, QueryKeys, SORT, Status, Storage } from "@/utils/app.constant";
+import {
+  Numbers,
+  QueryKeys,
+  SORT,
+  Status,
+  Storage,
+} from "@/utils/app.constant";
 import { transformLabel } from "@/utils/Helper";
-import { Pagination, Typography } from "@mui/material";
+import { Pagination, Typography, useMediaQuery } from "@mui/material";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { DataType } from "ka-table/enums";
+import { Theme } from "@mui/system";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { useEffect, useState } from "react";
 import KaTableComponent from "../components/KaTableComponent";
-import { useQueryClient } from "@tanstack/react-query";
 
 type StateDetail = {
   stateCode: string | undefined;
@@ -86,26 +93,9 @@ const District: React.FC = () => {
   const [cohortIdofState, setCohortIdofState] = useState<any>("");
   const queryClient = useQueryClient();
 
-  // useEffect(() => {
-  //   const fetchUserDetail = () => {
-  //     if (typeof window !== "undefined" && window.localStorage) {
-  //       const storedUserData = JSON.parse(
-  //         localStorage.getItem("adminInfo") || "{}"
-  //       );
-
-  //       const stateCodes = storedUserData?.customFields?.[0].code;
-  //       const stateNames = storedUserData?.customFields?.[0].value;
-  //       const stateField = storedUserData?.customFields[0].fieldId;
-
-  //       if (stateField) {
-  //         setStateFieldId(stateField);
-  //         setStateCode(stateCodes);
-  //         setStateValue(stateNames);
-  //       }
-  //     }
-  //   };
-  //   fetchUserDetail();
-  // }, [stateFieldId]);
+  const isMobile = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
 
   useEffect(() => {
     const fetchUserDetail = async () => {
@@ -120,7 +110,6 @@ const District: React.FC = () => {
           queryFn: () => getUserDetailsInfo(userId, true),
         });
 
-        console.log("response my cohorts", response);
         const statesField = response.userData.customFields.find(
           (field: { label: string }) => field.label === "STATES"
         );
@@ -139,13 +128,13 @@ const District: React.FC = () => {
 
   const fetchDistricts = async () => {
     try {
-
       const data = await queryClient.fetchQuery({
         queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode || "", "districts"],
-        queryFn: () => getDistrictsForState({
-          controllingfieldfk: stateCode || "",
-          fieldName: "districts",
-        }),
+        queryFn: () =>
+          getDistrictsForState({
+            controllingfieldfk: stateCode || "",
+            fieldName: "districts",
+          }),
       });
 
       const districts = data?.result?.values || [];
@@ -159,8 +148,6 @@ const District: React.FC = () => {
 
       const districtFieldID = data?.result?.fieldId || "";
       setDistrictFieldId(districtFieldID);
-
-      console.log("districtNameArray", districtNameArray);
     } catch (error) {
       console.error("Error fetching districts", error);
     }
@@ -180,11 +167,10 @@ const District: React.FC = () => {
 
       const response = await queryClient.fetchQuery({
         queryKey: [QueryKeys.MY_COHORTS, userId],
-        queryFn: () => getMyCohorts(userId)
+        queryFn: () => getMyCohorts(userId),
       });
 
       const cohortData = response?.result?.cohortData;
-      console.log("cohortData", cohortData);
       if (Array.isArray(cohortData)) {
         const stateCohort = cohortData.find(
           (cohort) => cohort.type === "STATE"
@@ -268,8 +254,6 @@ const District: React.FC = () => {
           districtNameArr.includes(district.label)
         );
 
-      console.log("filteredDistrictData", filteredDistrictData);
-
       setDistrictData(filteredDistrictData);
 
       const totalCount = filteredDistrictData.length;
@@ -311,7 +295,6 @@ const District: React.FC = () => {
       const response: any = await getCohortList(reqParams);
 
       const activeBlocks = response?.results?.cohortDetails || [];
-      console.log("activeBlocks", activeBlocks);
 
       const activeBlocksCount = activeBlocks.filter(
         (block: { status: string }) => block.status === "active"
@@ -340,20 +323,15 @@ const District: React.FC = () => {
       stateCode: stateCode,
       cohortId: cohortIdForEDIT,
     };
-    console.log("updatedRowData", updatedRowData);
     setSelectedStateForEdit(updatedRowData);
   };
   const handleDelete = (rowData: DistrictDetail) => {
     setSelectedStateForDelete(rowData);
     const districtValue = rowData.value;
     setDistrictValueForDelete(districtValue);
-
-    console.log("districtValue", districtValue);
-
     setCohortIdForDelete(rowData.cohortId);
     setConfirmationDialogOpen(true);
   };
-  console.log("cohort id for delte", cohotIdForDelete);
   const handleSearch = (keyword: string) => {
     setPageOffset(Numbers.ZERO);
     setPageCount(Numbers.ONE);
@@ -381,7 +359,6 @@ const District: React.FC = () => {
         status: Status.ARCHIVED,
       };
       const resp = await updateCohort(cohotIdForDelete, cohortDetails);
-      console.log(resp);
       if (resp?.responseCode === 200) {
         const cohort = filteredCohortOptionData()?.find(
           (item: any) => item.cohortId == cohotIdForDelete
@@ -389,7 +366,6 @@ const District: React.FC = () => {
         if (cohort) {
           cohort.status = Status.ARCHIVED;
         }
-        console.log(resp?.params?.successmessage);
       } else {
         console.log("Cohort Not Archived");
       }
@@ -423,7 +399,9 @@ const District: React.FC = () => {
       const response = await createOrUpdateOption(districtFieldId, newDistrict);
 
       if (response) {
-        queryClient.invalidateQueries({ queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode || "", "districts"] });
+        queryClient.invalidateQueries({
+          queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode || "", "districts"],
+        });
         await fetchDistricts();
       }
     } catch (error) {
@@ -641,10 +619,11 @@ const District: React.FC = () => {
       >
         {loading ? (
           <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            height="20vh"
+            width={"100%"}
+            id="check"
+            display={"flex"}
+            flexDirection={"column"}
+            alignItems={"center"}
           >
             <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
           </Box>
@@ -666,46 +645,7 @@ const District: React.FC = () => {
 
             {filteredCohortOptionData().length > 0 ? (
               <KaTableComponent
-                columns={[
-                  {
-                    key: "label",
-                    title: t("COMMON.DISTRICT").toUpperCase(),
-                    dataType: DataType.String,
-                    width: "130",
-                  },
-                  {
-                    key: "value",
-                    title: t("MASTER.CODE").toUpperCase(),
-                    dataType: DataType.String,
-                    width: "130",
-                  },
-                  {
-                    key: "createdBy",
-                    title: t("MASTER.CREATED_BY").toUpperCase(),
-                    width: "130",
-                  },
-                  {
-                    key: "updatedBy",
-                    title: t("MASTER.UPDATED_BY").toUpperCase(),
-                    width: "130",
-                  },
-                  {
-                    key: "createdAt",
-                    title: t("MASTER.CREATED_AT").toUpperCase(),
-                    width: "160",
-                  },
-                  {
-                    key: "updatedAt",
-                    title: t("MASTER.UPDATED_AT").toUpperCase(),
-                    width: "160",
-                  },
-                  {
-                    key: "actions",
-                    title: t("MASTER.ACTIONS").toUpperCase(),
-                    dataType: DataType.String,
-                    width: "130",
-                  },
-                ]}
+                columns={getDistrictTableData(t, isMobile)}
                 data={filteredCohortOptionData()}
                 limit={pageLimit}
                 offset={pageOffset}

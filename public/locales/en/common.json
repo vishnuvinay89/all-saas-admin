@@ -123,7 +123,6 @@
     "BLOCKS_REASSIGN_FAILED": "Block Reassignment fails",
     "USER_COHORTS": "{{name}} belongs to below cohorts",
     "DELETE_COHORT_WARNING": "Do you want to delete user from cohort?"
-
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -207,11 +206,12 @@
     "TOPIC_DETAILS": "Topic Details",
     "BROWSE_FILE": "Browse File",
     "UPLOAD": "Upload",
-    "COURSE_CREATED_SUCCESSFULLY":"Course created successfully",
+    "COURSE_CREATED_SUCCESSFULLY": "Course created successfully",
     "COURSE_NOT_CREATED": "Course not created",
     "RESOURCES": "Resources",
     "TOPIC": "Topic",
     "DURATION/MONTH": "Duration/Month"
+
   },
   "MASTER": {
     "STATE": "States",
@@ -260,8 +260,7 @@
     "CENTER_CREATED_SUCCESSFULLY": "Center Created Successfully",
     "SEARCHBAR_PLACEHOLDER": "Search Center..",
     "CENTER_UPDATE_FAILED": "Something went wrong while updating center",
-    "YOU_CANT_DELETE_CENTER_HAS_ACTIVE_LEARNERS":  "You can't delete the center because it has {{activeMembers}} Active Learners"
-
+    "YOU_CANT_DELETE_CENTER_HAS_ACTIVE_LEARNERS": "You can't delete the center because it has {{activeMembers}} Active Learners"
   },
   "FORM": {
     "FULL_NAME": "Full Name",
@@ -380,9 +379,8 @@
     "ARCHIVED_MEMBERS": "Archived Members",
     "ACTIVE_MEMBERS": "Active Members",
     "ACTIVE_LEARNERS": "Active Learners",
-    "ARCHIVED_LEARNERS": " Archived Learners"
+    "ARCHIVED_LEARNERS": " Archived Learners",
+    "CODE": "Code",
+    "DISTRICT": "District"
   }
-
-  
 }
-
