@@ -13,12 +13,15 @@ import {
 } from "@/services/MasterDataService";
 import { Numbers, QueryKeys, SORT } from "@/utils/app.constant";
 import { transformLabel } from "@/utils/Helper";
-import { Box, Pagination, SelectChangeEvent, Typography } from "@mui/material";
+import { Box, Pagination, SelectChangeEvent, Typography, useMediaQuery } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { useEffect, useState } from "react";
 import KaTableComponent from "../components/KaTableComponent";
 import { useQueryClient } from "@tanstack/react-query";
+import { getStateDataMaster } from "@/data/tableColumns";
+import { Theme } from "@mui/system";
+
 
 export interface StateDetail {
   updatedAt: any;
@@ -56,31 +59,9 @@ const State: React.FC = () => {
   const [stateNameArray, setStateNameArr] = useState<any>([]);
   const queryClient = useQueryClient();
 
-  const columns = [
-    { key: "label", title: t("MASTER.STATE").toUpperCase(), width: "160" },
-    { key: "value", title: t("MASTER.CODE").toUpperCase(), width: "160" },
-    {
-      key: "createdBy",
-      title: t("MASTER.CREATED_BY").toUpperCase(),
-      width: "160",
-    },
-    {
-      key: "updatedBy",
-      title: t("MASTER.UPDATED_BY").toUpperCase(),
-      width: "160",
-    },
-    {
-      key: "createdAt",
-      title: t("MASTER.CREATED_AT").toUpperCase(),
-      width: "160",
-    },
-    {
-      key: "updatedAt",
-      title: t("MASTER.UPDATED_AT").toUpperCase(),
-      width: "160",
-    },
-    // { key: "actions", title: t("MASTER.ACTIONS"), width: "160" },
-  ];
+  const isMobile = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
   const fetchStateData = async () => {
     try {
       setLoading(true);
@@ -340,7 +321,7 @@ const State: React.FC = () => {
             </Box>
           ) : (
             <KaTableComponent
-              columns={columns}
+            columns={getStateDataMaster(t, isMobile)}
               data={stateData}
               limit={pageLimit}
               offset={pageOffset}

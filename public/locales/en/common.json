@@ -379,7 +379,9 @@
     "ARCHIVED_MEMBERS": "Archived Members",
     "ACTIVE_MEMBERS": "Active Members",
     "ACTIVE_LEARNERS": "Active Learners",
-    "ARCHIVED_LEARNERS": " Archived Learners"
+    "ARCHIVED_LEARNERS": " Archived Learners",
+    "CODE": "Code",
+    "DISTRICT":"District"
   }
 
   
