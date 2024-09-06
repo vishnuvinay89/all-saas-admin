@@ -293,7 +293,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
             fieldSchema?.hasOwnProperty("isDropdown") ||
             fieldSchema?.hasOwnProperty("isCheckbox")
           ) {
-            apiBody.customFields.push({
+            apiBody?.customFields?.push({
               fieldId: fieldId,
               value: Array.isArray(fieldValue) ? fieldValue : [fieldValue],
             });
@@ -854,9 +854,10 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                 schema={schema}
                 uiSchema={uiSchema}
                 onSubmit={
-                  userType === FormContextType.TEACHER
-                    ? handleSubmit
-                    : handleSubmitLearners
+                  // userType === FormContextType.TEACHER
+                  //   ? handleSubmit
+                  //   :
+                     handleSubmitLearners
                 }
                 // onChange={handleChangeFormCreate}
                 // onError={handleErrorCreate}
@@ -921,9 +922,10 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                 schema={schema}
                 uiSchema={uiSchema}
                 onSubmit={
-                  userType === FormContextType.TEACHER
-                    ? handleSubmit
-                    : handleSubmitLearners
+                  // userType === FormContextType.TEACHER
+                  //   ? handleSubmit
+                  //   : 
+                    handleSubmitLearners
                 }
                 onChange={handleChange}
                 onError={handleError}
@@ -943,7 +945,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                   id="dynamic-form"
                   schema={schema}
                   uiSchema={uiSchema}
-                  onSubmit={handleSubmit}
+                  onSubmit={handleSubmitLearners}
                   onChange={handleChange}
                   onError={handleError}
                   // widgets={{}}
@@ -962,9 +964,10 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                   schema={schema}
                   uiSchema={uiSchema}
                   onSubmit={
-                    userType === "Teachers"
-                      ? handleSubmit
-                      : handleSubmitLearners
+                    // userType === "Teachers"
+                    //   ? handleSubmit
+                    //   : 
+                      handleSubmitLearners
                   }
                   onChange={handleChange}
                   onError={handleError}
