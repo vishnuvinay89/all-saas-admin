@@ -9,6 +9,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useTranslation } from "next-i18next";
 import Loader from "@/components/Loader";
+import { useQueryClient } from "@tanstack/react-query";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import {
   getDistrictsForState,
@@ -28,6 +29,7 @@ import {
   Status,
   Storage,
   Numbers,
+  QueryKeys,
 } from "@/utils/app.constant";
 import { getUserDetailsInfo } from "@/services/UserList";
 import {
@@ -120,6 +122,7 @@ const Block: React.FC = () => {
   const [statusValue, setStatusValue] = useState(Status.ACTIVE);
   const [pageSize, setPageSize] = React.useState<string | number>(10);
   const [isFirstVisit, setIsFirstVisit] = useState(true);
+  const queryClient = useQueryClient();
 
   const [filters, setFilters] = useState({
     name: searchKeyword,
@@ -140,7 +143,11 @@ const Block: React.FC = () => {
         if (typeof window !== "undefined" && window.localStorage) {
           userId = localStorage.getItem(Storage.USER_ID);
         }
-        const response = await getUserDetailsInfo(userId);
+
+        const response = await queryClient.fetchQuery({
+          queryKey: [QueryKeys.USER_READ, userId, true],
+          queryFn: () => getUserDetailsInfo(userId, true),
+        });
 
         const statesField = response.userData.customFields.find(
           (field: { label: string }) => field.label === "STATES"
@@ -160,11 +167,14 @@ const Block: React.FC = () => {
 
   const fetchDistricts = async () => {
     try {
-      const data = await getDistrictsForState({
-        controllingfieldfk: stateCode,
-        fieldName: "districts",
+      const data = await queryClient.fetchQuery({
+        queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode || "", "districts"],
+        queryFn: () =>
+          getDistrictsForState({
+            controllingfieldfk: stateCode || "",
+            fieldName: "districts",
+          }),
       });
-
       const districts = data?.result?.values || [];
       setDistrictsOptionRead(districts);
 
@@ -194,12 +204,22 @@ const Block: React.FC = () => {
         filters: {
           name: searchKeyword,
           states: stateCode,
-          type: "DISTRICT",
+          type: CohortTypes.DISTRICT,
         },
         sort: sortBy,
       };
 
-      const response = await getCohortList(reqParams);
+      const response = await queryClient.fetchQuery({
+        queryKey: [
+          QueryKeys.FIELD_OPTION_READ,
+          reqParams.limit,
+          reqParams.offset,
+          searchKeyword || "",
+          CohortTypes.DISTRICT,
+          reqParams.sort.join(","),
+        ],
+        queryFn: () => getCohortList(reqParams),
+      });
 
       const cohortDetails = response?.results?.cohortDetails || [];
 
@@ -258,10 +278,20 @@ const Block: React.FC = () => {
 
   const fetchBlocks = async () => {
     try {
-      const response = await getBlocksForDistricts({
-        controllingfieldfk:
+      const response = await queryClient.fetchQuery({
+        queryKey: [
+          QueryKeys.FIELD_OPTION_READ,
           selectedDistrict === t("COMMON.ALL") ? "" : selectedDistrict || "",
-        fieldName: "blocks",
+          "blocks",
+        ],
+        queryFn: () =>
+          getBlocksForDistricts({
+            controllingfieldfk:
+              selectedDistrict === t("COMMON.ALL")
+                ? ""
+                : selectedDistrict || "",
+            fieldName: "blocks",
+          }),
       });
       const blocks = response?.result?.values || [];
       setBlocksOptionRead(blocks);
@@ -309,7 +339,19 @@ const Block: React.FC = () => {
         sort: sortBy,
       };
 
-      const response = await getCohortList(reqParams);
+      const response = await queryClient.fetchQuery({
+        queryKey: [
+          QueryKeys.FIELD_OPTION_READ,
+          reqParams.limit,
+          reqParams.offset,
+          searchKeyword || "",
+          stateCode || "",
+          reqParams.filters.districts,
+          CohortTypes.BLOCK,
+          reqParams.sort.join(","),
+        ],
+        queryFn: () => getCohortList(reqParams),
+      });
       const cohortDetails = response?.results?.cohortDetails || [];
 
       const filteredBlockData = cohortDetails
@@ -497,7 +539,6 @@ const Block: React.FC = () => {
     newValue: any
   ) => {
     setStatusValue(newValue);
-
     setSelectedFilter(newValue);
     setPageSize(Numbers.TEN);
     setPageLimit(Numbers.TEN);
@@ -527,6 +568,14 @@ const Block: React.FC = () => {
         };
       });
     }
+
+    await queryClient.invalidateQueries({
+      queryKey: [QueryKeys.FIELD_OPTION_READ],
+    });
+    queryClient.fetchQuery({
+      queryKey: [QueryKeys.FIELD_OPTION_READ, newValue],
+      queryFn: () => getCohortList({ status: newValue }),
+    });
   };
 
   const handleConfirmDelete = async () => {
@@ -652,7 +701,7 @@ const Block: React.FC = () => {
 
     const queryParameters = {
       name: name,
-      type: "BLOCK",
+      type: CohortTypes.BLOCK,
       status: Status.ACTIVE,
       parentId: cohortId || "",
       customFields: [

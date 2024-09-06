@@ -13,6 +13,7 @@ export interface cohortListData {
   limit?: Number;
   offset?: Number;
   filter?: any;
+  status?: any;
 }
 export interface UpdateCohortMemberStatusParams {
   memberStatus: string;

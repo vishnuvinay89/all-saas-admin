@@ -16,6 +16,8 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
 import { getDistrictsForState } from "@/services/MasterDataService";
 import { getCohortList } from "@/services/CohortService/cohortService";
+import { useQueryClient } from "@tanstack/react-query";
+import { CohortTypes, QueryKeys } from "@/utils/app.constant";
 
 interface AddBlockModalProps {
   open: boolean;
@@ -64,6 +66,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   const [stateName, setStateName] = useState<any>("");
 
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const storedUserData = JSON.parse(
@@ -75,8 +78,6 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
     setStateName(stateNames);
   }, [open]);
 
-  console.log("state", stateCode, stateName);
-
   useEffect(() => {
     setFormData({
       name: initialValues.name || "",
@@ -86,8 +87,6 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
 
     setErrors({});
   }, [initialValues]);
-
-  console.log("formData", formData);
 
   useEffect(() => {
     if (formData.controllingField) {
@@ -100,9 +99,13 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
 
   const fetchDistricts = async () => {
     try {
-      const data = await getDistrictsForState({
-        controllingfieldfk: stateCode || "",
-        fieldName: "districts",
+      const data = await queryClient.fetchQuery({
+        queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode || "", "districts"],
+        queryFn: () =>
+          getDistrictsForState({
+            controllingfieldfk: stateCode || "",
+            fieldName: "districts",
+          }),
       });
 
       const districts = data?.result?.values || [];
@@ -114,10 +117,6 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
       const districtCodeArray = districts.map((item: any) => item.value);
       setDistrictCodeArr(districtCodeArray);
 
-      // const districtFieldID = data?.result?.fieldId || "";
-      // setDistrictFieldId(districtFieldID);
-
-      console.log("districtNameArray", districtNameArray);
     } catch (error) {
       console.error("Error fetching districts", error);
     }
@@ -134,11 +133,19 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
         offset: 0,
         filters: {
           states: stateCode,
-          type: "DISTRICT",
+          type: CohortTypes.DISTRICT,
         },
       };
 
-      const response = await getCohortList(reqParams);
+      const response = await queryClient.fetchQuery({
+        queryKey: [
+          QueryKeys.FIELD_OPTION_READ,
+          reqParams.limit,
+          reqParams.offset,
+          CohortTypes.DISTRICT,
+        ],
+        queryFn: () => getCohortList(reqParams),
+      });
 
       const cohortDetails = response?.results?.cohortDetails || [];
 
@@ -172,9 +179,6 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
         .filter((district: { label: any }) =>
           districtNameArr.includes(district.label)
         );
-
-      console.log("filteredDistrictData", filteredDistrictData);
-
       setDistricts(filteredDistrictData);
     } catch (error) {
       console.error("Error fetching and filtering cohort districts", error);
@@ -266,7 +270,6 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
   const handleSubmit = () => {
     if (validateForm()) {
       const currentCohortId: any = cohortIdAddNewDropdown;
-      console.log("Cohort ID on Submit:", currentCohortId);
 
       onSubmit(
         formData.name,

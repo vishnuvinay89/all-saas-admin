@@ -18,6 +18,7 @@ import {
 } from "@/services/MasterDataService";
 import { getUserDetailsInfo } from "@/services/UserList";
 import {
+  CohortTypes,
   Numbers,
   QueryKeys,
   SORT,
@@ -213,12 +214,25 @@ const District: React.FC = () => {
         filters: {
           name: searchKeyword,
           states: stateCode,
-          type: "DISTRICT",
+          type: CohortTypes.DISTRICT,
         },
         sort: sortBy,
       };
 
-      const response = await getCohortList(reqParams);
+      // const response = await getCohortList(reqParams);
+
+      const response = await queryClient.fetchQuery({
+        queryKey: [
+          QueryKeys.FIELD_OPTION_READ,
+          reqParams.limit,
+          reqParams.offset,
+          searchKeyword || "",
+          stateCode,
+          CohortTypes.DISTRICT,
+          reqParams.sort.join(","),
+        ],
+        queryFn: () => getCohortList(reqParams),
+      });
 
       const cohortDetails = response?.results?.cohortDetails || [];
 
@@ -287,12 +301,21 @@ const District: React.FC = () => {
         offset: 0,
         filters: {
           districts: districtValueForDelete,
-          type: "BLOCK",
+          type: CohortTypes.BLOCK,
         },
         sort: sortBy,
       };
-
-      const response: any = await getCohortList(reqParams);
+      const response = await queryClient.fetchQuery({
+        queryKey: [
+          QueryKeys.FIELD_OPTION_READ,
+          reqParams.limit,
+          reqParams.offset,
+          reqParams.filters.districts || "",
+          CohortTypes.BLOCK,
+          reqParams.sort.join(","),
+        ],
+        queryFn: () => getCohortList(reqParams),
+      });
 
       const activeBlocks = response?.results?.cohortDetails || [];
 
@@ -410,7 +433,7 @@ const District: React.FC = () => {
 
     const queryParameters = {
       name: name,
-      type: "DISTRICT",
+      type: CohortTypes.DISTRICT,
       status: Status.ACTIVE,
       parentId: cohortIdofState,
       customFields: [
@@ -458,6 +481,10 @@ const District: React.FC = () => {
       const response = await createOrUpdateOption(districtFieldId, newDistrict);
 
       if (response) {
+        queryClient.invalidateQueries({
+          queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode || "", "districts"],
+        });
+        await fetchDistricts();
         filteredCohortOptionData();
       }
     } catch (error) {
@@ -474,6 +501,9 @@ const District: React.FC = () => {
         queryParameters
       );
       if (cohortCreateResponse) {
+        queryClient.invalidateQueries({
+          queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode || "", "districts"],
+        });
         await fetchDistricts();
         filteredCohortOptionData();
         showToastMessage(t("COMMON.DISTRICT_UPDATED_SUCCESS"), "success");
