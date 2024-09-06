@@ -39,6 +39,8 @@ import dayjs from "dayjs";
 import { Role } from "@/utils/app.constant";
 import coursePlannerStore from "@/store/coursePlannerStore";
 import Papa from "papaparse";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 
 const ImportCsv = () => {
   const router = useRouter();
@@ -189,54 +191,53 @@ const ImportCsv = () => {
         type: "mainCourse",
         medium: "Telugu",
       };
-  
+
       Papa.parse(selectedFile, {
         header: true,
         skipEmptyLines: true,
         complete: async (results: any) => {
-
           const data = results.data;
-  
+
           const addTimestamp = (data: any[]) => {
             const timestamp = Date.now();
-  
+
             const updatedData = data.map((item) => {
               const newItem = { ...item };
-  
+
               if (newItem.externalId) {
                 newItem.externalId = `${newItem.externalId}${timestamp}`;
               }
               if (newItem.parentTaskId) {
                 newItem.parentTaskId = `${newItem.parentTaskId}${timestamp}`;
               }
-  
+
               return newItem;
             });
- 
+
             return updatedData;
           };
-  
 
           const convertToFile = (updatedData: any[]) => {
-            const csv = Papa.unparse(updatedData);  
-  
+            const csv = Papa.unparse(updatedData);
+
             const blob = new Blob([csv], { type: "text/csv" });
             const file = new File([blob], "updated_data.csv", {
               type: "text/csv",
             });
-  
+
             return file;
           };
-  
-  
+
           const updatedData = addTimestamp(data);
           const csvFile = convertToFile(updatedData);
-  
+
           try {
-      
             const response = await uploadCoursePlanner(csvFile, metaData);
-            console.log("Upload successful:", response.result.solutionData.message);
-  
+            console.log(
+              "Upload successful:",
+              response.result.solutionData.message
+            );
+
             if (
               response.result.solutionData.message ===
               "Solution created successfully"
@@ -247,10 +248,7 @@ const ImportCsv = () => {
               );
               setOpen(false);
             } else {
-              showToastMessage(
-                t("COURSE_PLANNER.COURSE_NOT_CREATED"),
-                "error"
-              );
+              showToastMessage(t("COURSE_PLANNER.COURSE_NOT_CREATED"), "error");
             }
           } catch (error) {
             console.error("Upload failed:", error);
@@ -264,7 +262,6 @@ const ImportCsv = () => {
       });
     }
   };
-  
 
   const handleCopyLink = () => {
     const link = window.location.href;
@@ -389,11 +386,21 @@ const ImportCsv = () => {
         </Typography>
       </Box>
 
-      <div>
+      <>
         {loading ? (
           <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
         ) : (
           <>
+            <Box>
+              <Box>
+                <Typography>
+                  {userProjectDetails?.length} Topics{" "}
+                  <FiberManualRecordIcon
+                    sx={{ fontSize: "10px", color: "#CDC5BD" }}
+                  />
+                </Typography>
+              </Box>
+            </Box>
             <Box mt={2}>
               {userProjectDetails.map((topic: any, index) => (
                 <Box key={topic._id} sx={{ borderRadius: "8px", mb: 2 }}>
@@ -407,16 +414,17 @@ const ImportCsv = () => {
                     }
                     sx={{
                       boxShadow: "none",
-                      background: "#F1E7D9",
                       border: "none",
                       transition: "0.3s",
+                      "&.Mui-expanded": {
+                        background: "#FFF8F2", // Highlight background when expanded
+                      },
                     }}
                   >
                     <AccordionSummary
                       expandIcon={<ArrowDropDownIcon sx={{ color: "black" }} />}
                       aria-controls={`panel${index}-content`}
                       id={`panel${index}-header`}
-                      className="accordion-summary"
                       sx={{
                         px: "16px",
                         m: 0,
@@ -430,19 +438,16 @@ const ImportCsv = () => {
                           display: "flex",
                           justifyContent: "space-between",
                           width: "100%",
-                          pr: "5px",
                           alignItems: "center",
                         }}
                       >
                         <Box
                           sx={{
                             display: "flex",
-                            justifyContent: "space-between",
                             alignItems: "center",
-                            gap: "5px",
+                            gap: "10px",
                           }}
                         >
-                          <RadioButtonUncheckedIcon sx={{ fontSize: "15px" }} />
                           <Typography
                             fontWeight="500"
                             fontSize="14px"
@@ -451,30 +456,65 @@ const ImportCsv = () => {
                             {`Topic ${index + 1} - ${topic.name}`}
                           </Typography>
                         </Box>
-                        <Typography
-                          fontWeight="600"
-                          fontSize="12px"
-                          color="#7C766F"
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: "10px",
+                            alignItems: "center",
+                          }}
                         >
-                          {getAbbreviatedMonth(
-                            topic?.metaInformation?.startDate
-                          )}
-                          ,{" "}
-                          {getAbbreviatedMonth(topic?.metaInformation?.endDate)}
-                        </Typography>
+                          <Typography
+                            fontWeight="600"
+                            fontSize="12px"
+                            color="#7C766F"
+                          >
+                            {getAbbreviatedMonth(
+                              topic?.metaInformation?.startDate
+                            )}
+                            ,{" "}
+                            {getAbbreviatedMonth(
+                              topic?.metaInformation?.endDate
+                            )}
+                          </Typography>
+                        </Box>
                       </Box>
                     </AccordionSummary>
+                    <Box
+                      sx={{
+                        background: "white",
+                        fontSize: "14px",
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        padding: "10px 25px  0px 25px ",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      <Box sx={{ flex: 1 }}>Sub-topic</Box>
+                      <Box sx={{ flex: 1, textAlign: "center" }}>Resources</Box>
+                      <Box sx={{ flex: 1, textAlign: "right" }}>
+                        Duration/Month
+                      </Box>
+                    </Box>
+
                     <AccordionDetails
                       sx={{
-                        padding: "0",
+                        padding: "20px",
                         transition: "max-height 0.3s ease-out",
+                        backgroundColor: "white",
                       }}
                     >
                       {topic.children.map((subTopic: any) => (
                         <Box
                           key={subTopic._id}
                           sx={{
-                            borderBottom: `1px solid black`,
+                            border: `1px solid #E0E0E0`,
+                            padding: "10px",
+                            backgroundColor: "white",
+                            marginBottom: "20px",
+                            // "&:hover": {
+                            //   background: "#F9F9F9",
+                            // },
                           }}
                         >
                           <Box
@@ -489,23 +529,37 @@ const ImportCsv = () => {
                                 display: "flex",
                                 justifyContent: "space-between",
                                 alignItems: "center",
-                                gap: "20px",
                               }}
                             >
                               <Box
                                 sx={{
-                                  fontSize: "16px",
-                                  fontWeight: "400",
-                                  color: "black",
-                                  cursor: "pointer",
+                                  flex: 1,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "8px",
+                                  fontWeight: 500,
                                 }}
                               >
-                                {subTopic.name}
+                                <FolderOutlinedIcon /> {subTopic.name}
                               </Box>
+
                               <Box
                                 sx={{
+                                  flex: 1,
+                                  textAlign: "center",
+                                  fontSize: "14px",
+                                  fontWeight: 500,
+                                  color: "#7C766F",
+                                }}
+                              >
+                                {`${subTopic?.learningResources?.length} Resources`}
+                              </Box>
+
+                              <Box
+                                sx={{
+                                  flex: 1,
                                   display: "flex",
-                                  justifyContent: "space-between",
+                                  justifyContent: "flex-end",
                                   alignItems: "center",
                                   gap: "6px",
                                 }}
@@ -513,7 +567,12 @@ const ImportCsv = () => {
                                 <Box
                                   sx={{
                                     padding: "5px",
-                                    background: "  #C1D6FF",
+                                    background:
+                                      getAbbreviatedMonth(
+                                        subTopic?.metaInformation?.startDate
+                                      ) === "Jan"
+                                        ? "#C1D6FF"
+                                        : "#FFD6D6",
                                     fontSize: "12px",
                                     fontWeight: "500",
                                     color: "#4D4639",
@@ -524,23 +583,7 @@ const ImportCsv = () => {
                                     subTopic?.metaInformation?.startDate
                                   )}
                                 </Box>
-                                <CheckCircleIcon />
                               </Box>
-                            </Box>
-                            <Box
-                              sx={{
-                                color: theme.palette.secondary.main,
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "4px",
-                                mt: 0.8,
-                                cursor: "pointer",
-                              }}
-                            >
-                              <Box sx={{ fontSize: "12px", fontWeight: "500" }}>
-                                {`${subTopic?.learningResources?.length} ${t("COURSE_PLANNER.RESOURCES")}`}
-                              </Box>
-                              <ArrowForwardIcon sx={{ fontSize: "16px" }} />
                             </Box>
                           </Box>
                         </Box>
@@ -552,7 +595,7 @@ const ImportCsv = () => {
             </Box>
           </>
         )}
-      </div>
+      </>
 
       <FileUploadDialog
         open={open}
