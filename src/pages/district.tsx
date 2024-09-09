@@ -130,10 +130,10 @@ const District: React.FC = () => {
   const fetchDistricts = async () => {
     try {
       const data = await queryClient.fetchQuery({
-        queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode || "", "districts"],
+        queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode, "districts"],
         queryFn: () =>
           getDistrictsForState({
-            controllingfieldfk: stateCode || "",
+            controllingfieldfk: stateCode,
             fieldName: "districts",
           }),
       });
@@ -157,7 +157,6 @@ const District: React.FC = () => {
   useEffect(() => {
     fetchDistricts();
   }, []);
-
   // get cohort id of state
   const getStatecohorts = async () => {
     let userId: any;
@@ -218,8 +217,6 @@ const District: React.FC = () => {
         },
         sort: sortBy,
       };
-
-      // const response = await getCohortList(reqParams);
 
       const response = await queryClient.fetchQuery({
         queryKey: [
@@ -477,15 +474,21 @@ const District: React.FC = () => {
         },
       ],
     };
+
     try {
       const response = await createOrUpdateOption(districtFieldId, newDistrict);
 
       if (response) {
+        setDistrictsOptionRead((prevDistricts: any[]) =>
+          prevDistricts.map((district: { value: string | undefined; }) =>
+            district.value === DistrictId
+              ? { ...district, name, value }
+              : district
+          )
+        );
         queryClient.invalidateQueries({
-          queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode || "", "districts"],
+          queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode, "districts"],
         });
-        await fetchDistricts();
-        filteredCohortOptionData();
       }
     } catch (error) {
       console.error("Error adding district:", error);
@@ -500,12 +503,12 @@ const District: React.FC = () => {
         cohortIdForEdit,
         queryParameters
       );
+
       if (cohortCreateResponse) {
         queryClient.invalidateQueries({
-          queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode || "", "districts"],
+          queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode, "districts"],
         });
-        await fetchDistricts();
-        filteredCohortOptionData();
+
         showToastMessage(t("COMMON.DISTRICT_UPDATED_SUCCESS"), "success");
       } else if (cohortCreateResponse.responseCode === 409) {
         showToastMessage(t("COMMON.DISTRICT_DUPLICATION_FAILURE"), "error");
@@ -514,9 +517,11 @@ const District: React.FC = () => {
       console.error("Error creating cohort:", error);
       showToastMessage(t("COMMON.DISTRICT_DUPLICATION_FAILURE"), "error");
     }
+
     setModalOpen(false);
     setSelectedStateForEdit(null);
   };
+
   const handleChangePageSize = (event: SelectChangeEvent<number>) => {
     const newSize = Number(event.target.value);
     setPageSizeArray((prev) =>
