@@ -13,7 +13,7 @@ import Select from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
-import { Role, Status } from "@/utils/app.constant";
+import { QueryKeys, Role, Status } from "@/utils/app.constant";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import {
   getCenterList,
@@ -23,6 +23,7 @@ import AreaSelection from "./AreaSelection";
 import { transformArray } from "../utils/Helper";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface State {
   value: string;
@@ -74,6 +75,8 @@ const HeaderComponent = ({
   setStatusValue,
 }: any) => {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
+
   const theme = useTheme<any>();
   const isMobile = useMediaQuery("(max-width:600px)");
   const isMediumScreen = useMediaQuery("(max-width:986px)");
@@ -81,6 +84,9 @@ const HeaderComponent = ({
   const [districts, setDistricts] = useState<District[]>([]);
   const [stateDefaultValue, setStateDefaultValue] = useState<string>("");
   const [allCenters, setAllCenters] = useState<CenterProp[]>([]);
+  const [initialDistrict, setInitialDistrict] = useState<any>("");
+  const [initialBlock, setInitialBlock] = useState<string>("");
+
 
   const [blocks, setBlocks] = useState<Block[]>([]);
 
@@ -96,13 +102,23 @@ const HeaderComponent = ({
       // }
     }
     try {
-      const object = {
-        controllingfieldfk: selectedCodes[0],
 
-        fieldName: "districts",
-      };
-      console.log(object);
-      const response = await getStateBlockDistrictList(object);
+      const response = await queryClient.fetchQuery({
+        queryKey: [QueryKeys.FIELD_OPTION_READ, selectedCodes[0], "districts"],
+        queryFn: () =>
+          getStateBlockDistrictList({
+            controllingfieldfk: selectedCodes[0],
+            fieldName: "districts",
+          }),
+      });
+
+      // const object = {
+      //   controllingfieldfk: selectedCodes[0],
+
+      //   fieldName: "districts",
+      // };
+      // console.log(object);
+      // const response = await getStateBlockDistrictList(object);
       const result = response?.result?.values;
       setDistricts(result);
     } catch (error) {
@@ -120,12 +136,22 @@ const HeaderComponent = ({
       handleBlockChange([], []);
     }
     try {
-      const object = {
-        controllingfieldfk: selectedCodes[0],
 
-        fieldName: "blocks",
-      };
-      const response = await getStateBlockDistrictList(object);
+      const response = await queryClient.fetchQuery({
+        queryKey: [QueryKeys.FIELD_OPTION_READ, selectedCodes[0], "blocks"],
+        queryFn: () =>
+          getStateBlockDistrictList({
+            controllingfieldfk: selectedCodes[0],
+            fieldName: "blocks",
+          }),
+      });
+
+      // const object = {
+      //   controllingfieldfk: selectedCodes[0],
+
+      //   fieldName: "blocks",
+      // };
+      // const response = await getStateBlockDistrictList(object);
       const result = response?.result?.values;
       setBlocks(result);
     } catch (error) {
@@ -150,7 +176,16 @@ const HeaderComponent = ({
         // "name": selected[0]
       },
     };
-    const response = await getCenterList(getCentersObject);
+    const response = await queryClient.fetchQuery({
+      queryKey: [
+        QueryKeys.FIELD_OPTION_READ,
+        getCentersObject.limit,
+        getCentersObject.offset,
+        getCentersObject.filters,
+      ],
+      queryFn: () => getCenterList(getCentersObject),
+    })
+    // const response = await getCenterList(getCentersObject);
     console.log(response?.result?.results?.cohortDetails[0].cohortId);
     // setSelectedBlockCohortId(
     //   response?.result?.results?.cohortDetails[0].cohortId
@@ -198,13 +233,25 @@ const HeaderComponent = ({
             } else {
               setStateDefaultValue(stateField.value);
 
-              const object = {
-                controllingfieldfk: stateField.code,
 
-                fieldName: "districts",
-              };
-              console.log(object);
-              const response = await getStateBlockDistrictList(object);
+              const response = await queryClient.fetchQuery({
+                queryKey: [QueryKeys.FIELD_OPTION_READ, stateField.code, "districts"],
+                queryFn: () =>
+                  getStateBlockDistrictList({
+                    controllingfieldfk: stateField.code,
+                    fieldName: "districts",
+                  }),
+              });
+        
+        
+
+              // const object = {
+              //   controllingfieldfk: stateField.code,
+
+              //   fieldName: "districts",
+              // };
+              // console.log(object);
+              // const response = await getStateBlockDistrictList(object);
               const result = response?.result?.values;
               setDistricts(result);
             }
@@ -233,6 +280,25 @@ const HeaderComponent = ({
     console.log(newValue);
     setStatusValue(newValue);
   };
+
+
+  useEffect(() => {
+    if (districts && districts.length > 0 && !selectedDistrict.length) {
+      const firstDistrictCode = districts[0].value;
+      setInitialDistrict(firstDistrictCode);
+      handleDistrictChangeWrapper([districts[0].label], [firstDistrictCode]);
+    }
+  }, [districts, selectedDistrict, handleDistrictChangeWrapper]);
+
+  useEffect(() => {
+    if (blocks && blocks.length > 0 && !selectedBlock.length) {
+      const firstBlockCode = blocks[0].value;
+      setInitialBlock(firstBlockCode);
+      handleBlockChangeWrapper([blocks[0].label], [firstBlockCode]);
+    }
+  }, [blocks, selectedBlock, handleBlockChangeWrapper]);
+
+
 
   return (
     <Box

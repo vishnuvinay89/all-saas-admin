@@ -5,8 +5,9 @@ import {
   getCenterList,
 } from "../services/MasterDataService"; // Update the import path as needed
 import { getCohortList } from "@/services/CohortService/cohortService";
-import { FormContextType } from "./app.constant";
+import { FormContextType, QueryKeys } from "./app.constant";
 import { useTranslation } from "react-i18next";
+import { useQueryClient } from "@tanstack/react-query";
 interface FieldProp {
   value: string;
   label: string;
@@ -43,9 +44,11 @@ export const useLocationState = (
   const [districtFieldId, setDistrictFieldId] = useState("");
   const [stateDefaultValue, setStateDefaultValue] = useState<string>("");
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
+
   const handleStateChangeWrapper = useCallback(
     async (selectedNames: string[], selectedCodes: string[]) => {
-      console.log("true", selectedCodes)
+      console.log("true", selectedCodes);
       try {
         setDistricts([]);
         setBlocks([]);
@@ -53,11 +56,24 @@ export const useLocationState = (
         setSelectedStateCode(selectedCodes[0]);
         setSelectedBlockCohortId("");
 
-        const object = {
-          controllingfieldfk: selectedCodes[0],
-          fieldName: "districts",
-        };
-        const response = await getStateBlockDistrictList(object);
+        // const object = {
+        //   controllingfieldfk: selectedCodes[0],
+        //   fieldName: "districts",
+        // };
+        // const response = await getStateBlockDistrictList(object);
+        const response = await queryClient.fetchQuery({
+          queryKey: [
+            QueryKeys.FIELD_OPTION_READ,
+            selectedCodes[0],
+            "districts",
+          ],
+          queryFn: () =>
+            getStateBlockDistrictList({
+              controllingfieldfk: selectedCodes[0],
+              fieldName: "districts",
+            }),
+        });
+
         setDistrictFieldId(response?.result?.fieldId);
         const result = response?.result?.values;
         setDistricts(result);
@@ -85,7 +101,7 @@ export const useLocationState = (
         };
         const response = await getStateBlockDistrictList(object);
         setBlockFieldId(response?.result?.fieldId);
-           //console.log(blockFieldId)
+        //console.log(blockFieldId)
         const result = response?.result?.values;
         setBlocks(result);
       } catch (error) {
@@ -106,8 +122,10 @@ export const useLocationState = (
 
         console.log(selectedStateCode, selectedDistrictCode);
         console.log(userType);
-        if (userType === FormContextType.TEAM_LEADER  ||
-          userType === FormContextType.ADMIN_CENTER) {
+        if (
+          userType === FormContextType.TEAM_LEADER ||
+          userType === FormContextType.ADMIN_CENTER
+        ) {
           console.log("true");
           const object = {
             limit: 200,
@@ -244,66 +262,93 @@ export const useLocationState = (
   }, [onClose, open]);
 
   useEffect(() => {
-    
     const fetchData = async () => {
       try {
-        const object = {
-          fieldName: "states",
-        };
-        const response = await getStateBlockDistrictList(object);
+        const response = await queryClient.fetchQuery({
+          queryKey: [
+            QueryKeys.FIELD_OPTION_READ,
+            "states",
+          ],
+          queryFn: () =>
+            getStateBlockDistrictList({
+              fieldName: "states",
+            }),
+        });
+        // const object = {
+        //   fieldName: "states",
+        // };
+        // const response = await getStateBlockDistrictList(object);
         setStateFieldId(response?.result?.fieldId);
-      
 
- 
         if (typeof window !== "undefined" && window.localStorage) {
           const admin = localStorage.getItem("adminInfo");
-          if(admin)
-          {
+          if (admin) {
+            const stateField = JSON.parse(admin).customFields.find(
+              (field: any) => field.label === "STATES"
+            );
+            console.log(stateField.value, stateField.code);
 
-            const stateField = JSON.parse(admin).customFields.find((field: any) => field.label === "STATES");
-              console.log(stateField.value, stateField.code)
-             if (!stateField.value.includes(',')) {
-              const object2 = {
-                controllingfieldfk: stateField.code,
-                fieldName: "districts",
-              };
-              const response2 = await getStateBlockDistrictList(object2);
+
+            if (!stateField.value.includes(",")) {
+
+              const response2 = await queryClient.fetchQuery({
+                queryKey: [
+                  QueryKeys.FIELD_OPTION_READ,
+                  stateField.code,
+                  "districts",
+                ],
+                queryFn: () =>
+                  getStateBlockDistrictList({
+                    controllingfieldfk: stateField.code,
+                    fieldName: "districts",
+                  }),
+              });
+      
+
+              // const object2 = {
+              //   controllingfieldfk: stateField.code,
+              //   fieldName: "districts",
+              // };
+              // const response2 = await getStateBlockDistrictList(object2);
               setDistrictFieldId(response2?.result?.fieldId);
               //setStateDefaultValue(t("COMMON.ALL_STATES"))
 
-                setStateDefaultValue(stateField.value);
+              setStateDefaultValue(stateField.value);
 
-                setSelectedState([stateField.value]);
-                setSelectedStateCode(stateField.code)
-                const object = {
-                  controllingfieldfk: stateField.code,
-          
-                  fieldName: "districts",
-                };
-                console.log(object);
-                const response = await getStateBlockDistrictList(object);
-                const result = response?.result?.values;
-                console.log(result)
-                setDistricts(result);
-
-              }
-              else{
-                setStateDefaultValue(t("COMMON.ALL_STATES"))
-
-              }
-              const object2=[{
-                value:stateField.code,
-                label:stateField.value
-              }]
-             setStates(object2);
-
+              setSelectedState([stateField.value]);
+              setSelectedStateCode(stateField.code);
+              const response = await queryClient.fetchQuery({
+                queryKey: [
+                  QueryKeys.FIELD_OPTION_READ,
+                  stateField.code,
+                  "districts",
+                ],
+                queryFn: () =>
+                  getStateBlockDistrictList({
+                    controllingfieldfk: stateField.code,
+                    fieldName: "districts",
+                  }),
+              });
+              const result = response?.result?.values;
+              console.log(result);
+              setDistricts(result);
+            } else {
+              setStateDefaultValue(t("COMMON.ALL_STATES"));
+            }
+            const object2 = [
+              {
+                value: stateField.code,
+                label: stateField.value,
+              },
+            ];
+            setStates(object2);
           }
           //console.log(JSON.parse(admin)?.customFields)
-       //  setAdminInfo(JSON.parse(admin))
+          //  setAdminInfo(JSON.parse(admin))
         }
-       // const result = response?.result?.values;
+        // const result = response?.result?.values;
         //console.log(result)
-       // setStates(result);
+        // setStates(result);
         console.log(typeof states);
       } catch (error) {
         console.log(error);
@@ -312,7 +357,7 @@ export const useLocationState = (
 
     fetchData();
   }, []);
-  console.log(stateDefaultValue)
+  console.log(stateDefaultValue);
   return {
     states,
     districts,
@@ -338,6 +383,6 @@ export const useLocationState = (
     handleCenterChangeWrapper,
     selectedCenterCode,
     selectedBlockCohortId,
-    stateDefaultValue
+    stateDefaultValue,
   };
 };

@@ -96,4 +96,6 @@ export const QueryKeys = {
   USER_READ: "userRead",
   FIELD_OPTION_READ: "fieldOptionRead",
   MY_COHORTS: "myCohorts",
+  GET_COHORT_LIST: "getcohortList",
+  GET_COHORT_MEMBER_LIST: "getCohortMemberList",
 }

@@ -12,19 +12,17 @@ import {
   updateCohortUpdate,
 } from "@/services/CohortService/cohortService";
 import {
-  CohortTypes, Numbers,
+  CohortTypes,
+  Numbers,
+  QueryKeys,
   SORT,
   Status,
-  Storage
+  Storage,
 } from "@/utils/app.constant";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationModal from "@/components/ConfirmationModal";
-import {
-  Box,
-  Button, Typography,
-  useMediaQuery
-} from "@mui/material";
+import { Box, Button, Typography, useMediaQuery } from "@mui/material";
 import Loader from "@/components/Loader";
 import { getFormRead } from "@/services/CreateUserService";
 import {
@@ -42,6 +40,7 @@ import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
 import DynamicForm from "@/components/DynamicForm";
 import useSubmittedButtonStore from "@/utils/useSharedState";
+import { useQueryClient } from "@tanstack/react-query";
 
 type cohortFilterDetails = {
   type?: string;
@@ -66,6 +65,8 @@ interface centerData {
 
 const Center: React.FC = () => {
   // use hooks
+  const queryClient = useQueryClient();
+
   const { t } = useTranslation();
   const adminInformation = useSubmittedButtonStore(
     (state: any) => state.adminInformation
@@ -186,7 +187,18 @@ const Center: React.FC = () => {
         sort: sort,
         filters: filters,
       };
-      const resp = await getCohortList(data);
+      // const resp = await getCohortList(data);
+      const resp = await queryClient.fetchQuery({
+        queryKey: [
+          QueryKeys.GET_COHORT_LIST,
+          data.limit,
+          data.offset,
+          JSON.stringify(data.filters),
+          JSON.stringify(data.sort),
+        ],
+        queryFn: () => getCohortList(data),
+      });
+
       if (resp) {
         const result = resp?.results?.cohortDetails;
         const resultData: centerData[] = [];
@@ -277,7 +289,17 @@ const Center: React.FC = () => {
       },
     };
 
-    const response: any = await fetchCohortMemberList(data);
+    const response = await queryClient.fetchQuery({
+      queryKey: [
+        QueryKeys.GET_COHORT_MEMBER_LIST,
+        data.limit,
+        data.page,
+        JSON.stringify(data.filters),
+      ],
+      queryFn: () => fetchCohortMemberList(data),
+    });
+
+
 
     if (response?.result) {
       const userDetails = response.result.userDetails;
@@ -383,7 +405,6 @@ const Center: React.FC = () => {
         });
       else setFilters({ type: "COHORT", states: stateCodes });
     }
-
   };
 
   const handleDistrictChange = (selected: string[], code: string[]) => {
