@@ -17,6 +17,7 @@ import {
   CohortTypes,
   FormValues,
   Numbers,
+  QueryKeys,
   SORT,
   Status,
   Storage,
@@ -52,6 +53,7 @@ import DynamicForm from "@/components/DynamicForm";
 import useSubmittedButtonStore from "@/utils/useSharedState";
 import { getUserDetailsInfo } from "@/services/UserList";
 import { showFilters } from "../../app.config";
+import { useQueryClient } from "@tanstack/react-query";
 
 type cohortFilterDetails = {
   type?: string;
@@ -84,6 +86,7 @@ interface CohortDetails {
 const Center: React.FC = () => {
   // use hooks
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const adminInformation = useSubmittedButtonStore(
     (state: any) => state.adminInformation
   );
@@ -205,7 +208,16 @@ const Center: React.FC = () => {
         sort: sort,
         filters: filters,
       };
-      const resp = await getCohortList(data);
+      const resp = await queryClient.fetchQuery({
+        queryKey: [
+          QueryKeys.GET_COHORT_LIST,
+          data.limit,
+          data.offset,
+          JSON.stringify(data.filters),
+          JSON.stringify(data.sort),
+        ],
+        queryFn: () => getCohortList(data),
+      });
       if (resp) {
         const result = resp?.results?.cohortDetails;
         const resultData: centerData[] = [];
@@ -294,8 +306,15 @@ const Center: React.FC = () => {
       },
     };
 
-    const response: any = await fetchCohortMemberList(data);
-
+    const response = await queryClient.fetchQuery({
+      queryKey: [
+        QueryKeys.GET_COHORT_MEMBER_LIST,
+        data.limit,
+        data.page,
+        JSON.stringify(data.filters),
+      ],
+      queryFn: () => fetchCohortMemberList(data),
+    });
     if (response?.result) {
       const userDetails = response.result.userDetails;
       const getActiveMembers = userDetails?.filter(

@@ -14,8 +14,8 @@ import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material/s
 import customTheme from "../styles/customTheme";
 import "./../styles/style.css";
 
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import "react-circular-progressbar/dist/styles.css";
 
@@ -42,14 +42,21 @@ function App({ Component, pageProps }: AppProps) {
     }
   };
 
-  const [client] = useState(new QueryClient())
+  const [client] = useState(
+    new QueryClient({
+      defaultOptions: {
+        queries: {
+          gcTime: 1000 * 60 * 60 * 24, // 24 hours
+          staleTime: 1000 * 60 * 60 * 24, // 24 hours
+        },
+      },
+    })
+  );
 
   return (
     <QueryClientProvider client={client}>
-
-    <AuthProvider>
+      <AuthProvider>
         <CssVarsProvider theme={customTheme}>
-
           {renderComponent()}
 
           <ToastContainer
@@ -60,7 +67,6 @@ function App({ Component, pageProps }: AppProps) {
         </CssVarsProvider>
       </AuthProvider>
       <ReactQueryDevtools initialIsOpen={false} />
-
     </QueryClientProvider>
   );
 }
