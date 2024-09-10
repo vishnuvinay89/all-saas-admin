@@ -17,20 +17,21 @@ import {
   getBlocksForDistricts,
   deleteOption,
   createOrUpdateOption,
-  fieldSearch
+  fieldSearch,
 } from "@/services/MasterDataService";
 import { transformLabel } from "@/utils/Helper";
 import { showToastMessage } from "@/components/Toastify";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { AddSchoolModal } from "@/components/AddSchoolModal";
 import PageSizeSelector from "@/components/PageSelector";
-import { SORT, Storage } from "@/utils/app.constant";
+import { QueryKeys, SORT, Storage } from "@/utils/app.constant";
 import { getUserDetailsInfo } from "@/services/UserList";
 import {
   createCohort,
   getCohortList,
 } from "@/services/CohortService/cohortService";
 import { Numbers } from "@/utils/app.constant";
+import { useQueryClient } from "@tanstack/react-query";
 
 type StateDetail = {
   block: string | undefined;
@@ -56,6 +57,7 @@ type BlockDetail = {
 
 const Block: React.FC = () => {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const [selectedSort, setSelectedSort] = useState<string>("Sort");
   const [selectedState, setSelectedState] = useState<string>("");
   const [selectedCluster, setSelectedCluster] = useState<string>("");
@@ -142,13 +144,23 @@ const Block: React.FC = () => {
     const reqParams = {
       limit: limit,
       offset: offset,
-      filters: {  
+      filters: {
         name: selectedCluster,
         type: "CLUSTER",
       },
     };
 
-    const response = await getCohortList(reqParams);
+    const response = await queryClient.fetchQuery({
+      queryKey: [
+        QueryKeys.GET_COHORT_LIST,
+        reqParams.limit,
+        reqParams.offset,
+        reqParams.filters,
+      ],
+      queryFn: () => getCohortList(reqParams),
+    });
+
+    // const response = await getCohortList(reqParams);
 
     const cohortDetails = response?.results?.cohortDetails;
 
@@ -170,11 +182,15 @@ const Block: React.FC = () => {
 
   const getSchoolFieldId = async () => {
     try {
-      const response = await fieldSearch({
-        name: "schools"}, 1, 0
+      const response = await fieldSearch(
+        {
+          name: "schools",
+        },
+        1,
+        0
       );
       if (response?.result?.length) {
-        const temp = response.result[0]
+        const temp = response?.result?.[0];
         const schoolFieldId = temp.fieldId || "";
         setSchoolsFieldId(schoolFieldId);
       }
@@ -184,11 +200,9 @@ const Block: React.FC = () => {
     }
   };
 
-
   useEffect(() => {
     getCohortSearchBlock();
   }, [selectedCluster]);
-
 
   const fetchSchools = async (clusterId: string) => {
     console.log("clusterId", clusterId);
@@ -197,13 +211,35 @@ const Block: React.FC = () => {
       const limit = pageLimit;
       const offset = pageOffset * limit;
 
-      const response = await getBlocksForDistricts({
+      // const response = await getBlocksForDistricts({
+      //   limit: limit,
+      //   offset: offset,
+      //   controllingfieldfk: selectedCluster || "",
+      //   fieldName: "schools",
+      //   optionName: searchKeyword || "",
+      //   sort: sortBy,
+      // });
+
+      const data = {
         limit: limit,
         offset: offset,
         controllingfieldfk: selectedCluster || "",
         fieldName: "schools",
         optionName: searchKeyword || "",
         sort: sortBy,
+      };
+
+      const response = await queryClient.fetchQuery({
+        queryKey: [
+          QueryKeys.GET_SCHOOLS_DATA,
+          data.limit,
+          data.offset,
+          data.controllingfieldfk,
+          data.fieldName,
+          data.optionName,
+          data.sort,
+        ],
+        queryFn: () => getBlocksForDistricts(data),
       });
 
       console.log("block response", response);
@@ -213,7 +249,6 @@ const Block: React.FC = () => {
 
       //console.log("setSchoolsFieldId", schoolFieldId);
       //setSchoolsFieldId(schoolFieldId);
-
 
       const totalCount = response?.result?.totalCount || 0;
       setPaginationCount(totalCount);
@@ -406,30 +441,41 @@ const Block: React.FC = () => {
     name: string,
     value: string,
     controllingField: string,
-    blocksFieldId: string,
+    blocksFieldId: string
   ) => {
-
     const reqParams = {
-        limit: 1,
-        offset: 0,
-        filters: {  
-          name: parentClusterName,
-          type: "CLUSTER",
-        },
-      };
+      limit: 1,
+      offset: 0,
+      filters: {
+        name: parentClusterName,
+        type: "CLUSTER",
+      },
+    };
 
-      const response = await getCohortList(reqParams);
+    const response = await queryClient.fetchQuery({
+      queryKey: [
+        QueryKeys.GET_COHORT_LIST,
+        reqParams.limit,
+        reqParams.offset,
+        reqParams.filters,
+      ],
+      queryFn: () => getCohortList(reqParams),
+    });
 
-      const cohortDetails = response?.results?.cohortDetails;
-      let parentCohortId = '';
-      if (cohortDetails && cohortDetails.length > 0) {
-        parentCohortId = cohortDetails[0]?.cohortId;
-        setCohortId(parentCohortId);
-      } 
-      else {
-        showToastMessage(t("COMMON.COHORT NOT CREATED FOR SELECTED CLUSTER"), "error");
-        return false;
-      }
+    // const response = await getCohortList(reqParams);
+
+    const cohortDetails = response?.results?.cohortDetails;
+    let parentCohortId = "";
+    if (cohortDetails && cohortDetails.length > 0) {
+      parentCohortId = cohortDetails[0]?.cohortId;
+      setCohortId(parentCohortId);
+    } else {
+      showToastMessage(
+        t("COMMON.COHORT NOT CREATED FOR SELECTED CLUSTER"),
+        "error"
+      );
+      return false;
+    }
 
     const newSchool = {
       options: [
@@ -488,8 +534,19 @@ const Block: React.FC = () => {
       <AddSchoolModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSubmit={(parentClusterName: string, name: string, value: string, controllingField: string) =>
-          handleAddSchoolSubmit(parentClusterName, name, value, controllingField, schoolFieldId)
+        onSubmit={(
+          parentClusterName: string,
+          name: string,
+          value: string,
+          controllingField: string
+        ) =>
+          handleAddSchoolSubmit(
+            parentClusterName,
+            name,
+            value,
+            controllingField,
+            schoolFieldId
+          )
         }
         fieldId={schoolFieldId}
         initialValues={
@@ -546,7 +603,6 @@ const Block: React.FC = () => {
                 },
               }}
             >
-
               <FormControl
                 sx={{
                   width: "25%",

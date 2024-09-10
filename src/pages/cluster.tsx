@@ -12,7 +12,7 @@ import Loader from "@/components/Loader";
 import { AddStateModal } from "@/components/AddStateModal";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { showToastMessage } from "@/components/Toastify";
-import { SORT, Numbers, Storage } from "@/utils/app.constant";
+import { SORT, Numbers, Storage, QueryKeys } from "@/utils/app.constant";
 import {
   Box,
   Chip,
@@ -27,7 +27,7 @@ import {
 } from "@/services/CohortService/cohortService";
 import { getUserDetailsInfo } from "@/services/UserList";
 import useStore from "@/store/store";
-
+import { useQueryClient } from "@tanstack/react-query";
 export interface StateDetail {
   updatedAt: any;
   createdAt: any;
@@ -55,6 +55,7 @@ type Option = {
 
 const State: React.FC = () => {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const [stateData, setStateData] = useState<StateDetail[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] =
@@ -236,7 +237,19 @@ const State: React.FC = () => {
 
       console.log("fetchStateData", data);
 
-      const resp = await getStateBlockDistrictList(data);
+      const resp = await queryClient.fetchQuery({
+        queryKey: [
+          QueryKeys.GET_CLUSTER_DATA,
+          data.limit,
+          data.offset,
+          data.fieldName,
+          data.optionName,
+          data.sort,
+        ],
+        queryFn: () => getStateBlockDistrictList(data),
+      });
+
+      // const resp = await getStateBlockDistrictList(data);
 
       if (resp?.result?.fieldId) {
         setFieldId(resp.result.fieldId);
@@ -272,7 +285,7 @@ const State: React.FC = () => {
   };
   useEffect(() => {
     fetchStateData();
-  }, [searchKeyword,pageLimit, pageOffset, sortBy]);
+  }, [searchKeyword, pageLimit, pageOffset, sortBy]);
 
   return (
     <HeaderComponent

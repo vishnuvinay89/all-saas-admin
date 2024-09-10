@@ -96,3 +96,15 @@ export enum apiCatchingDuration {
 export enum passwordKeys {
   OBLF = "@oblf",
 }
+
+export const QueryKeys = {
+  USER_READ: "userRead",
+  FIELD_OPTION_READ: "fieldOptionRead",
+  MY_COHORTS: "myCohorts",
+  GET_COHORT_LIST: "getcohortList",
+  GET_COHORT_MEMBER_LIST: "getCohortMemberList",
+  GET_CLUSTER_DATA: "getClustersData",
+  GET_SCHOOLS_DATA:"getSchoolsData",
+  GET_COHORT_SEARCH_BLOCK:"getCohortSearchBlock",
+ 
+};
