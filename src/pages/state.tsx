@@ -16,6 +16,7 @@ import {
   Box,
   Pagination,
   SelectChangeEvent,
+  Typography,
   useMediaQuery,
 } from "@mui/material";
 import { useTranslation } from "next-i18next";
@@ -314,19 +315,34 @@ const State: React.FC = () => {
         </Box>
       ) : (
         <div style={{ marginTop: "40px" }}>
-          <KaTableComponent
-            columns={getStateDataMaster(t, isMobile)}
-            data={stateData}
-            limit={pageLimit}
-            offset={pageOffset}
-            paginationEnable={paginationCount >= Numbers.FIVE}
-            PagesSelector={PagesSelector}
-            pagination={pagination}
-            PageSizeSelector={PageSizeSelectorFunction}
-            pageSizes={pageSizeArray}
-            onEdit={handleEdit}
-            extraActions={[]}
-          />
+          {stateData.length > 0 ? (
+            <KaTableComponent
+              columns={getStateDataMaster(t, isMobile)}
+              data={stateData}
+              limit={pageLimit}
+              offset={pageOffset}
+              paginationEnable={paginationCount >= Numbers.FIVE}
+              PagesSelector={PagesSelector}
+              pagination={pagination}
+              PageSizeSelector={PageSizeSelectorFunction}
+              pageSizes={pageSizeArray}
+              onEdit={handleEdit}
+              extraActions={[]}
+            />
+          ) : (
+            !loading && (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="20vh"
+              >
+                <Typography marginTop="10px" textAlign="center">
+                  {t("COMMON.STATE_NOT_FOUND")}
+                </Typography>
+              </Box>
+            )
+          )}
         </div>
       )}
     </HeaderComponent>
