@@ -126,7 +126,7 @@ const Block: React.FC = () => {
   const [filters, setFilters] = useState({
     name: searchKeyword,
     states: stateCode,
-    districts: selectedDistrict || "",
+    districts: selectedDistrict,
     type: CohortTypes.BLOCK,
     status: [statusValue],
   });
@@ -167,10 +167,10 @@ const Block: React.FC = () => {
   const fetchDistricts = async () => {
     try {
       const data = await queryClient.fetchQuery({
-        queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode || "", "districts"],
+        queryKey: [QueryKeys.FIELD_OPTION_READ, stateCode, "districts"],
         queryFn: () =>
           getDistrictsForState({
-            controllingfieldfk: stateCode || "",
+            controllingfieldfk: stateCode,
             fieldName: "districts",
           }),
       });
@@ -280,7 +280,7 @@ const Block: React.FC = () => {
       const response = await queryClient.fetchQuery({
         queryKey: [
           QueryKeys.FIELD_OPTION_READ,
-          selectedDistrict === t("COMMON.ALL") ? "" : selectedDistrict || "",
+          selectedDistrict === t("COMMON.ALL") ? "" : selectedDistrict,
           "blocks",
         ],
         queryFn: () =>
@@ -288,7 +288,7 @@ const Block: React.FC = () => {
             controllingfieldfk:
               selectedDistrict === t("COMMON.ALL")
                 ? ""
-                : selectedDistrict || "",
+                : selectedDistrict,
             fieldName: "blocks",
           }),
       });
@@ -331,7 +331,7 @@ const Block: React.FC = () => {
           name: searchKeyword,
           states: stateCode,
           districts:
-            selectedDistrict === t("COMMON.ALL") ? "" : selectedDistrict || "",
+            selectedDistrict === t("COMMON.ALL") ? "" : selectedDistrict,
           type: CohortTypes.BLOCK,
           status: [statusValue],
         },
@@ -344,7 +344,7 @@ const Block: React.FC = () => {
           reqParams.limit,
           reqParams.offset,
           searchKeyword || "",
-          stateCode || "",
+          stateCode,
           reqParams.filters.districts,
           CohortTypes.BLOCK,
           reqParams.sort.join(","),
@@ -652,17 +652,6 @@ const Block: React.FC = () => {
     </Box>
   );
 
-  const userProps = {
-    selectedFilter,
-    showStateDropdown: false,
-    userType: t("MASTER.BLOCKS"),
-    searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK"),
-    showFilter: true,
-    statusValue: statusValue,
-    setStatusValue: setStatusValue,
-    handleFilterChange: handleFilterChange,
-  };
-
   const handleAddNewBlock = () => {
     setEditState(null);
     setSelectedStateForEdit(null);
@@ -782,6 +771,23 @@ const Block: React.FC = () => {
     setSelectedStateForEdit(null);
   };
 
+  const userProps = {
+    selectedFilter,
+    handleSearch: handleSearch,
+    showStateDropdown: false,
+    userType: t("MASTER.BLOCKS"),
+    searchPlaceHolder: t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK"),
+    showFilter: true,
+    showSort: true,
+    statusValue: statusValue,
+    setStatusValue: setStatusValue,
+    handleFilterChange: handleFilterChange,
+    selectedSort: selectedSort,
+    shouldFetchDistricts: false,
+    handleSortChange: handleSortChange,
+    handleAddUserClick: handleAddNewBlock,
+  };
+
   return (
     <React.Fragment>
       <AddBlockModal
@@ -842,12 +848,6 @@ const Block: React.FC = () => {
 
       <HeaderComponent
         {...userProps}
-        handleAddUserClick={handleAddNewBlock}
-        handleSearch={handleSearch}
-        selectedSort={selectedSort}
-        handleSortChange={handleSortChange}
-        showSort={true}
-        shouldFetchDistricts={false}
       >
         {loading ? (
           <Box
