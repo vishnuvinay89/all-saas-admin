@@ -42,6 +42,7 @@ import Papa from "papaparse";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 import LinkIcon from "@mui/icons-material/Link";
+import { monthColors } from "@/utils/app.constant";
 
 const ImportCsv = () => {
   const router = useRouter();
@@ -396,7 +397,7 @@ const ImportCsv = () => {
                   sx={{ fontSize: "10px", color: "#CDC5BD" }}
                 />
               </Typography>
-              <Typography sx={{marginLeft: '5px'}}>
+              <Typography sx={{ marginLeft: "5px" }}>
                 {subTopics} {t("COURSE_PLANNER.SUBTOPICS")}{" "}
               </Typography>
             </Box>
@@ -575,25 +576,7 @@ const ImportCsv = () => {
                                       const month = getAbbreviatedMonth(
                                         subTopic?.metaInformation?.startDate
                                       );
-                                      switch (month) {
-                                        case "Jan":
-                                          return "#99CCFF";
-                                        case "Mar":
-                                          return "#D9B2FF";
-                                        case "Apr":
-                                        case "May":
-                                        case "Jun":
-                                        case "Jul":
-                                        case "Aug":
-                                        case "Sep":
-                                          return "#FFABAB";
-                                        case "Oct":
-                                        case "Nov":
-                                        case "Dec":
-                                          return "#FFD6D6";
-                                        default:
-                                          return "#FFD6D6";
-                                      }
+                                      return monthColors[month] || "#FFD6D6";
                                     })(),
                                     fontSize: "12px",
                                     fontWeight: "500",
