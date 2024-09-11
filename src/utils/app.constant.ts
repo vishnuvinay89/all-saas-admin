@@ -99,3 +99,18 @@ export const QueryKeys = {
   GET_COHORT_LIST: "getcohortList",
   GET_COHORT_MEMBER_LIST: "getCohortMemberList",
 }
+
+
+export const monthColors:any = {
+  "Jan": "#99CCFF",
+  "Mar": "#D9B2FF",
+  "Apr": "#FFABAB",
+  "May": "#FFABAB",
+  "Jun": "#FFABAB",
+  "Jul": "#FFABAB",
+  "Aug": "#FFABAB",
+  "Sep": "#FFABAB",
+  "Oct": "#FFD6D6",
+  "Nov": "#FFD6D6",
+  "Dec": "#FFD6D6"
+};
