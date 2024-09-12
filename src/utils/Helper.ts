@@ -193,74 +193,53 @@ export const mapFields = (formFields: any, Details: any) => {
   return initialFormData;
 };
 
-type Field = {
-  options?: Option[];
-  name?: string;
-  dependsOn: string | boolean | null;
-  sourceDetails?: {
-    url?: string;
-  };
-  fieldId?: string;
-  fileds?: any
+// Helper function to get options by category
+export const getOptionsByCategory = (frameworks: any, categoryCode: string) => {
+  // Find the category by code
+  const category = frameworks.categories.find(
+    (category: any) => category.code === categoryCode
+  );
+
+  // Return the mapped terms
+  return category.terms.map((term: any) => ({
+    name: term.name,
+    code: term.code,
+    associations: term.associations
+  }));
 };
 
-type Framework = {
-  name: string;
+interface Association {
   identifier: string;
+  code: string;
+  name: string;
+  category: string;
+  status: string;
+  [key: string]: any; // To include any additional fields
+}
+
+interface DataItem {
+  name: string;
+  code: string;
+  associations: Association[];
+}
+export const getAssociationsByCode = (data: DataItem[], code: string): Association[] | [] => {
+  const foundItem = data.find(item => item.code === code);
+  return foundItem ? foundItem.associations : [];
 };
 
-type Option = {
-  label: string;
-  value: string;
-};
-
-export const mapFrameworksToOptionsWithFieldId = (frameworks: Framework[]) => {
-  return frameworks.map(framework => ({
-     label: framework.name, value: framework.identifier
-  }));
-};
-
-export const formatOptions = (data: any[]) => {
-  return data.map((item) => ({
-    label: item.name,
-    value: item.code,
-  }));
-};
-
-export const getAssociatesByCode = (data: any, selectedCode: string): any[] => {
-  const selectedItem = data.find((item: { code: string; }) => item.code === selectedCode);
-  return selectedItem ? selectedItem.associates : [];
-};
-
-export const getAssociatesByIdentifier = (data: any, selectedIdentifier: string): any[] => {
-  const selectedItem = data.find((item: { identifier: string; }) => item.identifier === selectedIdentifier);
-  return selectedItem ? selectedItem.associates : [];
-};
-
-export const getOptionsByCode = (data: any, code: string) => {
-  const mediumData = data?.find((item: any) => item.code === code);
-
-  if (mediumData) {
-    return mediumData.terms
-      .filter((term: any) => term.status === 'Live')
-      .map((term: any) => ({
-        name: term.name,
-        code: term.code,
-        identifier: term.identifier,
-        associates: term.associations,
-      }));
-  }
-
-  return [];
-};
-
-export const filterByCategory = (data: any, category: string) => {
-  const categoryData = data
-    ?.filter((item: any) => item.category === category && item.status === 'Live')
-    .map((element: any) => ({
-      label: element.name,
-      value: element.identifier,
-    }));
-
-  return categoryData || [];
+export const findCommonAssociations = (data1: any[], data2: any[]) => {
+  return data1.map((item1) => {
+    const item2 = data2.find((item) => item.code === item1.code);
+    if (item2) {
+      const commonAssociations = item1.associations.filter((assoc1: any) =>
+        item2.associations.some((assoc2: any) => assoc1.identifier === assoc2.identifier)
+      );
+      return {
+        name: item1.name,
+        code: item1.code,
+        associations: commonAssociations,
+      };
+    }
+    return null;
+  }).filter(Boolean); 
 };
