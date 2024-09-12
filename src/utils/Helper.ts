@@ -321,34 +321,29 @@ export const filterAndMapAssociations = (
   category: string,
   options: any[],
   associationsList?: any[],
-  codeKey: string = 'code' // Default to 'code' if codeKey is not provided
+  codeKey: string = "code"
 ) => {
-  // Check if options is an array
   if (!Array.isArray(options)) {
-    console.error('Options is not an array:', options);
-    return []; // Return an empty array or handle the error
+    console.error("Options is not an array:", options);
+    return [];
   }
 
-  // Handle missing or empty associationsList gracefully
   if (!associationsList || associationsList.length === 0) {
-    return []; // Return an empty array if no associations are present
+    return [];
   }
 
   return options
     .filter((option) => {
-      // Use the codeKey to access the code property dynamically
       const optionCode = option[codeKey];
-      
-      // Check if the associationsList contains a matching item with the specified category
+
       return associationsList.some(
-        (assoc) =>
-          assoc[codeKey] === optionCode && assoc.category === category
+        (assoc) => assoc[codeKey] === optionCode && assoc.category === category
       );
     })
     .map((option) => ({
       name: option.name,
       code: option.code,
-      associations: option.associations || [], // Handle potential missing associations gracefully
+      associations: option.associations || [],
     }));
 };
 
