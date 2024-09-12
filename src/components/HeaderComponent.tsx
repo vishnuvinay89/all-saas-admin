@@ -71,7 +71,7 @@ const HeaderComponent = ({
   selectedCenter,
   handleCenterChange,
   statusValue,
-  shouldFetchDistricts=true,
+  shouldFetchDistricts = true,
   setStatusValue,
 }: any) => {
   const { t } = useTranslation();
@@ -87,7 +87,6 @@ const HeaderComponent = ({
   const [initialDistrict, setInitialDistrict] = useState<any>("");
   const [initialBlock, setInitialBlock] = useState<string>("");
 
-
   const [blocks, setBlocks] = useState<Block[]>([]);
 
   const handleStateChangeWrapper = async (
@@ -102,7 +101,6 @@ const HeaderComponent = ({
       // }
     }
     try {
-
       const response = await queryClient.fetchQuery({
         queryKey: [QueryKeys.FIELD_OPTION_READ, selectedCodes[0], "districts"],
         queryFn: () =>
@@ -136,7 +134,6 @@ const HeaderComponent = ({
       handleBlockChange([], []);
     }
     try {
-
       const response = await queryClient.fetchQuery({
         queryKey: [QueryKeys.FIELD_OPTION_READ, selectedCodes[0], "blocks"],
         queryFn: () =>
@@ -165,7 +162,7 @@ const HeaderComponent = ({
     selectedCodes: string[]
   ) => {
     const getCentersObject = {
-      limit: 200,
+      limit: 0,
       offset: 0,
       filters: {
         // "type":"COHORT",
@@ -184,7 +181,7 @@ const HeaderComponent = ({
         getCentersObject.filters,
       ],
       queryFn: () => getCenterList(getCentersObject),
-    })
+    });
     // const response = await getCenterList(getCentersObject);
     console.log(response?.result?.results?.cohortDetails[0].cohortId);
     // setSelectedBlockCohortId(
@@ -233,17 +230,18 @@ const HeaderComponent = ({
             } else {
               setStateDefaultValue(stateField.value);
 
-
               const response = await queryClient.fetchQuery({
-                queryKey: [QueryKeys.FIELD_OPTION_READ, stateField.code, "districts"],
+                queryKey: [
+                  QueryKeys.FIELD_OPTION_READ,
+                  stateField.code,
+                  "districts",
+                ],
                 queryFn: () =>
                   getStateBlockDistrictList({
                     controllingfieldfk: stateField.code,
                     fieldName: "districts",
                   }),
               });
-        
-        
 
               // const object = {
               //   controllingfieldfk: stateField.code,
@@ -281,12 +279,11 @@ const HeaderComponent = ({
     setStatusValue(newValue);
   };
 
-
   useEffect(() => {
     if (districts && districts.length > 0 && !selectedDistrict.length) {
-      const firstDistrictCode = districts[0].value;
+      const firstDistrictCode = districts?.[0].value;
       setInitialDistrict(firstDistrictCode);
-      handleDistrictChangeWrapper([districts[0].label], [firstDistrictCode]);
+      handleDistrictChangeWrapper([districts?.[0].label], [firstDistrictCode]);
     }
   }, [districts, selectedDistrict, handleDistrictChangeWrapper]);
 
@@ -298,7 +295,7 @@ const HeaderComponent = ({
     }
   }, [blocks, selectedBlock, handleBlockChangeWrapper]);
 
-
+ 
 
   return (
     <Box
@@ -368,7 +365,7 @@ const HeaderComponent = ({
                           : "inherit",
                     }}
                   >
-                    {t('COMMON.ACTIVE')}
+                    {t("COMMON.ACTIVE")}
                   </Box>
                 }
                 value={Status.ACTIVE}
@@ -385,7 +382,7 @@ const HeaderComponent = ({
                           : "inherit",
                     }}
                   >
-                    {t('COMMON.ARCHIVED')}
+                    {t("COMMON.ARCHIVED")}
                   </Box>
                 }
                 value={Status.ARCHIVED}

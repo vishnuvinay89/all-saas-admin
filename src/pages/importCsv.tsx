@@ -41,6 +41,8 @@ import coursePlannerStore from "@/store/coursePlannerStore";
 import Papa from "papaparse";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
+import LinkIcon from "@mui/icons-material/Link";
+import { monthColors } from "@/utils/app.constant";
 
 const ImportCsv = () => {
   const router = useRouter();
@@ -60,6 +62,7 @@ const ImportCsv = () => {
     "panel3-header": true,
   });
   const [userProjectDetails, setUserProjectDetails] = useState([]);
+  const [subTopics, setSubTopics] = useState<number>(0);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -88,11 +91,11 @@ const ImportCsv = () => {
       setLoading(true);
       const response = await getTargetedSolutions({
         subject: store?.taxanomySubject,
-        class: "4",
+        class: "Grade 10",
         state: "Maharashtra",
         board: store?.boardName,
         type: "mainCourse",
-        medium: "Telugu",
+        medium: "Hindi",
       });
 
       const courseData = response.result.data[0];
@@ -127,11 +130,11 @@ const ImportCsv = () => {
 
       const updatedResponse = await getTargetedSolutions({
         subject: store?.taxanomySubject,
-        class: "4",
+        class: "Grade 10",
         state: "Maharashtra",
         board: store?.boardName,
         type: "mainCourse",
-        medium: "Telugu",
+        medium: "Hindi",
       });
       setLoading(false);
       return updatedResponse.result.data[0]._id;
@@ -148,6 +151,18 @@ const ImportCsv = () => {
         id: courseId,
       });
       setUserProjectDetails(userProjectDetailsResponse.result.tasks);
+      if (userProjectDetails?.length) {
+        const totalChildren = userProjectDetails.reduce(
+          (acc: number, project: any) => {
+            return acc + (project?.children?.length || 0);
+          },
+          0
+        );
+
+        if (totalChildren !== subTopics) {
+          setSubTopics(totalChildren);
+        }
+      }
       setLoading(false);
     } catch (error) {
       console.error("Error fetching user project details:", error);
@@ -185,11 +200,11 @@ const ImportCsv = () => {
     if (selectedFile) {
       const metaData: CoursePlannerMetaData = {
         subject: store?.taxanomySubject,
-        class: "4",
+        class: "Grade 10",
         state: "Maharashtra",
         board: store?.boardName,
         type: "mainCourse",
-        medium: "Telugu",
+        medium: "Hindi",
       };
 
       Papa.parse(selectedFile, {
@@ -369,38 +384,28 @@ const ImportCsv = () => {
         showGradeMedium={false}
         showFoundaitonCourse={false}
       />
-      <Box
-        sx={{
-          padding: "16px",
-        }}
-      >
-        <Typography
-          variant={isSmallScreen ? "h4" : "h3"}
-          sx={{
-            textAlign: "center",
-            fontWeight: "bold",
-            color: "#000000",
-          }}
-        >
-          {t("COURSE_PLANNER.IMPORT_PLANNER_TO_UPLOADING")}
-        </Typography>
-      </Box>
 
-      <>
+      <Box>
         {loading ? (
           <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
         ) : (
           <>
-              <Box>
-                <Typography>
-                  {userProjectDetails?.length} {t("COURSE_PLANNER.TOPIC")}{" "}
-                  <FiberManualRecordIcon
-                    sx={{ fontSize: "10px", color: "#CDC5BD" }}
-                  />
-                </Typography>
-              </Box>
-           
-            <Box mt={2}>
+            <Box sx={{ display: "flex", flexDirection: "row" }}>
+              <Typography>
+                {userProjectDetails?.length} {t("COURSE_PLANNER.TOPIC")}{" "}
+                <FiberManualRecordIcon
+                  sx={{ fontSize: "10px", color: "#CDC5BD" }}
+                />
+              </Typography>
+              <Typography sx={{ marginLeft: "5px" }}>
+                {subTopics} {t("COURSE_PLANNER.SUBTOPICS")}{" "}
+              </Typography>
+            </Box>
+
+            <Box
+              mt={2}
+              sx={{ border: `1px solid #FFCCCC`, p: 2, borderRadius: "5px" }}
+            >
               {userProjectDetails.map((topic: any, index) => (
                 <Box key={topic._id} sx={{ borderRadius: "8px", mb: 2 }}>
                   <Accordion
@@ -489,13 +494,19 @@ const ImportCsv = () => {
                         borderRadius: "8px",
                       }}
                     >
-                      <Box sx={{ flex: 1 }}>Sub-topic</Box>
-                      <Box sx={{ flex: 1, textAlign: "center" }}>{t("COURSE_PLANNER.RESOURCES")}</Box>
+                      <Box sx={{ flex: 1 }}>
+                        {t("COURSE_PLANNER.SUB-TOPIC")}
+                      </Box>
+                      <Box sx={{ flex: 1, textAlign: "center" }}>
+                        {t("COURSE_PLANNER.RESOURCES")}
+                      </Box>
                       <Box sx={{ flex: 1, textAlign: "right" }}>
-                      {t("COURSE_PLANNER.DURATION/MONTH")}
+                        {t("COURSE_PLANNER.DURATION/MONTH")}
+                      </Box>
+                      <Box sx={{ flex: 1, textAlign: "right" }}>
+                        {t("COURSE_PLANNER.COPY_LINK")}
                       </Box>
                     </Box>
-
                     <AccordionDetails
                       sx={{
                         padding: "20px",
@@ -511,9 +522,6 @@ const ImportCsv = () => {
                             padding: "10px",
                             backgroundColor: "white",
                             marginBottom: "20px",
-                            // "&:hover": {
-                            //   background: "#F9F9F9",
-                            // },
                           }}
                         >
                           <Box
@@ -541,7 +549,6 @@ const ImportCsv = () => {
                               >
                                 <FolderOutlinedIcon /> {subTopic.name}
                               </Box>
-
                               <Box
                                 sx={{
                                   flex: 1,
@@ -553,7 +560,6 @@ const ImportCsv = () => {
                               >
                                 {`${subTopic?.learningResources?.length} Resources`}
                               </Box>
-
                               <Box
                                 sx={{
                                   flex: 1,
@@ -566,12 +572,12 @@ const ImportCsv = () => {
                                 <Box
                                   sx={{
                                     padding: "5px",
-                                    background:
-                                      getAbbreviatedMonth(
+                                    background: (() => {
+                                      const month = getAbbreviatedMonth(
                                         subTopic?.metaInformation?.startDate
-                                      ) === "Jan"
-                                        ? "#C1D6FF"
-                                        : "#FFD6D6",
+                                      );
+                                      return monthColors[month] || "#FFD6D6";
+                                    })(),
                                     fontSize: "12px",
                                     fontWeight: "500",
                                     color: "#4D4639",
@@ -582,6 +588,16 @@ const ImportCsv = () => {
                                     subTopic?.metaInformation?.startDate
                                   )}
                                 </Box>
+                              </Box>
+                              <Box
+                                sx={{
+                                  flex: 1,
+                                  display: "flex",
+                                  justifyContent: "flex-end",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <LinkIcon />
                               </Box>
                             </Box>
                           </Box>
@@ -594,7 +610,7 @@ const ImportCsv = () => {
             </Box>
           </>
         )}
-      </>
+      </Box>
 
       <FileUploadDialog
         open={open}
