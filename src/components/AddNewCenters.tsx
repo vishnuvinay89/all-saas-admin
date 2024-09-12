@@ -17,7 +17,7 @@ import AreaSelection from "./AreaSelection";
 import { showToastMessage } from "./Toastify";
 import { createCohort } from "@/services/CohortService/cohortService";
 import useSubmittedButtonStore from "@/utils/useSharedState";
-import DependentFields from "./DependentFields";
+import FrameworkCategories from "./FrameworkCategories";
 
 interface CustomField {
   fieldId: string;
@@ -187,10 +187,6 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
             fieldId: bmgsData.grade.fieldId,
             value: bmgsData.grade.gradeName,
           });
-          cohortDetails?.customFields?.push({
-            fieldId: bmgsData.subject.fieldId,
-            value: bmgsData.subject.subjectName.join(", "),
-          });
         }
       });
 
@@ -264,13 +260,13 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
             stateDefaultValue={stateDefaultValueForCenter}
           />
         </Box>
-        <DependentFields
+        <FrameworkCategories
           customFormData={customFormData}
           onFieldsChange={handleDependentFieldsChange}
           setShowForm={setShowForm}
         />
       </>
-      {dynamicFormForBlock && schema && uiSchema && selectedBlockCohortId &&  (
+      {dynamicFormForBlock && schema && uiSchema && selectedBlockCohortId && (
         <>
           {showForm ? (
             <DynamicForm
