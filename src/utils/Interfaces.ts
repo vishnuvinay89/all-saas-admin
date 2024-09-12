@@ -67,7 +67,7 @@ export interface SendCredentialsRequest {
 
 export interface CohortMemberList {
   limit: number;
-  page: number;
+  offset: number;
   filters: {
     cohortId: string;
     role?: string;

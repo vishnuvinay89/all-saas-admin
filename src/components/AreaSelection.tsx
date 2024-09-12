@@ -162,10 +162,12 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
             }
           />
           <MultipleSelectCheckmarks
-            names={blocks?.map((blocks) => blocks.label)}
+            names={capitalizeFirstLetterOfEachWordInArray(
+              blocks?.map((blocks) => blocks.label)
+            )}
             codes={blocks?.map((blocks) => blocks.value)}
             tagName={t("FACILITATORS.BLOCK")}
-            selectedCategories={selectedBlock}
+            selectedCategories={capitalizeFirstLetterOfEachWordInArray(selectedBlock)}
             onCategoryChange={handleBlockChangeWrapper}
             disabled={
               blocks?.length <= 0 ||
