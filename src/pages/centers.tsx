@@ -127,6 +127,7 @@ const Center: React.FC = () => {
     type: CohortTypes.COHORT,
     states: selectedStateCode,
     status: [statusValue],
+    districts: selectedDistrictCode,
   });
   const handleCloseAddLearnerModal = () => {
     setOpenAddNewCohort(false);
@@ -282,8 +283,8 @@ const Center: React.FC = () => {
 
   const getCohortMemberlistData = async (cohortId: string) => {
     const data = {
-      limit: 300,
-      page: 0,
+      limit: 0,
+      offset: 0,
       filters: {
         cohortId: cohortId,
       },
@@ -293,13 +294,11 @@ const Center: React.FC = () => {
       queryKey: [
         QueryKeys.GET_COHORT_MEMBER_LIST,
         data.limit,
-        data.page,
+        data.offset,
         JSON.stringify(data.filters),
       ],
       queryFn: () => fetchCohortMemberList(data),
     });
-
-
 
     if (response?.result) {
       const userDetails = response.result.userDetails;
@@ -512,17 +511,27 @@ const Center: React.FC = () => {
       } else {
         setSortBy(["createdAt", SORT.ASCENDING]);
       }
-      setSelectedSort(event.target.value);
     }
+    setSelectedSort(event.target.value);
   };
 
   const handleSearch = (keyword: string) => {
+    console.log("keyword", keyword?.length);
     setPageOffset(Numbers.ZERO);
     setPageCount(Numbers.ONE);
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      name: keyword,
-    }));
+    if (keyword?.length > 3) {
+      if (cohortData?.length > 0) {
+        setFilters((prevFilters) => ({
+          ...prevFilters,
+          name: keyword,
+        }));
+      }
+    } else {
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        name: keyword,
+      }));
+    }
   };
 
   const handleFilterChange = async (
@@ -767,6 +776,8 @@ const Center: React.FC = () => {
     selectedState: selectedState,
     selectedStateCode: selectedStateCode,
     selectedDistrict: selectedDistrict,
+    // selectedDistrictCode: selectedDistrictCode,
+    // selectedBlockCode: selectedBlockCode,
     selectedBlock: selectedBlock,
     selectedSort: selectedSort,
     selectedFilter: selectedFilter,
