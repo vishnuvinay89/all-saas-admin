@@ -279,21 +279,21 @@ const HeaderComponent = ({
     setStatusValue(newValue);
   };
 
-  useEffect(() => {
-    if (districts && districts.length > 0 && !selectedDistrict.length) {
-      const firstDistrictCode = districts?.[0].value;
-      setInitialDistrict(firstDistrictCode);
-      handleDistrictChangeWrapper([districts?.[0].label], [firstDistrictCode]);
-    }
-  }, [districts, selectedDistrict, handleDistrictChangeWrapper]);
+  // useEffect(() => {
+  //   if (districts && districts.length > 0 && !selectedDistrict.length) {
+  //     const firstDistrictCode = districts?.[0].value;
+  //     setInitialDistrict(firstDistrictCode);
+  //     handleDistrictChangeWrapper([districts?.[0].label], [firstDistrictCode]);
+  //   }
+  // }, [districts, selectedDistrict, handleDistrictChangeWrapper]);
 
-  useEffect(() => {
-    if (blocks && blocks.length > 0 && !selectedBlock.length) {
-      const firstBlockCode = blocks[0].value;
-      setInitialBlock(firstBlockCode);
-      handleBlockChangeWrapper([blocks[0].label], [firstBlockCode]);
-    }
-  }, [blocks, selectedBlock, handleBlockChangeWrapper]);
+  // useEffect(() => {
+  //   if (blocks && blocks.length > 0 && !selectedBlock.length) {
+  //     const firstBlockCode = blocks[0].value;
+  //     setInitialBlock(firstBlockCode);
+  //     handleBlockChangeWrapper([blocks[0].label], [firstBlockCode]);
+  //   }
+  // }, [blocks, selectedBlock, handleBlockChangeWrapper]);
 
  
 
