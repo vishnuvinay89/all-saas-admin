@@ -100,16 +100,17 @@ const ImportCsv = () => {
         medium: tstore?.taxonomyMedium,
       });
 
-      const courseData = response.result.data[0];
+      const courseData = response?.result?.data[0];
       let courseId = courseData._id;
 
       if (!courseId) {
-        courseId = await fetchCourseIdFromSolution(courseData.solutionId);
+        courseId = await fetchCourseIdFromSolution(courseData?.solutionId);
       }
 
       await fetchAndSetUserProjectDetails(courseId);
     } catch (error) {
       console.error("Error fetching course planner:", error);
+      setLoading(false);
     }
   }, [open]);
 
