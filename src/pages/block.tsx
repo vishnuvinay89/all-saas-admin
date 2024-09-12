@@ -286,9 +286,7 @@ const Block: React.FC = () => {
         queryFn: () =>
           getBlocksForDistricts({
             controllingfieldfk:
-              selectedDistrict === t("COMMON.ALL")
-                ? ""
-                : selectedDistrict,
+              selectedDistrict === t("COMMON.ALL") ? "" : selectedDistrict,
             fieldName: "blocks",
           }),
       });
@@ -315,10 +313,9 @@ const Block: React.FC = () => {
   const getCohortSearchBlock = async (selectedDistrict: string) => {
     try {
       setLoading(true);
-
       if (!blocksOptionRead.length || !blockNameArr.length) {
         console.warn(
-          "districtsOptionRead or districtNameArr is empty, waiting for data..."
+          "blocksOptionRead or blockNameArr is empty, waiting for data..."
         );
         setLoading(false);
         return;
@@ -351,8 +348,8 @@ const Block: React.FC = () => {
         ],
         queryFn: () => getCohortList(reqParams),
       });
-      const cohortDetails = response?.results?.cohortDetails || [];
 
+      const cohortDetails = response?.results?.cohortDetails || [];
       const filteredBlockData = cohortDetails
         .map(
           (blockDetail: {
@@ -394,7 +391,7 @@ const Block: React.FC = () => {
       setPaginationCount(totalCount);
       setPageCount(Math.ceil(totalCount / pageLimit));
 
-      setLoading(false);
+      setLoading(false); 
     } catch (error) {
       console.error("Error fetching and filtering cohort blocks", error);
       setLoading(false);
@@ -846,9 +843,7 @@ const Block: React.FC = () => {
         handleCloseModal={() => setConfirmationDialogOpen(false)}
       />
 
-      <HeaderComponent
-        {...userProps}
-      >
+      <HeaderComponent {...userProps}>
         {loading ? (
           <Box
             width={"100%"}
@@ -954,20 +949,18 @@ const Block: React.FC = () => {
                   onDelete={handleDelete}
                   extraActions={[]}
                 />
-              ) : (
-                !loading && (
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    height="20vh"
-                  >
-                    <Typography marginTop="10px" textAlign="center">
-                      {t("COMMON.BLOCKS_NOT_FOUND")}
-                    </Typography>
-                  </Box>
-                )
-              )}
+              ) : !loading && filteredCohortOptionData().length === 0 ? (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="20vh"
+                >
+                  <Typography marginTop="10px" textAlign="center">
+                    {t("COMMON.BLOCKS_NOT_FOUND")}
+                  </Typography>
+                </Box>
+              ) : null}
             </Box>
           </>
         )}
