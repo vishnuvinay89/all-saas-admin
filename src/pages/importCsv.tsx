@@ -38,6 +38,7 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import dayjs from "dayjs";
 import { Role } from "@/utils/app.constant";
 import coursePlannerStore from "@/store/coursePlannerStore";
+import taxonomyStore from "@/store/tanonomyStore";
 import Papa from "papaparse";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
@@ -47,6 +48,7 @@ import { monthColors } from "@/utils/app.constant";
 const ImportCsv = () => {
   const router = useRouter();
   const store = coursePlannerStore();
+  const tstore = taxonomyStore();
   const { subject } = router.query;
   const { t } = useTranslation();
   const [subjectDetails, setSubjectDetails] = useState<any | null>(null);
@@ -90,12 +92,12 @@ const ImportCsv = () => {
     try {
       setLoading(true);
       const response = await getTargetedSolutions({
-        subject: store?.taxanomySubject,
-        class: "Grade 10",
-        state: "Maharashtra",
-        board: store?.boardName,
-        type: "mainCourse",
-        medium: "Hindi",
+        subject: tstore?.taxonomySubject,
+        class: tstore?.taxonomyGrade,
+        state: tstore?.state,
+        board: tstore?.board,
+        type: tstore?.taxonomyType,
+        medium: tstore?.taxonomyMedium,
       });
 
       const courseData = response.result.data[0];
@@ -129,12 +131,12 @@ const ImportCsv = () => {
       });
 
       const updatedResponse = await getTargetedSolutions({
-        subject: store?.taxanomySubject,
-        class: "Grade 10",
-        state: "Maharashtra",
-        board: store?.boardName,
-        type: "mainCourse",
-        medium: "Hindi",
+        subject: tstore?.taxonomySubject,
+        class: tstore?.taxonomyGrade,
+        state: tstore?.state,
+        board: tstore?.board,
+        type: tstore?.taxonomyType,
+        medium: tstore?.taxonomyMedium,
       });
       setLoading(false);
       return updatedResponse.result.data[0]._id;
@@ -199,12 +201,12 @@ const ImportCsv = () => {
   const handleUpload = async () => {
     if (selectedFile) {
       const metaData: CoursePlannerMetaData = {
-        subject: store?.taxanomySubject,
-        class: "Grade 10",
-        state: "Maharashtra",
-        board: store?.boardName,
-        type: "mainCourse",
-        medium: "Hindi",
+        subject: tstore?.taxonomySubject,
+        class: tstore?.taxonomyGrade,
+        state: tstore?.state,
+        board: tstore?.board,
+        type: tstore?.taxonomyType,
+        medium: tstore?.taxonomyMedium,
       };
 
       Papa.parse(selectedFile, {
@@ -406,207 +408,216 @@ const ImportCsv = () => {
               mt={2}
               sx={{ border: `1px solid #FFCCCC`, p: 2, borderRadius: "5px" }}
             >
-              {userProjectDetails.map((topic: any, index) => (
-                <Box key={topic._id} sx={{ borderRadius: "8px", mb: 2 }}>
-                  <Accordion
-                    expanded={expandedPanels[`panel${index}-header`] || false}
-                    onChange={() =>
-                      setExpandedPanels((prev) => ({
-                        ...prev,
-                        [`panel${index}-header`]: !prev[`panel${index}-header`],
-                      }))
-                    }
-                    sx={{
-                      boxShadow: "none",
-                      border: "none",
-                      transition: "0.3s",
-                      "&.Mui-expanded": {
-                        background: "#FFF8F2",
-                      },
-                    }}
-                  >
-                    <AccordionSummary
-                      expandIcon={<ArrowDropDownIcon sx={{ color: "black" }} />}
-                      aria-controls={`panel${index}-content`}
-                      id={`panel${index}-header`}
+              {userProjectDetails.length > 0 ? (
+                userProjectDetails.map((topic: any, index) => (
+                  <Box key={topic._id} sx={{ borderRadius: "8px", mb: 2 }}>
+                    <Accordion
+                      expanded={expandedPanels[`panel${index}-header`] || false}
+                      onChange={() =>
+                        setExpandedPanels((prev) => ({
+                          ...prev,
+                          [`panel${index}-header`]:
+                            !prev[`panel${index}-header`],
+                        }))
+                      }
                       sx={{
-                        px: "16px",
-                        m: 0,
+                        boxShadow: "none",
+                        border: "none",
+                        transition: "0.3s",
                         "&.Mui-expanded": {
-                          minHeight: "48px",
+                          background: "#FFF8F2",
                         },
                       }}
                     >
-                      <Box
+                      <AccordionSummary
+                        expandIcon={
+                          <ArrowDropDownIcon sx={{ color: "black" }} />
+                        }
+                        aria-controls={`panel${index}-content`}
+                        id={`panel${index}-header`}
                         sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          width: "100%",
-                          alignItems: "center",
+                          px: "16px",
+                          m: 0,
+                          "&.Mui-expanded": {
+                            minHeight: "48px",
+                          },
                         }}
                       >
                         <Box
                           sx={{
                             display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
                             alignItems: "center",
-                            gap: "10px",
-                          }}
-                        >
-                          <Typography
-                            fontWeight="500"
-                            fontSize="14px"
-                            color="black"
-                          >
-                            {`Topic ${index + 1} - ${topic.name}`}
-                          </Typography>
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            gap: "10px",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Typography
-                            fontWeight="600"
-                            fontSize="12px"
-                            color="#7C766F"
-                          >
-                            {getAbbreviatedMonth(
-                              topic?.metaInformation?.startDate
-                            )}
-                            ,{" "}
-                            {getAbbreviatedMonth(
-                              topic?.metaInformation?.endDate
-                            )}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </AccordionSummary>
-                    <Box
-                      sx={{
-                        background: "white",
-                        fontSize: "14px",
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        padding: "10px 25px  0px 25px ",
-                        borderRadius: "8px",
-                      }}
-                    >
-                      <Box sx={{ flex: 1 }}>
-                        {t("COURSE_PLANNER.SUB-TOPIC")}
-                      </Box>
-                      <Box sx={{ flex: 1, textAlign: "center" }}>
-                        {t("COURSE_PLANNER.RESOURCES")}
-                      </Box>
-                      <Box sx={{ flex: 1, textAlign: "right" }}>
-                        {t("COURSE_PLANNER.DURATION/MONTH")}
-                      </Box>
-                      <Box sx={{ flex: 1, textAlign: "right" }}>
-                        {t("COURSE_PLANNER.COPY_LINK")}
-                      </Box>
-                    </Box>
-                    <AccordionDetails
-                      sx={{
-                        padding: "20px",
-                        transition: "max-height 0.3s ease-out",
-                        backgroundColor: "white",
-                      }}
-                    >
-                      {topic.children.map((subTopic: any) => (
-                        <Box
-                          key={subTopic._id}
-                          sx={{
-                            border: `1px solid #E0E0E0`,
-                            padding: "10px",
-                            backgroundColor: "white",
-                            marginBottom: "20px",
                           }}
                         >
                           <Box
                             sx={{
-                              py: "10px",
-                              px: "16px",
-                              background: "white",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "10px",
+                            }}
+                          >
+                            <Typography
+                              fontWeight="500"
+                              fontSize="14px"
+                              color="black"
+                            >
+                              {`Topic ${index + 1} - ${topic.name}`}
+                            </Typography>
+                          </Box>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              gap: "10px",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Typography
+                              fontWeight="600"
+                              fontSize="12px"
+                              color="#7C766F"
+                            >
+                              {getAbbreviatedMonth(
+                                topic?.metaInformation?.startDate
+                              )}
+                              ,{" "}
+                              {getAbbreviatedMonth(
+                                topic?.metaInformation?.endDate
+                              )}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </AccordionSummary>
+                      <Box
+                        sx={{
+                          background: "white",
+                          fontSize: "14px",
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          padding: "10px 25px  0px 25px ",
+                          borderRadius: "8px",
+                        }}
+                      >
+                        <Box sx={{ flex: 1 }}>
+                          {t("COURSE_PLANNER.SUB-TOPIC")}
+                        </Box>
+                        <Box sx={{ flex: 1, textAlign: "center" }}>
+                          {t("COURSE_PLANNER.RESOURCES")}
+                        </Box>
+                        <Box sx={{ flex: 1, textAlign: "right" }}>
+                          {t("COURSE_PLANNER.DURATION/MONTH")}
+                        </Box>
+                        <Box sx={{ flex: 1, textAlign: "right" }}>
+                          {t("COURSE_PLANNER.COPY_LINK")}
+                        </Box>
+                      </Box>
+                      <AccordionDetails
+                        sx={{
+                          padding: "20px",
+                          transition: "max-height 0.3s ease-out",
+                          backgroundColor: "white",
+                        }}
+                      >
+                        {topic.children.map((subTopic: any) => (
+                          <Box
+                            key={subTopic._id}
+                            sx={{
+                              border: `1px solid #E0E0E0`,
+                              padding: "10px",
+                              backgroundColor: "white",
+                              marginBottom: "20px",
                             }}
                           >
                             <Box
                               sx={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
+                                py: "10px",
+                                px: "16px",
+                                background: "white",
                               }}
                             >
                               <Box
                                 sx={{
-                                  flex: 1,
                                   display: "flex",
+                                  justifyContent: "space-between",
                                   alignItems: "center",
-                                  gap: "8px",
-                                  fontWeight: 500,
-                                }}
-                              >
-                                <FolderOutlinedIcon /> {subTopic.name}
-                              </Box>
-                              <Box
-                                sx={{
-                                  flex: 1,
-                                  textAlign: "center",
-                                  fontSize: "14px",
-                                  fontWeight: 500,
-                                  color: "#7C766F",
-                                }}
-                              >
-                                {`${subTopic?.learningResources?.length} Resources`}
-                              </Box>
-                              <Box
-                                sx={{
-                                  flex: 1,
-                                  display: "flex",
-                                  justifyContent: "flex-end",
-                                  alignItems: "center",
-                                  gap: "6px",
                                 }}
                               >
                                 <Box
                                   sx={{
-                                    padding: "5px",
-                                    background: (() => {
-                                      const month = getAbbreviatedMonth(
-                                        subTopic?.metaInformation?.startDate
-                                      );
-                                      return monthColors[month] || "#FFD6D6";
-                                    })(),
-                                    fontSize: "12px",
-                                    fontWeight: "500",
-                                    color: "#4D4639",
-                                    borderRadius: "8px",
+                                    flex: 1,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "8px",
+                                    fontWeight: 500,
                                   }}
                                 >
-                                  {getAbbreviatedMonth(
-                                    subTopic?.metaInformation?.startDate
-                                  )}
+                                  <FolderOutlinedIcon /> {subTopic.name}
                                 </Box>
-                              </Box>
-                              <Box
-                                sx={{
-                                  flex: 1,
-                                  display: "flex",
-                                  justifyContent: "flex-end",
-                                  alignItems: "center",
-                                }}
-                              >
-                                <LinkIcon />
+                                <Box
+                                  sx={{
+                                    flex: 1,
+                                    textAlign: "center",
+                                    fontSize: "14px",
+                                    fontWeight: 500,
+                                    color: "#7C766F",
+                                  }}
+                                >
+                                  {`${subTopic?.learningResources?.length} Resources`}
+                                </Box>
+                                <Box
+                                  sx={{
+                                    flex: 1,
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                    alignItems: "center",
+                                    gap: "6px",
+                                  }}
+                                >
+                                  <Box
+                                    sx={{
+                                      padding: "5px",
+                                      background: (() => {
+                                        const month = getAbbreviatedMonth(
+                                          subTopic?.metaInformation?.startDate
+                                        );
+                                        return monthColors[month] || "#FFD6D6";
+                                      })(),
+                                      fontSize: "12px",
+                                      fontWeight: "500",
+                                      color: "#4D4639",
+                                      borderRadius: "8px",
+                                    }}
+                                  >
+                                    {getAbbreviatedMonth(
+                                      subTopic?.metaInformation?.startDate
+                                    )}
+                                  </Box>
+                                </Box>
+                                <Box
+                                  sx={{
+                                    flex: 1,
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <LinkIcon />
+                                </Box>
                               </Box>
                             </Box>
                           </Box>
-                        </Box>
-                      ))}
-                    </AccordionDetails>
-                  </Accordion>
-                </Box>
-              ))}
+                        ))}
+                      </AccordionDetails>
+                    </Accordion>
+                  </Box>
+                ))
+              ) : (
+                <Typography textAlign="center" color="gray">
+                  {t("COMMON.NO_DATA_FOUND")}
+                </Typography>
+              )}
             </Box>
           </>
         )}

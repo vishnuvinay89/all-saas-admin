@@ -19,6 +19,9 @@ import ProtectedRoute from "../../components/ProtectedRoute";
 import cardData from "@/data/cardData";
 import Loader from "@/components/Loader";
 import { getChannelDetails } from "@/services/coursePlanner";
+import { getOptionsByCategory } from "@/utils/Helper";
+import coursePlannerStore from "@/store/coursePlannerStore";
+import taxonomyStore from "@/store/tanonomyStore"
 
 const Foundation = () => {
   const router = useRouter();
@@ -26,7 +29,8 @@ const Foundation = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
-
+  const store = coursePlannerStore();
+  const tStore = taxonomyStore();
   // State management
   const [selectedCardId, setSelectedCardId] = useState(null);
   const [grade, setGrade] = useState("");
@@ -35,33 +39,81 @@ const Foundation = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [selectFilter, setSelectFilter] = useState("");
   const [loading, setLoading] = useState(true);
+  const [framework, setFramework] = useState<any[]>([]);
+  const setState = taxonomyStore((state) => state.setState);
+  const setMatchingstate = coursePlannerStore(
+    (state) => state.setMatchingstate
+  );
+  const setStateassociations = coursePlannerStore(
+    (state) => state.setStateassociations
+  );
+  const setFramedata = coursePlannerStore((state) => state.setFramedata);
+  const setBoards = coursePlannerStore((state) => state.setBoards);
+  const [userStateName, setUserStateName] = useState<any>();
+
   useEffect(() => {
-    const fetchData = async () => {
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
+    const fetchStateName = () => {
+      if (typeof window !== "undefined") {
+        const stateName = localStorage.getItem("stateName");
+        setUserStateName(stateName || "");
+      }
     };
 
-    fetchData();
-  }, []);
-
-  useEffect(() => {
     const fetchChannelDetails = async () => {
+      if (!userStateName) return;
+
       try {
         const data = await getChannelDetails();
-       console.log(data?.result?.channel?.frameworks);
-       localStorage.setItem("channelDetails", JSON.stringify(data?.result?.channel?.frameworks))
+        setFramework(data?.result?.framework);
+        setFramedata(data?.result?.framework);
+
+        const getStates = await getOptionsByCategory(
+          data?.result?.framework,
+          "state"
+        );
+
+        const matchingState = getStates?.find(
+          (state: any) => state?.name === userStateName
+        );
+
+        if (matchingState) {
+          setState(matchingState?.name);
+          setMatchingstate(matchingState);
+          setStateassociations(matchingState?.associations);
+
+          const getBoards = await getOptionsByCategory(
+            data?.result?.framework,
+            "board"
+          );
+          if (getBoards && matchingState) {
+            const commonBoards = getBoards
+              .filter((item1: { code: any }) =>
+                matchingState.associations.some(
+                  (item2: { code: any; category: string }) =>
+                    item2.code === item1.code && item2.category === "board"
+                )
+              )
+              .map((item1: { name: any; code: any; associations: any }) => ({
+                name: item1.name,
+                code: item1.code,
+                associations: item1.associations,
+              }));
+            setBoards(commonBoards);
+          }
+        }
       } catch (err) {
-        console.log(err);
-        
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchChannelDetails();
-  }, []);
+    fetchStateName();
 
+    if (userStateName) {
+      fetchChannelDetails();
+    }
+  }, [userStateName]);
 
   const handleCardClick = (id: any) => {
     router.push(`/stateDetails?cardId=${id}`);
@@ -95,7 +147,7 @@ const Foundation = () => {
       },
       (err) => {
         console.error("Failed to copy link: ", err);
-      },
+      }
     );
   };
 
@@ -119,7 +171,7 @@ const Foundation = () => {
         {loading ? (
           <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
         ) : (
-          <Box sx={{ pl: '20px' }}>
+          <Box sx={{ pl: "20px" }}>
             {/* <Box
               sx={{
                 display: "grid",
@@ -134,16 +186,18 @@ const Foundation = () => {
             </Box> */}
             <Grid container spacing={2}>
               {!selectedCardId ? (
-                cardData?.map((card:any) => (
-                  <Grid item xs={12} md={4} key={card.id}> {/* Added item prop and key here */}
+                cardData?.map((card: any) => (
+                  <Grid item xs={12} md={4} key={card.id}>
+                    {" "}
+                    {/* Added item prop and key here */}
                     <Box
                       sx={{
                         cursor: "pointer",
                         border: "1px solid #D0C5B4",
-                        padding: '10px',
-                        borderRadius: '8px',
-                        display:'flex',
-                        justifyContent:'space-between',
+                        padding: "10px",
+                        borderRadius: "8px",
+                        display: "flex",
+                        justifyContent: "space-between",
                         "&:hover": {
                           backgroundColor: "#D0C5B4",
                         },
@@ -152,10 +206,14 @@ const Foundation = () => {
                     >
                       <Box>
                         <Box
-                          sx={{ display: "flex", alignItems: "center", gap: "18px" }}
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "18px",
+                          }}
                         >
                           <FolderOutlinedIcon />
-                          <Typography>{card.state}</Typography>
+                          <Typography>{store?.matchingstate?.name}</Typography>
                         </Box>
                         <Box
                           sx={{
@@ -164,7 +222,7 @@ const Foundation = () => {
                             gap: "8px",
                           }}
                         >
-                          <CustomStepper completedSteps={card.boardsUploaded} />
+                          {/* <CustomStepper completedSteps={card.boardsUploaded} />
                           <Typography
                             sx={{
                               fontSize: isSmallScreen ? "12px" : "14px",
@@ -173,7 +231,7 @@ const Foundation = () => {
                           >
                             ({card.boardsUploaded}/{card.totalBoards}{" "}
                             {t("COURSE_PLANNER.BOARDS_FULLY_UPLOADED")})
-                          </Typography>
+                          </Typography> */}
                         </Box>
                       </Box>
                       <Box sx={{ display: "flex", alignItems: "center" }}>

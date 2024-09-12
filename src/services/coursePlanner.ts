@@ -5,7 +5,7 @@ import axios from 'axios';
 
 
 export const getChannelDetails = async (): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_SUNBIRDSAAS_API_URL}/api/channel/v1/read/01369885294383923244`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_SUNBIRDSAAS_API_URL}/api/framework/v1/read/gujaratboardfw`;
 
   try {
     const response = await axios.get(apiUrl);
