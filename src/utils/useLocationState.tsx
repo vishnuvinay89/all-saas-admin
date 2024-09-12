@@ -314,6 +314,7 @@ export const useLocationState = (
               //setStateDefaultValue(t("COMMON.ALL_STATES"))
 
               setStateDefaultValue(stateField.value);
+              localStorage.setItem('userStateName',stateField?.value )
 
               setSelectedState([stateField.value]);
               setSelectedStateCode(stateField.code);
