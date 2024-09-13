@@ -21,6 +21,7 @@ import { useTranslation } from "next-i18next";
 import Loader from "@/components/Loader";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import coursePlannerStore from "@/store/coursePlannerStore";
+import taxonomyStore from "@/store/tanonomyStore";
 
 const StateDetails = () => {
   const router = useRouter();
@@ -28,7 +29,8 @@ const StateDetails = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
+  const store = coursePlannerStore();
+  const tStore = taxonomyStore();
   // State management
   const [loading, setLoading] = useState(true);
   const [grade, setGrade] = useState("");
@@ -37,25 +39,16 @@ const StateDetails = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [card, setCard] = useState<any>(null);
   const [boards, setBoards] = useState<any>([]);
-  const setBoardname = coursePlannerStore((state) => state.setBoardname);
+  const setBoard = taxonomyStore((state) => state.setBoard);
 
   useEffect(() => {
     const fetchData = async () => {
       setTimeout(() => {
         const foundCard = cardData.find((c) => c.id === cardId);
         setCard(foundCard);
-        
 
-        if (typeof window !== 'undefined') {
-          const channel = localStorage.getItem('channelDetails');
-          
-          if (channel) {
-            const parsedBoards = JSON.parse(channel);
-            setBoards(parsedBoards);
-          } else {
-            console.error('No channel details found in localStorage.');
-          }
-        }
+        const channel = store?.boards;
+        setBoards(channel);
 
         setLoading(false);
       }, 1000);
@@ -85,11 +78,11 @@ const StateDetails = () => {
   };
 
   const handleBoardClick = (board: string, boardName: string) => {
+    setBoard(boardName);
     router.push({
       pathname: "/subjectDetails",
-      query: { boardId: board, cardId: card.id },
+      query: { boardDetails: board, boardName: boardName },
     });
-    setBoardname(boardName)
   };
 
   const handleCopyLink = (state: string) => {
@@ -100,7 +93,7 @@ const StateDetails = () => {
       },
       (err) => {
         console.error("Failed to copy link: ", err);
-      },
+      }
     );
   };
 
@@ -125,13 +118,13 @@ const StateDetails = () => {
         handleDropdownChange={handleDropdownChange}
         card={undefined}
         selectFilter={""}
-        onBackClick={() => { }}
+        onBackClick={() => {}}
       />
       <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
         <IconButton onClick={handleBackClick}>
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h4">{card.state}</Typography>
+        <Typography variant="h2">{card.state}</Typography>
         <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
           <CustomStepper completedSteps={card.boardsUploaded} />
           <Typography
@@ -146,80 +139,79 @@ const StateDetails = () => {
         </Box>
       </Box>
       <Grid spacing={2} container sx={{ marginTop: "16px" }}>
-  {boards.map((board: any, index: number) => (
-    <Grid item xs={12} md={4} key={index}>
-      <Box
-        sx={{
-          alignItems: "center",
-          cursor: "pointer",
-          border: "1px solid #0000001A",
-          boxShadow: "none",
-          transition: "background-color 0.3s",
-          "&:hover": {
-            backgroundColor: "#EAF2FF",
-          },
-          marginTop: "8px",
-          padding: "16px",
-          display: 'flex',
-          justifyContent: 'space-between'
-        }}
-        onClick={() => {
-          handleBoardClick(board?.identifier, board?.name);
-        }}
-      >
-        <Box>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            <FolderOutlinedIcon />
-            <Typography variant="h6" sx={{ fontSize: "16px" }}>
-              {board?.name}
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-            }}
-          >
-            <Box sx={{ width: "40px", height: "40px" }}>
-              <CircularProgressbar
-                value={(card.boardsUploaded / card.totalBoards) * 100}
-                strokeWidth={10}
-                styles={buildStyles({
-                  pathColor: "#06A816",
-                  trailColor: "#E6E6E6",
-                  strokeLinecap: "round",
-                })}
-              />
+        {boards.map((board: any, index: number) => (
+          <Grid item xs={12} md={4} key={index}>
+            <Box
+              sx={{
+                alignItems: "center",
+                cursor: "pointer",
+                border: "1px solid #0000001A",
+                boxShadow: "none",
+                transition: "background-color 0.3s",
+                "&:hover": {
+                  backgroundColor: "#EAF2FF",
+                },
+                marginTop: "8px",
+                padding: "16px",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+              onClick={() => {
+                handleBoardClick(board, board?.name);
+              }}
+            >
+              <Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <FolderOutlinedIcon />
+                  <Typography variant="h6" sx={{ fontSize: "16px" }}>
+                    {board?.name}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "16px",
+                  }}
+                >
+                  <Box sx={{ width: "40px", height: "40px" }}>
+                    <CircularProgressbar
+                      value={(card.boardsUploaded / card.totalBoards) * 100}
+                      strokeWidth={10}
+                      styles={buildStyles({
+                        pathColor: "#06A816",
+                        trailColor: "#E6E6E6",
+                        strokeLinecap: "round",
+                      })}
+                    />
+                  </Box>
+                  <Typography sx={{ fontSize: "14px" }}>
+                    {card.boardsUploaded} / {card.totalBoards}{" "}
+                    {t("COURSE_PLANNER.SUBJECTS_UPLOADED")}
+                  </Typography>
+                </Box>
+              </Box>
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopyLink(board?.identifier);
+                  }}
+                  sx={{ minWidth: "auto", padding: 0 }}
+                >
+                  <InsertLinkOutlinedIcon />
+                </Button>
+              </Box>
             </Box>
-            <Typography sx={{ fontSize: "14px" }}>
-              {card.boardsUploaded} / {card.totalBoards}{" "}
-              {t("COURSE_PLANNER.SUBJECTS_UPLOADED")}
-            </Typography>
-          </Box>
-        </Box>
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCopyLink(board?.identifier);
-            }}
-            sx={{ minWidth: "auto", padding: 0 }}
-          >
-            <InsertLinkOutlinedIcon />
-          </Button>
-        </Box>
-      </Box>
-    </Grid>
-  ))}
-</Grid>
-
+          </Grid>
+        ))}
+      </Grid>
     </Box>
   );
 };
