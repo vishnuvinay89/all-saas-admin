@@ -140,6 +140,7 @@ const LoginPage = () => {
         //set user info in zustand store
         if (typeof window !== 'undefined' && window.localStorage) {
           localStorage.setItem('adminInfo', JSON.stringify(userInfo))
+          localStorage.setItem('stateName', userInfo?.customFields[0]?.value);        
         }
         if(userInfo.role!==Role.ADMIN)
         {

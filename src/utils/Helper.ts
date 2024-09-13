@@ -243,3 +243,87 @@ export const findCommonAssociations = (data1: any[], data2: any[]) => {
     return null;
   }).filter(Boolean); 
 };
+
+export const getOptionsByCategory = (frameworks: any, categoryCode: string) => {
+  // Find the category by code
+  const category = frameworks?.categories?.find(
+    (category: any) => category.code === categoryCode
+  );
+
+  // Return the mapped terms
+  return category?.terms?.map((term: any) => ({
+    name: term.name,
+    code: term.code,
+    associations: term.associations
+  }));
+};
+
+interface DataItem {
+  name: string;
+  code: string;
+  associations: Association[];
+}
+
+interface Association {
+  identifier: string;
+  code: string;
+  name: string;
+  category: string;
+  status: string;
+  [key: string]: any; // To include any additional fields
+}
+
+export const getAssociationsByCode = (data: DataItem[], code: string): Association[] | [] => {
+  const foundItem = data.find(item => item.name === code);
+  return foundItem ? foundItem.associations : [];
+};
+
+export const findCommonAssociations = (data1: any[], data2: any[]) => {
+  return data1.map((item1) => {
+    const item2 = data2.find((item) => item.code === item1.code);
+    if (item2) {
+      const commonAssociations = item1.associations.filter((assoc1: any) =>
+        item2.associations.some((assoc2: any) => assoc1.identifier === assoc2.identifier)
+      );
+      return {
+        name: item1.name,
+        code: item1.code,
+        associations: commonAssociations,
+      };
+    }
+    return null;
+  }).filter(Boolean); 
+};
+
+
+export const filterAndMapAssociations = (
+  category: string,
+  options: any[],
+  associationsList?: any[],
+  codeKey: string = "code"
+) => {
+  if (!Array.isArray(options)) {
+    console.error("Options is not an array:", options);
+    return [];
+  }
+
+  if (!associationsList || associationsList.length === 0) {
+    return [];
+  }
+
+  return options
+    .filter((option) => {
+      const optionCode = option[codeKey];
+
+      return associationsList.some(
+        (assoc) => assoc[codeKey] === optionCode && assoc.category === category
+      );
+    })
+    .map((option) => ({
+      name: option.name,
+      code: option.code,
+      associations: option.associations || [],
+    }));
+};
+
+
