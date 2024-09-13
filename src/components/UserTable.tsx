@@ -546,7 +546,7 @@ const UserTable: React.FC<UserTableProps> = ({
 
       
     const getCentersObject = {
-      limit: 200,
+      limit: 0,
       offset: 0,
       filters: {
         // "type":"COHORT",

@@ -94,14 +94,14 @@ export const createCohort = async (userData: any): Promise<any> => {
 
 export const fetchCohortMemberList = async ({
   limit,
-  page,
+  offset,
   filters,
 }: CohortMemberList): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohortmember/list`;
   try {
     const response = await post(apiUrl, {
       limit,
-      page,
+      offset,
       filters,
       // sort: ["username", "asc"],
     });
