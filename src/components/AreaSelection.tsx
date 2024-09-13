@@ -3,8 +3,9 @@ import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import MultipleSelectCheckmarks from "./FormControl";
-import { capitalizeFirstLetterOfEachWordInArray } from "@/utils/Helper";
-import { useMediaQuery } from "@mui/material";
+import { capitalizeFirstLetterOfEachWordInArray} from "@/utils/Helper";
+import {  useMediaQuery } from "@mui/material";
+import { Role } from "@/utils/app.constant";
 
 interface State {
   value: string;
@@ -54,8 +55,11 @@ interface DropdownBoxProps {
   isMobile: boolean;
   isMediumScreen: boolean;
   isCenterSelection?: boolean;
-  stateDefaultValue?: string;
+  stateDefaultValue?:string;
   userType?: string;
+  reAssignModal?:boolean;
+  blockDefaultValue?:string;
+  districtDefaultValue?:string
 }
 
 const AreaSelection: React.FC<DropdownBoxProps> = ({
@@ -76,17 +80,26 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
   inModal = false,
   handleCenterChangeWrapper = () => {},
   stateDefaultValue,
+  blockDefaultValue,
+  districtDefaultValue,
+  
   userType,
+  reAssignModal=false
 }) => {
+
+console.log(selectedState.length)
   const { t } = useTranslation();
   const theme = useTheme<any>();
-  const [singleState, setSingleState] = useState<boolean>(true);
-  const [stateValue, setStateValue] = useState<string>("");
-  const [stateCode, setStateCode] = useState<string>("");
-  const isSmallScreen = useMediaQuery((theme: any) =>
-    theme.breakpoints.down("sm")
-  );
-
+const [singleState, setSingleState] = useState <boolean>(true);
+const [stateValue, setStateValue] = useState <string>("");
+const [stateCode, setStateCode] = useState <string>("");
+let isSmallScreen = useMediaQuery((theme: any) =>
+theme.breakpoints.down("sm"),
+);
+// isSmallScreen=isMobile?true: false;
+const blockDisable= districtDefaultValue?false: true
+const shouldRenderSelectCheckmarks =
+!(reAssignModal && userType === Role.TEAM_LEADERS);
   return (
     <Box
       sx={{
@@ -98,13 +111,14 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
         // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
       }}
     >
-      <Box
+      
+       <Box
         sx={{
           display: "flex",
           flexDirection: isSmallScreen || isMediumScreen ? "column" : "row",
         }}
       >
-        {userType && (
+        {userType && !reAssignModal && (
           <Typography marginTop="20px" variant="h1">
             {userType}
           </Typography>
@@ -156,12 +170,14 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
             }
             overall={!inModal}
             defaultValue={
-              selectedState.length > 0 && districts?.length <= 0
+              reAssignModal
+                ? districtDefaultValue
+                : selectedState.length > 0 && districts?.length === 0
                 ? t("COMMON.NO_DISTRICTS")
                 : t("COMMON.ALL_DISTRICTS")
             }
           />
-          <MultipleSelectCheckmarks
+         { shouldRenderSelectCheckmarks &&( <MultipleSelectCheckmarks
             names={capitalizeFirstLetterOfEachWordInArray(
               blocks?.map((blocks) => blocks.label)
             )}
@@ -170,23 +186,26 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
             selectedCategories={capitalizeFirstLetterOfEachWordInArray(selectedBlock)}
             onCategoryChange={handleBlockChangeWrapper}
             disabled={
+             blockDefaultValue? false:
+
               blocks?.length <= 0 ||
               selectedDistrict?.length === 0 ||
               (selectedDistrict && selectedDistrict[0] === "") ||
               selectedDistrict[0] === t("COMMON.ALL_DISTRICTS")
             }
             overall={!inModal}
-            defaultValue={
+            defaultValue={ 
+            //  blockDefaultValue? blockDefaultValue:
               selectedDistrict?.length > 0 && blocks?.length <= 0
                 ? t("COMMON.NO_BLOCKS")
                 : t("COMMON.ALL_BLOCKS")
             }
-          />
-          {isCenterSelection && (
-            <MultipleSelectCheckmarks
-              names={capitalizeFirstLetterOfEachWordInArray(
-                allCenters?.map((centers) => centers.name)
-              )}
+          />)
+}
+
+
+         { isCenterSelection && ( <MultipleSelectCheckmarks
+              names={capitalizeFirstLetterOfEachWordInArray(allCenters?.map((centers) => centers.name))}
               codes={allCenters?.map((centers) => centers.cohortId)}
               tagName={t("CENTERS.CENTERS")}
               selectedCategories={selectedCenter}

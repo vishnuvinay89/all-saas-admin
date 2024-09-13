@@ -8,6 +8,7 @@ import { getCohortList } from "@/services/CohortService/cohortService";
 import { FormContextType, QueryKeys } from "./app.constant";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
+
 interface FieldProp {
   value: string;
   label: string;
@@ -19,8 +20,11 @@ interface CenterProp {
 export const useLocationState = (
   open: boolean,
   onClose: () => void,
-  userType?: any
+  userType?: any,
+ reAssignModal?:boolean
 ) => {
+  console.log(reAssignModal)
+  
   const [states, setStates] = useState<FieldProp[]>([]);
   const [districts, setDistricts] = useState<FieldProp[]>([]);
   const [blocks, setBlocks] = useState<FieldProp[]>([]);
@@ -29,13 +33,13 @@ export const useLocationState = (
   const isMediumScreen = useMediaQuery("(max-width:986px)");
   const [selectedState, setSelectedState] = useState<string[]>([]);
   const [selectedStateCode, setSelectedStateCode] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState<string[]>([]);
+  const [selectedDistrict, setSelectedDistrict] = useState<string[]>( []);
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
   const [selectedCenter, setSelectedCenter] = useState<string[]>([]);
   const [dynamicForm, setDynamicForm] = useState<any>(false);
   const [dynamicFormForBlock, setdynamicFormForBlock] = useState<any>(false);
 
-  const [selectedBlock, setSelectedBlock] = useState<string[]>([]);
+  const [selectedBlock, setSelectedBlock] = useState<string[]>( []);
   const [selectedBlockCode, setSelectedBlockCode] = useState("");
   const [selectedCenterCode, setSelectedCenterCode] = useState("");
   const [selectedBlockCohortId, setSelectedBlockCohortId] = useState("");
@@ -91,8 +95,14 @@ export const useLocationState = (
         handleBlockChange([], []);
       }
       try {
-        setBlocks([]);
-        setAllCenters([]);
+        console.log(reAssignModal)
+       
+      //  if(!reAssignModal)
+      //  {
+          setBlocks([]);
+         setAllCenters([]);
+  
+        
         setSelectedDistrictCode(selectedCodes[0]);
         setSelectedBlockCohortId("");
         const object = {
@@ -260,7 +270,7 @@ export const useLocationState = (
       setdynamicFormForBlock(false);
     }
   }, [onClose, open]);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -316,33 +326,78 @@ export const useLocationState = (
               setStateDefaultValue(stateField.value);
               localStorage.setItem('userStateName',stateField?.value )
 
-              setSelectedState([stateField.value]);
-              setSelectedStateCode(stateField.code);
-              const response = await queryClient.fetchQuery({
-                queryKey: [
-                  QueryKeys.FIELD_OPTION_READ,
-                  stateField.code,
-                  "districts",
-                ],
-                queryFn: () =>
-                  getStateBlockDistrictList({
-                    controllingfieldfk: stateField.code,
-                    fieldName: "districts",
-                  }),
-              });
-              const result = response?.result?.values;
-              console.log(result);
-              setDistricts(result);
-            } else {
-              setStateDefaultValue(t("COMMON.ALL_STATES"));
-            }
-            const object2 = [
-              {
-                value: stateField.code,
-                label: stateField.value,
-              },
-            ];
-            setStates(object2);
+                setSelectedState([stateField.value]);
+                setSelectedStateCode(stateField.code)
+                const object = {
+                  controllingfieldfk: stateField.code,
+          
+                  fieldName: "districts",
+                };
+                console.log(object);
+                const response = await getStateBlockDistrictList(object);
+                const result = response?.result?.values;
+                console.log(result)
+                setDistricts(result);
+                if(reAssignModal)
+                {
+                const data = getStoredData();
+                console.log(data)
+    setSelectedBlock([data.blocks]);
+    setSelectedDistrict([data.districtValue] );
+    setSelectedDistrictCode(data.districtCode);
+    setSelectedBlockCode(data.blockCode);
+   // if(selectedDistrict.length!==0)
+    {
+     // setSelectedDistrictCode(selectedCodes[0]);
+     // setSelectedBlockCohortId("");
+      const object = {
+        controllingfieldfk: selectedDistrictCode,
+        fieldName: "blocks",
+      };
+      const response = await getStateBlockDistrictList(object);
+      setBlockFieldId(response?.result?.fieldId);
+      //console.log(blockFieldId)
+      const result = response?.result?.values;
+      setBlocks(result);
+      const getCentersObject = {
+        limit: 0,
+        offset: 0,
+        filters: {
+          // "type":"COHORT",
+          status: ["active"],
+          states: stateField.code,
+          districts: data.districtCode,
+          blocks: data.blockCode
+          // "name": selected[0]
+        },
+      };
+      const centerResponse = await getCenterList(getCentersObject);
+     
+      //   const result = response?.result?.cohortDetails;
+      const dataArray = centerResponse?.result?.results?.cohortDetails;
+
+      const cohortInfo = dataArray
+        ?.filter((cohort: any) => cohort.type !== "BLOCK")
+        .map((item: any) => ({
+          cohortId: item?.cohortId,
+          name: item?.name,
+        }));
+      console.log(dataArray);
+      setAllCenters(cohortInfo);
+    }
+    }
+
+              }
+              else{
+                setStateDefaultValue(t("COMMON.ALL_STATES"))
+
+              }
+              const object2=[{
+                value:stateField.code,
+                label:stateField.value
+              }]
+             setStates(object2);
+
           }
           //console.log(JSON.parse(admin)?.customFields)
           //  setAdminInfo(JSON.parse(admin))
@@ -357,8 +412,20 @@ export const useLocationState = (
     };
 
     fetchData();
-  }, []);
-  console.log(stateDefaultValue);
+  }, [open]);
+  const getStoredData = () => {
+    const storedData = localStorage.getItem('reassignuserInfo');
+    if (storedData) {
+      try {
+        return JSON.parse(storedData);
+      } catch (error) {
+        console.error('Failed to parse localStorage data:', error);
+        return {}; // Return default if parsing fails
+      }
+    }
+    return {}; // Return default if no data is found
+  };
+  console.log(stateDefaultValue)
   return {
     states,
     districts,
@@ -385,5 +452,10 @@ export const useLocationState = (
     selectedCenterCode,
     selectedBlockCohortId,
     stateDefaultValue,
+    setSelectedBlock,
+    setSelectedDistrict,
+    setSelectedDistrictCode,
+    setSelectedBlockCode
+
   };
 };

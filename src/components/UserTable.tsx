@@ -47,7 +47,9 @@ type UserDetails = {
   districtCode?:any;
   blockCode?:any;
   centerMembershipIdList?:any;
-  blockMembershipIdList?:any
+  blockMembershipIdList?:any;
+  cohortIds?:any;
+  districtValue?:any
 };
 type FilterDetails = {
   role: any;
@@ -117,10 +119,19 @@ const UserTable: React.FC<UserTableProps> = ({
   const [centers, setCenters] = useState<CenterProp[]>([]);
   const [userName, setUserName] = useState("");
   const [blocks, setBlocks] = useState<FieldProp[]>([]);
-  const [userCohort, setUserCohorts] = useState ("")
+  const [userCohort, setUserCohorts] = useState ("");
+  const [assignedCenters, setAssignedCenters] = useState<any>();
+
 
   const [selectedUserId, setSelectedUserId] = useState("");
+  const [cohortId, setCohortId] = useState([]);
+
   const [block, setBlock] = useState("");
+  const [district, setDistrict] = useState("");
+
+  const [blockCode, setBlockCode] = useState("");
+  const [districtCode, setDistrictCode] = useState("");
+
 
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
@@ -534,8 +545,22 @@ const UserTable: React.FC<UserTableProps> = ({
   const handleReassignCohort = async(rowData: any) => {
    // setIsDeleteModalOpen(true);
    console.log(rowData)
-    setSelectedUserId(rowData.userId );
-    setBlock(rowData.blocks)
+    setSelectedUserId(rowData?.userId );
+    setCohortId(rowData?.cohortIds);
+    setBlock(rowData?.blocks)
+    console.log(rowData?.districtValue)
+    setDistrict(rowData?.districtValue)
+    setDistrictCode(rowData?.districtCode)
+  setBlockCode(rowData?.blockCode)
+  setAssignedCenters(rowData?.centers)
+  const reassignUserInfo = {
+    blocks: rowData?.blocks || [],
+    districtValue: rowData?.districtValue || '',
+    districtCode: rowData?.districtCode || '',
+    blockCode: rowData?.blockCode || ''
+  };
+
+  localStorage.setItem('reassignuserInfo', JSON.stringify(reassignUserInfo));
     setIsReassignCohortModalOpen(true)
 
     //const userData="";
@@ -734,7 +759,9 @@ const UserTable: React.FC<UserTableProps> = ({
             updatedBy: user.updatedBy,
             stateCode:stateField?.code,
             districtCode:districtField?.code,
-            blockCode:blockField?.code
+            blockCode:blockField?.code,
+            districtValue:districtField? districtField?.value: "-"
+
             // centers: null,
             // Programs: null,
           };
@@ -795,17 +822,21 @@ const UserTable: React.FC<UserTableProps> = ({
             //   (cohort: Cohort) => cohort.name,
             // );
             const cohortNames = response?.result?.cohortData
-              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK" && cohort?.cohortMemberStatus!=="archived") // Filter out cohorts with type 'block'
-              .map((cohort: Cohort) => cohort.name); 
+              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK" && cohort?.cohortMemberStatus!=="archived") 
+              .map((cohort: Cohort) => cohort.name);
+              const cohortIds = response?.result?.cohortData
+              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK" && cohort?.cohortMemberStatus!=="archived") 
+              .map((cohort: Cohort) => cohort.cohortId); 
+              
               const centerMembershipIdList = response?.result?.cohortData
-              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK" && cohort?.cohortMemberStatus!=="archived") // Filter out cohorts with type 'block'
+              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK" && cohort?.cohortMemberStatus!=="archived") 
               .map((cohort: Cohort) => cohort.cohortMembershipId);
               const blockMembershipIdList = response?.result?.cohortData
-              ?.filter((cohort: Cohort) => cohort.type === "BLOCK" && cohort?.cohortMemberStatus!=="archived") // Filter out cohorts with type 'block'
+              ?.filter((cohort: Cohort) => cohort.type === "BLOCK" && cohort?.cohortMemberStatus!=="archived") 
               .map((cohort: Cohort) => cohort.cohortMembershipId);
             //  const cohortMembershipId=response?.result?.cohortData?.cohortMembershipId;
               console.log(blockMembershipIdList)
-              console.log(centerMembershipIdList)
+              console.log(cohortIds)
 
 
             let finalArray;
@@ -813,12 +844,12 @@ const UserTable: React.FC<UserTableProps> = ({
               finalArray = capitalizeFirstLetterOfEachWordInArray(cohortNames);
             }
             //   const finalArray=capitalizeFirstLetterOfEachWordInArray(cohortNames)
-            // console.log(finalArray)
+             console.log(finalArray)
             return {
               ...user,
               centerMembershipIdList: centerMembershipIdList,
               blockMembershipIdList: blockMembershipIdList,
-
+              cohortIds:cohortIds,
               centers: finalArray ? finalArray?.join(" , ") : "-",
             };
           })
@@ -1096,9 +1127,15 @@ const UserTable: React.FC<UserTableProps> = ({
         onClose={handleCloseReassignModal}
        userType={userType}
         cohortData={centers}
-       blocks={blocks}
+       blockList={blocks}
         userId={selectedUserId}
         blockName={block}
+        districtName={district}
+        blockCode={blockCode}
+        districtCode={districtCode}
+        cohortId={cohortId}
+        centers={assignedCenters}
+
       />
 
       <CommonUserModal

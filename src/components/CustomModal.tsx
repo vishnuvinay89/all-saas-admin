@@ -8,6 +8,7 @@ import {
   Divider,
   useMediaQuery,
   Theme,
+  useTheme
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -40,10 +41,13 @@ const CustomModal: React.FC<CustomModalProps> = ({
   primaryBtnDisabled = true,
   children,
 }) => {
-  const isSmallScreen = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm"),
-  );
+  // const isSmallScreen = useMediaQuery((theme: Theme) =>
+  //   theme.breakpoints.down("sm"),
+  // );
+  const theme = useTheme<any>();
 
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
   return (
     <Modal
       open={open}
@@ -57,7 +61,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: isSmallScreen ? "90%" : 400,
+          width: isSmallScreen ? "90%" : isLargeScreen ? "65%" : "85%",
           maxWidth: "90%",
           bgcolor: "background.paper",
           boxShadow: 24,
