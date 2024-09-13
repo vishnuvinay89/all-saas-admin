@@ -24,7 +24,7 @@ import taxonomyStore from "@/store/tanonomyStore";
 import {
   filterAndMapAssociations,
   findCommonAssociations,
-  getAssociationsByCode,
+  getAssociationsByCodeNew,
   getOptionsByCategory,
 } from "@/utils/Helper";
 
@@ -88,7 +88,7 @@ const SubjectDetails = () => {
             store?.framedata,
             "medium"
           );
-          const boardAssociations = await getAssociationsByCode(
+          const boardAssociations = await getAssociationsByCodeNew(
             store?.boards,
             boardName
           );
@@ -170,7 +170,7 @@ const SubjectDetails = () => {
 
     if (medium) {
       const getGrades = getOptionsByCategory(store?.framedata, "gradeLevel");
-      const mediumAssociations = getAssociationsByCode(mediumOptions, medium);
+      const mediumAssociations = getAssociationsByCodeNew(mediumOptions, medium);
       setMediumAssociations(mediumAssociations);
 
       console.log(getGrades);
@@ -213,7 +213,7 @@ const SubjectDetails = () => {
     setTaxonomyGrade(grade);
     setSelectedgrade(grade);
     if (grade) {
-      const gradeAssociations = getAssociationsByCode(gradeOptions, grade);
+      const gradeAssociations = getAssociationsByCodeNew(gradeOptions, grade);
       setGradeAssociations(gradeAssociations);
       const type = getOptionsByCategory(store?.framedata, "courseType");
       console.log(type);
@@ -268,7 +268,7 @@ const SubjectDetails = () => {
     setSelectedtype(type);
 
     if (type) {
-      const typeAssociations = getAssociationsByCode(typeOptions, type);
+      const typeAssociations = getAssociationsByCodeNew(typeOptions, type);
       setTypeAssociations(typeAssociations);
       const subject = getOptionsByCategory(store?.framedata, "subject");
 
