@@ -1,11 +1,12 @@
 import { CoursePlannerMetaData, GetSolutionDetailsParams, GetTargetedSolutionsParams, GetUserProjectTemplateParams } from "@/utils/Interfaces";
 import { post } from "./RestClient";
 import axios from 'axios';
+import { frameworkId } from "../../app.config";
 
 
 
 export const getChannelDetails = async (): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_SUNBIRDSAAS_API_URL}/api/framework/v1/read/gujaratboardfw`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_SUNBIRDSAAS_API_URL}/api/framework/v1/read/${frameworkId}`;
 
   try {
     const response = await axios.get(apiUrl);

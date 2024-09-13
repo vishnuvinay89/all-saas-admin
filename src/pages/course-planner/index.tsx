@@ -59,7 +59,7 @@ const Foundation = () => {
       }
     };
 
-    const fetchChannelDetails = async () => {
+    const getFrameworkDetails = async () => {
       if (!userStateName) return;
 
       try {
@@ -111,7 +111,7 @@ const Foundation = () => {
     fetchStateName();
 
     if (userStateName) {
-      fetchChannelDetails();
+      getFrameworkDetails();
     }
   }, [userStateName]);
 
@@ -140,7 +140,7 @@ const Foundation = () => {
   };
 
   const handleCopyLink = (state: string) => {
-    const link = `${window.location.origin}/course-planner/foundation/${state}`;
+    const link = `${window.location.origin}/course-planner/${state}`;
     navigator.clipboard.writeText(link).then(
       () => {
         alert("Link copied to clipboard");

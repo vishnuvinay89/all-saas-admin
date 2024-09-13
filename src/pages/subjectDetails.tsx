@@ -341,7 +341,7 @@ const SubjectDetails = () => {
       ];
 
       const overallCommonSubjects = findOverallCommonSubjects(arrays);
-
+      
       setSubject(overallCommonSubjects);
     }
   };
