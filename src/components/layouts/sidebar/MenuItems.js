@@ -68,7 +68,7 @@ const Menuitems = [
     subOptions: [
       {
         title: "SIDEBAR.FOUNDATION_COURSE",
-        href: "/course-planner/foundation",
+        href: "/course-planner",
       },
       // {
       //   title: "SIDEBAR.MAIN_COURSE",

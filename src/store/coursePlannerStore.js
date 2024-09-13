@@ -5,10 +5,19 @@ import { persist } from "zustand/middleware";
 const coursePlannerStore = create(
   persist(
     (set) => ({
-      boardName: "",
+      matchingstate: "",
+      stateassociations: [],
+      framedata: [],
+      boards: [],
       taxanomySubject: "",
-      setBoardname: (newBoardname) =>
-        set((state) => ({ boardName: newBoardname })),
+      setMatchingstate: (newMatchingstate) =>
+        set((state) => ({ matchingstate: newMatchingstate })),
+      setStateassociations: (newStateassociations) =>
+        set((state) => ({ stateassociations: newStateassociations })),
+      setFramedata: (newFramedata) =>
+        set((state) => ({ framedata: newFramedata })),
+      setBoards: (newBoards) =>
+        set((state) => ({ boards: newBoards })),
       setTaxanomySubject: (newTaxanomySubject) =>
         set((state) => ({ taxanomySubject: newTaxanomySubject})),
     }),
