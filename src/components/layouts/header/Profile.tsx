@@ -8,14 +8,12 @@ import React, { useEffect } from "react";
 import { getFormRead } from "@/services/CreateUserService";
 import { getUserDetailsInfo } from "@/services/UserList";
 import { Storage } from "@/utils/app.constant";
-import {
-  firstLetterInUpperCase,
-} from "@/utils/Helper";
+import { firstLetterInUpperCase } from "@/utils/Helper";
 import useSubmittedButtonStore from "@/utils/useSharedState";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MailIcon from "@mui/icons-material/Mail";
 import PhoneIcon from "@mui/icons-material/Phone";
-import { Box, Button, Menu, Typography } from "@mui/material";
+import { Box, Button, Divider, Menu, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 const Profile = () => {
   const [anchorEl4, setAnchorEl4] = React.useState<null | HTMLElement>(null);
@@ -185,7 +183,7 @@ const Profile = () => {
   useEffect(() => {
     getUserName();
   }, [formdata]);
-  
+
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
       const admin = localStorage.getItem("adminInfo");
@@ -240,7 +238,7 @@ const Profile = () => {
                 whiteSpace: "nowrap",
               }}
             >
-              {t("COMMON.HI", { name: firstLetterInUpperCase(userName ?? "")})}
+              {t("COMMON.HI", { name: firstLetterInUpperCase(userName ?? "") })}
             </Typography>
 
             <FeatherIcon icon="chevron-down" size="20" />
@@ -259,77 +257,123 @@ const Profile = () => {
         PaperProps={{
           sx: {
             width: "500px",
-            backgroundColor: "#F8EFE7",
+            borderRadius: "12px",
+          },
+        }}
+        MenuListProps={{
+          sx: {
+            paddingTop: "0px !important",
+            paddingBottom: "0px !important",
           },
         }}
       >
         <Box
-          sx={{
-            backgroundColor: "#78590C",
-            width: "50px",
-            height: "50px",
-            borderRadius: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            marginLeft: "45%",
-          }}
+          sx={{ backgroundColor: "#F8EFE7", height: "56px", width: "100%" }}
+        ></Box>
+        <Box
+          sx={{ display: "flex", justifyContent: "center", marginTop: "-25px" }}
         >
-          <Typography
-            variant="h6"
-            color={"white"}
-            sx={{ fontWeight: "bold", fontSize: "18px" }}
+          <Box
+            sx={{
+              backgroundColor: "#78590C",
+              width: "50px",
+              height: "50px",
+              borderRadius: "50%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
           >
-            {adminInfo?.name
-              ?.split(" ")
-              .map((word: any) => word[0])
-              .join("")}
-          </Typography>
+            <Typography
+              variant="h6"
+              color={"white"}
+              sx={{ fontWeight: "bold", fontSize: "18px" }}
+            >
+              {adminInfo?.name
+                ?.split(" ")
+                .map((word: any) => word[0])
+                .join("")}
+            </Typography>
+          </Box>
         </Box>
+
         <Box
           sx={{
             position: "relative",
             // marginTop:"10px",
-            padding: "20px",
             // borderRadius: "10px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
             backgroundColor: "white",
           }}
         >
-          <Typography variant="h5" sx={{ marginBottom: "10px" }}>
+          <Typography
+            variant="h5"
+            sx={{
+              marginBottom: "15px",
+              marginTop: "10px",
+              textAlign: "center",
+              px: "20px",
+              fontSize: "16px",
+            }}
+          >
             {adminInfo?.name}
           </Typography>
-          <Typography variant="subtitle1" sx={{ marginBottom: "20px" }}>
+          <Typography
+            variant="subtitle1"
+            sx={{
+              marginBottom: "20px",
+              textAlign: "center",
+              px: "20px",
+              color: "#7C766F",
+              fontSize: "14px",
+            }}
+          >
             {adminInfo?.role}
           </Typography>
           <Box
-            sx={{ display: "flex", alignItems: "center", marginBottom: "10px" }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "10px",
+              px: "20px",
+            }}
           >
             <PhoneIcon sx={{ marginRight: "10px" }} />
-            <Typography variant="body1">{adminInfo?.mobile}</Typography>
+            <Typography variant="body1" sx={{ fontSize: "14px" }}>
+              {adminInfo?.mobile}
+            </Typography>
           </Box>
           <Box
-            sx={{ display: "flex", alignItems: "center", marginBottom: "20px" }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "20px",
+              px: "20px",
+            }}
           >
             <MailIcon sx={{ marginRight: "10px" }} />
-            <Typography variant="body1">{adminInfo?.email}</Typography>
+            <Typography variant="body1" sx={{ fontSize: "14px" }}>
+              {adminInfo?.email}
+            </Typography>
           </Box>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={handleLogout}
-            sx={{
-              fontSize: "16px",
-              backgroundColor: "white",
-              border: "0.6px solid black", // Replace with your desired border color
-            }}
-            endIcon={<LogoutIcon />}
-          >
-            {t("COMMON.LOGOUT")}
-          </Button>
+
+          <Divider sx={{ color: "#D0C5B4" }} />
+          <Box sx={{ px: "20px" }}>
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={handleLogout}
+              sx={{
+                fontSize: "16px",
+                backgroundColor: "white",
+                border: "0.6px solid #1E1B16",
+                my: "20px",
+              }}
+              endIcon={<LogoutIcon />}
+            >
+              {t("COMMON.LOGOUT")}
+            </Button>
+          </Box>
         </Box>
       </Menu>
       {console.log(adminInfo?.role)}
