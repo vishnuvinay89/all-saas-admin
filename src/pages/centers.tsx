@@ -41,6 +41,7 @@ import { RJSFSchema } from "@rjsf/utils";
 import DynamicForm from "@/components/DynamicForm";
 import useSubmittedButtonStore from "@/utils/useSharedState";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/router";
 
 type cohortFilterDetails = {
   type?: string;
@@ -66,6 +67,7 @@ interface centerData {
 const Center: React.FC = () => {
   // use hooks
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { t } = useTranslation();
   const adminInformation = useSubmittedButtonStore(
@@ -769,6 +771,70 @@ const Center: React.FC = () => {
     fetchData();
   }, []);
 
+  const handleMemberClick = async (
+    type: "active" | "archived",
+    count: number,
+    cohortId: string
+  ) => {
+    if (!count) {
+      console.error("No members available for this cohort.");
+      return;
+    }
+
+    console.log(`${type} members clicked`, count, `for cohort`, cohortId);
+
+    try {
+      let data = {
+        limit: 0,
+        offset: 0,
+        filters: {
+          cohortId: cohortId,
+        },
+      };
+
+      const result = await getCohortList(data);
+
+      if (!result || !result.results || !result.results.cohortDetails) {
+        console.log("Invalid response structure or no cohort details found.");
+      }
+
+      const customFields = result?.results?.cohortDetails?.[0]?.customFields;
+
+      // Check if customFields exist
+      if (!customFields || customFields.length === 0) {
+        console.log("No custom fields found for this cohort.");
+      }
+
+      const urlData: any = { type: type };
+
+      customFields?.forEach((item: any) => {
+        if (item?.label === "STATES") {
+          urlData.stateCode = item?.code;
+        } else if (item?.label === "DISTRICTS") {
+          urlData.districtCode = item?.code;
+        } else if (item?.label === "BLOCKS") {
+          urlData.blockCode = item?.code;
+        }
+      });
+
+      if (!urlData.stateCode || !urlData.districtCode || !urlData.blockCode) {
+        throw new Error(
+          "Incomplete location data (state, district, block) for the cohort."
+        );
+      }
+
+      if (urlData) {
+        router.push(
+          `learners/${urlData.stateCode}/${urlData.districtCode}/${urlData.blockCode}/${urlData.type}`
+        );
+      }
+
+      console.log("urlData", urlData);
+    } catch (error) {
+      console.log("Error handling member click:", error);
+    }
+  };
+
   // props to send in header
   const userProps = {
     userType: t("SIDEBAR.CENTERS"),
@@ -844,6 +910,7 @@ const Center: React.FC = () => {
             showIcons={true}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            handleMemberClick={handleMemberClick}
           />
         ) : (
           <Box

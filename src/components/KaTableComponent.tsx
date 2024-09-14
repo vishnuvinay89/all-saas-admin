@@ -16,6 +16,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import ActionIcon from "./ActionIcon";
 import UserNameCell from "./UserNameCell";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 interface KaTableComponentProps {
   columns: ITableProps["columns"];
@@ -39,6 +40,7 @@ interface KaTableComponentProps {
   noDataMessage?: any;
   pagination?: boolean;
   reassignType?: string;
+  handleMemberClick?: any;
 }
 
 const KaTableComponent: React.FC<KaTableComponentProps> = ({
@@ -55,6 +57,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   noDataMessage,
   pagination = true,
   reassignType,
+  handleMemberClick,
 }) => {
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
   const { t } = useTranslation();
@@ -153,21 +156,72 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                   return <UserNameCell userId={props?.rowData?.updatedBy} />;
                 } else if (props.column.key === DataKey.ACTIVE_MEMBER) {
                   return (
-                    <Typography color={"green"}>
-                      {props.rowData?.totalActiveMembers
-                        ? props.rowData?.totalActiveMembers
-                        : "-"}
+                    <Typography
+                      color={"green"}
+                      onClick={() =>
+                        handleMemberClick(
+                          Status.ACTIVE,
+                          props?.rowData?.totalActiveMembers,
+                          props?.rowData?.cohortId
+                        )
+                      }
+                      sx={{
+                        color: "green",
+                        cursor:
+                          props.rowData?.totalActiveMembers &&
+                          props.rowData?.totalActiveMembers >= 0
+                            ? "pointer"
+                            : "not-allowed",
+                      }}
+                    >
+                      {props.rowData?.totalActiveMembers ? (
+                        <a
+                          href="#"
+                          style={{ textDecoration: "none", color: "inherit" }}
+                        >
+                          {props.rowData?.totalActiveMembers}
+                        </a>
+                      ) : (
+                        "-"
+                      )}
                     </Typography>
                   );
                 } else if (props.column.key === DataKey.ARCHIVED_MEMBERS) {
                   return (
-                    <Typography color={"error"}>
-                      {props.rowData?.totalArchivedMembers
-                        ? props.rowData?.totalArchivedMembers
-                        : "-"}
+                    <Typography
+                      color={"error"}
+                      onClick={() =>
+                        props.rowData?.totalArchivedMembers &&
+                        props.rowData?.totalArchivedMembers >= 0 &&
+                        handleMemberClick(
+                          Status.ARCHIVED,
+                          props?.rowData?.totalActiveMembers,
+                          props?.rowData?.cohortId
+                        )
+                      }
+                      sx={{
+                        color: "red",
+                        cursor:
+                          props.rowData?.totalArchivedMembers &&
+                          props.rowData?.totalArchivedMembers >= 0
+                            ? "pointer"
+                            : "not-allowed",
+                      }}
+                    >
+                      {props.rowData?.totalArchivedMembers ? (
+                        <a
+                          href="#"
+                          style={{ textDecoration: "none", color: "inherit" }}
+                        >
+                          {props.rowData?.totalArchivedMembers}
+                        </a>
+                      ) : (
+                        "-"
+                      )}
                     </Typography>
                   );
                 }
+
                 if (props.column.key === DataKey.STATUS) {
                   if (props.rowData?.status === Status.ARCHIVED) {
                     return (
