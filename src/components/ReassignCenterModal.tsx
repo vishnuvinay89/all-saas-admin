@@ -455,9 +455,9 @@ console.log(formattedBlocks)
           />
           {(selectedBlock.length===0 &&  userType!==Role.TEAM_LEADERS)? (<>
              <Typography
-             sx={{mt:"10px"}}
+             sx={{mt:"20px"}}
              >
-                            please select block from block list          
+                          { t("COMMON.PLEASE_SELECT_BLOCK_LIST")} 
 
              </Typography>
           </>): 
@@ -509,7 +509,8 @@ console.log(formattedBlocks)
         </Box>
       ))
     ) : (
-      <Box sx={{ textAlign: "center", color: "gray" }}>No centers available</Box>
+      <Box sx={{ textAlign: "center", color: "gray" }}> { t("COMMON.NO_CENTER_AVAILABLE")} 
+</Box>
     )
   ) : formattedBlocks && formattedBlocks.length > 0 ? (
     formattedBlocks.map((center: any) => (
@@ -533,7 +534,7 @@ console.log(formattedBlocks)
       </Box>
     ))
   ) : (
-    <Box sx={{ textAlign: "center", color: "gray" }}>No blocks available</Box>
+    <Box sx={{ textAlign: "center", color: "gray" }}>{ t("COMMON.NO_BLOCK_AVAILABLE")}</Box>
   )}
 </Box>
 
