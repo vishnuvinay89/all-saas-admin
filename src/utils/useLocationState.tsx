@@ -8,6 +8,7 @@ import { getCohortList } from "@/services/CohortService/cohortService";
 import { FormContextType, QueryKeys } from "./app.constant";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
+import { formatedDistricts } from "@/services/formatedDistrict";
 
 interface FieldProp {
   value: string;
@@ -336,8 +337,10 @@ export const useLocationState = (
                 console.log(object);
                 const response = await getStateBlockDistrictList(object);
                 const result = response?.result?.values;
-                console.log(result)
-                setDistricts(result);
+                const districtResult= await formatedDistricts();
+               
+                console.log(districtResult)
+                setDistricts(districtResult);
                 if(reAssignModal)
                 {
                 const data = getStoredData();
