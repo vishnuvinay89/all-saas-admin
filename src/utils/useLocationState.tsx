@@ -351,7 +351,7 @@ export const useLocationState = (
      // setSelectedDistrictCode(selectedCodes[0]);
      // setSelectedBlockCohortId("");
       const object = {
-        controllingfieldfk: selectedDistrictCode,
+        controllingfieldfk:data.districtCode,
         fieldName: "blocks",
       };
       const response = await getStateBlockDistrictList(object);

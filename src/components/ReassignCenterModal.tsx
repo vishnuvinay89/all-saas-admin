@@ -4,6 +4,7 @@ import {
   Divider,
   InputAdornment,
   TextField,
+  Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTheme } from "@mui/material/styles";
@@ -19,6 +20,7 @@ import { updateUser } from "@/services/CreateUserService";
 import { useLocationState } from "@/utils/useLocationState";
 import AreaSelection from "./AreaSelection";
 import { transformArray } from "../utils/Helper";
+import { firstLetterInUpperCase } from "./../utils/Helper";
 
 interface ReassignCohortModalProps {
   open: boolean;
@@ -100,8 +102,8 @@ const {
     })
   );
 
-  console.log(centers?.split(',').map((center :any)=> center.trim()))
-  console.log(blockCode)
+  console.log(centers)
+  console.log(selectedBlock)
   const names = cohortData.map((item : any)=> item.name);
 
   console.log(names); 
@@ -110,9 +112,8 @@ const {
 
   //const [selectedBlockId, setselectedBlockId] = useState(blockName);
 
-  // const [checkedCenters, setCheckedCenters] = useState<string[]>([blockCode]);
-  const [checkedCenters, setCheckedCenters] = useState<string[]>([]);
-
+   const [checkedCenters, setCheckedCenters] = useState<string[]>([]);
+  //const [checkedCenters, setCheckedCenters] = useState<string[]>([]);
 
   const handleSearchInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -133,9 +134,21 @@ const {
         : [...prev, name]
     );
   };
-  console.log(checkedCenters)
 
-  console.log(userType)
+  useEffect(() => {
+    if (blockName) {
+      if(userType===Role.TEAM_LEADERS)
+      setCheckedCenters([blockName]);
+    }
+    if(centers)
+    {
+      if(userType!==Role.TEAM_LEADERS)
+      setCheckedCenters(centers?.split(',').map((center :any)=> center.trim()))
+
+    }
+  }, [blockName, centers, open]); 
+  console.log(checkedCenters)
+  console.log(centers)
 
   const handleReassign = async () => {
     try {
@@ -159,14 +172,10 @@ const {
         .map((center) => center!.value);
       
        unSelectedData= blocks
-        .filter((center) => center?.value && !checkedCenters.includes(center.value))
-        .map((center) => center!.value);
+        .filter((center) => center?.label && !checkedCenters.includes(center.label))
+        .map((center) => center!.label);
       }
-      console.log(unSelectedData)
 
-const labelArray = filteredCBlocks
-  ?.filter((block: any) => unSelectedData?.includes(block.value))
-  .map((block: any) => block.label);
 
       console.log(blocks)
       console.log(selectedData)
@@ -278,11 +287,34 @@ const labelArray = filteredCBlocks
         const previousBlockId = previousCohortDetails?.find(
           (item: any) => item?.type === "BLOCK"
         )?.cohortId;
-  
+
+  let unSelectedBlockCohortIds: string[] = [];
+
+  for (const code of unSelectedData) {
+    const reassignBlockObject = {
+      limit: 200,
+      offset: 0,
+      filters: {
+        status: ['active'],
+        name: code,
+      },
+    }
+    const centerResponse = await getCenterList(reassignBlockObject);
+    const cohortDetailsInfo = centerResponse?.result?.results?.cohortDetails;
+    const unSelectedBlockCohortIdValue = cohortDetailsInfo?.find(
+      (item: any) => item?.type === 'BLOCK'
+    )?.cohortId;
+
+    if (unSelectedBlockCohortIdValue) {
+      unSelectedBlockCohortIds.push(unSelectedBlockCohortIdValue);
+    }
+    unSelectedBlockCohortIds.push(previousBlockId);
+
+  }
         payload = {
           userId: [userId],
           cohortId: [selectedBlockCohortId],
-          removeCohortId: [previousBlockId],
+          removeCohortId:unSelectedBlockCohortIds,
         };
   
         await bulkCreateCohortMembers(payload);
@@ -342,7 +374,17 @@ const labelArray = filteredCBlocks
   let filteredCohorts = cohorts?.filter((cohort) =>
     cohort?.name?.toLowerCase().includes(searchInput)
   );
-  console.log(filteredCohorts)
+
+  
+  const formattedCohorts = filteredCohorts?.map(location => ({
+    ...location,
+    name: location.name 
+      ? location.name.split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(' ')
+      : ''
+  }));
+  
   // const filteredCBlocks = blocks?.filter((cohort: any) =>
   //   cohort.label.toLowerCase().includes(searchInput)
   // );
@@ -352,6 +394,18 @@ const labelArray = filteredCBlocks
   label: cohort.label,
   value: cohort.value,
 }));
+
+const formattedBlocks = filteredCBlocks.map(location => ({
+  ...location,
+  label: location.label
+    ? location.label.split(' ')
+        .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ')
+    : ''
+}));
+console.log(filteredCBlocks)
+console.log(formattedBlocks)
+
   const handleToggle2 = (centerName: string) => {
     // If the selected center is already checked, uncheck it
     if (checkedCenters.includes(centerName)) {
@@ -362,7 +416,8 @@ const labelArray = filteredCBlocks
     }
   };
   
- 
+  console.log(filteredCohorts)
+
   return (
     <>
       <CustomModal
@@ -398,82 +453,94 @@ const labelArray = filteredCBlocks
             districtDefaultValue={districtName}
             blockDefaultValue={userType===Role.TEAM_LEADERS?undefined:blockName}
           />
-        <Box sx={{ p: 1 }}>
-          <TextField
+          {(selectedBlock.length===0 &&  userType!==Role.TEAM_LEADERS)? (<>
+             <Typography
+             sx={{mt:"10px"}}
+             >
+                            please select block from block list          
+
+             </Typography>
+          </>): 
+          (<>  <Box sx={{ p: 1 }}>
+            <TextField
+              sx={{
+                backgroundColor: theme.palette.warning["A700"],
+                borderRadius: 8,
+                "& .MuiOutlinedInput-root fieldset": { border: "none" },
+                "& .MuiOutlinedInput-input": { borderRadius: 8 },
+              }}
+              placeholder={ userType===Role.TEAM_LEADERS?t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK"): t("CENTERS.SEARCHBAR_PLACEHOLDER")}
+              value={searchInput}
+              onChange={handleSearchInputChange}
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
+          
+          <Box sx={{ p: 3, maxHeight: "300px", overflowY: "auto" }}>
+  {userType !== Role.TEAM_LEADERS ? (
+    formattedCohorts && formattedCohorts.length > 0 ? (
+      formattedCohorts.map((center) => (
+        <Box key={center.id}>
+          <Box
+            sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}
+          >
+            <span style={{ color: "black" }}>{center.name}</span>
+            <Checkbox
+              checked={center?.name ? checkedCenters.includes(center.name) : false}
+              onChange={() => center?.name && handleToggle(center.name)}
+              sx={{
+                color: theme.palette.text.primary,
+                "&.Mui-checked": {
+                  color: "black",
+                },
+                verticalAlign: "middle",
+                marginTop: "-10px",
+              }}
+            />
+          </Box>
+          <Divider sx={{ mb: 2 }} />
+        </Box>
+      ))
+    ) : (
+      <Box sx={{ textAlign: "center", color: "gray" }}>No centers available</Box>
+    )
+  ) : formattedBlocks && formattedBlocks.length > 0 ? (
+    formattedBlocks.map((center: any) => (
+      <Box key={center.value}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+          <span style={{ color: "black" }}>{center.label}</span>
+          <Checkbox
+            checked={checkedCenters.includes(center.label)}
+            onChange={() => handleToggle2(center.label)}
             sx={{
-              backgroundColor: theme.palette.warning["A700"],
-              borderRadius: 8,
-              "& .MuiOutlinedInput-root fieldset": { border: "none" },
-              "& .MuiOutlinedInput-input": { borderRadius: 8 },
-            }}
-            placeholder={ userType===Role.TEAM_LEADERS?t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK"): t("CENTERS.SEARCHBAR_PLACEHOLDER")}
-            value={searchInput}
-            onChange={handleSearchInputChange}
-            fullWidth
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
+              color: theme.palette.text.primary,
+              "&.Mui-checked": {
+                color: "black",
+              },
+              verticalAlign: "middle",
+              marginTop: "-10px",
             }}
           />
         </Box>
-        
-      <Box sx={{ p: 3, maxHeight: "300px", overflowY: "auto" }}>
-          { 
+        <Divider sx={{ mb: 2 }} />
+      </Box>
+    ))
+  ) : (
+    <Box sx={{ textAlign: "center", color: "gray" }}>No blocks available</Box>
+  )}
+</Box>
+
           
-          userType!==Role.TEAM_LEADERS? (filteredCohorts?.map((center) => 
-          (
-            <Box key={center.id}>
-              <Box
-                sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}
-              >
-                <span style={{ color: "black" }}>{center.name}</span>
-                <Checkbox
-                 checked={center?.name ? checkedCenters.includes(center.name) : false}
-                 onChange={() => center?.name && handleToggle(center.name)}
-                 
-                  sx={{
-                    color: theme.palette.text.primary,
-                    "&.Mui-checked": {
-                      color: "black",
-                    },
-                    verticalAlign: "middle",
-                    marginTop: "-10px",
-                  }}
-                />
-              </Box>
-              <Divider sx={{ mb: 2 }} />
-            </Box>
-          )
-          )):
-          (filteredCBlocks?.map((center: any) => (
-            <Box key={center.value}>
-              <Box
-                sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}
-              >
-                <span style={{ color: "black" }}>{center.label}</span>
-                <Checkbox
-                  checked={checkedCenters.includes(center.value)}
-                  onChange={() => handleToggle2(center.value)}
-                  sx={{
-                    color: theme.palette.text.primary,
-                    "&.Mui-checked": {
-                      color: "black",
-                    },
-                    verticalAlign: "middle",
-                    marginTop: "-10px",
-                  }}
-                />
-              </Box>
-              <Divider sx={{ mb: 2 }} />
-            </Box>
-          )))
-          }
-
-
-        </Box>
+          
+          </>)}
+      
       
        
       </CustomModal>
