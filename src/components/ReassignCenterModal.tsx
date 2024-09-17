@@ -94,7 +94,6 @@ const {
     setSelectedDistrictCode,
     setSelectedBlockCode
   } =useLocationState(open, onClose, roleType, true)
-  
   let cohorts: Cohort[] = allCenters?.map(
     (cohort: { cohortId: any; name: string }) => ({
       name: cohort.name,
@@ -102,7 +101,7 @@ const {
     })
   );
 
-  console.log(centers)
+  console.log(blockCode)
   console.log(selectedBlock)
   const names = cohortData.map((item : any)=> item.name);
 
@@ -198,6 +197,7 @@ const {
             const blockField = userDetails?.userData?.customFields.find(
               (field: any) => field.label === "BLOCKS"
             );
+            console.log(checkedCenters)
             customFields = [
              
               {
@@ -308,9 +308,10 @@ const {
     if (unSelectedBlockCohortIdValue) {
       unSelectedBlockCohortIds.push(unSelectedBlockCohortIdValue);
     }
-    unSelectedBlockCohortIds.push(previousBlockId);
 
   }
+  unSelectedBlockCohortIds.push(previousBlockId);
+
         payload = {
           userId: [userId],
           cohortId: [selectedBlockCohortId],
@@ -324,19 +325,20 @@ const {
         const blockField = userDetails?.userData?.customFields.find(
           (field: any) => field.label === "BLOCKS"
         );
-  
+        const selectedCenterCode = filteredCBlocks.find(location => location.label === checkedCenters[0])?.value;
         let customFields = [
           {
             fieldId: blockField.fieldId,
-            value: checkedCenters[0],
+            value: selectedCenterCode,
           },
         ];
+        console.log(selectedBlockCode,checkedCenters[0])
         if(selectedDistrict[0]!==districtName)
            {
             customFields = [
               {
                 fieldId: blockField.fieldId,
-                value: checkedCenters[0],
+                value: selectedCenterCode,
               },
               {
                 fieldId: districtFieldId,

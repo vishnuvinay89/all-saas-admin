@@ -8,7 +8,7 @@ import { getCohortList } from "@/services/CohortService/cohortService";
 import { FormContextType, QueryKeys } from "./app.constant";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
-import { formatedDistricts } from "@/services/formatedDistrict";
+import { formatedBlocks, formatedDistricts } from "@/services/formatedCohorts";
 
 interface FieldProp {
   value: string;
@@ -114,7 +114,9 @@ export const useLocationState = (
         setBlockFieldId(response?.result?.fieldId);
         //console.log(blockFieldId)
         const result = response?.result?.values;
-        setBlocks(result);
+        const blockResult=await formatedBlocks(selectedCodes[0])
+        setBlocks(blockResult);
+        //setBlocks(result);
       } catch (error) {
         console.log(error);
       }
@@ -361,7 +363,8 @@ export const useLocationState = (
       setBlockFieldId(response?.result?.fieldId);
       //console.log(blockFieldId)
       const result = response?.result?.values;
-      setBlocks(result);
+      const blockResult=await formatedBlocks(data.districtCode)
+      setBlocks(blockResult);
       const getCentersObject = {
         limit: 0,
         offset: 0,
