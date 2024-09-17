@@ -4,6 +4,24 @@ import { Role, FormContextType, FormValues, InputTypes } from "./app.constant";
 import { State } from "./Interfaces";
 import { useQueryClient } from '@tanstack/react-query';
 
+interface Value {
+  value: string;
+  label: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string | null;
+  updatedBy: string | null;
+  cohortId?: string;
+}
+
+interface CohortDetail {
+  cohortId: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string | null;
+  updatedBy: string | null;
+}
 export const generateUUID = () => {
   let d = new Date().getTime();
   let d2 =
@@ -106,7 +124,7 @@ export const capitalizeFirstLetterOfEachWordInArray = (
     return arr;
   }
   console.log(arr);
-  return arr.map((str) =>
+  return arr?.map((str) =>
     str.replace(/\b[a-z]/g, (char) => char.toUpperCase())
   );
 };
@@ -249,6 +267,28 @@ export const findCommonAssociations = (data1: any[], data2: any[]) => {
   }).filter(Boolean); 
 };
 
+export function mergeCohortDetails(values: Value[], cohortDetails: CohortDetail[]): Value[] {
+  const filteredValues = values.map(value => ({
+      value: value.value,
+      label: value.label,
+      createdAt: value.createdAt,
+      updatedAt: value.updatedAt,
+      createdBy: value.createdBy,
+      updatedBy: value.updatedBy,
+  }));
+
+  const newValues = cohortDetails.map(cohort => ({
+      value: cohort.name,
+      label: cohort.name,
+      createdAt: cohort.createdAt,
+      updatedAt: cohort.updatedAt,
+      createdBy: cohort.createdBy,
+      updatedBy: cohort.updatedBy,
+      cohortId: cohort.cohortId,
+  }));
+
+  return [...filteredValues, ...newValues];
+}
 
 interface DataItem {
   name: string;
