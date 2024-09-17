@@ -67,6 +67,7 @@ const ImportCsv = () => {
   const [subTopics, setSubTopics] = useState<number>(0);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const setResources = taxonomyStore((state) => state.setResources);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -305,6 +306,13 @@ const ImportCsv = () => {
     return months[date.getMonth()];
   };
 
+  const handleResources = (subTopic: any) => {
+    setResources(subTopic);
+    router.push({
+      pathname: "/resourceList",
+    });
+  };
+
   return (
     <Box sx={{ padding: isSmallScreen ? "16px" : "32px" }}>
       <Box
@@ -471,7 +479,7 @@ const ImportCsv = () => {
                             sx={{
                               display: "flex",
                               gap: "10px",
-                              alignItems: "center",
+                              alignItems: "center",                            
                             }}
                           >
                             <Typography
@@ -524,11 +532,13 @@ const ImportCsv = () => {
                         {topic.children.map((subTopic: any) => (
                           <Box
                             key={subTopic._id}
+                            onClick={() => handleResources(subTopic) }
                             sx={{
                               border: `1px solid #E0E0E0`,
                               padding: "10px",
                               backgroundColor: "white",
                               marginBottom: "20px",
+                               cursor: "pointer"
                             }}
                           >
                             <Box
