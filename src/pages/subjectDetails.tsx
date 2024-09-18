@@ -358,11 +358,16 @@ const SubjectDetails = () => {
             sx={{
               "& .MuiSelect-select": {
                 padding: "8px 16px",
+                textAlign: "left",
               },
-              border: "1px solid black",
-              borderRadius: "10px",
+              "& fieldset": {
+                border: "none",
+              },
+              border: "1px solid #3C3C3C",
+              borderRadius: "8px",
               marginRight: "16px",
-              height: 30,
+              height: 40,
+              width: "170px",
             }}
           >
             <MenuItem value="">
@@ -384,15 +389,20 @@ const SubjectDetails = () => {
             sx={{
               "& .MuiSelect-select": {
                 padding: "8px 16px",
+                textAlign: "left",
               },
-              border: "1px solid black",
-              borderRadius: "10px",
+              "& fieldset": {
+                border: "none",
+              },
+              border: "1px solid #3C3C3C",
+              borderRadius: "8px",
               marginRight: "16px",
-              height: 30,
+              height: 40,
+              width: "170px",
             }}
           >
             <MenuItem value="">
-              <Typography>Select Grade</Typography>
+              <Typography >Select Grade</Typography>
             </MenuItem>
             {grade.map((item: any) => (
               <MenuItem key={item.name} value={item.name}>
@@ -401,6 +411,7 @@ const SubjectDetails = () => {
             ))}
           </Select>
         </Box>
+
         <Box>
           <Select
             value={selectedtype || ""}
@@ -410,10 +421,15 @@ const SubjectDetails = () => {
             sx={{
               "& .MuiSelect-select": {
                 padding: "8px 16px",
+                textAlign: "left",
               },
-              border: "1px solid black",
-              borderRadius: "10px",
-              height: 30,
+              "& fieldset": {
+                border: "none",
+              },
+              border: "1px solid #3C3C3C",
+              borderRadius: "8px",
+              height: 40,
+              width: "170px",
             }}
           >
             <MenuItem value="">
@@ -427,6 +443,7 @@ const SubjectDetails = () => {
           </Select>
         </Box>
       </Box>
+
       <Box
         sx={{
           display: "flex",
@@ -444,7 +461,7 @@ const SubjectDetails = () => {
         <Box sx={{ width: "40px", height: "40px" }}></Box>
       </Box>
       <Box sx={{ marginTop: "16px" }}>
-        {subject && subject.length > 0 ? (
+        {subject && subject.length > 1 ? (
           subject.map((subj: any, index: any) => (
             <MuiCard
               key={index}
@@ -502,7 +519,6 @@ const SubjectDetails = () => {
                   }}
                   sx={{ minWidth: "auto", padding: 0 }}
                 >
-                  <InsertLinkOutlinedIcon />
                 </Button>
               </Box>
             </MuiCard>
