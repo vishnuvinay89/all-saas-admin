@@ -439,6 +439,8 @@ const Center: React.FC = () => {
         });
       }
     }
+    setPageOffset(Numbers.ZERO);
+    fetchUserList();
   };
   const handleBlockChange = (selected: string[], code: string[]) => {
     setSelectedBlock(selected);
@@ -792,7 +794,16 @@ const Center: React.FC = () => {
         },
       };
 
-      const result = await getCohortList(data);
+      // const result = await getCohortList(data);
+      const result = await queryClient.fetchQuery({
+        queryKey: [
+          QueryKeys.GET_COHORT_LIST,
+          data.limit,
+          data.offset,
+          data.filters,
+        ],
+        queryFn: () => getCohortList(data),
+      });
 
       if (!result || !result.results || !result.results.cohortDetails) {
         console.log("Invalid response structure or no cohort details found.");
@@ -822,10 +833,11 @@ const Center: React.FC = () => {
           "Incomplete location data (state, district, block) for the cohort."
         );
       }
+      
 
       if (urlData) {
         router.push(
-          `learners/${urlData.stateCode}/${urlData.districtCode}/${urlData.blockCode}/${urlData.type}`
+          `learners?state=${urlData.stateCode}&district=${urlData.districtCode}&block=${urlData.blockCode}&status=${urlData.type}`
         );
       }
 
