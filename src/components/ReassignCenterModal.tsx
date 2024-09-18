@@ -21,6 +21,7 @@ import { useLocationState } from "@/utils/useLocationState";
 import AreaSelection from "./AreaSelection";
 import { transformArray } from "../utils/Helper";
 import { firstLetterInUpperCase } from "./../utils/Helper";
+import useSubmittedButtonStore from "@/utils/useSharedState";
 
 interface ReassignCohortModalProps {
   open: boolean;
@@ -104,7 +105,10 @@ const {
   console.log(blockCode)
   console.log(selectedBlock)
   const names = cohortData.map((item : any)=> item.name);
-
+  const setReassignButtonStatus = useSubmittedButtonStore((state:any) => state.setReassignButtonStatus);
+  const reassignButtonStatus = useSubmittedButtonStore(
+    (state: any) => state.reassignButtonStatus
+  );
   console.log(names); 
  
     const [searchInput, setSearchInput] = useState("");
@@ -290,32 +294,16 @@ const {
 
   let unSelectedBlockCohortIds: string[] = [];
 
-  for (const code of unSelectedData) {
-    const reassignBlockObject = {
-      limit: 200,
-      offset: 0,
-      filters: {
-        status: ['active'],
-        name: code,
-      },
-    }
-    const centerResponse = await getCenterList(reassignBlockObject);
-    const cohortDetailsInfo = centerResponse?.result?.results?.cohortDetails;
-    const unSelectedBlockCohortIdValue = cohortDetailsInfo?.find(
-      (item: any) => item?.type === 'BLOCK'
-    )?.cohortId;
-
-    if (unSelectedBlockCohortIdValue) {
-      unSelectedBlockCohortIds.push(unSelectedBlockCohortIdValue);
-    }
-
-  }
+ 
   unSelectedBlockCohortIds.push(previousBlockId);
-
+  let cohortIds = blocks
+  .filter((item:any) => item.label !== checkedCenters[0]) 
+  .map((item:any) => item.cohortId);
+  cohortIds.push(previousBlockId)
         payload = {
           userId: [userId],
           cohortId: [selectedBlockCohortId],
-          removeCohortId:unSelectedBlockCohortIds,
+          removeCohortId:cohortIds,
         };
   
         await bulkCreateCohortMembers(payload);
@@ -359,6 +347,8 @@ const {
           t("COMMON.BLOCKS_REASSIGN_SUCCESSFULLY"),
           "success"
         );
+        reassignButtonStatus ? setReassignButtonStatus(false) : setReassignButtonStatus(true);
+
       }
     } catch (error) {
       showToastMessage(

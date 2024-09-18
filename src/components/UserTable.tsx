@@ -31,6 +31,7 @@ import { useQuery } from "@tanstack/react-query";
 import ReassignCenterModal from "./ReassignCenterModal";
 import { getCenterList, getStateBlockDistrictList } from "@/services/MasterDataService";
 import { updateCohortMemberStatus } from "@/services/CohortService/cohortService";
+import useSubmittedButtonStore from "@/utils/useSharedState";
 type UserDetails = {
   userId: any;
   username: any;
@@ -153,6 +154,9 @@ const UserTable: React.FC<UserTableProps> = ({
   const [openAddLearnerModal, setOpenAddLearnerModal] = React.useState(false);
   const [userId, setUserId] = useState();
   const [submitValue, setSubmitValue] = useState<boolean>(false);
+  const reassignButtonStatus = useSubmittedButtonStore(
+    (state: any) => state.reassignButtonStatus
+  );
   const { data:teacherFormData ,isLoading: teacherFormDataLoading, error :teacherFormDataErrror } = useQuery<any[]>({
     queryKey: ["teacherFormData"],  
     queryFn: () => Promise.resolve([]), 
@@ -806,7 +810,8 @@ const UserTable: React.FC<UserTableProps> = ({
     filters,
     parentState,
     deleteUserState,
-    sortByForCohortMemberList
+    sortByForCohortMemberList,
+    reassignButtonStatus
   ]);
 
   useEffect(() => {

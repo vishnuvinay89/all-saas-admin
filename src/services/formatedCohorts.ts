@@ -69,47 +69,52 @@ export const formatedDistricts = async () => {
 
 export const formatedBlocks = async (districtCode: string) => {
   const adminState = JSON.parse(
-      localStorage.getItem("adminInfo") || "{}"
-    ).customFields.find(
-      (field: any) => field.label === "STATES"
-    );;
-try {
-  const reqParams = {
+    localStorage.getItem("adminInfo") || "{}"
+  ).customFields.find(
+    (field: any) => field.label === "STATES"
+  );
+  try {
+    const reqParams = {
       limit: 0,
       offset: 0,
       filters: {
-       // name: searchKeyword,
+        // name: searchKeyword,
         states: adminState.code,
-        districts:districtCode,
-
+        districts: districtCode,
         type: CohortTypes.BLOCK,
-        status: ["active"]
+        status: ["active"],
       },
-   sort: ["name", "asc"],
+      sort: ["name", "asc"],
     };
 
     const response = await getCohortList(reqParams);
+    const cohortDetails = response?.results?.cohortDetails || [];
 
-          const cohortDetails = response?.results?.cohortDetails || [];
-          const object = {
-              controllingfieldfk:districtCode,
-              fieldName: "blocks",
-          };
-            const optionReadResponse = await getStateBlockDistrictList(object);
-               //console.log(blockFieldId)
-            const result = optionReadResponse?.result?.values;
-            console.log(cohortDetails)
-            console.log(result)
-            const matchedCohorts = result?.map((value: any) => {
-              const cohortMatch = cohortDetails.find((cohort: any )=> cohort.name === value.label);
-              return cohortMatch ? { ...value } : null;
-            }).filter(Boolean);
-            console.log(matchedCohorts);
-            
-            return  matchedCohorts;
+    const object = {
+      controllingfieldfk: districtCode,
+      fieldName: "blocks",
+    };
+    const optionReadResponse = await getStateBlockDistrictList(object);
+    const result = optionReadResponse?.result?.values;
 
-} catch (error) {
-  console.log('Error in getting Channel Details', error);
-  return error;
-}
+    console.log(cohortDetails);
+    console.log(result);
+
+    const matchedCohorts = result
+      ?.map((value: any) => {
+        const cohortMatch = cohortDetails.find(
+          (cohort: any) => cohort.name === value.label
+        );
+        // Include cohortId if the match is found
+        return cohortMatch ? { ...value, cohortId: cohortMatch.cohortId } : null;
+      })
+      .filter(Boolean);
+
+
+    return matchedCohorts;
+  } catch (error) {
+    console.log("Error in getting Channel Details", error);
+    return error;
+  }
 };
+
