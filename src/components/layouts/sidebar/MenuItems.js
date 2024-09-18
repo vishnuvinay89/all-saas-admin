@@ -65,16 +65,6 @@ const Menuitems = [
     title: "SIDEBAR.COURSE_PLANNER",
     icon: coursePannerIcon,
     href: "/course-planner",
-    subOptions: [
-      {
-        title: "SIDEBAR.FOUNDATION_COURSE",
-        href: "/course-planner",
-      },
-      // {
-      //   title: "SIDEBAR.MAIN_COURSE",
-      //   href: "/mainCourse",
-      // },
-    ],
   },
 ];
 
