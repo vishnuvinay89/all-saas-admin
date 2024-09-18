@@ -290,32 +290,16 @@ const {
 
   let unSelectedBlockCohortIds: string[] = [];
 
-  for (const code of unSelectedData) {
-    const reassignBlockObject = {
-      limit: 200,
-      offset: 0,
-      filters: {
-        status: ['active'],
-        name: code,
-      },
-    }
-    const centerResponse = await getCenterList(reassignBlockObject);
-    const cohortDetailsInfo = centerResponse?.result?.results?.cohortDetails;
-    const unSelectedBlockCohortIdValue = cohortDetailsInfo?.find(
-      (item: any) => item?.type === 'BLOCK'
-    )?.cohortId;
-
-    if (unSelectedBlockCohortIdValue) {
-      unSelectedBlockCohortIds.push(unSelectedBlockCohortIdValue);
-    }
-
-  }
+ 
   unSelectedBlockCohortIds.push(previousBlockId);
-
+  let cohortIds = blocks
+  .filter((item:any) => item.label !== checkedCenters[0]) 
+  .map((item:any) => item.cohortId);
+  cohortIds.push(previousBlockId)
         payload = {
           userId: [userId],
           cohortId: [selectedBlockCohortId],
-          removeCohortId:unSelectedBlockCohortIds,
+          removeCohortId:cohortIds,
         };
   
         await bulkCreateCohortMembers(payload);
