@@ -277,6 +277,7 @@ export const useLocationState = (
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if(open){
         const response = await queryClient.fetchQuery({
           queryKey: [
             QueryKeys.FIELD_OPTION_READ,
@@ -412,7 +413,7 @@ export const useLocationState = (
         //console.log(result)
         // setStates(result);
         console.log(typeof states);
-      } catch (error) {
+      }} catch (error) {
         console.log(error);
       }
     };
