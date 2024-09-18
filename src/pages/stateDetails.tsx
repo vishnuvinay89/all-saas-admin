@@ -49,7 +49,7 @@ const StateDetails = () => {
 
         const channel = store?.boards;
         setBoards(channel);
-
+        localStorage.removeItem("overallCommonSubjects")
         setLoading(false);
       }, 1000);
     };

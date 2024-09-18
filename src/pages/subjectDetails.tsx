@@ -81,6 +81,24 @@ const SubjectDetails = () => {
   const setTaxonomySubject = taxonomyStore((state) => state.setTaxonomySubject);
 
   useEffect(() => {
+    const subjects = localStorage.getItem('overallCommonSubjects');
+  
+    if (subjects) {
+      try {
+        const parsedData = JSON.parse(subjects);
+        setSubject(parsedData);
+      } catch (error) {
+        console.error("Failed to parse subjects from localStorage:", error);
+      }
+    } else {
+      console.log("No subjects found in localStorage.");
+      setSubject([]);
+    }
+  }, []);
+  
+  
+
+  useEffect(() => {
     const fetchFrameworkDetails = async () => {
       if (typeof boardDetails === "string") {
         try {
@@ -343,6 +361,7 @@ const SubjectDetails = () => {
       const overallCommonSubjects = findOverallCommonSubjects(arrays);
       
       setSubject(overallCommonSubjects);
+      localStorage.setItem("overallCommonSubjects", JSON.stringify(overallCommonSubjects))
     }
   };
 

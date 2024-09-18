@@ -304,8 +304,6 @@ const ImportCsv = () => {
     });
   };
 
-
-
   const totalChildren = userProjectDetails?.reduce(
     (acc: number, project: any) => {
       return acc + (project?.children?.length || 0);
