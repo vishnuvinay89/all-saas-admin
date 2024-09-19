@@ -266,11 +266,7 @@ const UserTable: React.FC<UserTableProps> = ({
     setSelectedBlockCode("");
     setSelectedDistrictCode("");
     setSelectedState(selected);
-    const updatedQuery = { ...router.query };
-  delete updatedQuery.districtCode; 
-  delete updatedQuery.blockCode; 
-  delete updatedQuery.center;
-
+  
 
     console.log(selected[0])
     if (selected[0] === "" || selected[0] === t("COMMON.ALL_STATES")) {
