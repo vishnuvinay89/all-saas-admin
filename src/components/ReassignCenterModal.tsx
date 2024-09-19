@@ -131,11 +131,18 @@ const {
   };
 
   const handleToggle = (name: string) => {
-    setCheckedCenters((prev) =>
+    if(userType===Role.LEARNERS)
+    {
+      setCheckedCenters([name]);
+    }
+    else{
+      setCheckedCenters((prev) =>
       prev.includes(name)
         ? prev.filter((center) => center !== name)
         : [...prev, name]
     );
+    }
+   
   };
 
   useEffect(() => {
