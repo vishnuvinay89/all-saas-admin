@@ -112,7 +112,6 @@
     "NEW": "New {{role}}",
     "USER_CREDENTIAL_SEND_SUCCESSFULLY": "User credentials sent successfully!",
     "USER_CREDENTIALS_WILL_BE_SEND_SOON": "User credentials will be sent soon",
-
     "REASSIGN_CENTERS": "Re-assign Center",
     "REASSIGN_BLOCKS": "Re-assign Blocks",
     "REASSIGN": "Reassign",
@@ -125,10 +124,9 @@
     "DELETE_COHORT_WARNING": "Do you want to delete user from cohort?",
     "NO_CENTER_AVAILABLE": "No centers available",
     "NO_BLOCK_AVAILABLE": "No blocks available",
-    "PLEASE_SELECT_BLOCK_LIST":"Please select block from block list"
-
-
-
+    "PLEASE_SELECT_BLOCK_LIST": "Please select block from block list",
+    "ALL_CENTERS": "All centers",
+    "NO_CENTERS": "No centers"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -162,7 +160,6 @@
     "SEARCHBAR_PLACEHOLDER": "Search Facilitators..",
     "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher is created, and credentials sent successfully!",
     "USER_CREDENTIALS_WILL_BE_SEND_SOON": "Teacher is created ,credentials will be sent soon",
-
     "FACILITATOR_UPDATED_SUCCESSFULLY": "Teacher has been successfully updated!",
     "EDIT_FACILITATOR": "Edit Facilitator"
   },
@@ -175,7 +172,6 @@
     "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
     "LEARNER_CREATED_SUCCESSFULLY": "Learner has been successfully created!",
     "USER_CREDENTIALS_WILL_BE_SEND_SOON": "Learner is created, credentials will be sent soon",
-
     "LEARNER_UPDATED_SUCCESSFULLY": "Learner has been successfully updated!",
     "EDIT_LEARNER": "Edit Learner"
   },
@@ -185,14 +181,12 @@
     "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
     "TEAM_LEADER_CREATED_SUCCESSFULLY": "Team Leader is created, and credentials sent successfully!",
     "USER_CREDENTIALS_WILL_BE_SEND_SOON": "Team Leader is created ,credentials will be sent soon",
-
     "TEAM_LEADER_UPDATED_SUCCESSFULLY": "Team Leader has been successfully updated!",
     "EDIT_TEAM_LEADER": "Edit Team Leader"
   },
   "ADMIN": {
     "ADMIN_UPDATED_SUCCESSFULLY": "Admin has been successfully updated!"
   },
-
   "COHORTS": {
     "SEARCHBAR_PLACEHOLDER": "Search Center.."
   },
@@ -214,12 +208,11 @@
     "UPLOAD": "Upload",
     "COURSE_CREATED_SUCCESSFULLY": "Course created successfully",
     "COURSE_NOT_CREATED": "Course not created",
-    "SUB-TOPIC":"Sub-topic",
-    "SUBTOPICS":"Sub-Topics",
+    "SUB-TOPIC": "Sub-topic",
+    "SUBTOPICS": "Sub-Topics",
     "RESOURCES": "Resources",
     "TOPIC": "Topic",
     "DURATION/MONTH": "Duration/Month"
-
   },
   "MASTER": {
     "STATE": "States",
