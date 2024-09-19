@@ -677,19 +677,19 @@ const UserTable: React.FC<UserTableProps> = ({
         {
           finalResult = result?.map((user: any) => {
             const ageField = user?.customField?.find(
-              (field: any) => field?.fieldname === "AGE"
+              (field: any) => field?.label === "AGE"
             );
             const genderField = user?.customField?.find(
-              (field: any) => field?.fieldname === "GENDER"
+              (field: any) => field?.label === "GENDER"
             );
             const blockField = user?.customField?.find(
-              (field: any) => field?.fieldname === "BLOCKS"
+              (field: any) => field?.label === "BLOCKS"
             );
             const districtField = user?.customField?.find(
-              (field: any) => field?.fieldname === "DISTRICTS"
+              (field: any) => field?.label === "DISTRICTS"
             );
             const stateField = user?.customField?.find(
-              (field: any) => field?.fieldname === "STATES"
+              (field: any) => field?.label === "STATES"
             );
               return {
                 userId: user?.userId,
@@ -701,13 +701,13 @@ const UserTable: React.FC<UserTableProps> = ({
                 role: user.role,
                 //  gender: user.gender,
                 mobile: user.mobile === "NaN" ? "-" : user.mobile,
-                age: ageField ? ageField?.fieldvalues : "-",
-                district: districtField ? districtField?.fieldvalues+" , "+blockField?.fieldvalues  : "-",
-                state: stateField ? stateField?.fieldvalues : "-",
-                blocks: blockField ? blockField?.fieldvalues : "-",
+                age: ageField ? ageField?.value : "-",
+                district: districtField ? districtField?.value+" , "+blockField?.value  : "-",
+                state: stateField ? stateField?.value : "-",
+                blocks: blockField ? blockField?.value : "-",
                 gender: genderField
-                  ? genderField.fieldvalues?.charAt(0)?.toUpperCase() +
-                    genderField.fieldvalues.slice(1).toLowerCase()
+                  ? genderField.value?.charAt(0)?.toUpperCase() +
+                    genderField.value.slice(1).toLowerCase()
                   : "-",
               //  createdAt: user?.createdAt,
               //  updatedAt: user?.updatedAt,
