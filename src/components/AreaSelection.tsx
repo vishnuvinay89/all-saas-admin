@@ -170,6 +170,8 @@ const shouldRenderSelectCheckmarks =
             }
             overall={!inModal}
             defaultValue={
+              //districtDefaultValue? districtDefaultValue:
+
               reAssignModal
                 ? districtDefaultValue
                 : selectedState.length > 0 && districts?.length === 0
@@ -186,7 +188,7 @@ const shouldRenderSelectCheckmarks =
             selectedCategories={capitalizeFirstLetterOfEachWordInArray(selectedBlock)}
             onCategoryChange={handleBlockChangeWrapper}
             disabled={
-             blockDefaultValue? false:
+           //  blockDefaultValue? false:
 
               blocks?.length <= 0 ||
               selectedDistrict?.length === 0 ||
@@ -212,6 +214,12 @@ const shouldRenderSelectCheckmarks =
               onCategoryChange={handleCenterChangeWrapper}
               disabled={selectedBlock.length === 0 || selectedCenter[0] === ""}
               overall={!inModal}
+              defaultValue={ 
+                //  blockDefaultValue? blockDefaultValue:
+                  selectedBlock?.length > 0 && blocks?.length <= 0
+                    ? t("COMMON.NO_CENTERS")
+                    : t("COMMON.ALL_CENTERS")
+                }
             />
           )}
         </Box>

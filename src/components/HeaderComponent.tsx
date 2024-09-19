@@ -24,6 +24,7 @@ import { transformArray } from "../utils/Helper";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import { useQueryClient } from "@tanstack/react-query";
+import { formatedBlocks, formatedDistricts } from "@/services/formatedCohorts";
 
 interface State {
   value: string;
@@ -73,7 +74,15 @@ const HeaderComponent = ({
   statusValue,
   shouldFetchDistricts = true,
   setStatusValue,
+  setSelectedDistrictCode,
+  setSelectedDistrict,
+  setSelectedBlockCode,
+  setSelectedBlock,
+  setSelectedCenter,
+  selectedCenterCode,
+  setSelectedCenterCode
 }: any) => {
+
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -118,6 +127,7 @@ const HeaderComponent = ({
       // console.log(object);
       // const response = await getStateBlockDistrictList(object);
       const result = response?.result?.values;
+
       setDistricts(result);
     } catch (error) {
       console.log(error);
@@ -150,7 +160,9 @@ const HeaderComponent = ({
       // };
       // const response = await getStateBlockDistrictList(object);
       const result = response?.result?.values;
-      setBlocks(result);
+      const blockResult=await formatedBlocks(selectedCodes[0])
+
+      setBlocks(blockResult);
     } catch (error) {
       console.log(error);
     }
@@ -251,7 +263,57 @@ const HeaderComponent = ({
               // console.log(object);
               // const response = await getStateBlockDistrictList(object);
               const result = response?.result?.values;
-              setDistricts(result);
+              const districtResult= await formatedDistricts();
+
+              setDistricts(districtResult);
+              setSelectedDistrict([districtResult[0]?.label])
+              setSelectedDistrictCode(districtResult[0]?.value)
+              const blockResult=await formatedBlocks(districtResult[0]?.value)
+              setBlocks(blockResult);
+
+             setSelectedBlock([blockResult[0]?.label])
+             setSelectedBlockCode(blockResult[0]?.value)
+             const getCentersObject = {
+              limit: 0,
+              offset: 0,
+              filters: {
+                // "type":"COHORT",
+                status: ["active"],
+                states:  stateField.code,
+                districts: districtResult[0]?.value,
+                blocks: blockResult[0]?.value,
+                // "name": selected[0]
+              },
+            };
+            const centerResponse = await queryClient.fetchQuery({
+              queryKey: [
+                QueryKeys.FIELD_OPTION_READ,
+                getCentersObject.limit,
+                getCentersObject.offset,
+                getCentersObject.filters,
+              ],
+              queryFn: () => getCenterList(getCentersObject),
+            });
+            // const response = await getCenterList(getCentersObject);
+            console.log(centerResponse);
+            // setSelectedBlockCohortId(
+            //   response?.result?.results?.cohortDetails[0].cohortId
+            // );
+            //   const result = response?.result?.cohortDetails;
+            const dataArray = centerResponse?.result?.results?.cohortDetails;
+            console.log(dataArray);
+
+            const cohortInfo = dataArray
+              ?.filter((cohort: any) => cohort.type !== "BLOCK")
+              .map((item: any) => ({
+                cohortId: item?.cohortId,
+                name: item?.name,
+              }));
+            console.log(dataArray);
+            setAllCenters(cohortInfo);
+            setSelectedCenter([cohortInfo[0]?.name])
+            setSelectedCenterCode(cohortInfo[0]?.cohortId)
+              console.log(cohortInfo)
             }
 
             const object = [

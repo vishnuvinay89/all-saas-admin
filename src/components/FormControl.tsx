@@ -85,7 +85,7 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
           }
           onChange={handleChange}
           input={<OutlinedInput label={tagName} />}
-          renderValue={(selected) => selected.join(", ")}
+          renderValue={(selected) => selected?.join(", ")}
           MenuProps={MenuProps}
         >
           {overall && (
