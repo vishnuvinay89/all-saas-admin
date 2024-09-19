@@ -11,6 +11,7 @@ const taxonomyStore = create(
       taxonomyGrade: "",
       taxonomyType: "",
       taxonomySubject: "",
+      resources:"",
       setState: (newState) =>
         set((state) => ({ state: newState})),
       setBoard: (newBoard) =>
@@ -23,6 +24,8 @@ const taxonomyStore = create(
         set((state) => ({ taxonomyType: newTaxonomyType})),
       setTaxonomySubject: (newTaxonomySubject) =>
         set((state) => ({ taxonomySubject: newTaxonomySubject})),
+      setResources: (newResources) =>
+        set((state) => ({ resources: newResources})),
     }),
     {
       name: "taxonomy",

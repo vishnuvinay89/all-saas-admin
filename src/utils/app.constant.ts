@@ -114,3 +114,8 @@ export const monthColors:any = {
   "Nov": "#FFD6D6",
   "Dec": "#FFD6D6"
 };
+
+export enum ResourceType {
+  PREREQUISITE = "prerequisite",
+  POSTREQUISITE = "postrequisite",
+}

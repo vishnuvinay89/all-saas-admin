@@ -49,7 +49,7 @@ const StateDetails = () => {
 
         const channel = store?.boards;
         setBoards(channel);
-
+        localStorage.removeItem("overallCommonSubjects")
         setLoading(false);
       }, 1000);
     };
@@ -107,38 +107,16 @@ const StateDetails = () => {
 
   return (
     <Box>
-      <FilterSearchBar
-        grade={grade}
-        medium={medium}
-        searchQuery={searchQuery}
-        handleGradeChange={handleGradeChange}
-        handleMediumChange={handleMediumChange}
-        handleSearchChange={handleSearchChange}
-        selectedOption={selectedOption}
-        handleDropdownChange={handleDropdownChange}
-        card={undefined}
-        selectFilter={""}
-        onBackClick={() => {}}
-      />
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
+     
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2, mt: 2 }}>
         <IconButton onClick={handleBackClick}>
           <ArrowBackIcon />
         </IconButton>
         <Typography variant="h2">{card.state}</Typography>
         <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
-          <CustomStepper completedSteps={card.boardsUploaded} />
-          <Typography
-            sx={{
-              fontSize: isSmallScreen ? "12px" : "14px",
-              color: "#7C766F",
-            }}
-          >
-            ({card.boardsUploaded}/{card.totalBoards}
-            {t("COURSE_PLANNER.BOARDS_FULLY_UPLOADED")})
-          </Typography>
         </Box>
       </Box>
-      <Grid spacing={2} container sx={{ marginTop: "16px" }}>
+      <Grid spacing={2} container sx={{ marginTop: "16px", ml: 2 }}>
         {boards.map((board: any, index: number) => (
           <Grid item xs={12} md={4} key={index}>
             <Box
@@ -173,29 +151,8 @@ const StateDetails = () => {
                     {board?.name}
                   </Typography>
                 </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "16px",
-                  }}
-                >
-                  <Box sx={{ width: "40px", height: "40px" }}>
-                    <CircularProgressbar
-                      value={(card.boardsUploaded / card.totalBoards) * 100}
-                      strokeWidth={10}
-                      styles={buildStyles({
-                        pathColor: "#06A816",
-                        trailColor: "#E6E6E6",
-                        strokeLinecap: "round",
-                      })}
-                    />
-                  </Box>
-                  <Typography sx={{ fontSize: "14px" }}>
-                    {card.boardsUploaded} / {card.totalBoards}{" "}
-                    {t("COURSE_PLANNER.SUBJECTS_UPLOADED")}
-                  </Typography>
-                </Box>
+              
+                 
               </Box>
               <Box sx={{ display: "flex", justifyContent: "center" }}>
                 <Button
@@ -205,7 +162,7 @@ const StateDetails = () => {
                   }}
                   sx={{ minWidth: "auto", padding: 0 }}
                 >
-                  <InsertLinkOutlinedIcon />
+             
                 </Button>
               </Box>
             </Box>

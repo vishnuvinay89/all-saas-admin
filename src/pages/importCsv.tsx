@@ -67,6 +67,7 @@ const ImportCsv = () => {
   const [subTopics, setSubTopics] = useState<number>(0);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const setResources = taxonomyStore((state) => state.setResources);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -153,18 +154,9 @@ const ImportCsv = () => {
       const userProjectDetailsResponse = await getUserProjectDetails({
         id: courseId,
       });
-      setUserProjectDetails(userProjectDetailsResponse.result.tasks);
+      setUserProjectDetails(userProjectDetailsResponse?.result?.tasks);
       if (userProjectDetails?.length) {
-        const totalChildren = userProjectDetails.reduce(
-          (acc: number, project: any) => {
-            return acc + (project?.children?.length || 0);
-          },
-          0
-        );
-
-        if (totalChildren !== subTopics) {
-          setSubTopics(totalChildren);
-        }
+       
       }
       setLoading(false);
     } catch (error) {
@@ -305,6 +297,24 @@ const ImportCsv = () => {
     return months[date.getMonth()];
   };
 
+  const handleResources = (subTopic: any) => {
+    setResources(subTopic);
+    router.push({
+      pathname: "/resourceList",
+    });
+  };
+
+  const totalChildren = userProjectDetails?.reduce(
+    (acc: number, project: any) => {
+      return acc + (project?.children?.length || 0);
+    },
+    0
+  );
+
+  if (totalChildren !== subTopics) {
+    setSubTopics(totalChildren);
+  }
+
   return (
     <Box sx={{ padding: isSmallScreen ? "16px" : "32px" }}>
       <Box
@@ -321,8 +331,8 @@ const ImportCsv = () => {
           <IconButton onClick={handleBackClick}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant={isSmallScreen ? "h5" : "h4"}>
-            {subjectDetails?.subject}
+          <Typography variant={isSmallScreen ? "h5" : "h2"}>
+            {tstore.taxonomySubject}
           </Typography>
         </Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
@@ -367,26 +377,10 @@ const ImportCsv = () => {
             }}
             onClick={handleCopyLink}
           >
-            <AttachmentIcon />
+            {/* <AttachmentIcon /> */}
           </Button>
         </Box>
       </Box>
-
-      <FilterSearchBar
-        grade=""
-        medium=""
-        searchQuery=""
-        handleGradeChange={() => {}}
-        handleMediumChange={() => {}}
-        handleSearchChange={() => {}}
-        selectedOption=""
-        handleDropdownChange={() => {}}
-        card={undefined}
-        selectFilter={undefined}
-        onBackClick={() => {}}
-        showGradeMedium={false}
-        showFoundaitonCourse={false}
-      />
 
       <Box>
         {loading ? (
@@ -497,7 +491,7 @@ const ImportCsv = () => {
                           display: "flex",
                           flexDirection: "row",
                           justifyContent: "space-between",
-                          padding: "10px 25px  0px 25px ",
+                          padding: "10px 25px 0px 25px",
                           borderRadius: "8px",
                         }}
                       >
@@ -510,10 +504,8 @@ const ImportCsv = () => {
                         <Box sx={{ flex: 1, textAlign: "right" }}>
                           {t("COURSE_PLANNER.DURATION/MONTH")}
                         </Box>
-                        <Box sx={{ flex: 1, textAlign: "right" }}>
-                          {t("COURSE_PLANNER.COPY_LINK")}
-                        </Box>
                       </Box>
+
                       <AccordionDetails
                         sx={{
                           padding: "20px",
@@ -524,11 +516,13 @@ const ImportCsv = () => {
                         {topic.children.map((subTopic: any) => (
                           <Box
                             key={subTopic._id}
+                            onClick={() => handleResources(subTopic)}
                             sx={{
                               border: `1px solid #E0E0E0`,
                               padding: "10px",
                               backgroundColor: "white",
                               marginBottom: "20px",
+                              cursor: "pointer",
                             }}
                           >
                             <Box
@@ -595,16 +589,6 @@ const ImportCsv = () => {
                                       subTopic?.metaInformation?.startDate
                                     )}
                                   </Box>
-                                </Box>
-                                <Box
-                                  sx={{
-                                    flex: 1,
-                                    display: "flex",
-                                    justifyContent: "flex-end",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <LinkIcon />
                                 </Box>
                               </Box>
                             </Box>
