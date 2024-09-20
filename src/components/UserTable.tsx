@@ -538,9 +538,9 @@ router.replace({
     return initialFormData;
   };
   const handleEdit = async (rowData: any) => {
-    if (submitValue) {
-      setSubmitValue(false);
-    }
+   
+    submitValue ? setSubmitValue(false) : setSubmitValue(true);
+
     console.log("Edit row:", rowData);
 
     try {
