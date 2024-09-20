@@ -604,6 +604,7 @@ router.replace({
     setCohortId(rowData?.cohortIds);
     setBlock(rowData?.blocks)
     console.log(rowData?.districtValue)
+   
     setDistrict(rowData?.districtValue)
     setDistrictCode(rowData?.districtCode)
   setBlockCode(rowData?.blockCode)
@@ -764,6 +765,12 @@ router.replace({
               //  updatedAt: user?.updatedAt,
                 createdBy: user?.createdBy,
                 updatedBy: user?.updatedBy,
+                stateCode:stateField?.code,
+
+                districtCode:districtField?.code,
+            blockCode:blockField?.code,
+            districtValue:districtField? districtField?.value: "-"
+
                 // // centers: null,
                 // Programs: null,
               };
