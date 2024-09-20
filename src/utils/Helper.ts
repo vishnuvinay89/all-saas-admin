@@ -111,9 +111,9 @@ export const transformArray = (arr: State[]): State[] => {
   }));
 };
 
-export const firstLetterInUpperCase = (label: string): string | null => {
+export const firstLetterInUpperCase = (label: string): string => {
   if (!label) {
-    return null;
+    return '';
   }
 
   return label
