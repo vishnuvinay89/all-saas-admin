@@ -27,7 +27,7 @@ const Menuitems = [
     subOptions: [
       {
         title: "SIDEBAR.TEAM_LEADERS",
-        href: "/teamLeader",
+        href: "/team-leader",
       },
       {
         title: "SIDEBAR.FACILITATORS",
