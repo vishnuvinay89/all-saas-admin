@@ -229,7 +229,19 @@ const CommonUserModal: React.FC<UserModalProps> = ({
     const formData = data.formData;
     console.log("Form data submitted:", formData);
     const schemaProperties = schema.properties;
-    const result = generateUsernameAndPassword(selectedStateCode, userType);
+
+    console.log(formData['year of joining scp'])
+    let result;
+    if(formData['year of joining scp'])
+    {
+      result = generateUsernameAndPassword(selectedStateCode, userType, formData['year of joining scp']);
+
+    }
+    else
+    {
+      result = generateUsernameAndPassword(selectedStateCode, userType);
+
+    }
     if (result !== null) {
       const { username, password } = result;
 

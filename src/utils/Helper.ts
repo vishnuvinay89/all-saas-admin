@@ -65,7 +65,10 @@ export const getDeviceId = () => {
 
 export const generateUsernameAndPassword = (
   stateCode: string,
-  role: string
+  role: string,
+  yearOfJoining?: string,
+  
+
 ) => {
   const currentYear = new Date().getFullYear().toString().slice(-2); // Last two digits of the current year
   const randomNum = Math.floor(10000 + Math.random() * 90000).toString(); //NOSONAR
@@ -80,9 +83,10 @@ export const generateUsernameAndPassword = (
     console.warn(`Unknown role: ${role}`); // Log a warning for unknown roles
     return null; // Return null or handle as needed
   }
-
+  const yearSuffix =
+  yearOfJoining ? yearOfJoining?.slice(-2) : currentYear;
   const prefix = rolePrefixes[role];
-  const username = `${prefix}${stateCode}${currentYear}${randomNum}`;
+  const username = `${prefix}${stateCode}${yearSuffix}${randomNum}`;
 
   return { username, password: randomNum };
 };
