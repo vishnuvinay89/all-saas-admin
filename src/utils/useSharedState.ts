@@ -16,6 +16,17 @@ const useSubmittedButtonStore = create((set) => ({
   setUserEnteredEmail: (status: string) => set({ userEnteredEmail: status }),
   shouldFetch:true,
    setShouldFetch:(data: boolean) => set({ shouldFetch: data }),
+   selectedBlockStore:"",
+   setSelectedBlockStore: (status: string) => set({ selectedBlockStore: status }),
+
+   selectedDistrictStore:"",
+   setSelectedDistrictStore: (status: string) => set({ selectedDistrictStore: status }),
+
+   selectedCenterStore:"",
+   setSelectedCenterStore: (status: string) => set({ selectedCenterStore: status }),
+
+
+
 
 }));
 

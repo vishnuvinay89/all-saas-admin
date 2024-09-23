@@ -99,7 +99,28 @@ const UserTable: React.FC<UserTableProps> = ({
   const [centerMembershipIdList, setCenterMembershipIdList] = React.useState<string[]>([]);
   const router = useRouter();
 
+  const selectedBlockStore = useSubmittedButtonStore(
+    (state: any) => state.selectedBlockStore
+  );
+  const setSelectedBlockStore = useSubmittedButtonStore(
+    (state: any) => state.setSelectedBlockStore
+  );
+  const selectedDistrictStore = useSubmittedButtonStore(
+    (state: any) => state.selectedDistrictStore
+  );
+  const setSelectedDistrictStore = useSubmittedButtonStore(
+    (state: any) => state.setSelectedDistrictStore
+  );
+  const selectedCenterStore = useSubmittedButtonStore(
+    (state: any) => state.selectedCenterStore
+  );
+  const setSelectedCenterStore = useSubmittedButtonStore(
+    (state: any) => state.setSelectedCenterStore
+  );
 
+
+
+ 
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
@@ -125,6 +146,7 @@ const UserTable: React.FC<UserTableProps> = ({
   const [userCohort, setUserCohorts] = useState ("");
   const [assignedCenters, setAssignedCenters] = useState<any>();
 
+  const [initialized, setInitialized] = useState(false);
 
   const [selectedUserId, setSelectedUserId] = useState("");
   const [cohortId, setCohortId] = useState([]);
@@ -256,6 +278,24 @@ const UserTable: React.FC<UserTableProps> = ({
     />
   );
   const handleStateChange = async (selected: string[], code: string[]) => {
+    const newQuery = { ...router.query }; 
+ 
+     if (newQuery.center) {
+       delete newQuery.center;  
+     }
+     if (newQuery.district) {
+      delete newQuery.district;
+    }
+     if (newQuery.block) {
+       delete newQuery.block;
+     }
+     router.replace({
+       pathname: router.pathname,
+       query: { 
+         ...newQuery, 
+         state: code?.join(","), 
+       }
+     });
     setSelectedCenterCode([])
 
     setEnableCenterFilter(false)
@@ -314,6 +354,22 @@ const UserTable: React.FC<UserTableProps> = ({
   };
 
   const handleDistrictChange = (selected: string[], code: string[]) => {
+    const newQuery = { ...router.query }; 
+
+    if (newQuery.center) {
+      delete newQuery.center;  
+    }
+    if (newQuery.block) {
+      delete newQuery.block;
+    }
+    router.replace({
+      pathname: router.pathname,
+      query: { 
+        ...newQuery, 
+        state: selectedStateCode, 
+        district: code?.join(",") 
+      }
+    });
     setSelectedCenterCode([])
 
     setEnableCenterFilter(false)
@@ -322,11 +378,9 @@ const UserTable: React.FC<UserTableProps> = ({
     setSelectedBlock([]);
     setSelectedDistrict(selected);
 setSelectedBlockCode("");
+localStorage.setItem('selectedDistrict', selected[0])
 
-router.replace({
-  pathname: router.pathname,
-  query: { ...router.query, stateCode: selectedStateCode ,districtCode: selected[0] }
-});
+setSelectedDistrictStore(selected[0])
     if (selected[0] === "" || selected[0] === t("COMMON.ALL_DISTRICTS")) {
       if (filters.status) {
         setFilters({
@@ -367,8 +421,40 @@ router.replace({
 
     setEnableCenterFilter(false)
      setSelectedCenter([]);
+    const newQuery = { ...router.query }; 
+    if (newQuery.center) {
+      delete newQuery.center;  
+    }
+    if (newQuery.block) {
+      delete newQuery.block;
+    }
+    console.log(code?.join(","))
+    router.replace({
+      pathname: router.pathname,
+      query: { 
+        ...newQuery, 
+        state: selectedStateCode, 
+        district: selectedDistrictCode, 
+        block: code?.join(",") 
+      }
+    });
+    
+   
     setSelectedBlock(selected);
+    localStorage.setItem('selectedBlock', selected[0])
+    setSelectedBlockStore(selected[0])
     if (selected[0] === "" || selected[0] === t("COMMON.ALL_BLOCKS")) {
+      if (newQuery.block) {
+        delete newQuery.block;
+      }
+      router.replace({
+        pathname: router.pathname,
+        query: { 
+          ...newQuery, 
+          state: selectedStateCode, 
+          district: selectedDistrictCode, 
+        }
+      });
       if (filters.status) {
         setFilters({
           states: selectedStateCode,
@@ -408,14 +494,49 @@ router.replace({
     console.log("Selected categories:", selected);
   };
   const handleCenterChange = async(selected: string[], code: string[]) => {
+    if(code[0])
+    {
+console.log(code[0])
+      router.replace({
+        pathname: router.pathname,
+        query: { 
+          ...router.query, 
+          state: selectedStateCode, 
+          district: selectedDistrictCode, 
+          block: selectedBlockCode, 
+          center: code[0]
+        }
+      });
+    }
+    else
+    {
+      const newQuery = { ...router.query }; 
+          if (newQuery.center) {
+            delete newQuery.center;  
+            router.replace({
+              ...newQuery, 
+             
+            });
+          }
+      
+    }
+
+
+  
+
+
+    
     setSelectedCenterCode([code[0]])
 
     setSelectedCenter(selected)
+    localStorage.setItem('selectedCenter',selected[0] )
+  setSelectedCenterStore(selected[0])
     console.log(selected[0])
     if (selected[0] === "" || selected[0] === t("COMMON.ALL_CENTERS")) {
       setEnableCenterFilter(false)
-
+      setSelectedCenterCode([])
       if (filters.status) {
+
         setFilters({
           states: selectedStateCode,
           districts: selectedDistrictCode,
@@ -425,6 +546,7 @@ router.replace({
 
         });
       } else {
+
         setFilters({
           states: selectedStateCode,
           districts: selectedDistrictCode,
@@ -860,7 +982,7 @@ router.replace({
       }
     };
     console.log(data )
-    if (selectedBlockCode !== "" || (selectedDistrictCode !== "" && selectedBlockCode === "")) {
+    if ((selectedBlockCode !== "") || (selectedDistrictCode !== "" && selectedBlockCode === "") || (userType===Role.TEAM_LEADERS && selectedDistrictCode!=="") ){
       fetchUserList();
     }
    // fetchUserList();
@@ -875,9 +997,10 @@ router.replace({
     deleteUserState,
     sortByForCohortMemberList,
     reassignButtonStatus,
-    enableCenterFilter
+    enableCenterFilter,
+    userType
   ]);
-
+console.log(selectedBlockStore)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -964,7 +1087,17 @@ router.replace({
               // }
             
               // )
-              if(selectedBlockCode && selectedDistrictCode)
+              if(selectedDistrictCode)
+              {
+               setFilters({
+                  states: stateField.code,
+                  districts:selectedDistrictCode,
+                //  blocks:selectedBlockCode,
+                  role: role,
+                  status:[statusValue],
+                })
+              }
+              if(selectedBlockCode)
               {
                setFilters({
                   states: stateField.code,
@@ -993,7 +1126,7 @@ router.replace({
   }, [selectedBlockCode, selectedDistrictCode]);
   useEffect(() => {
     const fetchData =  () => {
-      console.log(selectedCenter.length)
+     // console.log(selectedCenter.length)
       if(userType===Role.TEAM_LEADERS)
       {
         setEnableCenterFilter(false);
@@ -1003,21 +1136,25 @@ router.replace({
         if(selectedCenter.length!==0)
       {
         if (selectedCenter[0] === "" || selectedCenter[0] === t("COMMON.ALL_CENTERS")) {
+
           setEnableCenterFilter(false);
 
         }
         else
         {
+          console.log(selectedCenterCode)
+
          setEnableCenterFilter(true);
 
         }
           //setEnableCenterFilter(true);
          if(selectedCenterCode.length!==0)
-         {  setFilters({
+         { 
+          setFilters({
           // states: selectedStateCode,
           // districts: selectedDistrictCode,
           // blocks: blocks,
-          cohortId:selectedCenterCode,
+          cohortId:selectedCenterCode[0],
           role: role,
           status:[statusValue]
         });}
@@ -1026,6 +1163,7 @@ router.replace({
         }
         else{
           setEnableCenterFilter(false)
+          if(selectedCenterCode.length!==0)
           setSelectedCenterCode([])
         }
       }
@@ -1036,95 +1174,113 @@ router.replace({
   
     fetchData();
   }, [selectedCenter, selectedCenterCode]);
- 
+ console.log(enableCenterFilter)
+  // useEffect(() => {
+  //   const { state, district, block, center } = router.query;
 
+  // {
+  //   if (state) {
+  //     setSelectedStateCode(state.toString());
+  //   }
+  //   if (district) {
+  //     setSelectedDistrictCode(district.toString());
+  //   }
+  //   if (block) {
+  //     setSelectedBlockCode(block.toString());
+  //   }
+  //   if ( center) {
+  //     setSelectedCenter([center.toString()]);
+  //   }
+  //   setInitialized(true);
+  // }
+  // }, []);
 
-useEffect(() => {
+  // useEffect(() => {
 
-  // Handle replacement when only state and district codes are available
-  if (selectedStateCode!=="" && selectedDistrictCode==="" && selectedBlockCode==="") {
-    const newQuery = { ...router.query }; 
-     console.log(newQuery)
- 
-     if (newQuery.center) {
-       delete newQuery.center;  
-     }
-     if (newQuery.district) {
-      delete newQuery.district;
-    }
-     if (newQuery.block) {
-       delete newQuery.block;
-     }
-     router.replace({
-       pathname: router.pathname,
-       query: { 
-         ...newQuery, 
-         state: selectedStateCode, 
-       }
-     });
-   }
-  if (selectedStateCode!=="" && selectedDistrictCode!=="" && selectedBlockCode==="") {
-   const newQuery = { ...router.query }; 
-    console.log(newQuery)
-
-    if (newQuery.center) {
-      delete newQuery.center;  
-    }
-    if (newQuery.block) {
-      delete newQuery.block;
-    }
-    router.replace({
-      pathname: router.pathname,
-      query: { 
-        ...newQuery, 
-        state: selectedStateCode, 
-        district: selectedDistrictCode 
-      }
-    });
-  }
-
-  // Handle replacement when state, district, and block codes are available
-  if (selectedStateCode!=="" && selectedDistrictCode!=="" && selectedBlockCode!=="" && selectedCenter.length === 0) {
-    console.log("heyyy")
-    const newQuery = { ...router.query }; 
-
-    if (newQuery.center) {
-      delete newQuery.center;  
-    }
-    if (newQuery.block) {
-      delete newQuery.block;
-    }
-    router.replace({
-      pathname: router.pathname,
-      query: { 
-        ...newQuery, 
-        state: selectedStateCode, 
-        district: selectedDistrictCode, 
-        block: selectedBlockCode 
-      }
-    });
-  }
-
-  // Handle replacement when state, district, block, and center are all selected
-  if (selectedStateCode !==""&& selectedDistrictCode!=="" && selectedBlockCode!=="" && selectedCenter.length !== 0) {
-    console.log("heyyy")
-
-    console.log(selectedCenter);
-    if (userType !== Role.TEAM_LEADERS) {
-      router.replace({
-        pathname: router.pathname,
-        query: { 
-          ...router.query, 
-          state: selectedStateCode, 
-          district: selectedDistrictCode, 
-          block: selectedBlockCode, 
-          center: selectedCenter
-        }
-      });
-    }
-  }
-}, [selectedStateCode, selectedDistrictCode, selectedBlockCode, selectedCenter]);
-
+  //   // Handle replacement when only state and district codes are available
+  //   if (selectedStateCode!=="" && selectedDistrictCode==="" && selectedBlockCode==="") {
+  //     console.log("true")
+  //     const newQuery = { ...router.query }; 
+  //      console.log(newQuery)
+   
+  //      if (newQuery.center) {
+  //        delete newQuery.center;  
+  //      }
+  //      if (newQuery.district) {
+  //       delete newQuery.district;
+  //     }
+  //      if (newQuery.block) {
+  //        delete newQuery.block;
+  //      }
+  //      router.replace({
+  //        pathname: router.pathname,
+  //        query: { 
+  //          ...newQuery, 
+  //          state: selectedStateCode, 
+  //        }
+  //      });
+  //    }
+  //   if (selectedStateCode!=="" && selectedDistrictCode!=="" && selectedBlockCode==="") {
+  //    const newQuery = { ...router.query }; 
+  //     console.log(newQuery)
+  
+  //     if (newQuery.center) {
+  //       delete newQuery.center;  
+  //     }
+  //     if (newQuery.block) {
+  //       delete newQuery.block;
+  //     }
+  //     router.replace({
+  //       pathname: router.pathname,
+  //       query: { 
+  //         ...newQuery, 
+  //         state: selectedStateCode, 
+  //         district: selectedDistrictCode 
+  //       }
+  //     });
+  //   }
+  
+  //   // Handle replacement when state, district, and block codes are available
+  //   if (selectedStateCode!=="" && selectedDistrictCode!=="" && selectedBlockCode!=="" && selectedCenter.length === 0) {
+  //     const newQuery = { ...router.query }; 
+  
+  //     if (newQuery.center) {
+  //       delete newQuery.center;  
+  //     }
+  //     if (newQuery.block) {
+  //       delete newQuery.block;
+  //     }
+  //     router.replace({
+  //       pathname: router.pathname,
+  //       query: { 
+  //         ...newQuery, 
+  //         state: selectedStateCode, 
+  //         district: selectedDistrictCode, 
+  //         block: selectedBlockCode 
+  //       }
+  //     });
+  //   }
+  
+  //   // Handle replacement when state, district, block, and center are all selected
+  //   if (selectedStateCode !==""&& selectedDistrictCode!=="" && selectedBlockCode!=="" && selectedCenter.length !== 0) {
+  //     console.log("heyyy")
+  
+  //     console.log(selectedCenter);
+  //     if (userType !== Role.TEAM_LEADERS) {
+  //       router.replace({
+  //         pathname: router.pathname,
+  //         query: { 
+  //           ...router.query, 
+  //           state: selectedStateCode, 
+  //           district: selectedDistrictCode, 
+  //           block: selectedBlockCode, 
+  //           center: selectedCenter
+  //         }
+  //       });
+  //     }
+  //   }
+  // }, [selectedStateCode]);
+  
 
 
   const handleCloseDeleteModal = () => {
@@ -1252,7 +1408,8 @@ useEffect(() => {
      selectedCenter: selectedCenter,
      setSelectedCenter:setSelectedCenter,
      selectedCenterCode:selectedCenterCode,
-     setSelectedCenterCode: setSelectedCenterCode
+     setSelectedCenterCode: setSelectedCenterCode,
+     setSelectedStateCode:setSelectedStateCode
   };
   
 
