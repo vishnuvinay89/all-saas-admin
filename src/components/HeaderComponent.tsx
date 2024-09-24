@@ -25,6 +25,9 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import { useQueryClient } from "@tanstack/react-query";
 import { formatedBlocks, formatedDistricts } from "@/services/formatedCohorts";
+import { useRouter } from "next/router";
+import useSubmittedButtonStore from "@/utils/useSharedState";
+import { userAgent } from "next/server";
 
 interface State {
   value: string;
@@ -80,11 +83,13 @@ const HeaderComponent = ({
   setSelectedBlock,
   setSelectedCenter,
   selectedCenterCode,
-  setSelectedCenterCode
+  setSelectedCenterCode,
+  setSelectedStateCode,
 }: any) => {
 
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const theme = useTheme<any>();
   const isMobile = useMediaQuery("(max-width:600px)");
@@ -95,9 +100,27 @@ const HeaderComponent = ({
   const [allCenters, setAllCenters] = useState<CenterProp[]>([]);
   const [initialDistrict, setInitialDistrict] = useState<any>("");
   const [initialBlock, setInitialBlock] = useState<string>("");
+  const [initialized, setInitialized] = useState(false);
 
   const [blocks, setBlocks] = useState<Block[]>([]);
-
+  const selectedBlockStore = useSubmittedButtonStore(
+    (state: any) => state.selectedBlockStore
+  );
+  const setSelectedBlockStore = useSubmittedButtonStore(
+    (state: any) => state.setSelectedBlockStore
+  );
+  const selectedDistrictStore = useSubmittedButtonStore(
+    (state: any) => state.selectedDistrictStore
+  );
+  const setSelectedDistrictStore = useSubmittedButtonStore(
+    (state: any) => state.setSelectedDistrictStore
+  );
+  const selectedCenterStore = useSubmittedButtonStore(
+    (state: any) => state.selectedCenterStore
+  );
+  const setSelectedCenterStore = useSubmittedButtonStore(
+    (state: any) => state.setSelectedCenterStore
+  );
   const handleStateChangeWrapper = async (
     selectedNames: string[],
     selectedCodes: string[]
@@ -221,6 +244,20 @@ const HeaderComponent = ({
 
   useEffect(() => {
     const fetchData = async () => {
+      const { state, district,  center } = router.query;
+console.log(router.asPath)
+const fullPath = router.asPath;
+
+// Extract query parameters
+const queryString = fullPath.split('?')[1]; // Get the part after '?'
+console.log(queryString)
+const params = new URLSearchParams(queryString);
+
+// Check if 'block' is present
+const hasBlock = params.has('block');
+const hasDistrict = params.has('district');
+const hasCenter = params.has('center');
+const hasState = params.has('state');
       try {
         const object = {
           // "limit": 20,
@@ -266,13 +303,53 @@ const HeaderComponent = ({
               const districtResult= await formatedDistricts();
 
               setDistricts(districtResult);
-              setSelectedDistrict([districtResult[0]?.label])
-              setSelectedDistrictCode(districtResult[0]?.value)
+              if(!hasDistrict)
+              {
+                setSelectedDistrict([districtResult[0]?.label])
+                setSelectedDistrictCode(districtResult[0]?.value)
+                localStorage.setItem('selectedDistrict', districtResult[0]?.label)
+               setSelectedDistrictStore(districtResult[0]?.label)
+               
+              }
               const blockResult=await formatedBlocks(districtResult[0]?.value)
               setBlocks(blockResult);
+              if(!hasBlock && !hasDistrict)
+              {
 
-             setSelectedBlock([blockResult[0]?.label])
-             setSelectedBlockCode(blockResult[0]?.value)
+                if(userType===Role.TEAM_LEADERS)
+               {
+                  setSelectedBlock([t("COMMON.ALL_BLOCKS")])
+                  //setSelectedBlockCode("")
+                  router.replace({
+                    pathname: router.pathname,
+                    query: { 
+                      ...router.query, 
+                      state: stateField.code, 
+                      district: districtResult[0]?.value, 
+                    }
+                  });
+               }
+               else{
+
+                   setSelectedBlock([blockResult[0]?.label])
+                setSelectedBlockCode(blockResult[0]?.value)
+                localStorage.setItem('selectedBlock',blockResult[0]?.label )
+                 setSelectedBlockStore(blockResult[0]?.label)
+
+                router.replace({
+                  pathname: router.pathname,
+                  query: { 
+                    ...router.query, 
+                    state: stateField.code, 
+                    district: districtResult[0]?.value, 
+                    block: blockResult[0]?.value 
+                  }
+                });
+
+                }
+
+                             }
+           
              const getCentersObject = {
               limit: 0,
               offset: 0,
@@ -309,10 +386,29 @@ const HeaderComponent = ({
                 cohortId: item?.cohortId,
                 name: item?.name,
               }));
+              setAllCenters(cohortInfo);
+
             console.log(dataArray);
-            setAllCenters(cohortInfo);
-            setSelectedCenter([cohortInfo[0]?.name])
-            setSelectedCenterCode(cohortInfo[0]?.cohortId)
+            console.log(userType)
+            if(!hasCenter && !hasBlock && !hasDistrict && userType!==Role.TEAM_LEADERS)
+            {
+              console.log(hasCenter)
+              setSelectedCenter([t("COMMON.ALL_CENTERS")])
+            //  setSelectedCenterCode([cohortInfo[0]?.cohortId])
+            //   localStorage.setItem('selectedCenter',cohortInfo[0]?.name )
+            //  setSelectedCenterStore(cohortInfo[0]?.name)
+              router.replace({
+                pathname: router.pathname,
+                query: { 
+                  ...router.query, 
+                  state: stateField.code, 
+                  district: districtResult[0]?.value, 
+                  block: blockResult[0]?.value ,
+                 // center: cohortInfo[0]?.cohortId
+                }
+              });
+            }
+           
               console.log(cohortInfo)
             }
 
@@ -335,7 +431,7 @@ const HeaderComponent = ({
     if (shouldFetchDistricts) {
       fetchData();
     }
-  }, [shouldFetchDistricts]);
+  }, [shouldFetchDistricts,userType]);
   const handleChange = (event: React.SyntheticEvent, newValue: any) => {
     console.log(newValue);
     setStatusValue(newValue);
@@ -357,7 +453,51 @@ const HeaderComponent = ({
   //   }
   // }, [blocks, selectedBlock, handleBlockChangeWrapper]);
 
- 
+  useEffect(() => {
+
+    const { state, district, block, center } = router.query;
+    {
+
+      if (state) {
+       setSelectedStateCode(state.toString());
+      }
+    
+      if (district) {
+        setSelectedDistrictCode(district.toString());
+       // setSelectedDistrict([selectedDistrictStore])
+       setSelectedDistrict([localStorage.getItem('selectedDistrict')])
+        if(!localStorage.getItem('selectedDistrict'))
+        {
+          setSelectedDistrict([selectedDistrictStore])
+        }
+      
+      }
+  
+      if (block) {
+  
+        setSelectedBlockCode(block.toString());
+        console.log(selectedBlockCode)
+       // setSelectedBlock([selectedBlockStore])
+        setSelectedBlock([localStorage.getItem('selectedBlock')])
+        if(!localStorage.getItem('selectedBlock'))
+          setSelectedBlock([selectedBlockStore])
+      }
+    
+      if (center) {
+        console.log(center)
+
+        setSelectedCenterCode([center.toString()]);
+       // setSelectedCenter([selectedCenterStore])
+        setSelectedCenter([localStorage.getItem('selectedCenter')])
+        if(!localStorage.getItem('selectedCenter'))
+               setSelectedCenter([selectedCenterStore])
+
+      }
+    //  setInitialized(true)
+    }
+  
+  }, [router]);
+  
 
   return (
     <Box
