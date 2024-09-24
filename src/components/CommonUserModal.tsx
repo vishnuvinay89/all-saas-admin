@@ -10,7 +10,10 @@ import {
   updateUser,
 } from "@/services/CreateUserService";
 import { sendCredentialService } from "@/services/NotificationService";
-import { firstLetterInUpperCase, generateUsernameAndPassword } from "@/utils/Helper";
+import {
+  firstLetterInUpperCase,
+  generateUsernameAndPassword,
+} from "@/utils/Helper";
 import { FormData } from "@/utils/Interfaces";
 import {
   FormContext,
@@ -374,7 +377,6 @@ const CommonUserModal: React.FC<UserModalProps> = ({
         onCloseModal();
 
         if (!isEditModal) {
-
           const isQueue = false;
           const context = "USER";
           let creatorName;
@@ -565,9 +567,6 @@ const CommonUserModal: React.FC<UserModalProps> = ({
         {!isEditModal && (
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px",
               marginTop: "10px",
             }}
           >
