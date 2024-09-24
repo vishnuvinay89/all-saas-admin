@@ -3,8 +3,8 @@ import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import MultipleSelectCheckmarks from "./FormControl";
-import { capitalizeFirstLetterOfEachWordInArray} from "@/utils/Helper";
-import {  useMediaQuery } from "@mui/material";
+import { capitalizeFirstLetterOfEachWordInArray } from "@/utils/Helper";
+import { useMediaQuery } from "@mui/material";
 import { Role } from "@/utils/app.constant";
 
 interface State {
@@ -55,11 +55,11 @@ interface DropdownBoxProps {
   isMobile: boolean;
   isMediumScreen: boolean;
   isCenterSelection?: boolean;
-  stateDefaultValue?:string;
+  stateDefaultValue?: string;
   userType?: string;
-  reAssignModal?:boolean;
-  blockDefaultValue?:string;
-  districtDefaultValue?:string
+  reAssignModal?: boolean;
+  blockDefaultValue?: string;
+  districtDefaultValue?: string;
 }
 
 const AreaSelection: React.FC<DropdownBoxProps> = ({
@@ -82,40 +82,35 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
   stateDefaultValue,
   blockDefaultValue,
   districtDefaultValue,
-  
-  userType,
-  reAssignModal=false
-}) => {
 
-console.log(selectedState.length)
+  userType,
+  reAssignModal = false,
+}) => {
+  console.log(selectedState.length);
   const { t } = useTranslation();
   const theme = useTheme<any>();
-const [singleState, setSingleState] = useState <boolean>(true);
-const [stateValue, setStateValue] = useState <string>("");
-const [stateCode, setStateCode] = useState <string>("");
-let isSmallScreen = useMediaQuery((theme: any) =>
-theme.breakpoints.down("sm"),
-);
-// isSmallScreen=isMobile?true: false;
-const blockDisable= districtDefaultValue?false: true
-const shouldRenderSelectCheckmarks =
-!(reAssignModal && userType === Role.TEAM_LEADERS);
+  const [singleState, setSingleState] = useState<boolean>(true);
+  const [stateValue, setStateValue] = useState<string>("");
+  const [stateCode, setStateCode] = useState<string>("");
+  let isSmallScreen = useMediaQuery((theme: any) =>
+    theme.breakpoints.down("sm")
+  );
+  // isSmallScreen=isMobile?true: false;
+  const blockDisable = districtDefaultValue ? false : true;
+  const shouldRenderSelectCheckmarks = !(
+    reAssignModal && userType === Role.TEAM_LEADERS
+  );
   return (
     <Box
       sx={{
         display: "flex",
-        flexDirection: "column",
-        //backgroundColor: theme.palette.secondary["200"],
-        // p: isMobile ? "8px" : "16px",
         borderRadius: "8px",
-        // boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
       }}
     >
-      
-       <Box
+      <Box
         sx={{
           display: "flex",
-          flexDirection: isSmallScreen || isMediumScreen ? "column" : "row",
+          width: "100%",
         }}
       >
         {userType && !reAssignModal && (
@@ -126,102 +121,102 @@ const shouldRenderSelectCheckmarks =
         {!isSmallScreen && (
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "row",
               justifyContent: inModal ? "center" : "flex-end",
               marginLeft: inModal ? undefined : "auto",
             }}
           ></Box>
         )}
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: isSmallScreen ? "column" : "row",
-            alignItems: isSmallScreen ? "center" : undefined,
-            justifyContent: isSmallScreen ? "center" : undefined,
-          }}
-        >
-          <MultipleSelectCheckmarks
-            names={states?.map(
-              (state) =>
-                state.label?.toLowerCase().charAt(0).toUpperCase() +
-                state.label?.toLowerCase().slice(1)
-            )}
-            codes={states?.map((state) => state.value)}
-            tagName={t("FACILITATORS.STATE")}
-            selectedCategories={selectedState}
-            onCategoryChange={handleStateChangeWrapper}
-            disabled={
-              stateDefaultValue === t("COMMON.ALL_STATES") ? false : true
-            }
-            overall={!inModal}
-            defaultValue={stateDefaultValue}
-          />
-          <MultipleSelectCheckmarks
-            names={districts?.map((districts) => districts.label)}
-            codes={districts?.map((districts) => districts.value)}
-            tagName={t("FACILITATORS.DISTRICT")}
-            selectedCategories={selectedDistrict}
-            onCategoryChange={handleDistrictChangeWrapper}
-            disabled={
-              districts?.length <= 0 ||
-              (selectedState.length === 0 &&
-                stateDefaultValue === t("COMMON.ALL_STATES"))
-            }
-            overall={!inModal}
-            defaultValue={
-              //districtDefaultValue? districtDefaultValue:
-
-              reAssignModal
-                ? districtDefaultValue
-                : selectedState.length > 0 && districts?.length === 0
-                ? t("COMMON.NO_DISTRICTS")
-                : t("COMMON.ALL_DISTRICTS")
-            }
-          />
-         { shouldRenderSelectCheckmarks &&( <MultipleSelectCheckmarks
-            names={capitalizeFirstLetterOfEachWordInArray(
-              blocks?.map((blocks) => blocks.label)
-            )}
-            codes={blocks?.map((blocks) => blocks.value)}
-            tagName={t("FACILITATORS.BLOCK")}
-            selectedCategories={capitalizeFirstLetterOfEachWordInArray(selectedBlock)}
-            onCategoryChange={handleBlockChangeWrapper}
-            disabled={
-           //  blockDefaultValue? false:
-
-              blocks?.length <= 0 ||
-              selectedDistrict?.length === 0 ||
-              (selectedDistrict && selectedDistrict[0] === "") ||
-              selectedDistrict[0] === t("COMMON.ALL_DISTRICTS")
-            }
-            overall={!inModal}
-            defaultValue={ 
-            //  blockDefaultValue? blockDefaultValue:
-              selectedDistrict?.length > 0 && blocks?.length <= 0
-                ? t("COMMON.NO_BLOCKS")
-                : t("COMMON.ALL_BLOCKS")
-            }
-          />)
-}
-
-
-         { isCenterSelection && ( <MultipleSelectCheckmarks
-              names={capitalizeFirstLetterOfEachWordInArray(allCenters?.map((centers) => centers.name))}
-              codes={allCenters?.map((centers) => centers.cohortId)}
-              tagName={t("CENTERS.CENTERS")}
-              selectedCategories={selectedCenter}
-              onCategoryChange={handleCenterChangeWrapper}
-              disabled={selectedBlock.length === 0 || selectedCenter[0] === "" ||selectedBlock[0]===t("COMMON.ALL_BLOCKS")|| (selectedBlock?.length > 0 && allCenters?.length <= 0)}
-              overall={!inModal}
-              defaultValue={ 
-                //  blockDefaultValue? blockDefaultValue:
-                  selectedBlock?.length > 0 && allCenters?.length <= 0
-                    ? t("COMMON.NO_CENTERS")
-                    : t("COMMON.ALL_CENTERS")
+        <Box sx={{ width: "100%" }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <MultipleSelectCheckmarks
+                names={states?.map(
+                  (state) =>
+                    state.label?.toLowerCase().charAt(0).toUpperCase() +
+                    state.label?.toLowerCase().slice(1)
+                )}
+                codes={states?.map((state) => state.value)}
+                tagName={t("FACILITATORS.STATE")}
+                selectedCategories={selectedState}
+                onCategoryChange={handleStateChangeWrapper}
+                disabled={stateDefaultValue !== t("COMMON.ALL_STATES")}
+                overall={!inModal}
+                defaultValue={stateDefaultValue}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <MultipleSelectCheckmarks
+                names={districts?.map((district) => district.label)}
+                codes={districts?.map((district) => district.value)}
+                tagName={t("FACILITATORS.DISTRICT")}
+                selectedCategories={selectedDistrict}
+                onCategoryChange={handleDistrictChangeWrapper}
+                disabled={
+                  districts?.length <= 0 ||
+                  (selectedState.length === 0 &&
+                    stateDefaultValue === t("COMMON.ALL_STATES"))
                 }
-            />
-          )}
+                overall={!inModal}
+                defaultValue={
+                  reAssignModal
+                    ? districtDefaultValue
+                    : selectedState.length > 0 && districts?.length === 0
+                      ? t("COMMON.NO_DISTRICTS")
+                      : t("COMMON.ALL_DISTRICTS")
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              {shouldRenderSelectCheckmarks && (
+                <MultipleSelectCheckmarks
+                  names={capitalizeFirstLetterOfEachWordInArray(
+                    blocks?.map((block) => block.label)
+                  )}
+                  codes={blocks?.map((block) => block.value)}
+                  tagName={t("FACILITATORS.BLOCK")}
+                  selectedCategories={capitalizeFirstLetterOfEachWordInArray(
+                    selectedBlock
+                  )}
+                  onCategoryChange={handleBlockChangeWrapper}
+                  disabled={
+                    blocks?.length <= 0 ||
+                    selectedDistrict?.length === 0 ||
+                    selectedDistrict[0] === t("COMMON.ALL_DISTRICTS")
+                  }
+                  overall={!inModal}
+                  defaultValue={
+                    selectedDistrict?.length > 0 && blocks?.length === 0
+                      ? t("COMMON.NO_BLOCKS")
+                      : t("COMMON.ALL_BLOCKS")
+                  }
+                />
+              )}
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              {isCenterSelection && (
+                <MultipleSelectCheckmarks
+                  names={capitalizeFirstLetterOfEachWordInArray(
+                    allCenters?.map((center) => center.name)
+                  )}
+                  codes={allCenters?.map((center) => center.cohortId)}
+                  tagName={t("CENTERS.CENTERS")}
+                  selectedCategories={selectedCenter}
+                  onCategoryChange={handleCenterChangeWrapper}
+                  disabled={
+                    selectedBlock.length === 0 ||
+                    selectedBlock[0] === t("COMMON.ALL_BLOCKS") ||
+                    (selectedBlock?.length > 0 && allCenters?.length === 0)
+                  }
+                  overall={!inModal}
+                  defaultValue={
+                    selectedBlock?.length > 0 && allCenters?.length === 0
+                      ? t("COMMON.NO_CENTERS")
+                      : t("COMMON.ALL_CENTERS")
+                  }
+                />
+              )}
+            </Grid>
+          </Grid>
         </Box>
       </Box>
     </Box>
