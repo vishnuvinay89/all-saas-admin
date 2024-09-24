@@ -212,11 +212,11 @@ const shouldRenderSelectCheckmarks =
               tagName={t("CENTERS.CENTERS")}
               selectedCategories={selectedCenter}
               onCategoryChange={handleCenterChangeWrapper}
-              disabled={selectedBlock.length === 0 || selectedCenter[0] === ""}
+              disabled={selectedBlock.length === 0 || selectedCenter[0] === "" ||selectedBlock[0]===t("COMMON.ALL_BLOCKS")|| (selectedBlock?.length > 0 && allCenters?.length <= 0)}
               overall={!inModal}
               defaultValue={ 
                 //  blockDefaultValue? blockDefaultValue:
-                  selectedBlock?.length > 0 && blocks?.length <= 0
+                  selectedBlock?.length > 0 && allCenters?.length <= 0
                     ? t("COMMON.NO_CENTERS")
                     : t("COMMON.ALL_CENTERS")
                 }

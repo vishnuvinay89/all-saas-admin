@@ -129,7 +129,7 @@ export const capitalizeFirstLetterOfEachWordInArray = (
   }
   console.log(arr);
   return arr?.map((str) =>
-    str.replace(/\b[a-z]/g, (char) => char.toUpperCase())
+    str?.replace(/\b[a-z]/g, (char) => char.toUpperCase())
   );
 };
 export const fieldTextValidation = (text: string) => {
