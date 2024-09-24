@@ -320,12 +320,12 @@ const filters: FilterDetails=
   role: Role.TEAM_LEADER,
   status:[Status.ACTIVE]}
 console.log(filters)        
-      let limit=200;
-      let offset=0;
+      // let limit=200;
+      // let offset=0;
       let sort= ["name", "asc"]
       let resp;
       try {
-        resp = await cohortMemberList({ limit, filters, sort, offset });
+        resp = await cohortMemberList({  filters, sort });
       } catch (apiError) {
         console.log("API call failed, proceeding to else block");
         resp = null;
@@ -770,7 +770,12 @@ finally{   handleCloseConfirmation();
             }}
           >
             {assignedTeamLeaderNames.length>1 ?(
-              <>{assignedTeamLeaderNames[0]} and more..</>
+            <>
+             {t('COMMON.ASSIGNED_TEAM_LEADERS', { assignedTeamLeaderNames:assignedTeamLeaderNames[0]})}
+
+            </> 
+
+
             ):(<>
               {assignedTeamLeaderNames[0]}
             </>)

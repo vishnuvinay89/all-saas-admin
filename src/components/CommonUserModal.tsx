@@ -11,7 +11,7 @@ import {
 } from "@/services/CreateUserService";
 import { generateUsernameAndPassword } from "@/utils/Helper";
 import { FormData } from "@/utils/Interfaces";
-import { FormContext, FormContextType, RoleId ,Role, apiCatchingDuration} from "@/utils/app.constant";
+import { FormContext, FormContextType, RoleId ,Role, apiCatchingDuration, Status} from "@/utils/app.constant";
 import { useLocationState } from "@/utils/useLocationState";
 import useSubmittedButtonStore from "@/utils/useSharedState";
 import { Box, Button, useTheme } from "@mui/material";
@@ -26,6 +26,7 @@ import { showToastMessage } from "./Toastify";
 import SendCredentialModal from './SendCredentialModal';
 import { sendCredentialService } from "@/services/NotificationService";
 import { useQuery } from "@tanstack/react-query";
+import { cohortMemberList } from "@/services/UserList";
 
 interface UserModalProps {
   open: boolean;
@@ -36,7 +37,15 @@ interface UserModalProps {
   onSubmit: (submitValue: boolean) => void;
   userType: string;
 }
-
+type FilterDetails = {
+  role: any;
+  status?: any;
+  districts?: any;
+  states?: any;
+  blocks?: any;
+  name?: any;
+  cohortId?: any
+};
 const CommonUserModal: React.FC<UserModalProps> = ({
   open,
   onClose,
@@ -156,7 +165,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   } = useLocationState(open, onClose, roleType);
 
 
-
+console.log(selectedBlockCohortId)
   useEffect(() => {
     const getAddUserFormData =  () => {
       try {
@@ -345,7 +354,25 @@ const CommonUserModal: React.FC<UserModalProps> = ({
 
           showToastMessage(t(messageKey), "success");
         } else {
-          
+             if(userType===Role.TEAM_LEADER)
+             {
+
+              const filters: FilterDetails=
+{
+  cohortId:selectedBlockCohortId,
+  role: Role.TEAM_LEADER,
+  status:[Status.ACTIVE]}
+              let limit=200;
+              let offset=0;
+              let sort= ["name", "asc"]
+              let resp;
+              try {
+                resp = await cohortMemberList({ limit, filters, sort, offset });
+              } catch (apiError) {
+                console.log("API call failed, proceeding to else block");
+                resp = null;
+              }
+             }
           const response = await createUser(apiBody);
           console.log(response);
           if (response) {
