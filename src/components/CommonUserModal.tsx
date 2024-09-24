@@ -495,33 +495,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
     setCreateFacilitator(false);
     setOpenModal(false);
   };
-  const handleBlockAction = async() => {
-  // const filters: FilterDetails=
-  // {
-    // cohortId:selectedBlockCohortId,
-    // role: Role.TEAM_LEADER,
-    // status:[Status.ACTIVE]}
-              
-    //             let sort= ["name", "asc"]
-    //             let resp;
-    //             try {
-    //               resp = await cohortMemberList({  filters, sort });
-    //             } catch (apiError) {
-    //               console.log("API call failed, proceeding to else block");
-    //               resp = null;
-    //             }
-    //             if(resp?.userDetails)
-    //              {
-
-    //              // onClose();
-    //               setcreateTLAlertModal(true)
-    //             //  setAssignedTeamLeader(resp?.userDetails?.length)
-    //               setSelectedBlockForTL(selectedBlock[0])
-    //               const userNames = resp?.userDetails?.map((user: any )=> user.name);
-    //               //setSelectedTLUserID(userId)
-    //             //  setAssignedTeamLeaderNames(userNames)
-    //              }
-  };
+ 
   const handleAction = () => {
     setTimeout(() => {
       setCreateFacilitator(true);
