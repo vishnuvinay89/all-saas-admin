@@ -367,8 +367,11 @@ console.log(filters)
 
  
   unSelectedBlockCohortIds.push(previousBlockId);
+  let cohortCode = formattedBlocks
+.filter((item:any) => item.label === checkedCenters[0]) 
+.map((item:any) => item.value);
   let cohortIds = blocks
-  .filter((item:any) => item.label !== checkedCenters[0]) 
+  .filter((item:any) => item.value !== cohortCode[0]) 
   .map((item:any) => item.cohortId);
   cohortIds.push(previousBlockId)
         payload = {
@@ -388,7 +391,7 @@ console.log(filters)
         let customFields = [
           {
             fieldId: blockField.fieldId,
-            value: selectedCenterCode,
+            value: cohortCode,
           },
         ];
         console.log(selectedBlockCode,checkedCenters[0])
@@ -507,8 +510,11 @@ let unSelectedBlockCohortIds: string[] = [];
 
 console.log(previousBlockId)
 unSelectedBlockCohortIds.push(previousBlockId);
+let cohortCode = formattedBlocks
+.filter((item:any) => item.label === selectedBlockForTL) 
+.map((item:any) => item.value);
 let cohortIds = blocks
-.filter((item:any) => item.label !== selectedBlockForTL) 
+.filter((item:any) => item.value !== cohortCode) 
 .map((item:any) => item.cohortId);
 cohortIds.push(previousBlockId)
  const  payload = {
@@ -537,7 +543,7 @@ cohortIds.push(previousBlockId)
       customFields = [
         {
           fieldId: blockField.fieldId,
-          value: selectedCenterCode,
+          value: cohortCode,
         },
         {
           fieldId: districtFieldId,
