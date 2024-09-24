@@ -5,6 +5,7 @@ import {
   InputAdornment,
   TextField,
   Typography,
+  FormControlLabel
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTheme } from "@mui/material/styles";
@@ -12,10 +13,10 @@ import { useTranslation } from "next-i18next";
 import { showToastMessage } from "./Toastify";
 import CustomModal from "./CustomModal";
 import SearchIcon from "@mui/icons-material/Search";
-import { Role } from "@/utils/app.constant";
+import { Role , Status} from "@/utils/app.constant";
 import { bulkCreateCohortMembers } from "@/services/CohortService/cohortService";
 import { getCenterList } from "@/services/MasterDataService";
-import { getUserDetailsInfo } from "@/services/UserList";
+import { cohortMemberList, getUserDetailsInfo } from "@/services/UserList";
 import { updateUser } from "@/services/CreateUserService";
 import { useLocationState } from "@/utils/useLocationState";
 import AreaSelection from "./AreaSelection";
@@ -43,7 +44,15 @@ interface Cohort {
   cohortId?: string;
   name?: string;
 }
-
+type FilterDetails = {
+  role: any;
+  status?: any;
+  districts?: any;
+  states?: any;
+  blocks?: any;
+  name?: any;
+  cohortId?: any
+};
 const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
   open,
   onClose,
@@ -59,6 +68,7 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
   centers
   
 }) => { 
+  console.log(userId)
   const { t } = useTranslation();
   const theme = useTheme<any>();
   const roleType = userType;
@@ -110,8 +120,29 @@ const {
     (state: any) => state.reassignButtonStatus
   );
   console.log(names); 
- 
+  // const [filters, setFilters] = useState<FilterDetails>({
+  //  // cohortId:selectedBlockCohortId,
+  //   role: Role.TEAM_LEADER,
+  //   status:[Status.ACTIVE]
+
+  // });
     const [searchInput, setSearchInput] = useState("");
+    const [reassignAlertModal, setReassignAlertModal] = useState(false);
+    const [assignedTeamLeader, setAssignedTeamLeader] = useState("");
+    const [selectedBlockForTL, setSelectedBlockForTL] = useState("");
+    const [assignedTeamLeaderNames, setAssignedTeamLeaderNames] = useState([]);
+    const [confirmButtonDisable, setConfirmButtonDisable] = useState(true);
+    const [checkedConfirmation, setCheckedConfirmation] = useState<boolean>(false);
+    const [selectedBlockCohortIdForTL, setSelectedBlockCohortIdForTL] = useState("");
+    const [selectedTLUserID, setSelectedTLUserID] = useState(userId);
+
+
+    // const [reassignOpen, setReassignOpen] = useState(false);
+
+
+
+
+
 
   //const [selectedBlockId, setselectedBlockId] = useState(blockName);
 
@@ -261,6 +292,8 @@ const {
           "success"
         );
       } else {
+
+
         const reassignBlockObject = {
           limit: 200,
           offset: 0,
@@ -275,15 +308,46 @@ const {
         const selectedBlockCohortId = cohortDetails?.find(
           (item: any) => item?.type === "BLOCK"
         )?.cohortId;
-  
-        if (!selectedBlockCohortId) {
+        setSelectedBlockCohortIdForTL(selectedBlockCohortId)
+        // setFilters({
+        //   cohortId:selectedBlockCohortId,
+        //   role: Role.TEAM_LEADER,
+        //   status:[Status.ACTIVE]}
+        //   )
+const filters: FilterDetails=
+{
+  cohortId:selectedBlockCohortId,
+  role: Role.TEAM_LEADER,
+  status:[Status.ACTIVE]}
+console.log(filters)        
+      let limit=200;
+      let offset=0;
+      let sort= ["name", "asc"]
+      let resp;
+      try {
+        resp = await cohortMemberList({ limit, filters, sort, offset });
+      } catch (apiError) {
+        console.log("API call failed, proceeding to else block");
+        resp = null;
+      }
+   if (!selectedBlockCohortId) {
           showToastMessage(
             t("COMMON.COHORT_ID_NOT_FOUND", { block: checkedCenters[0] }),
             "info"
           );
           return;
         }
-  
+        if(resp?.userDetails)
+        {
+          handleClose();
+          setReassignAlertModal(true)
+          setAssignedTeamLeader(resp?.userDetails?.length)
+          setSelectedBlockForTL(checkedCenters[0])
+          const userNames = resp?.userDetails?.map((user: any )=> user.name);
+          setSelectedTLUserID(userId)
+          setAssignedTeamLeaderNames(userNames)
+        }
+        else{
         const previousBlockObject = {
           limit: 200,
           offset: 0,
@@ -355,9 +419,10 @@ const {
           "success"
         );
         reassignButtonStatus ? setReassignButtonStatus(false) : setReassignButtonStatus(true);
-
+        }
       }
     } catch (error) {
+      console.log(error)
       showToastMessage(
         t(
           userType === Role.TEAM_LEADERS
@@ -414,12 +479,123 @@ console.log(formattedBlocks)
       setCheckedCenters([centerName]);
     }
   };
-  
-  console.log(filteredCohorts)
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCheckedConfirmation(event.target.checked);
 
+  };
+
+  const wrappedHandleReassignAction = async () => {
+    try{
+      console.log(selectedTLUserID)
+   // await handleDeleteAction();
+   const previousBlockObject = {
+    limit: 200,
+    offset: 0,
+    filters: {
+      status: ["active"],
+      name: blockName,
+    },
+  };
+
+  const previousResponse = await getCenterList(previousBlockObject);
+  const previousCohortDetails = previousResponse?.result?.results?.cohortDetails;
+  const previousBlockId = previousCohortDetails?.find(
+    (item: any) => item?.type === "BLOCK"
+  )?.cohortId;
+
+let unSelectedBlockCohortIds: string[] = [];
+
+console.log(previousBlockId)
+unSelectedBlockCohortIds.push(previousBlockId);
+let cohortIds = blocks
+.filter((item:any) => item.label !== selectedBlockForTL) 
+.map((item:any) => item.cohortId);
+cohortIds.push(previousBlockId)
+ const  payload = {
+    userId: [selectedTLUserID],
+    cohortId: [selectedBlockCohortIdForTL],
+    removeCohortId:cohortIds,
+  };
+
+  await bulkCreateCohortMembers(payload);
+  handleClose();
+
+  const userDetails = await getUserDetailsInfo(selectedTLUserID);
+  const blockField = userDetails?.userData?.customFields.find(
+    (field: any) => field.label === "BLOCKS"
+  );
+  const selectedCenterCode = filteredCBlocks.find(location => location.label === selectedBlockForTL)?.value;
+  let customFields = [
+    {
+      fieldId: blockField.fieldId,
+      value: selectedCenterCode,
+    },
+  ];
+  console.log(selectedBlockCode,selectedBlockForTL)
+  if(selectedDistrict[0]!==districtName)
+     {
+      customFields = [
+        {
+          fieldId: blockField.fieldId,
+          value: selectedCenterCode,
+        },
+        {
+          fieldId: districtFieldId,
+          value: selectedDistrictCode,
+        },
+      ];
+     }
+  const updateObject = {
+    userData: {},
+    customFields: customFields,
+  };
+  if (selectedTLUserID) {
+
+    await updateUser(selectedTLUserID, updateObject);
+  }
+
+  showToastMessage(
+    t("COMMON.BLOCKS_REASSIGN_SUCCESSFULLY"),
+    "success"
+  );
+  reassignButtonStatus ? setReassignButtonStatus(false) : setReassignButtonStatus(true);
+  }
+  catch(error)
+  {
+     console.log(error)
+     showToastMessage(
+      t("COMMON.SOMETHING_WENT_WRONG"),
+      "error"
+    );
+  }
+
+finally{   handleCloseConfirmation();
+}
+  };
+  const handleCancelAction = async () => {
+    // await handleDeleteAction();
+    handleCloseConfirmation();
+   };
+  const handleCloseConfirmation=  () => {
+    // await handleDeleteAction();
+   // handleCloseConfirmation();
+   setReassignAlertModal(false)
+   setCheckedConfirmation(false);
+   setConfirmButtonDisable(true)
+   };
+
+
+   useEffect(() => {
+    if (checkedConfirmation) {
+      setConfirmButtonDisable(false);
+    } else {
+      setConfirmButtonDisable(true);
+    }
+  }, [checkedConfirmation]);
   return (
     <>
       <CustomModal
+        width="65%"
         open={open}
         handleClose={handleClose}
         title= {userType===Role.TEAM_LEADERS? t("COMMON.REASSIGN_BLOCKS"):t("COMMON.REASSIGN_CENTERS")}
@@ -544,6 +720,77 @@ console.log(formattedBlocks)
       
        
       </CustomModal>
+      { (
+        <CustomModal
+          width="30%"
+          open={reassignAlertModal}
+          handleClose={handleCloseConfirmation}
+          primaryBtnText={t("COMMON.REASSIGN")}
+          primaryBtnClick={wrappedHandleReassignAction}
+          primaryBtnDisabled={confirmButtonDisable}
+          secondaryBtnText={t("COMMON.CANCEL")}
+          secondaryBtnClick={handleCancelAction}
+        >
+          <Box
+            sx={{
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              padding: "16px",
+              width: "fit-content",
+              backgroundColor: "#f9f9f9",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Typography
+              variant="body1"
+              sx={{ marginBottom: "12px", fontWeight: "bold", color: "#333" }}
+            >
+{assignedTeamLeaderNames.length>1 ?(
+              <>
+               {t('COMMON.MULTIPLE_TEAM_LEADERS_ASSIGNED', { selectedBlockForTL: selectedBlockForTL,assignedTeamLeader: assignedTeamLeader})}
+
+              </>
+            ):(<>
+
+              {t('COMMON.SINGLE_TEAM_LEADERS_ASSIGNED', { selectedBlockForTL: selectedBlockForTL,assignedTeamLeader: assignedTeamLeader})}
+
+                        </>)
+}
+             
+            </Typography>
+            <Box
+            sx={{
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              padding: "8px",
+              marginBottom: "16px",
+              backgroundColor: "#fff",
+              maxHeight: "200px",
+              overflowY: "auto",
+            }}
+          >
+            {assignedTeamLeaderNames.length>1 ?(
+              <>{assignedTeamLeaderNames[0]} and more..</>
+            ):(<>
+              {assignedTeamLeaderNames[0]}
+            </>)
+             
+            }
+         </Box>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={checkedConfirmation}
+                  onChange={handleChange}
+                  color="primary"
+                />
+              }
+              label={ t('COMMON.CONTINUE_ASSIGNED_TEAM_LEADER', {selectedBlockForTL: selectedBlockForTL})}
+              sx={{ marginTop: "12px", color: "#555" }}
+            />
+          </Box>
+        </CustomModal>
+      )}
     </>
   );
 };
