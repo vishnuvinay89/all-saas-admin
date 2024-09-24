@@ -1,7 +1,7 @@
 import { post, get } from "./RestClient";
 
 export interface userListParam {
-  limit: number;
+  limit?: number;
   //  page: number;
   filters: {
     role?: string;
