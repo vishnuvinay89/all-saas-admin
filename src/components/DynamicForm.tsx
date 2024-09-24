@@ -9,7 +9,7 @@ import CustomRadioWidget from "./form/CustomRadioWidget";
 import MultiSelectCheckboxes from "./form/MultiSelectCheckboxes";
 import MultiSelectDropdown from "./form/MultiSelectDropdown";
 const FormWithMaterialUI = withTheme(MaterialUITheme);
-import { getCurrentYearPattern } from '@/utils/Helper';
+import { getCurrentYearPattern } from "@/utils/Helper";
 
 interface DynamicFormProps {
   schema: any;
@@ -55,9 +55,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   const setUserEnteredEmail = useSubmittedButtonStore(
     (state: any) => state.setUserEnteredEmail
   );
-  const setNoError= useSubmittedButtonStore(
-    (state: any) => state.setNoError
-  );
+  const setNoError = useSubmittedButtonStore((state: any) => state.setNoError);
 
   const widgets: any = {
     MultiSelectDropdown: MultiSelectDropdown,
@@ -67,9 +65,9 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
   const handleError = (errors: any) => {
     if (errors.length === 0) {
-    console.log("No errors");
-    // You can perform any additional action here when there are no errors
-  }
+      console.log("No errors");
+      // You can perform any additional action here when there are no errors
+    }
     console.log("handle error1");
     if (errors.length > 0) {
       const property = errors[0].property?.replace(/^root\./, "");
@@ -117,7 +115,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     console.log("Form data changed:", cleanedFormData);
 
     setLocalFormData(cleanedFormData);
-    setUserEnteredEmail(cleanedFormData?.email)
+    setUserEnteredEmail(cleanedFormData?.email);
     onChange({ ...event, formData: cleanedFormData });
   };
 
@@ -125,14 +123,14 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     const currentYearPattern = new RegExp(getCurrentYearPattern());
 
     console.log("errors", errors);
-    errors.length===0? setNoError(true):  setNoError(false)
-   
+    errors.length === 0 ? setNoError(true) : setNoError(false);
+
     console.log("schema", schema);
 
     return errors?.map((error: any) => {
       switch (error.name) {
         case "required": {
-          console.log(submittedButtonStatus)
+          console.log(submittedButtonStatus);
           error.message = submittedButtonStatus
             ? t("FORM_ERROR_MESSAGES.THIS_IS_REQUIRED_FIELD")
             : "";
@@ -211,7 +209,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             default: {
               const validRange = currentYearPattern.test(pattern);
               if (!validRange) {
-                error.message = t('FORM_ERROR_MESSAGES.ENTER_VALID_YEAR');
+                error.message = t("FORM_ERROR_MESSAGES.ENTER_VALID_YEAR");
               }
               break;
             }
@@ -250,10 +248,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     });
   };
   useEffect(() => {
-   // setSubmittedButtonStatus(false);
+    // setSubmittedButtonStatus(false);
   }, []);
   return (
-    <div>
+    <div className="shreyas shinde">
       <FormWithMaterialUI
         schema={schema}
         uiSchema={uiSchema}
@@ -270,7 +268,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         fields={customFields}
         id={id}
       >
-                        <style>{`.rjsf-default-submit { display: none !important; }`}</style>
+        <style>{`.rjsf-default-submit { display: none !important; }`}</style>
         {children}
       </FormWithMaterialUI>
     </div>
