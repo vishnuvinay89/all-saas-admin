@@ -86,6 +86,7 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
 
   return (
     <CustomModal
+    width="25%"
       open={open}
       handleClose={handleClose}
       title={t("COMMON.DELETE_USER")}

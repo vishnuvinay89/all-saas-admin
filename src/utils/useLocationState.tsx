@@ -5,11 +5,20 @@ import {
   getCenterList,
 } from "../services/MasterDataService"; // Update the import path as needed
 import { getCohortList } from "@/services/CohortService/cohortService";
-import { FormContextType, QueryKeys } from "./app.constant";
+import { FormContextType, QueryKeys, Status, Role } from "./app.constant";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { formatedBlocks, formatedDistricts } from "@/services/formatedCohorts";
-
+import { cohortMemberList } from "@/services/UserList";
+type FilterDetails = {
+  role: any;
+  status?: any;
+  districts?: any;
+  states?: any;
+  blocks?: any;
+  name?: any;
+  cohortId?: any
+};
 interface FieldProp {
   value: string;
   label: string;
@@ -50,6 +59,8 @@ export const useLocationState = (
   const [stateDefaultValue, setStateDefaultValue] = useState<string>("");
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const [assignedTeamLeader, setAssignedTeamLeader] = useState("");
+  const [assignedTeamLeaderNames, setAssignedTeamLeaderNames] = useState([]);
 
   const handleStateChangeWrapper = useCallback(
     async (selectedNames: string[], selectedCodes: string[]) => {
@@ -154,17 +165,53 @@ export const useLocationState = (
           };
           const response = await getCenterList(object);
           const getCohortDetails = response?.result?.results?.cohortDetails;
+          console.log(getCohortDetails)
           const blockId = getCohortDetails?.map((item: any) => {
             if (item?.type === "BLOCK") {
               return item?.cohortId;
             }
-          });
+          })
+          const blockCohortId =  getCohortDetails?.find(
+            (item: any) => item?.type === "BLOCK"
+          )?.cohortId;
           if (blockId) {
             console.log("blockId", blockId[0]);
             setSelectedBlockCohortId(blockId[0]);
           } else {
             console.log("No Block Id found");
           }
+
+
+          const filters: FilterDetails=
+  {
+    cohortId:blockCohortId,
+    role: Role.TEAM_LEADER,
+    status:[Status.ACTIVE]}
+              
+                let sort= ["name", "asc"]
+                let resp;
+                try {
+                  resp = await cohortMemberList({  filters, sort });
+                } catch (apiError) {
+                  console.log("API call failed, proceeding to else block");
+                  resp = null;
+                }
+                if(resp?.userDetails)
+                 {
+
+                 // onClose();
+                 // setcreateTLAlertModal(true)
+                  setAssignedTeamLeader(resp?.userDetails?.length)
+               //   setSelectedBlockForTL(selectedBlock[0])
+                  const userNames = resp?.userDetails?.map((user: any )=> user.name);
+                  //setSelectedTLUserID(userId)
+                 setAssignedTeamLeaderNames(userNames)
+                 }
+                 else{
+                  setAssignedTeamLeader("");
+                  setAssignedTeamLeaderNames([])
+                 }
+
         } else {
           const getCentersObject = {
             limit: 0,
@@ -180,9 +227,14 @@ export const useLocationState = (
           };
           const response = await getCenterList(getCentersObject);
           console.log(response?.result?.results?.cohortDetails[0].cohortId);
-          setSelectedBlockCohortId(
-            response?.result?.results?.cohortDetails[0].cohortId
-          );
+          // setSelectedBlockCohortId(
+          //   response?.result?.results?.cohortDetails[0].cohortId
+          // );
+          const blockCohortId =  response?.result?.results?.cohortDetails?.find(
+            (item: any) => item?.type === "BLOCK"
+          )?.cohortId;
+          console.log(blockCohortId)
+          setSelectedBlockCohortId(blockCohortId)
           //   const result = response?.result?.cohortDetails;
           const dataArray = response?.result?.results?.cohortDetails;
 
@@ -195,7 +247,9 @@ export const useLocationState = (
           console.log(dataArray);
           setAllCenters(cohortInfo);
         }
-        console.log(selected);
+
+
+                console.log(selected);
       } catch (error) {
         setAllCenters([]);
 
@@ -462,7 +516,9 @@ export const useLocationState = (
     setSelectedBlock,
     setSelectedDistrict,
     setSelectedDistrictCode,
-    setSelectedBlockCode
+    setSelectedBlockCode,
+    assignedTeamLeaderNames,
+    assignedTeamLeader
 
   };
 };

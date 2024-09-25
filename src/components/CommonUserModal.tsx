@@ -20,11 +20,12 @@ import {
   FormContextType,
   Role,
   RoleId,
+  Status,
   apiCatchingDuration,
 } from "@/utils/app.constant";
 import { useLocationState } from "@/utils/useLocationState";
 import useSubmittedButtonStore from "@/utils/useSharedState";
-import { Box, Button, useTheme } from "@mui/material";
+import { Box, Button, Checkbox, FormControlLabel, Typography, useTheme } from "@mui/material";
 import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -35,6 +36,9 @@ import { transformArray } from "../utils/Helper";
 import AreaSelection from "./AreaSelection";
 import SendCredentialModal from "./SendCredentialModal";
 import { showToastMessage } from "./Toastify";
+import { cohortMemberList } from "@/services/UserList";
+import CustomModal from "./CustomModal";
+import { setConfig } from "next/config";
 
 interface UserModalProps {
   open: boolean;
@@ -45,6 +49,8 @@ interface UserModalProps {
   onSubmit: (submitValue: boolean) => void;
   userType: string;
 }
+
+
 
 const CommonUserModal: React.FC<UserModalProps> = ({
   open,
@@ -60,6 +66,10 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   const [uiSchema, setUiSchema] = React.useState<any>();
   const [openModal, setOpenModal] = React.useState(false);
   const [adminInfo, setAdminInfo] = React.useState<any>();
+  const [createTLAlertModal, setcreateTLAlertModal] = useState(false);
+  const [confirmButtonDisable, setConfirmButtonDisable] = useState(true);
+  const [checkedConfirmation, setCheckedConfirmation] = useState<boolean>(false);
+  
   const messageKeyMap: Record<string, string> = {
     [FormContextType.STUDENT]: "LEARNERS.LEARNER_CREATED_SUCCESSFULLY",
     [FormContextType.TEACHER]: "FACILITATORS.FACILITATOR_CREATED_SUCCESSFULLY",
@@ -167,7 +177,10 @@ const CommonUserModal: React.FC<UserModalProps> = ({
     stateFieldId,
     dynamicFormForBlock,
     stateDefaultValue,
+    assignedTeamLeader,
+    assignedTeamLeaderNames
   } = useLocationState(open, onClose, roleType);
+  console.log(assignedTeamLeaderNames)
 
   useEffect(() => {
     const getAddUserFormData = () => {
@@ -464,7 +477,6 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   const handleChange = (event: IChangeEvent<any>) => {
     console.log("Form data changed:", event.formData);
   };
-
   const handleError = (errors: any) => {
     console.log("Form errors:", errors);
   };
@@ -472,7 +484,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
     setCreateFacilitator(false);
     setOpenModal(false);
   };
-
+ 
   const handleAction = () => {
     setTimeout(() => {
       setCreateFacilitator(true);
@@ -499,6 +511,45 @@ const CommonUserModal: React.FC<UserModalProps> = ({
       setSubmitButtonEnable(true);
     }
   }, [dynamicForm, dynamicFormForBlock, open]);
+
+
+  const handleChangeCheckBox = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCheckedConfirmation(event.target.checked);
+
+  };
+
+  const wrappedHandleContinueAction = () => {
+    handleCloseConfirmation();
+     setOpenModal(true);
+     //onClose();
+
+  
+
+}
+
+  const handleCancelAction = async () => {
+    // await handleDeleteAction();
+    handleCloseConfirmation();
+//setAssignedTeamLeaderNames([]);
+   };
+  const handleCloseConfirmation=  () => {
+    // await handleDeleteAction();
+   // handleCloseConfirmation();
+   setcreateTLAlertModal(false);
+   setCheckedConfirmation(false);
+   setConfirmButtonDisable(true);
+ //  setAssignedTeamLeaderNames([]);
+
+   };
+
+
+   useEffect(() => {
+    if (checkedConfirmation) {
+      setConfirmButtonDisable(false);
+    } else {
+      setConfirmButtonDisable(true);
+    }
+  }, [checkedConfirmation]);
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
       const admin = localStorage.getItem("adminInfo");
@@ -554,7 +605,18 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                   !isEditModal &&
                   noError
                 ) {
-                  setOpenModal(true);
+                 // setOpenModal(true);
+                 console.log(assignedTeamLeaderNames.length)
+                 if(assignedTeamLeaderNames.length!==0 && userType===FormContextType.TEAM_LEADER)
+                 {
+                    setcreateTLAlertModal(true);
+                                     // setOpenModal(true)
+
+                 }
+                 else{
+                  //onClose();
+                  setOpenModal(true)
+                 }
                 }
                 console.log("Submit button was clicked");
               }}
@@ -664,6 +726,89 @@ const CommonUserModal: React.FC<UserModalProps> = ({
               : Role.TEACHER
         }
       />
+
+
+
+
+
+
+
+
+
+<CustomModal
+          width="40%"
+          open={createTLAlertModal}
+          handleClose={handleCloseConfirmation}
+          primaryBtnText={t("COMMON.CONTINUE")}
+          primaryBtnClick={wrappedHandleContinueAction}
+          primaryBtnDisabled={confirmButtonDisable}
+          secondaryBtnText={t("COMMON.CANCEL")}
+          secondaryBtnClick={handleCancelAction}
+        >
+          <Box
+            sx={{
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              padding: "16px",
+              width: "fit-content",
+              backgroundColor: "#f9f9f9",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Typography
+              variant="body1"
+              sx={{ marginBottom: "12px", fontWeight: "bold", color: "#333" }}
+            >
+{assignedTeamLeaderNames.length>1 ?(
+              <>
+               {t('COMMON.MULTIPLE_TEAM_LEADERS_ASSIGNED', { selectedBlockForTL: selectedBlock[0],assignedTeamLeader: assignedTeamLeader})}
+
+              </>
+            ):(<>
+
+              {t('COMMON.SINGLE_TEAM_LEADERS_ASSIGNED', { selectedBlockForTL: selectedBlock[0],assignedTeamLeader: assignedTeamLeader})}
+
+                        </>)
+}
+             
+            </Typography>
+            <Box
+            sx={{
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              padding: "8px",
+              marginBottom: "16px",
+              backgroundColor: "#fff",
+              maxHeight: "200px",
+              overflowY: "auto",
+            }}
+          >
+            {assignedTeamLeaderNames.length>1 ?(
+            <>
+             {t('COMMON.ASSIGNED_TEAM_LEADERS', { assignedTeamLeaderNames:assignedTeamLeaderNames[0]})}
+
+            </> 
+
+
+            ):(<>
+              {assignedTeamLeaderNames[0]}
+            </>)
+             
+            }
+         </Box>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={checkedConfirmation}
+                  onChange={handleChangeCheckBox}
+                  color="primary"
+                />
+              }
+              label={ t('COMMON.CONTINUE_ASSIGNED_TEAM_LEADER', {selectedBlockForTL: selectedBlock[0]})}
+              sx={{ marginTop: "12px", color: "#555" }}
+            />
+          </Box>
+        </CustomModal>
     </>
   );
 };

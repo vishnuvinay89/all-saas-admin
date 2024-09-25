@@ -126,7 +126,12 @@
     "NO_BLOCK_AVAILABLE": "No blocks available",
     "PLEASE_SELECT_BLOCK_LIST": "Please select block from block list",
     "ALL_CENTERS": "All centers",
-    "NO_CENTERS": "No centers"
+    "NO_CENTERS": "No centers",
+    "MULTIPLE_TEAM_LEADERS_ASSIGNED": "Selected block {{selectedBlockForTL}} already has {{assignedTeamLeader}} Team Leaders assigned.",
+    "SINGLE_TEAM_LEADERS_ASSIGNED":"Selected block {{selectedBlockForTL}} already has {{assignedTeamLeader}} Team Leader assigned.",
+    "CONTINUE_ASSIGNED_TEAM_LEADER":"Still do you want to continue to assign team leader to {{selectedBlockForTL}}",
+    "ASSIGNED_TEAM_LEADERS":"{{assignedTeamLeaderNames}} and more..",
+    "CONTINUE":"Continue"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",

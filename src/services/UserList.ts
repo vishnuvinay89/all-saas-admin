@@ -1,10 +1,10 @@
 import { post, get } from "./RestClient";
 
 export interface userListParam {
-  limit: number;
+  limit?: number;
   //  page: number;
   filters: {
-    role: string;
+    role?: string;
     status?: string;
     states?: string;
     districts?: string;
@@ -12,7 +12,7 @@ export interface userListParam {
   };
   fields?: any;
   sort?: object;
-  offset: number;
+  offset?: number;
 }
 
 export const userList = async ({
