@@ -51,15 +51,7 @@ interface UserModalProps {
 }
 
 
-type FilterDetails = {
-  role: any;
-  status?: any;
-  districts?: any;
-  states?: any;
-  blocks?: any;
-  name?: any;
-  cohortId?: any
-};
+
 const CommonUserModal: React.FC<UserModalProps> = ({
   open,
   onClose,
@@ -75,12 +67,9 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   const [openModal, setOpenModal] = React.useState(false);
   const [adminInfo, setAdminInfo] = React.useState<any>();
   const [createTLAlertModal, setcreateTLAlertModal] = useState(false);
-  const [selectedBlockForTL, setSelectedBlockForTL] = useState("");
   const [confirmButtonDisable, setConfirmButtonDisable] = useState(true);
   const [checkedConfirmation, setCheckedConfirmation] = useState<boolean>(false);
-  const [selectedBlockCohortIdForTL, setSelectedBlockCohortIdForTL] = useState("");
-  const [selectedTLUserID, setSelectedTLUserID] = useState(userId);
-
+  
   const messageKeyMap: Record<string, string> = {
     [FormContextType.STUDENT]: "LEARNERS.LEARNER_CREATED_SUCCESSFULLY",
     [FormContextType.TEACHER]: "FACILITATORS.FACILITATOR_CREATED_SUCCESSFULLY",
