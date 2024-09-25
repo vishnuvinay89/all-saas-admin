@@ -86,7 +86,6 @@ const HeaderComponent = ({
   setSelectedCenterCode,
   setSelectedStateCode,
 }: any) => {
-
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -183,7 +182,7 @@ const HeaderComponent = ({
       // };
       // const response = await getStateBlockDistrictList(object);
       const result = response?.result?.values;
-      const blockResult=await formatedBlocks(selectedCodes[0])
+      const blockResult = await formatedBlocks(selectedCodes[0]);
 
       setBlocks(blockResult);
     } catch (error) {
@@ -244,20 +243,20 @@ const HeaderComponent = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      const { state, district,  center } = router.query;
-console.log(router.asPath)
-const fullPath = router.asPath;
+      const { state, district, center } = router.query;
+      console.log(router.asPath);
+      const fullPath = router.asPath;
 
-// Extract query parameters
-const queryString = fullPath.split('?')[1]; // Get the part after '?'
-console.log(queryString)
-const params = new URLSearchParams(queryString);
+      // Extract query parameters
+      const queryString = fullPath.split("?")[1]; // Get the part after '?'
+      console.log(queryString);
+      const params = new URLSearchParams(queryString);
 
-// Check if 'block' is present
-const hasBlock = params.has('block');
-const hasDistrict = params.has('district');
-const hasCenter = params.has('center');
-const hasState = params.has('state');
+      // Check if 'block' is present
+      const hasBlock = params.has("block");
+      const hasDistrict = params.has("district");
+      const hasCenter = params.has("center");
+      const hasState = params.has("state");
       try {
         const object = {
           // "limit": 20,
@@ -300,116 +299,116 @@ const hasState = params.has('state');
               // console.log(object);
               // const response = await getStateBlockDistrictList(object);
               const result = response?.result?.values;
-              const districtResult= await formatedDistricts();
+              const districtResult = await formatedDistricts();
 
               setDistricts(districtResult);
-              if(!hasDistrict)
-              {
-                setSelectedDistrict([districtResult[0]?.label])
-                setSelectedDistrictCode(districtResult[0]?.value)
-                localStorage.setItem('selectedDistrict', districtResult[0]?.label)
-               setSelectedDistrictStore(districtResult[0]?.label)
-               
+              if (!hasDistrict) {
+                setSelectedDistrict([districtResult[0]?.label]);
+                setSelectedDistrictCode(districtResult[0]?.value);
+                localStorage.setItem(
+                  "selectedDistrict",
+                  districtResult[0]?.label
+                );
+                setSelectedDistrictStore(districtResult[0]?.label);
               }
-              const blockResult=await formatedBlocks(districtResult[0]?.value)
+              const blockResult = await formatedBlocks(
+                districtResult[0]?.value
+              );
               setBlocks(blockResult);
-              if(!hasBlock && !hasDistrict)
-              {
-
-                if(userType===Role.TEAM_LEADERS)
-               {
-                  setSelectedBlock([t("COMMON.ALL_BLOCKS")])
+              if (!hasBlock && !hasDistrict) {
+                if (userType === Role.TEAM_LEADERS) {
+                  setSelectedBlock([t("COMMON.ALL_BLOCKS")]);
                   //setSelectedBlockCode("")
                   router.replace({
                     pathname: router.pathname,
-                    query: { 
-                      ...router.query, 
-                      state: stateField.code, 
-                      district: districtResult[0]?.value, 
-                    }
+                    query: {
+                      ...router.query,
+                      state: stateField.code,
+                      district: districtResult[0]?.value,
+                    },
                   });
-               }
-               else{
+                } else {
+                  setSelectedBlock([blockResult[0]?.label]);
+                  setSelectedBlockCode(blockResult[0]?.value);
+                  localStorage.setItem("selectedBlock", blockResult[0]?.label);
+                  setSelectedBlockStore(blockResult[0]?.label);
 
-                   setSelectedBlock([blockResult[0]?.label])
-                setSelectedBlockCode(blockResult[0]?.value)
-                localStorage.setItem('selectedBlock',blockResult[0]?.label )
-                 setSelectedBlockStore(blockResult[0]?.label)
-
-                router.replace({
-                  pathname: router.pathname,
-                  query: { 
-                    ...router.query, 
-                    state: stateField.code, 
-                    district: districtResult[0]?.value, 
-                    block: blockResult[0]?.value 
-                  }
-                });
-
+                  router.replace({
+                    pathname: router.pathname,
+                    query: {
+                      ...router.query,
+                      state: stateField.code,
+                      district: districtResult[0]?.value,
+                      block: blockResult[0]?.value,
+                    },
+                  });
                 }
+              }
 
-                             }
-           
-             const getCentersObject = {
-              limit: 0,
-              offset: 0,
-              filters: {
-                // "type":"COHORT",
-                status: ["active"],
-                states:  stateField.code,
-                districts: districtResult[0]?.value,
-                blocks: blockResult[0]?.value,
-                // "name": selected[0]
-              },
-            };
-            const centerResponse = await queryClient.fetchQuery({
-              queryKey: [
-                QueryKeys.FIELD_OPTION_READ,
-                getCentersObject.limit,
-                getCentersObject.offset,
-                getCentersObject.filters,
-              ],
-              queryFn: () => getCenterList(getCentersObject),
-            });
-            // const response = await getCenterList(getCentersObject);
-            console.log(centerResponse);
-            // setSelectedBlockCohortId(
-            //   response?.result?.results?.cohortDetails[0].cohortId
-            // );
-            //   const result = response?.result?.cohortDetails;
-            const dataArray = centerResponse?.result?.results?.cohortDetails;
-            console.log(dataArray);
+              const getCentersObject = {
+                limit: 0,
+                offset: 0,
+                filters: {
+                  // "type":"COHORT",
+                  status: ["active"],
+                  states: stateField.code,
+                  districts: districtResult[0]?.value,
+                  blocks: blockResult[0]?.value,
+                  // "name": selected[0]
+                },
+              };
+              const centerResponse = await queryClient.fetchQuery({
+                queryKey: [
+                  QueryKeys.FIELD_OPTION_READ,
+                  getCentersObject.limit,
+                  getCentersObject.offset,
+                  getCentersObject.filters,
+                ],
+                queryFn: () => getCenterList(getCentersObject),
+              });
+              // const response = await getCenterList(getCentersObject);
+              console.log(centerResponse);
+              // setSelectedBlockCohortId(
+              //   response?.result?.results?.cohortDetails[0].cohortId
+              // );
+              //   const result = response?.result?.cohortDetails;
+              const dataArray = centerResponse?.result?.results?.cohortDetails;
+              console.log(dataArray);
 
-            const cohortInfo = dataArray
-              ?.filter((cohort: any) => cohort.type !== "BLOCK")
-              .map((item: any) => ({
-                cohortId: item?.cohortId,
-                name: item?.name,
-              }));
+              const cohortInfo = dataArray
+                ?.filter((cohort: any) => cohort.type !== "BLOCK")
+                .map((item: any) => ({
+                  cohortId: item?.cohortId,
+                  name: item?.name,
+                }));
               setAllCenters(cohortInfo);
 
-            console.log(dataArray);
-            console.log(userType)
-            if(!hasCenter && !hasBlock && !hasDistrict && userType!==Role.TEAM_LEADERS)
-            {
-              console.log(hasCenter)
-              setSelectedCenter([t("COMMON.ALL_CENTERS")])
-            //  setSelectedCenterCode([cohortInfo[0]?.cohortId])
-            //   localStorage.setItem('selectedCenter',cohortInfo[0]?.name )
-            //  setSelectedCenterStore(cohortInfo[0]?.name)
-              router.replace({
-                pathname: router.pathname,
-                query: { 
-                  ...router.query, 
-                  state: stateField.code, 
-                  district: districtResult[0]?.value, 
-                  block: blockResult[0]?.value ,
-                 // center: cohortInfo[0]?.cohortId
-                }
-              });
-            }
-           
-              console.log(cohortInfo)
+              console.log(dataArray);
+              console.log(userType);
+              if (
+                !hasCenter &&
+                !hasBlock &&
+                !hasDistrict &&
+                userType !== Role.TEAM_LEADERS
+              ) {
+                console.log(hasCenter);
+                setSelectedCenter([t("COMMON.ALL_CENTERS")]);
+                //  setSelectedCenterCode([cohortInfo[0]?.cohortId])
+                //   localStorage.setItem('selectedCenter',cohortInfo[0]?.name )
+                //  setSelectedCenterStore(cohortInfo[0]?.name)
+                router.replace({
+                  pathname: router.pathname,
+                  query: {
+                    ...router.query,
+                    state: stateField.code,
+                    district: districtResult[0]?.value,
+                    block: blockResult[0]?.value,
+                    // center: cohortInfo[0]?.cohortId
+                  },
+                });
+              }
+
+              console.log(cohortInfo);
             }
 
             const object = [
@@ -431,7 +430,7 @@ const hasState = params.has('state');
     if (shouldFetchDistricts) {
       fetchData();
     }
-  }, [shouldFetchDistricts,userType]);
+  }, [shouldFetchDistricts, userType]);
   const handleChange = (event: React.SyntheticEvent, newValue: any) => {
     console.log(newValue);
     setStatusValue(newValue);
@@ -454,50 +453,42 @@ const hasState = params.has('state');
   // }, [blocks, selectedBlock, handleBlockChangeWrapper]);
 
   useEffect(() => {
-
     const { state, district, block, center } = router.query;
     {
-
       if (state) {
-       setSelectedStateCode(state.toString());
+        setSelectedStateCode(state.toString());
       }
-    
+
       if (district) {
         setSelectedDistrictCode(district.toString());
-       // setSelectedDistrict([selectedDistrictStore])
-       setSelectedDistrict([localStorage.getItem('selectedDistrict')])
-        if(!localStorage.getItem('selectedDistrict'))
-        {
-          setSelectedDistrict([selectedDistrictStore])
+        // setSelectedDistrict([selectedDistrictStore])
+        setSelectedDistrict([localStorage.getItem("selectedDistrict")]);
+        if (!localStorage.getItem("selectedDistrict")) {
+          setSelectedDistrict([selectedDistrictStore]);
         }
-      
       }
-  
+
       if (block) {
-  
         setSelectedBlockCode(block.toString());
-        console.log(selectedBlockCode)
-       // setSelectedBlock([selectedBlockStore])
-        setSelectedBlock([localStorage.getItem('selectedBlock')])
-        if(!localStorage.getItem('selectedBlock'))
-          setSelectedBlock([selectedBlockStore])
+        console.log(selectedBlockCode);
+        // setSelectedBlock([selectedBlockStore])
+        setSelectedBlock([localStorage.getItem("selectedBlock")]);
+        if (!localStorage.getItem("selectedBlock"))
+          setSelectedBlock([selectedBlockStore]);
       }
-    
+
       if (center) {
-        console.log(center)
+        console.log(center);
 
         setSelectedCenterCode([center.toString()]);
-       // setSelectedCenter([selectedCenterStore])
-        setSelectedCenter([localStorage.getItem('selectedCenter')])
-        if(!localStorage.getItem('selectedCenter'))
-               setSelectedCenter([selectedCenterStore])
-
+        // setSelectedCenter([selectedCenterStore])
+        setSelectedCenter([localStorage.getItem("selectedCenter")]);
+        if (!localStorage.getItem("selectedCenter"))
+          setSelectedCenter([selectedCenterStore]);
       }
-    //  setInitialized(true)
+      //  setInitialized(true)
     }
-  
   }, [router]);
-  
 
   return (
     <Box

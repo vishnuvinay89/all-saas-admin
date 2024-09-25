@@ -46,10 +46,10 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: isSmallScreen ? "90%" : isLargeScreen ? "65%" : "85%",
+    width: isSmallScreen ? "90%" : "40%",
     maxHeight: "80vh",
     backgroundColor: "#fff",
-    borderRadius: '8px',
+    borderRadius: "8px",
     boxShadow: theme.shadows[5],
   };
 
@@ -60,8 +60,8 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
     padding: theme.spacing(2),
     zIndex: 9999,
     borderBottom: `1px solid ${theme.palette.divider}`,
-    borderTopLeftRadius: '8px',
-    borderTopRightRadius: '8px',
+    borderTopLeftRadius: "8px",
+    borderTopRightRadius: "8px",
   };
 
   const contentStyle = {

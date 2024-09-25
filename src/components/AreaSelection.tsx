@@ -111,24 +111,36 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
         sx={{
           display: "flex",
           width: "100%",
+          justifyContent: "space-between",
+          "@media (max-width: 900px)": {
+            flexDirection: "column",
+          },
         }}
       >
         {userType && !reAssignModal && (
-          <Typography marginTop="20px" variant="h1">
-            {userType}
-          </Typography>
+          <Box>
+            <Typography marginTop="20px" variant="h1">
+              {userType}
+            </Typography>
+          </Box>
         )}
-        {!isSmallScreen && (
-          <Box
-            sx={{
-              justifyContent: inModal ? "center" : "flex-end",
-              marginLeft: inModal ? undefined : "auto",
-            }}
-          ></Box>
-        )}
-        <Box sx={{ width: "100%" }}>
+
+        <Box
+          sx={{
+            width: inModal ? "100%" : "62%",
+            "@media (max-width: 900px)": {
+              width: "100%",
+            },
+          }}
+        >
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Grid
+              item
+              xs={12}
+              sm={inModal ? 12 : 6}
+              md={inModal ? 12 : 4}
+              lg={inModal ? 12 : isCenterSelection ? 3 : 4}
+            >
               <MultipleSelectCheckmarks
                 names={states?.map(
                   (state) =>
@@ -144,7 +156,13 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
                 defaultValue={stateDefaultValue}
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Grid
+              item
+              xs={12}
+              sm={inModal ? 12 : 6}
+              md={inModal ? 12 : 4}
+              lg={inModal ? 12 : isCenterSelection ? 3 : 4}
+            >
               <MultipleSelectCheckmarks
                 names={districts?.map((district) => district.label)}
                 codes={districts?.map((district) => district.value)}
@@ -166,7 +184,13 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
                 }
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Grid
+              item
+              xs={12}
+              sm={inModal ? 12 : 6}
+              md={inModal ? 12 : 4}
+              lg={inModal ? 12 : isCenterSelection ? 3 : 4}
+            >
               {shouldRenderSelectCheckmarks && (
                 <MultipleSelectCheckmarks
                   names={capitalizeFirstLetterOfEachWordInArray(
@@ -192,8 +216,14 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
                 />
               )}
             </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              {isCenterSelection && (
+            {isCenterSelection && (
+              <Grid
+                item
+                xs={12}
+                sm={inModal ? 12 : 6}
+                md={inModal ? 12 : 4}
+                lg={inModal ? 12 : isCenterSelection ? 3 : 4}
+              >
                 <MultipleSelectCheckmarks
                   names={capitalizeFirstLetterOfEachWordInArray(
                     allCenters?.map((center) => center.name)
@@ -214,8 +244,8 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
                       : t("COMMON.ALL_CENTERS")
                   }
                 />
-              )}
-            </Grid>
+              </Grid>
+            )}
           </Grid>
         </Box>
       </Box>
