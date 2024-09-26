@@ -736,7 +736,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
 
 
 <CustomModal
-          width="40%"
+          width="30%"
           open={createTLAlertModal}
           handleClose={handleCloseConfirmation}
           primaryBtnText={t("COMMON.CONTINUE")}

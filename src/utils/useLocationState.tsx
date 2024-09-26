@@ -174,9 +174,10 @@ export const useLocationState = (
           const blockCohortId =  getCohortDetails?.find(
             (item: any) => item?.type === "BLOCK"
           )?.cohortId;
-          if (blockId) {
-            console.log("blockId", blockId[0]);
-            setSelectedBlockCohortId(blockId[0]);
+          console.log(blockCohortId)
+          if (blockCohortId) {
+            console.log("blockId", blockId);
+            setSelectedBlockCohortId(blockCohortId);
           } else {
             console.log("No Block Id found");
           }
