@@ -22,7 +22,7 @@ import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import { Role, apiCatchingDuration } from "@/utils/app.constant";
 import { getFormRead } from "@/services/CreateUserService";
 import { showToastMessage } from "./Toastify";
-import { capitalizeFirstLetterOfEachWordInArray } from "../utils/Helper";
+import { capitalizeFirstLetterOfEachWordInArray , firstLetterInUpperCase} from "../utils/Helper";
 import { getUserTableColumns, getTLTableColumns } from "@/data/tableColumns";
 import { TablePagination, useMediaQuery } from "@mui/material";
 import { Theme } from "@mui/system";
@@ -876,9 +876,9 @@ console.log(code[0])
                 //  gender: user.gender,
                 mobile: user.mobile === "NaN" ? "-" : user.mobile,
                 age: ageField ? ageField?.value : "-",
-                district: districtField ? districtField?.value+" , "+blockField?.value  : "-",
+                district: districtField ? districtField?.value+" , "+firstLetterInUpperCase(blockField?.value)  : "-",
                 state: stateField ? stateField?.value : "-",
-                blocks: blockField ? blockField?.value : "-",
+                blocks: blockField ? firstLetterInUpperCase(blockField?.value) : "-",
                 gender: genderField
                   ? genderField?.value?.charAt(0)?.toUpperCase() +
                     genderField?.value?.slice(1).toLowerCase()
@@ -930,9 +930,9 @@ console.log(code[0])
             //  gender: user.gender,
             mobile: user.mobile === "NaN" ? "-" : user?.mobile,
             age: ageField ? ageField?.value : "-",
-            district: districtField ? districtField?.value+" , "+blockField?.value : "-",
+            district: districtField ? districtField?.value+" , "+firstLetterInUpperCase(blockField?.value) : "-",
             state: stateField ? stateField?.value : "-",
-            blocks: blockField ? blockField?.value : "-",
+            blocks: blockField ? firstLetterInUpperCase(blockField?.value) : "-",
             gender: genderField
               ? genderField.value?.charAt(0)?.toUpperCase() +
                 genderField.value.slice(1).toLowerCase()
