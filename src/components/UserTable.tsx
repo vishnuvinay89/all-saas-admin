@@ -355,21 +355,14 @@ const UserTable: React.FC<UserTableProps> = ({
 
   const handleDistrictChange = (selected: string[], code: string[]) => {
     const newQuery = { ...router.query }; 
-
+console.log(selected)
     if (newQuery.center) {
       delete newQuery.center;  
     }
     if (newQuery.block) {
       delete newQuery.block;
     }
-    router.replace({
-      pathname: router.pathname,
-      query: { 
-        ...newQuery, 
-        state: selectedStateCode, 
-        district: code?.join(",") 
-      }
-    });
+   
     setSelectedCenterCode([])
 
     setEnableCenterFilter(false)
@@ -382,6 +375,7 @@ localStorage.setItem('selectedDistrict', selected[0])
 
 setSelectedDistrictStore(selected[0])
     if (selected[0] === "" || selected[0] === t("COMMON.ALL_DISTRICTS")) {
+     
       if (filters.status) {
         setFilters({
           states: selectedStateCode,
@@ -395,7 +389,25 @@ setSelectedDistrictStore(selected[0])
           role: role,
         });
       }
+      if (newQuery.district) {
+        delete newQuery.district;  
+      }
+      router.replace({
+        pathname: router.pathname,
+        query: { 
+          ...newQuery, 
+          state: selectedStateCode, 
+        }
+      });
     } else {
+      router.replace({
+        pathname: router.pathname,
+        query: { 
+          ...newQuery, 
+          state: selectedStateCode, 
+          district: code?.join(",") 
+        }
+      });
       const districts = code?.join(",");
       setSelectedDistrictCode(districts);
       if (filters.status) {
@@ -429,15 +441,7 @@ setSelectedDistrictStore(selected[0])
       delete newQuery.block;
     }
     console.log(code?.join(","))
-    router.replace({
-      pathname: router.pathname,
-      query: { 
-        ...newQuery, 
-        state: selectedStateCode, 
-        district: selectedDistrictCode, 
-        block: code?.join(",") 
-      }
-    });
+    
     
    
     setSelectedBlock(selected);
@@ -471,6 +475,15 @@ setSelectedDistrictStore(selected[0])
         });
       }
     } else {
+      router.replace({
+        pathname: router.pathname,
+        query: { 
+          ...newQuery, 
+          state: selectedStateCode, 
+          district: selectedDistrictCode, 
+          block: code?.join(",") 
+        }
+      });
       const blocks = code?.join(",");
       setSelectedBlockCode(blocks);
       if (filters.status) {
@@ -1087,8 +1100,60 @@ console.log(selectedBlockStore)
               // }
             
               // )
-              if(selectedDistrictCode)
+              // console.log(selectedDistrict)
+              // console.log(selectedBlock)
+              // if( selectedDistrict.length===0 ||selectedDistrict[0]==="All Districts")
+              // {
+              //   const newQuery = { ...router.query }; 
+                
+              //   if (newQuery.district) {
+              //    delete newQuery.district;
+              //  }
+              //   if (newQuery.block) {
+              //     delete newQuery.block;
+              //   }
+              //   if(newQuery.center)
+              //   {
+              //     delete newQuery.center;
+              //   }
+              //   console.log(newQuery)
+              //   router.replace({
+              //     pathname: router.pathname,
+              //     query: { 
+              //       ...newQuery, 
+              //     }
+              //   });
+                
+              // }
+              // console.log(selectedBlock)
+              // if( selectedBlock.length===0 ||selectedBlock[0]==="All Blocks")
+              // {
+              //   const newQuery = { ...router.query }; 
+ 
+              //   // if (newQuery.district) {
+              //   //   delete newQuery.district;
+              //   // }
+             
+              //   if (newQuery.block) {
+              //     delete newQuery.block;
+              //   }
+              //   if(newQuery.center)
+              //   {
+              //     delete newQuery.center;
+              //   }
+              //   router.replace({
+              //     pathname: router.pathname,
+              //     query: { 
+              //       ...newQuery, 
+              //     }
+              //   });
+
+              // }
+
+
+              if(selectedDistrictCode && selectedDistrict.length!==0 &&selectedDistrict[0]!==t("COMMON.ALL_DISTRICTS"))
               {
+                console.log("true---")
                setFilters({
                   states: stateField.code,
                   districts:selectedDistrictCode,
@@ -1097,7 +1162,7 @@ console.log(selectedBlockStore)
                   status:[statusValue],
                 })
               }
-              if(selectedBlockCode)
+              if(selectedBlockCode && selectedBlock.length!==0 && selectedBlock[0]!==t("COMMON.ALL_BLOCKS"))
               {
                setFilters({
                   states: stateField.code,

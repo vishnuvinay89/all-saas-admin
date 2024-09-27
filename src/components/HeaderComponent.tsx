@@ -458,8 +458,8 @@ const HeaderComponent = ({
       if (state) {
         setSelectedStateCode(state.toString());
       }
-
-      if (district) {
+       console.log(selectedDistrict)
+      if (district && selectedDistrict.length!==0 && selectedDistrict[0]!==t("COMMON.ALL_DISTRICTS")) {
         setSelectedDistrictCode(district.toString());
         // setSelectedDistrict([selectedDistrictStore])
         setSelectedDistrict([localStorage.getItem("selectedDistrict")]);
@@ -467,8 +467,9 @@ const HeaderComponent = ({
           setSelectedDistrict([selectedDistrictStore]);
         }
       }
+     
 
-      if (block) {
+      if (block && selectedBlock.length!==0 &&selectedBlock[0]!==t("COMMON.ALL_BLOCKS")) {
         setSelectedBlockCode(block.toString());
         console.log(selectedBlockCode);
         // setSelectedBlock([selectedBlockStore])
@@ -476,8 +477,9 @@ const HeaderComponent = ({
         if (!localStorage.getItem("selectedBlock"))
           setSelectedBlock([selectedBlockStore]);
       }
+   
 
-      if (center) {
+      if (center && selectedCenter.length!==0 &&selectedCenter[0]!==t("COMMON.ALL_CENTERS")) {
         console.log(center);
 
         setSelectedCenterCode([center.toString()]);
@@ -486,6 +488,7 @@ const HeaderComponent = ({
         if (!localStorage.getItem("selectedCenter"))
           setSelectedCenter([selectedCenterStore]);
       }
+   
       //  setInitialized(true)
     }
   }, [router]);
