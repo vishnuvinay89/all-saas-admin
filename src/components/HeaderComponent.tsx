@@ -459,7 +459,7 @@ const HeaderComponent = ({
         setSelectedStateCode(state.toString());
       }
        console.log(selectedDistrict)
-      if (district && selectedDistrict.length!==0 && selectedDistrict[0]!==t("COMMON.ALL_DISTRICTS")) {
+      if (district) {
         setSelectedDistrictCode(district.toString());
         // setSelectedDistrict([selectedDistrictStore])
         setSelectedDistrict([localStorage.getItem("selectedDistrict")]);
@@ -469,7 +469,7 @@ const HeaderComponent = ({
       }
      
 
-      if (block && selectedBlock.length!==0 &&selectedBlock[0]!==t("COMMON.ALL_BLOCKS")) {
+      if (block ) {
         setSelectedBlockCode(block.toString());
         console.log(selectedBlockCode);
         // setSelectedBlock([selectedBlockStore])
@@ -479,7 +479,7 @@ const HeaderComponent = ({
       }
    
 
-      if (center && selectedCenter.length!==0 &&selectedCenter[0]!==t("COMMON.ALL_CENTERS")) {
+      if (center) {
         console.log(center);
 
         setSelectedCenterCode([center.toString()]);
