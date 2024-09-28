@@ -1559,7 +1559,7 @@ console.log(selectedBlockStore)
         centers={userCohort}
         userId={selectedUserId}
         userName={userName}
-
+         userType={userType}
 
       />
        <ReassignCenterModal

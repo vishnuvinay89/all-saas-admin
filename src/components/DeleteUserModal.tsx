@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import CustomModal from "./CustomModal";
+import { Role } from "@/utils/app.constant";
 
 interface DeleteUserModalProps {
   open: boolean;
@@ -40,7 +41,9 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
   centers,
   userId,
   userName,
+  userType
 }) => {
+  console.log(centers)
   const { t } = useTranslation();
   const theme = useTheme<any>();
   const reasons = [
@@ -109,7 +112,7 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
             variant="body1"
             sx={{ marginBottom: "12px", fontWeight: "bold", color: "#333" }}
           >
-            {t("COMMON.USER_COHORTS", { name: userName })}
+            {userType===Role.TEAM_LEADERS?t("COMMON.USER_BLOCK", { name: userName }): centers.split(', ').length===1 ? t("COMMON.USER_CENTER", { name: userName }) : t("COMMON.USER_CENTERS", { name: userName })}
           </Typography>
 
           <Box
@@ -134,7 +137,8 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({
                 color="primary"
               />
             }
-            label={t("COMMON.DELETE_COHORT_WARNING")}
+            label={userType===Role.TEAM_LEADERS?t("COMMON.DELETE_FROM_BLOCK_WARNING"): centers.split(', ').length===1 ? t("COMMON.DELETE_FROM_CENTER_WARNING") : t("COMMON.DELETE_FROM_CENTERS_WARNING")}
+
             sx={{ marginTop: "12px", color: "#555" }}
           />
         </Box>
