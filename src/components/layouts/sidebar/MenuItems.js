@@ -27,7 +27,7 @@ const Menuitems = [
     subOptions: [
       {
         title: "SIDEBAR.TEAM_LEADERS",
-        href: "/teamLeader",
+        href: "/team-leader",
       },
       {
         title: "SIDEBAR.FACILITATORS",
@@ -65,16 +65,6 @@ const Menuitems = [
     title: "SIDEBAR.COURSE_PLANNER",
     icon: coursePannerIcon,
     href: "/course-planner",
-    subOptions: [
-      {
-        title: "SIDEBAR.FOUNDATION_COURSE",
-        href: "/course-planner",
-      },
-      // {
-      //   title: "SIDEBAR.MAIN_COURSE",
-      //   href: "/mainCourse",
-      // },
-    ],
   },
 ];
 

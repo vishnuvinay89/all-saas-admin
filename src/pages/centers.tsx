@@ -214,8 +214,10 @@ const Center: React.FC = () => {
             return await getCohortMemberlistData(cohortId);
           })
         );
-
-        result?.forEach((item: any, index: number) => {
+console.log(result)
+const finalResult=  result
+?.filter((cohort: any) => cohort.type === "COHORT")
+finalResult?.forEach((item: any, index: number) => {
           const cohortType =
             item?.customFields?.find(
               (field: any) => field.label === "TYPE_OF_COHORT"
@@ -243,6 +245,7 @@ const Center: React.FC = () => {
           };
           resultData?.push(requiredData);
         });
+        console.log(resultData)
         setCohortData(resultData);
         const totalCount = resp?.count;
         setTotalCound(totalCount);

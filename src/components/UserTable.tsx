@@ -22,7 +22,7 @@ import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import { Role, apiCatchingDuration } from "@/utils/app.constant";
 import { getFormRead } from "@/services/CreateUserService";
 import { showToastMessage } from "./Toastify";
-import { capitalizeFirstLetterOfEachWordInArray } from "../utils/Helper";
+import { capitalizeFirstLetterOfEachWordInArray , firstLetterInUpperCase} from "../utils/Helper";
 import { getUserTableColumns, getTLTableColumns } from "@/data/tableColumns";
 import { TablePagination, useMediaQuery } from "@mui/material";
 import { Theme } from "@mui/system";
@@ -31,6 +31,8 @@ import { useQuery } from "@tanstack/react-query";
 import ReassignCenterModal from "./ReassignCenterModal";
 import { getCenterList, getStateBlockDistrictList } from "@/services/MasterDataService";
 import { updateCohortMemberStatus } from "@/services/CohortService/cohortService";
+import useSubmittedButtonStore from "@/utils/useSharedState";
+import { useRouter } from "next/router";
 type UserDetails = {
   userId: any;
   username: any;
@@ -47,7 +49,9 @@ type UserDetails = {
   districtCode?:any;
   blockCode?:any;
   centerMembershipIdList?:any;
-  blockMembershipIdList?:any
+  blockMembershipIdList?:any;
+  cohortIds?:any;
+  districtValue?:any
 };
 type FilterDetails = {
   role: any;
@@ -93,8 +97,30 @@ const UserTable: React.FC<UserTableProps> = ({
   const [selectedState, setSelectedState] = React.useState<string[]>([]);
   const [blockMembershipIdList, setBlockMembershipIdList] = React.useState<string[]>([]);
   const [centerMembershipIdList, setCenterMembershipIdList] = React.useState<string[]>([]);
+  const router = useRouter();
+
+  const selectedBlockStore = useSubmittedButtonStore(
+    (state: any) => state.selectedBlockStore
+  );
+  const setSelectedBlockStore = useSubmittedButtonStore(
+    (state: any) => state.setSelectedBlockStore
+  );
+  const selectedDistrictStore = useSubmittedButtonStore(
+    (state: any) => state.selectedDistrictStore
+  );
+  const setSelectedDistrictStore = useSubmittedButtonStore(
+    (state: any) => state.setSelectedDistrictStore
+  );
+  const selectedCenterStore = useSubmittedButtonStore(
+    (state: any) => state.selectedCenterStore
+  );
+  const setSelectedCenterStore = useSubmittedButtonStore(
+    (state: any) => state.setSelectedCenterStore
+  );
 
 
+
+ 
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
@@ -117,15 +143,27 @@ const UserTable: React.FC<UserTableProps> = ({
   const [centers, setCenters] = useState<CenterProp[]>([]);
   const [userName, setUserName] = useState("");
   const [blocks, setBlocks] = useState<FieldProp[]>([]);
-  const [userCohort, setUserCohorts] = useState ("")
+  const [userCohort, setUserCohorts] = useState ("");
+  const [assignedCenters, setAssignedCenters] = useState<any>();
+
+  const [initialized, setInitialized] = useState(false);
 
   const [selectedUserId, setSelectedUserId] = useState("");
+  const [cohortId, setCohortId] = useState([]);
+
   const [block, setBlock] = useState("");
+  const [district, setDistrict] = useState("");
+
+  const [blockCode, setBlockCode] = useState("");
+  const [districtCode, setDistrictCode] = useState("");
+
 
   const [selectedReason, setSelectedReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [deleteUserState, setDeleteUserState] = useState(false);
   const [selectedCenter, setSelectedCenter] = useState<string[]>([]);
+  const [selectedCenterCode, setSelectedCenterCode] = useState<string[]>([]);
+
   const [enableCenterFilter, setEnableCenterFilter] = useState<boolean>(false);
 
 
@@ -142,6 +180,10 @@ const UserTable: React.FC<UserTableProps> = ({
   const [openAddLearnerModal, setOpenAddLearnerModal] = React.useState(false);
   const [userId, setUserId] = useState();
   const [submitValue, setSubmitValue] = useState<boolean>(false);
+  console.log(selectedBlockCode)
+  const reassignButtonStatus = useSubmittedButtonStore(
+    (state: any) => state.reassignButtonStatus
+  );
   const { data:teacherFormData ,isLoading: teacherFormDataLoading, error :teacherFormDataErrror } = useQuery<any[]>({
     queryKey: ["teacherFormData"],  
     queryFn: () => Promise.resolve([]), 
@@ -236,11 +278,36 @@ const UserTable: React.FC<UserTableProps> = ({
     />
   );
   const handleStateChange = async (selected: string[], code: string[]) => {
+    const newQuery = { ...router.query }; 
+ 
+     if (newQuery.center) {
+       delete newQuery.center;  
+     }
+     if (newQuery.district) {
+      delete newQuery.district;
+    }
+     if (newQuery.block) {
+       delete newQuery.block;
+     }
+     router.replace({
+       pathname: router.pathname,
+       query: { 
+         ...newQuery, 
+         state: code?.join(","), 
+       }
+     });
+    setSelectedCenterCode([])
+
     setEnableCenterFilter(false)
     setSelectedDistrict([]);
-    setSelectedBlock([]);
+    setSelectedCenter([]);
 
+    setSelectedBlock([]);
+    setSelectedBlockCode("");
+    setSelectedDistrictCode("");
     setSelectedState(selected);
+  
+
     console.log(selected[0])
     if (selected[0] === "" || selected[0] === t("COMMON.ALL_STATES")) {
       if (filters.status) setFilters({ status: [filters.status], role: role });
@@ -287,13 +354,28 @@ const UserTable: React.FC<UserTableProps> = ({
   };
 
   const handleDistrictChange = (selected: string[], code: string[]) => {
+    const newQuery = { ...router.query }; 
+console.log(selected)
+    if (newQuery.center) {
+      delete newQuery.center;  
+    }
+    if (newQuery.block) {
+      delete newQuery.block;
+    }
+   
+    setSelectedCenterCode([])
+
     setEnableCenterFilter(false)
+    setSelectedCenter([]);
 
     setSelectedBlock([]);
     setSelectedDistrict(selected);
+setSelectedBlockCode("");
+localStorage.setItem('selectedDistrict', selected[0])
 
-
+setSelectedDistrictStore(selected[0])
     if (selected[0] === "" || selected[0] === t("COMMON.ALL_DISTRICTS")) {
+     
       if (filters.status) {
         setFilters({
           states: selectedStateCode,
@@ -307,7 +389,25 @@ const UserTable: React.FC<UserTableProps> = ({
           role: role,
         });
       }
+      if (newQuery.district) {
+        delete newQuery.district;  
+      }
+      router.replace({
+        pathname: router.pathname,
+        query: { 
+          ...newQuery, 
+          state: selectedStateCode, 
+        }
+      });
     } else {
+      router.replace({
+        pathname: router.pathname,
+        query: { 
+          ...newQuery, 
+          state: selectedStateCode, 
+          district: code?.join(",") 
+        }
+      });
       const districts = code?.join(",");
       setSelectedDistrictCode(districts);
       if (filters.status) {
@@ -329,10 +429,36 @@ const UserTable: React.FC<UserTableProps> = ({
     console.log("Selected categories:", selected);
   };
   const handleBlockChange = (selected: string[], code: string[]) => {
-    setEnableCenterFilter(false)
+    setSelectedCenterCode([])
 
+    setEnableCenterFilter(false)
+     setSelectedCenter([]);
+    const newQuery = { ...router.query }; 
+    if (newQuery.center) {
+      delete newQuery.center;  
+    }
+    if (newQuery.block) {
+      delete newQuery.block;
+    }
+    console.log(code?.join(","))
+    
+    
+   
     setSelectedBlock(selected);
+    localStorage.setItem('selectedBlock', selected[0])
+    setSelectedBlockStore(selected[0])
     if (selected[0] === "" || selected[0] === t("COMMON.ALL_BLOCKS")) {
+      if (newQuery.block) {
+        delete newQuery.block;
+      }
+      router.replace({
+        pathname: router.pathname,
+        query: { 
+          ...newQuery, 
+          state: selectedStateCode, 
+          district: selectedDistrictCode, 
+        }
+      });
       if (filters.status) {
         setFilters({
           states: selectedStateCode,
@@ -349,6 +475,15 @@ const UserTable: React.FC<UserTableProps> = ({
         });
       }
     } else {
+      router.replace({
+        pathname: router.pathname,
+        query: { 
+          ...newQuery, 
+          state: selectedStateCode, 
+          district: selectedDistrictCode, 
+          block: code?.join(",") 
+        }
+      });
       const blocks = code?.join(",");
       setSelectedBlockCode(blocks);
       if (filters.status) {
@@ -372,17 +507,83 @@ const UserTable: React.FC<UserTableProps> = ({
     console.log("Selected categories:", selected);
   };
   const handleCenterChange = async(selected: string[], code: string[]) => {
-    setSelectedCenter(selected)
+    if(code[0])
+    {
+console.log(code[0])
+      router.replace({
+        pathname: router.pathname,
+        query: { 
+          ...router.query, 
+          state: selectedStateCode, 
+          district: selectedDistrictCode, 
+          block: selectedBlockCode, 
+          center: code[0]
+        }
+      });
+    }
+    else
+    {
+      const newQuery = { ...router.query }; 
+          if (newQuery.center) {
+            delete newQuery.center;  
+            router.replace({
+              ...newQuery, 
+             
+            });
+          }
+      
+    }
 
-    setEnableCenterFilter(true)
-    setFilters({
-      // states: selectedStateCode,
-      // districts: selectedDistrictCode,
-      // blocks: blocks,
-      cohortId:code[0],
-      role: role,
-      status:[statusValue]
-    });
+
+  
+
+
+    
+    setSelectedCenterCode([code[0]])
+
+    setSelectedCenter(selected)
+    localStorage.setItem('selectedCenter',selected[0] )
+  setSelectedCenterStore(selected[0])
+    console.log(selected[0])
+    if (selected[0] === "" || selected[0] === t("COMMON.ALL_CENTERS")) {
+      setEnableCenterFilter(false)
+      setSelectedCenterCode([])
+      if (filters.status) {
+
+        setFilters({
+          states: selectedStateCode,
+          districts: selectedDistrictCode,
+          blocks: selectedBlockCode,
+          role: role,
+          status: filters.status,
+
+        });
+      } else {
+
+        setFilters({
+          states: selectedStateCode,
+          districts: selectedDistrictCode,
+          blocks: selectedBlockCode,
+          role: role,
+        });
+      }
+    }
+    else
+    {
+      setEnableCenterFilter(true)
+
+      setFilters({
+        // states: selectedStateCode,
+        // districts: selectedDistrictCode,
+        // blocks: blocks,
+        cohortId:code[0],
+        role: role,
+        status:[statusValue]
+      });
+  
+    }
+
+  
 
   };
   const handleSortChange = async (event: SelectChangeEvent) => {
@@ -472,9 +673,9 @@ const UserTable: React.FC<UserTableProps> = ({
     return initialFormData;
   };
   const handleEdit = async (rowData: any) => {
-    if (submitValue) {
-      setSubmitValue(false);
-    }
+   
+    submitValue ? setSubmitValue(false) : setSubmitValue(true);
+
     console.log("Edit row:", rowData);
 
     try {
@@ -534,8 +735,23 @@ const UserTable: React.FC<UserTableProps> = ({
   const handleReassignCohort = async(rowData: any) => {
    // setIsDeleteModalOpen(true);
    console.log(rowData)
-    setSelectedUserId(rowData.userId );
-    setBlock(rowData.blocks)
+    setSelectedUserId(rowData?.userId );
+    setCohortId(rowData?.cohortIds);
+    setBlock(rowData?.blocks)
+    console.log(rowData?.districtValue)
+   
+    setDistrict(rowData?.districtValue)
+    setDistrictCode(rowData?.districtCode)
+  setBlockCode(rowData?.blockCode)
+  setAssignedCenters(rowData?.centers)
+  const reassignUserInfo = {
+    blocks: rowData?.blocks || [],
+    districtValue: rowData?.districtValue || '',
+    districtCode: rowData?.districtCode || '',
+    blockCode: rowData?.blockCode || ''
+  };
+
+  localStorage.setItem('reassignuserInfo', JSON.stringify(reassignUserInfo));
     setIsReassignCohortModalOpen(true)
 
     //const userData="";
@@ -648,19 +864,19 @@ const UserTable: React.FC<UserTableProps> = ({
         {
           finalResult = result?.map((user: any) => {
             const ageField = user?.customField?.find(
-              (field: any) => field?.fieldname === "AGE"
+              (field: any) => field?.label === "AGE"
             );
             const genderField = user?.customField?.find(
-              (field: any) => field?.fieldname === "GENDER"
+              (field: any) => field?.label === "GENDER"
             );
             const blockField = user?.customField?.find(
-              (field: any) => field?.fieldname === "BLOCKS"
+              (field: any) => field?.label === "BLOCKS"
             );
             const districtField = user?.customField?.find(
-              (field: any) => field?.fieldname === "DISTRICTS"
+              (field: any) => field?.label === "DISTRICTS"
             );
             const stateField = user?.customField?.find(
-              (field: any) => field?.fieldname === "STATES"
+              (field: any) => field?.label === "STATES"
             );
               return {
                 userId: user?.userId,
@@ -672,18 +888,24 @@ const UserTable: React.FC<UserTableProps> = ({
                 role: user.role,
                 //  gender: user.gender,
                 mobile: user.mobile === "NaN" ? "-" : user.mobile,
-                age: ageField ? ageField?.fieldvalues : "-",
-                district: districtField ? districtField?.fieldvalues+" , "+blockField?.fieldvalues  : "-",
-                state: stateField ? stateField?.fieldvalues : "-",
-                blocks: blockField ? blockField?.fieldvalues : "-",
+                age: ageField ? ageField?.value : "-",
+                district: districtField ? districtField?.value+" , "+firstLetterInUpperCase(blockField?.value)  : "-",
+                state: stateField ? stateField?.value : "-",
+                blocks: blockField ? firstLetterInUpperCase(blockField?.value) : "-",
                 gender: genderField
-                  ? genderField.fieldvalues?.charAt(0)?.toUpperCase() +
-                    genderField.fieldvalues.slice(1).toLowerCase()
+                  ? genderField?.value?.charAt(0)?.toUpperCase() +
+                    genderField?.value?.slice(1).toLowerCase()
                   : "-",
               //  createdAt: user?.createdAt,
               //  updatedAt: user?.updatedAt,
                 createdBy: user?.createdBy,
                 updatedBy: user?.updatedBy,
+                stateCode:stateField?.code,
+
+                districtCode:districtField?.code,
+            blockCode:blockField?.code,
+            districtValue:districtField? districtField?.value: "-"
+
                 // // centers: null,
                 // Programs: null,
               };
@@ -697,7 +919,7 @@ const UserTable: React.FC<UserTableProps> = ({
             (field: any) => field?.label === "AGE"
           );
           const genderField = user?.customFields?.find(
-            (field: any) => field?.label === "GENDER"
+            (field: any) => field?.label === "GENDER" 
           );
           const blockField = user?.customFields?.find(
             (field: any) => field?.label === "BLOCKS"
@@ -719,11 +941,11 @@ const UserTable: React.FC<UserTableProps> = ({
               user.name.slice(1).toLowerCase(),
             role: user.role,
             //  gender: user.gender,
-            mobile: user.mobile === "NaN" ? "-" : user.mobile,
-            age: ageField ? ageField.value : "-",
-            district: districtField ? districtField.value+" , "+blockField.value : "-",
-            state: stateField ? stateField.value : "-",
-            blocks: blockField ? blockField.value : "-",
+            mobile: user.mobile === "NaN" ? "-" : user?.mobile,
+            age: ageField ? ageField?.value : "-",
+            district: districtField ? districtField?.value+" , "+firstLetterInUpperCase(blockField?.value) : "-",
+            state: stateField ? stateField?.value : "-",
+            blocks: blockField ? firstLetterInUpperCase(blockField?.value) : "-",
             gender: genderField
               ? genderField.value?.charAt(0)?.toUpperCase() +
                 genderField.value.slice(1).toLowerCase()
@@ -734,7 +956,9 @@ const UserTable: React.FC<UserTableProps> = ({
             updatedBy: user.updatedBy,
             stateCode:stateField?.code,
             districtCode:districtField?.code,
-            blockCode:blockField?.code
+            blockCode:blockField?.code,
+            districtValue:districtField? districtField?.value: "-"
+
             // centers: null,
             // Programs: null,
           };
@@ -770,7 +994,12 @@ const UserTable: React.FC<UserTableProps> = ({
         console.log(error);
       }
     };
-    fetchUserList();
+    console.log(data )
+    if ((selectedBlockCode !== "") || (selectedDistrictCode !== "" && selectedBlockCode === "") || (userType===Role.TEAM_LEADERS && selectedDistrictCode!=="") ){
+      fetchUserList();
+    }
+   // fetchUserList();
+
   }, [
     pageOffset,
     submitValue,
@@ -779,9 +1008,12 @@ const UserTable: React.FC<UserTableProps> = ({
     filters,
     parentState,
     deleteUserState,
-    sortByForCohortMemberList
+    sortByForCohortMemberList,
+    reassignButtonStatus,
+    enableCenterFilter,
+    userType
   ]);
-
+console.log(selectedBlockStore)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -795,17 +1027,21 @@ const UserTable: React.FC<UserTableProps> = ({
             //   (cohort: Cohort) => cohort.name,
             // );
             const cohortNames = response?.result?.cohortData
-              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK" && cohort?.cohortMemberStatus!=="archived") // Filter out cohorts with type 'block'
-              .map((cohort: Cohort) => cohort.name); 
+              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK" && cohort?.cohortMemberStatus!=="archived") 
+              .map((cohort: Cohort) => cohort.name);
+              const cohortIds = response?.result?.cohortData
+              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK" && cohort?.cohortMemberStatus!=="archived") 
+              .map((cohort: Cohort) => cohort.cohortId); 
+              
               const centerMembershipIdList = response?.result?.cohortData
-              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK" && cohort?.cohortMemberStatus!=="archived") // Filter out cohorts with type 'block'
+              ?.filter((cohort: Cohort) => cohort.type !== "BLOCK" && cohort?.cohortMemberStatus!=="archived") 
               .map((cohort: Cohort) => cohort.cohortMembershipId);
               const blockMembershipIdList = response?.result?.cohortData
-              ?.filter((cohort: Cohort) => cohort.type === "BLOCK" && cohort?.cohortMemberStatus!=="archived") // Filter out cohorts with type 'block'
+              ?.filter((cohort: Cohort) => cohort.type === "BLOCK" && cohort?.cohortMemberStatus!=="archived") 
               .map((cohort: Cohort) => cohort.cohortMembershipId);
             //  const cohortMembershipId=response?.result?.cohortData?.cohortMembershipId;
               console.log(blockMembershipIdList)
-              console.log(centerMembershipIdList)
+              console.log(cohortIds)
 
 
             let finalArray;
@@ -813,12 +1049,12 @@ const UserTable: React.FC<UserTableProps> = ({
               finalArray = capitalizeFirstLetterOfEachWordInArray(cohortNames);
             }
             //   const finalArray=capitalizeFirstLetterOfEachWordInArray(cohortNames)
-            // console.log(finalArray)
+             console.log(finalArray)
             return {
               ...user,
               centerMembershipIdList: centerMembershipIdList,
               blockMembershipIdList: blockMembershipIdList,
-
+              cohortIds:cohortIds,
               centers: finalArray ? finalArray?.join(" , ") : "-",
             };
           })
@@ -853,19 +1089,94 @@ const UserTable: React.FC<UserTableProps> = ({
               if (!stateField.value.includes(',')) {
               setSelectedState([stateField.value]);
               setSelectedStateCode(stateField.code)
-              setFilters({
-                states: stateField.code,
-                role: role,
-                status:[statusValue],
-              }
+
+
+              // setFilters({
+              //   states: stateField.code,
+              //   //districts:selectedDistrictCode,
+              //  // blocks:selectedBlockCode,
+              //   role: role,
+              //   status:[statusValue],
+              // }
             
-              )
+              // )
+              // console.log(selectedDistrict)
+              // console.log(selectedBlock)
+              // if( selectedDistrict.length===0 ||selectedDistrict[0]==="All Districts")
+              // {
+              //   const newQuery = { ...router.query }; 
+                
+              //   if (newQuery.district) {
+              //    delete newQuery.district;
+              //  }
+              //   if (newQuery.block) {
+              //     delete newQuery.block;
+              //   }
+              //   if(newQuery.center)
+              //   {
+              //     delete newQuery.center;
+              //   }
+              //   console.log(newQuery)
+              //   router.replace({
+              //     pathname: router.pathname,
+              //     query: { 
+              //       ...newQuery, 
+              //     }
+              //   });
+                
+              // }
+              // console.log(selectedBlock)
+              // if( selectedBlock.length===0 ||selectedBlock[0]==="All Blocks")
+              // {
+              //   const newQuery = { ...router.query }; 
+ 
+              //   // if (newQuery.district) {
+              //   //   delete newQuery.district;
+              //   // }
+             
+              //   if (newQuery.block) {
+              //     delete newQuery.block;
+              //   }
+              //   if(newQuery.center)
+              //   {
+              //     delete newQuery.center;
+              //   }
+              //   router.replace({
+              //     pathname: router.pathname,
+              //     query: { 
+              //       ...newQuery, 
+              //     }
+              //   });
+
+              // }
+
+
+              if(selectedDistrictCode && selectedDistrict.length!==0 &&selectedDistrict[0]!==t("COMMON.ALL_DISTRICTS"))
+              {
+                console.log("true---")
+               setFilters({
+                  states: stateField.code,
+                  districts:selectedDistrictCode,
+                //  blocks:selectedBlockCode,
+                  role: role,
+                  status:[statusValue],
+                })
+              }
+              if(selectedBlockCode && selectedBlock.length!==0 && selectedBlock[0]!==t("COMMON.ALL_BLOCKS"))
+              {
+               setFilters({
+                  states: stateField.code,
+                  districts:selectedDistrictCode,
+                  blocks:selectedBlockCode,
+                  role: role,
+                  status:[statusValue],
+                })
+              }
+             
+             
               }
               
-              const object=[{
-                value:stateField.code,
-                label:stateField.value
-              }]
+            
             // setStates(object);
   
           }
@@ -877,13 +1188,164 @@ const UserTable: React.FC<UserTableProps> = ({
     };
   
     fetchData();
-  }, []);
+  }, [selectedBlockCode, selectedDistrictCode]);
+  useEffect(() => {
+    const fetchData =  () => {
+     // console.log(selectedCenter.length)
+      if(userType===Role.TEAM_LEADERS)
+      {
+        setEnableCenterFilter(false);
 
+      }
+      else{
+        if(selectedCenter.length!==0)
+      {
+        if (selectedCenter[0] === "" || selectedCenter[0] === t("COMMON.ALL_CENTERS")) {
 
+          setEnableCenterFilter(false);
 
+        }
+        else
+        {
+          console.log(selectedCenterCode)
 
+         setEnableCenterFilter(true);
 
+        }
+          //setEnableCenterFilter(true);
+         if(selectedCenterCode.length!==0)
+         { 
+          setFilters({
+          // states: selectedStateCode,
+          // districts: selectedDistrictCode,
+          // blocks: blocks,
+          cohortId:selectedCenterCode[0],
+          role: role,
+          status:[statusValue]
+        });}
+          
+          
+        }
+        else{
+          setEnableCenterFilter(false)
+          if(selectedCenterCode.length!==0)
+          setSelectedCenterCode([])
+        }
+      }
+        
+       
+          
+    };
+  
+    fetchData();
+  }, [selectedCenter, selectedCenterCode]);
+ console.log(enableCenterFilter)
+  // useEffect(() => {
+  //   const { state, district, block, center } = router.query;
 
+  // {
+  //   if (state) {
+  //     setSelectedStateCode(state.toString());
+  //   }
+  //   if (district) {
+  //     setSelectedDistrictCode(district.toString());
+  //   }
+  //   if (block) {
+  //     setSelectedBlockCode(block.toString());
+  //   }
+  //   if ( center) {
+  //     setSelectedCenter([center.toString()]);
+  //   }
+  //   setInitialized(true);
+  // }
+  // }, []);
+
+  // useEffect(() => {
+
+  //   // Handle replacement when only state and district codes are available
+  //   if (selectedStateCode!=="" && selectedDistrictCode==="" && selectedBlockCode==="") {
+  //     console.log("true")
+  //     const newQuery = { ...router.query }; 
+  //      console.log(newQuery)
+   
+  //      if (newQuery.center) {
+  //        delete newQuery.center;  
+  //      }
+  //      if (newQuery.district) {
+  //       delete newQuery.district;
+  //     }
+  //      if (newQuery.block) {
+  //        delete newQuery.block;
+  //      }
+  //      router.replace({
+  //        pathname: router.pathname,
+  //        query: { 
+  //          ...newQuery, 
+  //          state: selectedStateCode, 
+  //        }
+  //      });
+  //    }
+  //   if (selectedStateCode!=="" && selectedDistrictCode!=="" && selectedBlockCode==="") {
+  //    const newQuery = { ...router.query }; 
+  //     console.log(newQuery)
+  
+  //     if (newQuery.center) {
+  //       delete newQuery.center;  
+  //     }
+  //     if (newQuery.block) {
+  //       delete newQuery.block;
+  //     }
+  //     router.replace({
+  //       pathname: router.pathname,
+  //       query: { 
+  //         ...newQuery, 
+  //         state: selectedStateCode, 
+  //         district: selectedDistrictCode 
+  //       }
+  //     });
+  //   }
+  
+  //   // Handle replacement when state, district, and block codes are available
+  //   if (selectedStateCode!=="" && selectedDistrictCode!=="" && selectedBlockCode!=="" && selectedCenter.length === 0) {
+  //     const newQuery = { ...router.query }; 
+  
+  //     if (newQuery.center) {
+  //       delete newQuery.center;  
+  //     }
+  //     if (newQuery.block) {
+  //       delete newQuery.block;
+  //     }
+  //     router.replace({
+  //       pathname: router.pathname,
+  //       query: { 
+  //         ...newQuery, 
+  //         state: selectedStateCode, 
+  //         district: selectedDistrictCode, 
+  //         block: selectedBlockCode 
+  //       }
+  //     });
+  //   }
+  
+  //   // Handle replacement when state, district, block, and center are all selected
+  //   if (selectedStateCode !==""&& selectedDistrictCode!=="" && selectedBlockCode!=="" && selectedCenter.length !== 0) {
+  //     console.log("heyyy")
+  
+  //     console.log(selectedCenter);
+  //     if (userType !== Role.TEAM_LEADERS) {
+  //       router.replace({
+  //         pathname: router.pathname,
+  //         query: { 
+  //           ...router.query, 
+  //           state: selectedStateCode, 
+  //           district: selectedDistrictCode, 
+  //           block: selectedBlockCode, 
+  //           center: selectedCenter
+  //         }
+  //       });
+  //     }
+  //   }
+  // }, [selectedStateCode]);
+  
 
 
   const handleCloseDeleteModal = () => {
@@ -988,7 +1450,9 @@ const UserTable: React.FC<UserTableProps> = ({
     searchPlaceHolder: searchPlaceholder,
     selectedState: selectedState,
     selectedDistrict: selectedDistrict,
+    setSelectedDistrict:setSelectedDistrict,
     selectedBlock: selectedBlock,
+    setSelectedBlock:setSelectedBlock,
     selectedSort: selectedSort,
     statusValue:statusValue,
     setStatusValue:setStatusValue,
@@ -1001,11 +1465,18 @@ const UserTable: React.FC<UserTableProps> = ({
     handleSearch: handleSearch,
     handleAddUserClick: handleAddUserClick,
     selectedBlockCode: selectedBlockCode,
+    setSelectedBlockCode:setSelectedBlockCode,
     selectedDistrictCode: selectedDistrictCode,
+    setSelectedDistrictCode:setSelectedDistrictCode,
     selectedStateCode: selectedStateCode,
     handleCenterChange:handleCenterChange,
-     selectedCenter: selectedCenter
+     selectedCenter: selectedCenter,
+     setSelectedCenter:setSelectedCenter,
+     selectedCenterCode:selectedCenterCode,
+     setSelectedCenterCode: setSelectedCenterCode,
+     setSelectedStateCode:setSelectedStateCode
   };
+  
 
   return (
     <HeaderComponent {...userProps}>
@@ -1088,7 +1559,7 @@ const UserTable: React.FC<UserTableProps> = ({
         centers={userCohort}
         userId={selectedUserId}
         userName={userName}
-
+         userType={userType}
 
       />
        <ReassignCenterModal
@@ -1096,9 +1567,15 @@ const UserTable: React.FC<UserTableProps> = ({
         onClose={handleCloseReassignModal}
        userType={userType}
         cohortData={centers}
-       blocks={blocks}
+       blockList={blocks}
         userId={selectedUserId}
         blockName={block}
+        districtName={district}
+        blockCode={blockCode}
+        districtCode={districtCode}
+        cohortId={cohortId}
+        centers={assignedCenters}
+
       />
 
       <CommonUserModal

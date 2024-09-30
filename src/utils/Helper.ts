@@ -4,6 +4,24 @@ import { Role, FormContextType, FormValues, InputTypes } from "./app.constant";
 import { State } from "./Interfaces";
 import { useQueryClient } from '@tanstack/react-query';
 
+interface Value {
+  value: string;
+  label: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string | null;
+  updatedBy: string | null;
+  cohortId?: string;
+}
+
+interface CohortDetail {
+  cohortId: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string | null;
+  updatedBy: string | null;
+}
 export const generateUUID = () => {
   let d = new Date().getTime();
   let d2 =
@@ -47,7 +65,10 @@ export const getDeviceId = () => {
 
 export const generateUsernameAndPassword = (
   stateCode: string,
-  role: string
+  role: string,
+  yearOfJoining?: string,
+  
+
 ) => {
   const currentYear = new Date().getFullYear().toString().slice(-2); // Last two digits of the current year
   const randomNum = Math.floor(10000 + Math.random() * 90000).toString(); //NOSONAR
@@ -62,9 +83,10 @@ export const generateUsernameAndPassword = (
     console.warn(`Unknown role: ${role}`); // Log a warning for unknown roles
     return null; // Return null or handle as needed
   }
-
+  const yearSuffix =
+  yearOfJoining ? yearOfJoining?.slice(-2) : currentYear;
   const prefix = rolePrefixes[role];
-  const username = `${prefix}${stateCode}${currentYear}${randomNum}`;
+  const username = `${prefix}${stateCode}${yearSuffix}${randomNum}`;
 
   return { username, password: randomNum };
 };
@@ -89,9 +111,9 @@ export const transformArray = (arr: State[]): State[] => {
   }));
 };
 
-export const firstLetterInUpperCase = (label: string): string | null => {
+export const firstLetterInUpperCase = (label: string): string => {
   if (!label) {
-    return null;
+    return '';
   }
 
   return label
@@ -106,8 +128,8 @@ export const capitalizeFirstLetterOfEachWordInArray = (
     return arr;
   }
   console.log(arr);
-  return arr.map((str) =>
-    str.replace(/\b[a-z]/g, (char) => char.toUpperCase())
+  return arr?.map((str) =>
+    str?.replace(/\b[a-z]/g, (char) => char.toUpperCase())
   );
 };
 export const fieldTextValidation = (text: string) => {
@@ -117,9 +139,21 @@ export const fieldTextValidation = (text: string) => {
   const regex = /^[A-Za-z\s]+$/;
   return regex.test(text);
 };
+
 export const getCurrentYearPattern = () => {
   const currentYear = new Date().getFullYear();
-  return `^(19[0-9][0-9]|20[0-${Math.floor(currentYear / 10) % 10}][0-${currentYear % 10}])$`;
+  
+  // Build the dynamic part for the current century
+  let regexPart = '';
+  if (currentYear >= 2000 && currentYear < 2100) {
+    const lastDigit = currentYear % 10;
+    const middleDigit = Math.floor((currentYear % 100) / 10);
+    
+    regexPart = `20[0-${middleDigit - 1}][0-9]|20${middleDigit}[0-${lastDigit}]`;
+  }
+
+  // Full regex covering 1900–1999, 2000 to current year
+  return `^(19[0-9]{2}|${regexPart})$`;
 };
 
 export const mapFields = (formFields: any, Details: any) => {
@@ -249,6 +283,28 @@ export const findCommonAssociations = (data1: any[], data2: any[]) => {
   }).filter(Boolean); 
 };
 
+export function mergeCohortDetails(values: Value[], cohortDetails: CohortDetail[]): Value[] {
+  const filteredValues = values.map(value => ({
+      value: value.value,
+      label: value.label,
+      createdAt: value.createdAt,
+      updatedAt: value.updatedAt,
+      createdBy: value.createdBy,
+      updatedBy: value.updatedBy,
+  }));
+
+  const newValues = cohortDetails.map(cohort => ({
+      value: cohort.name,
+      label: cohort.name,
+      createdAt: cohort.createdAt,
+      updatedAt: cohort.updatedAt,
+      createdBy: cohort.createdBy,
+      updatedBy: cohort.updatedBy,
+      cohortId: cohort.cohortId,
+  }));
+
+  return [...filteredValues, ...newValues];
+}
 
 interface DataItem {
   name: string;

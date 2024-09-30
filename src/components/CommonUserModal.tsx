@@ -9,23 +9,36 @@ import {
   getFormRead,
   updateUser,
 } from "@/services/CreateUserService";
-import { generateUsernameAndPassword } from "@/utils/Helper";
+import { sendCredentialService } from "@/services/NotificationService";
+import {
+  firstLetterInUpperCase,
+  generateUsernameAndPassword,
+} from "@/utils/Helper";
 import { FormData } from "@/utils/Interfaces";
-import { FormContext, FormContextType, RoleId ,Role, apiCatchingDuration} from "@/utils/app.constant";
+import {
+  FormContext,
+  FormContextType,
+  Role,
+  RoleId,
+  Status,
+  apiCatchingDuration,
+} from "@/utils/app.constant";
 import { useLocationState } from "@/utils/useLocationState";
 import useSubmittedButtonStore from "@/utils/useSharedState";
-import { Box, Button, useTheme } from "@mui/material";
+import { Box, Button, Checkbox, FormControlLabel, Typography, useTheme } from "@mui/material";
 import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
+import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import { tenantId } from "../../app.config";
 import { transformArray } from "../utils/Helper";
 import AreaSelection from "./AreaSelection";
+import SendCredentialModal from "./SendCredentialModal";
 import { showToastMessage } from "./Toastify";
-import SendCredentialModal from './SendCredentialModal';
-import { sendCredentialService } from "@/services/NotificationService";
-import { useQuery } from "@tanstack/react-query";
+import { cohortMemberList } from "@/services/UserList";
+import CustomModal from "./CustomModal";
+import { setConfig } from "next/config";
 
 interface UserModalProps {
   open: boolean;
@@ -36,6 +49,8 @@ interface UserModalProps {
   onSubmit: (submitValue: boolean) => void;
   userType: string;
 }
+
+
 
 const CommonUserModal: React.FC<UserModalProps> = ({
   open,
@@ -51,16 +66,23 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   const [uiSchema, setUiSchema] = React.useState<any>();
   const [openModal, setOpenModal] = React.useState(false);
   const [adminInfo, setAdminInfo] = React.useState<any>();
+  const [createTLAlertModal, setcreateTLAlertModal] = useState(false);
+  const [confirmButtonDisable, setConfirmButtonDisable] = useState(true);
+  const [checkedConfirmation, setCheckedConfirmation] = useState<boolean>(false);
+  
   const messageKeyMap: Record<string, string> = {
     [FormContextType.STUDENT]: "LEARNERS.LEARNER_CREATED_SUCCESSFULLY",
     [FormContextType.TEACHER]: "FACILITATORS.FACILITATOR_CREATED_SUCCESSFULLY",
-    [FormContextType.TEAM_LEADER]: "TEAM_LEADERS.TEAM_LEADER_CREATED_SUCCESSFULLY",
+    [FormContextType.TEAM_LEADER]:
+      "TEAM_LEADERS.TEAM_LEADER_CREATED_SUCCESSFULLY",
     [FormContextType.ADMIN]: "ADMIN.ADMIN_UPDATED_SUCCESSFULLY",
   };
   const delayCredentialsMessageMap: Record<string, string> = {
     [FormContextType.STUDENT]: "LEARNERS.USER_CREDENTIALS_WILL_BE_SEND_SOON",
-    [FormContextType.TEACHER]: "FACILITATORS.USER_CREDENTIALS_WILL_BE_SEND_SOON",
-    [FormContextType.TEAM_LEADER]: "TEAM_LEADERS.USER_CREDENTIALS_WILL_BE_SEND_SOON",
+    [FormContextType.TEACHER]:
+      "FACILITATORS.USER_CREDENTIALS_WILL_BE_SEND_SOON",
+    [FormContextType.TEAM_LEADER]:
+      "TEAM_LEADERS.USER_CREDENTIALS_WILL_BE_SEND_SOON",
   };
   const [submitButtonEnable, setSubmitButtonEnable] =
     React.useState<boolean>(false);
@@ -77,36 +99,38 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
   );
-  const noError = useSubmittedButtonStore(
-    (state: any) => state.noError);
+  const noError = useSubmittedButtonStore((state: any) => state.noError);
 
-  const  userEnteredEmail = useSubmittedButtonStore(
+  const userEnteredEmail = useSubmittedButtonStore(
     (state: any) => state.userEnteredEmail
   );
-  const { data:teacherFormData ,isLoading: teacherFormDataLoading, error :teacherFormDataErrror} = useQuery<any>({
+  const {
+    data: teacherFormData,
+    isLoading: teacherFormDataLoading,
+    error: teacherFormDataErrror,
+  } = useQuery<any>({
     queryKey: ["teacherFormData"],
-    queryFn: () => getFormRead(
-      FormContext.USERS,
-      FormContextType.TEACHER
-      ),
+    queryFn: () => getFormRead(FormContext.USERS, FormContextType.TEACHER),
     staleTime: apiCatchingDuration.GETREADFORM,
-  })
-  const { data:studentFormData ,isLoading: studentFormDataLoading, error :studentFormDataErrror} = useQuery<any>({
+  });
+  const {
+    data: studentFormData,
+    isLoading: studentFormDataLoading,
+    error: studentFormDataErrror,
+  } = useQuery<any>({
     queryKey: ["studentFormData"],
-    queryFn: () => getFormRead(
-      FormContext.USERS,
-      FormContextType.STUDENT
-      ),
-      staleTime: apiCatchingDuration.GETREADFORM,
-    })
-  const { data:teamLeaderFormData ,isLoading: teamLeaderFormDataLoading, error :teamLeaderFormDataErrror} = useQuery<any>({
+    queryFn: () => getFormRead(FormContext.USERS, FormContextType.STUDENT),
+    staleTime: apiCatchingDuration.GETREADFORM,
+  });
+  const {
+    data: teamLeaderFormData,
+    isLoading: teamLeaderFormDataLoading,
+    error: teamLeaderFormDataErrror,
+  } = useQuery<any>({
     queryKey: ["teamLeaderFormData"],
-    queryFn: () => getFormRead(
-       FormContext.USERS,
-      FormContextType.TEAM_LEADER
-      ),
-      staleTime: apiCatchingDuration.GETREADFORM,
-    })
+    queryFn: () => getFormRead(FormContext.USERS, FormContextType.TEAM_LEADER),
+    staleTime: apiCatchingDuration.GETREADFORM,
+  });
   // const { data:adminFormData ,isLoading: adminFormDataLoading, error :adminFormDataErrror} = useQuery<FormData>({
   //   queryKey: ["adminFormData"],
   //   queryFn: () => getFormRead(
@@ -152,13 +176,14 @@ const CommonUserModal: React.FC<UserModalProps> = ({
     districtFieldId,
     stateFieldId,
     dynamicFormForBlock,
-    stateDefaultValue
+    stateDefaultValue,
+    assignedTeamLeader,
+    assignedTeamLeaderNames
   } = useLocationState(open, onClose, roleType);
-
-
+  console.log(assignedTeamLeaderNames)
 
   useEffect(() => {
-    const getAddUserFormData =  () => {
+    const getAddUserFormData = () => {
       try {
         // const response: FormData = await getFormRead(
         //   FormContext.USERS,
@@ -169,10 +194,15 @@ const CommonUserModal: React.FC<UserModalProps> = ({
         //   userType
         // );
         // console.log("sortedFields", response);
-        
-       const response : FormData = userType===FormContextType.TEACHER? teacherFormData: userType===FormContextType.STUDENT? studentFormData : teamLeaderFormData;
-       //    console.log(studentFormData)
-           console.log(response)
+
+        const response: FormData =
+          userType === FormContextType.TEACHER
+            ? teacherFormData
+            : userType === FormContextType.STUDENT
+              ? studentFormData
+              : teamLeaderFormData;
+        //    console.log(studentFormData)
+        console.log(response);
 
         if (response) {
           if (userType === FormContextType.TEACHER) {
@@ -189,7 +219,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
             setFormValue(formValues);
             setSchema(schema);
             setUiSchema(uiSchema);
-            console.log("teacher2")
+            console.log("teacher2");
           } else if (userType === FormContextType.TEAM_LEADER) {
             const { schema, uiSchema, formValues } = GenerateSchemaAndUiSchema(
               response,
@@ -207,7 +237,6 @@ const CommonUserModal: React.FC<UserModalProps> = ({
             setUiSchema(uiSchema);
           }
         }
-      
       } catch (error) {
         console.error("Error fetching form data:", error);
       }
@@ -229,7 +258,18 @@ const CommonUserModal: React.FC<UserModalProps> = ({
     const formData = data.formData;
     console.log("Form data submitted:", formData);
     const schemaProperties = schema.properties;
-    const result = generateUsernameAndPassword(selectedStateCode, userType);
+
+    console.log(formData["year of joining scp"]);
+    let result;
+    if (formData["year of joining scp"]) {
+      result = generateUsernameAndPassword(
+        selectedStateCode,
+        userType,
+        formData["year of joining scp"]
+      );
+    } else {
+      result = generateUsernameAndPassword(selectedStateCode, userType);
+    }
     if (result !== null) {
       const { username, password } = result;
 
@@ -315,7 +355,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
             name: apiBody?.name,
             mobile: apiBody?.mobile,
             father_name: apiBody?.father_name,
-            email:apiBody?.email
+            email: apiBody?.email,
           };
           const customFields = apiBody?.customFields;
           console.log(customFields);
@@ -333,121 +373,100 @@ const CommonUserModal: React.FC<UserModalProps> = ({
 
           showToastMessage(t(messageKey), "success");
         } else {
-          
           const response = await createUser(apiBody);
           console.log(response);
           if (response) {
-            const messageKey = messageKeyMap[userType]
+            const messageKey = messageKeyMap[userType];
 
-                  if(userType===FormContextType.STUDENT)
-                  {
-        
-            showToastMessage(t(messageKey), "success");
-                  }
-            // if(userType===FormContextType.STUDENT)
-            // setOpenModal(true);
+            if (userType === FormContextType.STUDENT) {
+              showToastMessage(t(messageKey), "success");
+            }
           } else {
             showToastMessage(t("COMMON.SOMETHING_WENT_WRONG"), "error");
           }
-        
         }
         onSubmit(true);
         onClose();
         onCloseModal();
 
+        if (!isEditModal) {
+          const isQueue = false;
+          const context = "USER";
+          let creatorName;
+          const key =
+            userType === FormContextType.STUDENT
+              ? "onLearnerCreated"
+              : userType === FormContextType.TEACHER
+                ? "onFacilitatorCreated"
+                : "onTeamLeaderCreated";
 
-
-       if(!isEditModal)
-       {
-      //  setOpenModal(true);
-
-        const isQueue = false;
-        const context = 'USER';
-        let createrName;
-        const key = userType === FormContextType.STUDENT
-        ? 'onLearnerCreated'
-        : userType === FormContextType.TEACHER
-        ? 'onFacilitatorCreated'
-        : 'onTeamLeaderCreated';
-
-       if (typeof window !== 'undefined' && window.localStorage) {
-          createrName = localStorage.getItem('name');
-        }
-        let replacements: { [key: string]: string };
-        replacements={}
-        console.log(Object.keys(replacements).length === 0)
-        if (createrName) {
-          if(userType===FormContextType.STUDENT)
-          {
-            replacements = 
-            {
-              "{FirstName}": createrName,
-              "{UserName}": username,
-              "{LearnerName}" : apiBody['name'],
-              "{Password}": password
+          if (typeof window !== "undefined" && window.localStorage) {
+            creatorName = localStorage.getItem("name");
           }
-          }
-          else{
-            replacements = 
-            {
-              "{FirstName}": apiBody['name'],
-              "{UserName}": username,
-              "{Password}": password
-          }
-
-          }
-          
-        }
-        const sendTo = {
-        //  receipients: [userEmail],
-          receipients: userType === FormContextType.STUDENT?[adminInfo?.email]: [formData?.email],
-
-        };
-        if (Object.keys(replacements).length !== 0 && sendTo) {
-         
-          const response = await sendCredentialService({
-            isQueue,
-            context,
-            key,
-            replacements,
-            email: sendTo,
-          });
-          if(userType!==FormContextType.STUDENT)
-          {
-            const messageKey = messageKeyMap[userType]
-
-            if (response?.result[0]?.data[0]?.status === 'success') {
-                showToastMessage(t(messageKey), "success");
-
-            } 
-            else {
-              const messageKey = delayCredentialsMessageMap[userType] || "TEAM_LEADERS.USER_CREDENTIALS_WILL_BE_SEND_SOON";
-
-                  showToastMessage(t(messageKey), "success");
-
+          let replacements: { [key: string]: string };
+          replacements = {};
+          console.log(Object.keys(replacements).length === 0);
+          if (creatorName) {
+            if (userType === FormContextType.STUDENT) {
+              replacements = {
+                "{FirstName}": firstLetterInUpperCase(creatorName),
+                "{UserName}": username,
+                "{LearnerName}": firstLetterInUpperCase(apiBody["name"]),
+                "{Password}": password,
+              };
+            } else {
+              replacements = {
+                "{FirstName}": firstLetterInUpperCase(apiBody["name"]),
+                "{UserName}": username,
+                "{Password}": password,
+              };
             }
           }
-        if(userType===FormContextType.STUDENT )
-        {
-          if( response?.result[0]?.data[0]?.status === 'success' && !isEditModal)
-          {
-            setOpenModal(true);
+          const sendTo = {
+            //  receipients: [userEmail],
+            receipients:
+              userType === FormContextType.STUDENT
+                ? [adminInfo?.email]
+                : [formData?.email],
+          };
+          if (Object.keys(replacements).length !== 0 && sendTo) {
+            const response = await sendCredentialService({
+              isQueue,
+              context,
+              key,
+              replacements,
+              email: sendTo,
+            });
+            if (userType !== FormContextType.STUDENT) {
+              const messageKey = messageKeyMap[userType];
 
-          }
-          else{
-            showToastMessage(
-              t('LEARNERS.USER_CREDENTIALS_WILL_BE_SEND_SOON'),
-              'success'
-            );
+              if (response?.result[0]?.data[0]?.status === "success") {
+                showToastMessage(t(messageKey), "success");
+              } else {
+                const messageKey =
+                  delayCredentialsMessageMap[userType] ||
+                  "TEAM_LEADERS.USER_CREDENTIALS_WILL_BE_SEND_SOON";
+
+                showToastMessage(t(messageKey), "success");
+              }
+            }
+            if (userType === FormContextType.STUDENT) {
+              if (
+                response?.result[0]?.data[0]?.status === "success" &&
+                !isEditModal
+              ) {
+                setOpenModal(true);
+              } else {
+                showToastMessage(
+                  t("LEARNERS.USER_CREDENTIALS_WILL_BE_SEND_SOON"),
+                  "success"
+                );
+              }
+            }
+          } else {
+            showToastMessage(t("COMMON.SOMETHING_WENT_WRONG"), "error");
           }
         }
-          
-          
-
-        } else {
-          showToastMessage(t('COMMON.SOMETHING_WENT_WRONG'), 'error');
-        }
-      }
       } catch (error) {
         onClose();
         console.log(error);
@@ -458,7 +477,6 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   const handleChange = (event: IChangeEvent<any>) => {
     console.log("Form data changed:", event.formData);
   };
-
   const handleError = (errors: any) => {
     console.log("Form errors:", errors);
   };
@@ -466,7 +484,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
     setCreateFacilitator(false);
     setOpenModal(false);
   };
-
+ 
   const handleAction = () => {
     setTimeout(() => {
       setCreateFacilitator(true);
@@ -493,116 +511,150 @@ const CommonUserModal: React.FC<UserModalProps> = ({
       setSubmitButtonEnable(true);
     }
   }, [dynamicForm, dynamicFormForBlock, open]);
+
+
+  const handleChangeCheckBox = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCheckedConfirmation(event.target.checked);
+
+  };
+
+  const wrappedHandleContinueAction = () => {
+    handleCloseConfirmation();
+     setOpenModal(true);
+     //onClose();
+
+  
+
+}
+
+  const handleCancelAction = async () => {
+    // await handleDeleteAction();
+    handleCloseConfirmation();
+//setAssignedTeamLeaderNames([]);
+   };
+  const handleCloseConfirmation=  () => {
+    // await handleDeleteAction();
+   // handleCloseConfirmation();
+   setcreateTLAlertModal(false);
+   setCheckedConfirmation(false);
+   setConfirmButtonDisable(true);
+ //  setAssignedTeamLeaderNames([]);
+
+   };
+
+
+   useEffect(() => {
+    if (checkedConfirmation) {
+      setConfirmButtonDisable(false);
+    } else {
+      setConfirmButtonDisable(true);
+    }
+  }, [checkedConfirmation]);
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
       const admin = localStorage.getItem("adminInfo");
       if (admin) setAdminInfo(JSON.parse(admin));
-      console.log(adminInfo?.email)
+      console.log(adminInfo?.email);
     }
   }, []);
   return (
     <>
-    <SimpleModal
-      open={open}
-      onClose={onClose}
-      showFooter={true}
-      modalTitle={modalTitle}
-      footer={
-        <Box display="flex" justifyContent="flex-end">
-          <Button
-          onClick={onClose}
-          sx={{
-            color: "secondary",
-            fontSize: "14px",
-            fontWeight: "500",
-          }}
-          variant="outlined"
-        >
-          {t("COMMON.CANCEL")}
-        </Button>
-          <Button
-            variant="contained"
-            type="submit"
-            form= { userType===FormContextType.STUDENT && !isEditModal ?"dynamic-form" : isEditModal?"dynamic-form": ""}// Add this line
-            sx={{
-              fontSize: "14px",
-              fontWeight: "500",
-              width: "auto",
-              height: "40px",
-              marginLeft: "10px",
-            }}
-            color="primary"
-            disabled={!submitButtonEnable}
-            onClick={() => { 
-              
-              setSubmittedButtonStatus(true);
-              // if (userType !== FormContextType.STUDENT && !isEditModal && noError) {
-              //   setOpenModal(true);
-              // }
-               console.log(submittedButtonStatus)
-                console.log(noError)
-                if (userType !== FormContextType.STUDENT && !isEditModal && noError) {
-                  setOpenModal(true);
+      <SimpleModal
+        open={open}
+        onClose={onClose}
+        showFooter={true}
+        modalTitle={modalTitle}
+        footer={
+          <Box display="flex" justifyContent="flex-end">
+            <Button
+              onClick={onClose}
+              sx={{
+                color: "secondary",
+                fontSize: "14px",
+                fontWeight: "500",
+              }}
+              variant="outlined"
+            >
+              {t("COMMON.CANCEL")}
+            </Button>
+            <Button
+              variant="contained"
+              type="submit"
+              form={
+                userType === FormContextType.STUDENT && !isEditModal
+                  ? "dynamic-form"
+                  : isEditModal
+                    ? "dynamic-form"
+                    : ""
+              } // Add this line
+              sx={{
+                fontSize: "14px",
+                fontWeight: "500",
+                width: "auto",
+                height: "40px",
+                marginLeft: "10px",
+              }}
+              color="primary"
+              disabled={!submitButtonEnable}
+              onClick={() => {
+                setSubmittedButtonStatus(true);
+                console.log(submittedButtonStatus);
+                console.log(noError);
+                if (
+                  userType !== FormContextType.STUDENT &&
+                  !isEditModal &&
+                  noError
+                ) {
+                 // setOpenModal(true);
+                 console.log(assignedTeamLeaderNames.length)
+                 if(assignedTeamLeaderNames.length!==0 && userType===FormContextType.TEAM_LEADER)
+                 {
+                    setcreateTLAlertModal(true);
+                                     // setOpenModal(true)
+
+                 }
+                 else{
+                  //onClose();
+                  setOpenModal(true)
+                 }
                 }
-              console.log("Submit button was clicked");
+                console.log("Submit button was clicked");
+              }}
+            >
+              {!isEditModal ? t("COMMON.CREATE") : t("COMMON.UPDATE")}
+            </Button>
+          </Box>
+        }
+      >
+        {!isEditModal && (
+          <Box
+            sx={{
+              marginTop: "10px",
             }}
           >
-            {!isEditModal ? t("COMMON.CREATE") : t("COMMON.UPDATE")}
-          </Button>
-        </Box>
-      }
-    >
-      {!isEditModal && (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "8px",
-            marginTop: "10px",
-          }}
-        >
-          <AreaSelection
-            states={transformArray(states)}
-            districts={transformArray(districts)}
-            blocks={transformArray(blocks)}
-            selectedState={selectedState}
-            selectedDistrict={selectedDistrict}
-            selectedBlock={selectedBlock}
-            handleStateChangeWrapper={handleStateChangeWrapper}
-            handleDistrictChangeWrapper={handleDistrictChangeWrapper}
-            handleBlockChangeWrapper={handleBlockChangeWrapper}
-            isMobile={isMobile}
-            isMediumScreen={isMediumScreen}
-            isCenterSelection={userType !== "TEAM LEADER"}
-            allCenters={allCenters}
-            selectedCenter={selectedCenter}
-            handleCenterChangeWrapper={handleCenterChangeWrapper}
-            inModal={true}
-            stateDefaultValue={stateDefaultValue}
-          />
-        </Box>
-      )}
-      {formData
-        ? schema &&
-          uiSchema && (
-            <DynamicForm
-              id="dynamic-form"
-              schema={schema}
-              uiSchema={uiSchema}
-              onSubmit={handleSubmit}
-              onChange={handleChange}
-              onError={handleError}
-              // widgets={{}}
-              showErrorList={true}
-              customFields={customFields}
-              formData={formData}
-            >
-              {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
-            </DynamicForm>
-          )
-        : userType === FormContextType.TEAM_LEADER
-          ? dynamicFormForBlock &&
-            schema &&
+            <AreaSelection
+              states={transformArray(states)}
+              districts={transformArray(districts)}
+              blocks={transformArray(blocks)}
+              selectedState={selectedState}
+              selectedDistrict={selectedDistrict}
+              selectedBlock={selectedBlock}
+              handleStateChangeWrapper={handleStateChangeWrapper}
+              handleDistrictChangeWrapper={handleDistrictChangeWrapper}
+              handleBlockChangeWrapper={handleBlockChangeWrapper}
+              isMobile={isMobile}
+              isMediumScreen={isMediumScreen}
+              isCenterSelection={userType !== "TEAM LEADER"}
+              allCenters={allCenters}
+              selectedCenter={selectedCenter}
+              handleCenterChangeWrapper={handleCenterChangeWrapper}
+              inModal={true}
+              stateDefaultValue={stateDefaultValue}
+            />
+          </Box>
+        )}
+        {formData
+          ? schema &&
             uiSchema && (
               <DynamicForm
                 id="dynamic-form"
@@ -614,43 +666,150 @@ const CommonUserModal: React.FC<UserModalProps> = ({
                 // widgets={{}}
                 showErrorList={true}
                 customFields={customFields}
-                formData={formValue}
+                formData={formData}
               >
                 {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
               </DynamicForm>
             )
-          : dynamicForm &&
-            schema &&
-            uiSchema && (
-              <DynamicForm
-                id="dynamic-form"
-                schema={schema}
-                uiSchema={uiSchema}
-                onSubmit={handleSubmit}
-                onChange={handleChange}
-                onError={handleError}
-                // widgets={{}}
-                showErrorList={true}
-                customFields={customFields}
-                formData={formValue}
-              >
-                {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
-              </DynamicForm>
-            )}
-    </SimpleModal>
-     <SendCredentialModal
-     handleBackAction={handleBackAction}
-     open={openModal}
-     onClose={onCloseModal}
-     email={(userType!==FormContextType.STUDENT)? userEnteredEmail: adminInfo?.email}
-     userType={
-      userType === FormContextType.STUDENT
-        ? Role.STUDENT
-        : userType === FormContextType.TEAM_LEADER
-        ? Role.TEAM_LEADER
-        : Role.TEACHER
-    }   />
-   </>
+          : userType === FormContextType.TEAM_LEADER
+            ? dynamicFormForBlock &&
+              schema &&
+              uiSchema && (
+                <DynamicForm
+                  id="dynamic-form"
+                  schema={schema}
+                  uiSchema={uiSchema}
+                  onSubmit={handleSubmit}
+                  onChange={handleChange}
+                  onError={handleError}
+                  // widgets={{}}
+                  showErrorList={true}
+                  customFields={customFields}
+                  formData={formValue}
+                >
+                  {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
+                </DynamicForm>
+              )
+            : dynamicForm &&
+              schema &&
+              uiSchema && (
+                <DynamicForm
+                  id="dynamic-form"
+                  schema={schema}
+                  uiSchema={uiSchema}
+                  onSubmit={handleSubmit}
+                  onChange={handleChange}
+                  onError={handleError}
+                  // widgets={{}}
+                  showErrorList={true}
+                  customFields={customFields}
+                  formData={formValue}
+                >
+                  {/* <CustomSubmitButton onClose={primaryActionHandler} /> */}
+                </DynamicForm>
+              )}
+      </SimpleModal>
+      <SendCredentialModal
+        handleBackAction={handleBackAction}
+        open={openModal}
+        onClose={onCloseModal}
+        email={
+          userType !== FormContextType.STUDENT
+            ? userEnteredEmail
+            : adminInfo?.email
+        }
+        userType={
+          userType === FormContextType.STUDENT
+            ? Role.STUDENT
+            : userType === FormContextType.TEAM_LEADER
+              ? Role.TEAM_LEADER
+              : Role.TEACHER
+        }
+      />
+
+
+
+
+
+
+
+
+
+<CustomModal
+          width="30%"
+          open={createTLAlertModal}
+          handleClose={handleCloseConfirmation}
+          primaryBtnText={t("COMMON.CONTINUE")}
+          primaryBtnClick={wrappedHandleContinueAction}
+          primaryBtnDisabled={confirmButtonDisable}
+          secondaryBtnText={t("COMMON.CANCEL")}
+          secondaryBtnClick={handleCancelAction}
+        >
+          <Box
+            sx={{
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              padding: "16px",
+              width: "fit-content",
+              backgroundColor: "#f9f9f9",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Typography
+              variant="body1"
+              sx={{ marginBottom: "12px", fontWeight: "bold", color: "#333" }}
+            >
+{assignedTeamLeaderNames.length>1 ?(
+              <>
+               {t('COMMON.MULTIPLE_TEAM_LEADERS_ASSIGNED', { selectedBlockForTL: selectedBlock[0],assignedTeamLeader: assignedTeamLeader})}
+
+              </>
+            ):(<>
+
+              {t('COMMON.SINGLE_TEAM_LEADERS_ASSIGNED', { selectedBlockForTL: selectedBlock[0],assignedTeamLeader: assignedTeamLeader})}
+
+                        </>)
+}
+             
+            </Typography>
+            <Box
+            sx={{
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              padding: "8px",
+              marginBottom: "16px",
+              backgroundColor: "#fff",
+              maxHeight: "200px",
+              overflowY: "auto",
+            }}
+          >
+            {assignedTeamLeaderNames.length>1 ?(
+            <>
+             {t('COMMON.ASSIGNED_TEAM_LEADERS', { assignedTeamLeaderNames:assignedTeamLeaderNames[0]})}
+
+            </> 
+
+
+            ):(<>
+              {assignedTeamLeaderNames[0]}
+            </>)
+             
+            }
+         </Box>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={checkedConfirmation}
+                  onChange={handleChangeCheckBox}
+                  color="primary"
+                />
+              }
+              label={ t('COMMON.CONTINUE_ASSIGNED_TEAM_LEADER', {selectedBlockForTL: selectedBlock[0]})}
+              sx={{ marginTop: "12px", color: "#555" }}
+            />
+          </Box>
+        </CustomModal>
+    </>
   );
 };
 

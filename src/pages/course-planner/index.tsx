@@ -154,24 +154,10 @@ const Foundation = () => {
   return (
     <ProtectedRoute>
       <>
-        <FilterSearchBar
-          grade={grade}
-          medium={medium}
-          searchQuery={searchQuery}
-          handleGradeChange={handleGradeChange}
-          handleMediumChange={handleMediumChange}
-          handleSearchChange={handleSearchChange}
-          selectedOption={selectedOption}
-          handleDropdownChange={(event) => handleFilter(event.target.value)}
-          card={undefined}
-          selectFilter={selectFilter}
-          onBackClick={undefined}
-        />
-
         {loading ? (
           <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
         ) : (
-          <Box sx={{ pl: "20px" }}>
+          <Box sx={{ pl: "20px", mt: 5 }}>
             {/* <Box
               sx={{
                 display: "grid",
@@ -242,7 +228,6 @@ const Foundation = () => {
                           }}
                           sx={{ minWidth: "auto", padding: 0 }}
                         >
-                          <InsertLinkOutlinedIcon />
                         </Button>
                       </Box>
                     </Box>

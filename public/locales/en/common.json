@@ -112,7 +112,6 @@
     "NEW": "New {{role}}",
     "USER_CREDENTIAL_SEND_SUCCESSFULLY": "User credentials sent successfully!",
     "USER_CREDENTIALS_WILL_BE_SEND_SOON": "User credentials will be sent soon",
-
     "REASSIGN_CENTERS": "Re-assign Center",
     "REASSIGN_BLOCKS": "Re-assign Blocks",
     "REASSIGN": "Reassign",
@@ -121,8 +120,22 @@
     "BLOCKS_REASSIGN_SUCCESSFULLY": "Block reassign successfully",
     "CENTERS_REASSIGN_FAILED": "Center Reassignment fails",
     "BLOCKS_REASSIGN_FAILED": "Block Reassignment fails",
-    "USER_COHORTS": "{{name}} belongs to below cohorts",
-    "DELETE_COHORT_WARNING": "Do you want to delete user from cohort?"
+    "USER_BLOCK": "{{name}} belongs to below block",
+    "USER_CENTERS": "{{name}} belongs to below centers",
+    "USER_CENTER": "{{name}} belongs to below center",
+    "DELETE_FROM_BLOCK_WARNING": "Do you want to delete user from block?",
+    "DELETE_FROM_CENTER_WARNING": "Do you want to delete user from center?",
+    "DELETE_FROM_CENTERS_WARNING": "Do you want to delete user from centers?",
+   "NO_CENTER_AVAILABLE": "No centers available",
+    "NO_BLOCK_AVAILABLE": "No blocks available",
+    "PLEASE_SELECT_BLOCK_LIST": "Please select block from block list",
+    "ALL_CENTERS": "All centers",
+    "NO_CENTERS": "No centers",
+    "MULTIPLE_TEAM_LEADERS_ASSIGNED": "Selected block {{selectedBlockForTL}} already has {{assignedTeamLeader}} Team Leaders assigned.",
+    "SINGLE_TEAM_LEADERS_ASSIGNED":"Selected block {{selectedBlockForTL}} already has {{assignedTeamLeader}} Team Leader assigned.",
+    "CONTINUE_ASSIGNED_TEAM_LEADER":"Still do you want to continue to assign team leader to {{selectedBlockForTL}}",
+    "ASSIGNED_TEAM_LEADERS":"{{assignedTeamLeaderNames}} and more..",
+    "CONTINUE":"Continue"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -156,7 +169,6 @@
     "SEARCHBAR_PLACEHOLDER": "Search Facilitators..",
     "FACILITATOR_CREATED_SUCCESSFULLY": "Teacher is created, and credentials sent successfully!",
     "USER_CREDENTIALS_WILL_BE_SEND_SOON": "Teacher is created ,credentials will be sent soon",
-
     "FACILITATOR_UPDATED_SUCCESSFULLY": "Teacher has been successfully updated!",
     "EDIT_FACILITATOR": "Edit Facilitator"
   },
@@ -169,7 +181,6 @@
     "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
     "LEARNER_CREATED_SUCCESSFULLY": "Learner has been successfully created!",
     "USER_CREDENTIALS_WILL_BE_SEND_SOON": "Learner is created, credentials will be sent soon",
-
     "LEARNER_UPDATED_SUCCESSFULLY": "Learner has been successfully updated!",
     "EDIT_LEARNER": "Edit Learner"
   },
@@ -179,14 +190,12 @@
     "FIRST_SELECT_REQUIRED_FIELDS": "First select required fields",
     "TEAM_LEADER_CREATED_SUCCESSFULLY": "Team Leader is created, and credentials sent successfully!",
     "USER_CREDENTIALS_WILL_BE_SEND_SOON": "Team Leader is created ,credentials will be sent soon",
-
     "TEAM_LEADER_UPDATED_SUCCESSFULLY": "Team Leader has been successfully updated!",
     "EDIT_TEAM_LEADER": "Edit Team Leader"
   },
   "ADMIN": {
     "ADMIN_UPDATED_SUCCESSFULLY": "Admin has been successfully updated!"
   },
-
   "COHORTS": {
     "SEARCHBAR_PLACEHOLDER": "Search Center.."
   },
@@ -208,11 +217,17 @@
     "UPLOAD": "Upload",
     "COURSE_CREATED_SUCCESSFULLY": "Course created successfully",
     "COURSE_NOT_CREATED": "Course not created",
-    "SUB-TOPIC":"Sub-topic",
-    "SUBTOPICS":"Sub-Topics",
+    "SUB-TOPIC": "Sub-topic",
+    "SUBTOPICS": "Sub-Topics",
     "RESOURCES": "Resources",
     "TOPIC": "Topic",
-    "DURATION/MONTH": "Duration/Month"
+    "DURATION/MONTH": "Duration/Month",
+    "LEARNERS_PREREQISITE":"Learners Pre-requisites",
+    "NO_DATA_PRE":"No data available for Learners Pre-requisites",
+    "LEARNERS_POSTREQISITE":"Learners Post-requisites",
+    "NO_DATA_POST":"No data available for Learners Post-requisites",
+    "FACILITATORS":"Facilitators Requisites",
+    "NO_DATA":"No data available for Facilitators Requisites"
 
   },
   "MASTER": {

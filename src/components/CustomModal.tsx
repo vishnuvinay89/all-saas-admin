@@ -8,13 +8,14 @@ import {
   Divider,
   useMediaQuery,
   Theme,
+  useTheme
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 interface CustomModalProps {
   open: boolean;
   handleClose: () => void;
-  title: string;
+  title?: string;
   subtitle?: string;
   primaryBtnText: string;
   secondaryBtnText?: string;
@@ -24,6 +25,7 @@ interface CustomModalProps {
   backdropClose?: boolean;
   primaryBtnDisabled?: boolean;
   children: React.ReactNode;
+  width?:string
 }
 
 const CustomModal: React.FC<CustomModalProps> = ({
@@ -39,11 +41,15 @@ const CustomModal: React.FC<CustomModalProps> = ({
   backdropClose = true,
   primaryBtnDisabled = true,
   children,
+  width
 }) => {
-  const isSmallScreen = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm"),
-  );
+  // const isSmallScreen = useMediaQuery((theme: Theme) =>
+  //   theme.breakpoints.down("sm"),
+  // );
+  const theme = useTheme<any>();
 
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
   return (
     <Modal
       open={open}
@@ -57,7 +63,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: isSmallScreen ? "90%" : 400,
+          width: isSmallScreen ? "90%" : isLargeScreen ? width : width,
           maxWidth: "90%",
           bgcolor: "background.paper",
           boxShadow: 24,
