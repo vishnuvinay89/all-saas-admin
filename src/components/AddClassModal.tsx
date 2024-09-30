@@ -93,9 +93,9 @@ export const AddClassModal: React.FC<AddClassModalProps> = ({
     (e: React.ChangeEvent<HTMLInputElement | { value: unknown }>) => {
       let value = typeof e.target.value === "string" ? e.target.value : "";
 
-      if (field === "value") {
-        value = value.toUpperCase().slice(0, 3);
-      }
+      // if (field === "value") {
+      //   value = value.toUpperCase().slice(0, 3);
+      // }
       setFormData((prev) => ({ ...prev, [field]: value }));
 
       let errorMessage: string | null = null;
@@ -185,12 +185,12 @@ export const AddClassModal: React.FC<AddClassModalProps> = ({
           helperText={errors.value}
           disabled={isEditing}
         />
-        <Box display="flex" alignItems="center" mt={2}>
+        {/* <Box display="flex" alignItems="center" mt={2}>
           <InfoOutlinedIcon color="primary" sx={{ mr: 1 }} />
           <Typography variant="caption" color="textSecondary">
             {t("COMMON.CODE_NOTIFICATION")}
           </Typography>
-        </Box>
+        </Box> */}
       </DialogContent>
       <Divider />
       <DialogActions sx={{ p: 2 }}>

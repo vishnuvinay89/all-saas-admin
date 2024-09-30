@@ -115,7 +115,7 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
         );
       } else {
         const reassignBlockObject = {
-          limit: 200,
+          limit: 0,
           offset: 0,
           filters: {
             status: ["active"],
@@ -138,7 +138,7 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
         }
 
         const previousBlockObject = {
-          limit: 200,
+          limit: 0,
           offset: 0,
           filters: {
             status: ["active"],
