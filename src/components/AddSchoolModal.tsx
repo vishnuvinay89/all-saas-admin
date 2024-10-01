@@ -15,9 +15,7 @@ import {
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useTranslation } from "next-i18next";
 import { getDistrictsForState } from "@/services/MasterDataService";
-import {
-  getCohortList,
-} from "@/services/CohortService/cohortService";
+import { getCohortList } from "@/services/CohortService/cohortService";
 interface AddSchoolModalProps {
   open: boolean;
   onClose: () => void;
@@ -27,7 +25,7 @@ interface AddSchoolModalProps {
     value: string,
     controllingField: string,
     fieldId: string,
-    districtId?: string,
+    districtId?: string
   ) => void;
   fieldId: string;
   initialValues?: {
@@ -51,11 +49,11 @@ export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({
     value: initialValues.value || "",
     controllingField: initialValues.controllingField || "",
   });
-  const [parentClusterName, setparentCluster]=useState<any>();
+  const [parentClusterName, setparentCluster] = useState<any>();
   const [errors, setErrors] = useState<Record<string, string | null>>({});
-  const [clusters, setClusters] = useState<
-    { value: string; label: string }[]
-  >([]);
+  const [clusters, setClusters] = useState<{ value: string; label: string }[]>(
+    []
+  );
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -113,13 +111,12 @@ export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({
     }
 
     if (field == "controllingField" && clusters.length > 0) {
-
-      const clusterLabel = clusters.find(item => item.value === value)?.label;
+      const clusterLabel = clusters.find((item) => item.value === value)?.label;
       setparentCluster(clusterLabel);
       // const reqParams = {
       //   limit: 1,
       //   offset: 0,
-      //   filters: {  
+      //   filters: {
       //     name: clusterLabel,
       //     type: "CLUSTER",
       //   },
@@ -132,7 +129,7 @@ export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({
       // if (cohortDetails && cohortDetails.length > 0) {
       //   const parentCohortId = cohortDetails[0]?.cohortId;
       //   setparentCluster(parentCohortId);
-      // } 
+      // }
       // else {
       //   return t("COMMON.COHORT NOT CREATED FOR SELECTED CLUSTER");
       // }
@@ -153,7 +150,7 @@ export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({
 
       let errorMessage: string | null = null;
 
-      if (field === "name") {
+      if (field === "name" && !/^[a-zA-Z0-9-_]+$/.test(value)) {
         errorMessage = validateField(
           field,
           value,
@@ -165,13 +162,12 @@ export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({
           value,
           t("COMMON.SCHOOL_CODE_REQUIRED")
         );
-      } 
-      else if (field === "controllingField") {
-          errorMessage = validateField(
-            field,
-            value,
-            t("COMMON.CLUSTER_NAME_REQUIRED")
-          );
+      } else if (field === "controllingField") {
+        errorMessage = validateField(
+          field,
+          value,
+          t("COMMON.CLUSTER_NAME_REQUIRED")
+        );
       }
       setErrors((prev) => ({
         ...prev,
@@ -210,7 +206,7 @@ export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({
         formData.value,
         formData.controllingField,
         fieldId,
-        districtId,
+        districtId
       );
       setFormData({
         name: "",

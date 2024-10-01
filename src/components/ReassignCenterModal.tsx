@@ -4,6 +4,7 @@ import {
   Divider,
   InputAdornment,
   TextField,
+  Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTheme } from "@mui/material/styles";
@@ -16,6 +17,7 @@ import { bulkCreateCohortMembers } from "@/services/CohortService/cohortService"
 import { getCenterList } from "@/services/MasterDataService";
 import { getUserDetailsInfo } from "@/services/UserList";
 import { updateUser } from "@/services/CreateUserService";
+import Loader from "./Loader";
 
 interface ReassignCohortModalProps {
   open: boolean;
@@ -59,7 +61,7 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
 
   const [searchInput, setSearchInput] = useState("");
   const [selectedBlockId, setselectedBlockId] = useState("");
-
+  const [loading, setLoading] = useState<boolean | undefined>(undefined);
   const [checkedCenters, setCheckedCenters] = useState<string[]>([]);
 
   useEffect(() => {
@@ -201,6 +203,7 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
     }
   };
 
+ 
   const filteredCohorts = cohorts?.filter((cohort) =>
     cohort.name.toLowerCase().includes(searchInput)
   );
@@ -234,90 +237,135 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
           ? t("COMMON.REASSIGN_BLOCKS")
           : t("COMMON.REASSIGN_CLASSES")
       }
-      primaryBtnText={t("COMMON.REASSIGN")}
+      primaryBtnText={ t("COMMON.REASSIGN")}
       primaryBtnClick={handleReassign}
-      primaryBtnDisabled={checkedCenters.length === 0}
+      primaryBtnDisabled={!cohorts ||checkedCenters.length === 0}
     >
-      <Box sx={{ p: 1 }}>
-        <TextField
-          sx={{
-            backgroundColor: theme.palette.warning["A700"],
-            borderRadius: 8,
-            "& .MuiOutlinedInput-root fieldset": { border: "none" },
-            "& .MuiOutlinedInput-input": { borderRadius: 8 },
-          }}
-          placeholder={
-            userType === Role.TEAM_LEADERS
-              ? t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK")
-              : t("CENTERS.SEARCHBAR_PLACEHOLDER")
-          }
-          value={searchInput}
-          onChange={handleSearchInputChange}
-          fullWidth
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Box>
-      <Box sx={{ p: 3, maxHeight: "300px", overflowY: "auto" }}>
-        {userType !== Role.TEAM_LEADERS
-          ? filteredCohorts?.map((center) => (
-              <Box key={center.id}>
+      {loading ? (
+        <Box
+          width={"100%"}
+          id="check"
+          display={"flex"}
+          flexDirection={"column"}
+          alignItems={"center"}
+        >
+          <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
+        </Box>
+      ) : (
+        <div>
+          <Box sx={{ p: 1 }}>
+            <TextField
+              sx={{
+                backgroundColor: theme.palette.warning["A700"],
+                borderRadius: 8,
+                "& .MuiOutlinedInput-root fieldset": { border: "none" },
+                "& .MuiOutlinedInput-input": { borderRadius: 8 },
+              }}
+              placeholder={
+                userType === Role.TEAM_LEADERS
+                  ? t("MASTER.SEARCHBAR_PLACEHOLDER_BLOCK")
+                  : t("CENTERS.SEARCHBAR_PLACEHOLDER")
+              }
+              value={searchInput}
+              onChange={handleSearchInputChange}
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
+      
+          {cohorts ? (
+            <Box sx={{ p: 3, maxHeight: "300px", overflowY: "auto" }}>
+              {userType !== Role.TEAM_LEADERS &&
+              filteredCohorts &&
+              filteredCohorts?.length > 0 ? (
+                filteredCohorts?.map((center) => (
+                  <Box key={center.id}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 2,
+                      }}
+                    >
+                      <span style={{ color: "black" }}>{center.name}</span>
+                      <Checkbox
+                        checked={checkedCenters.includes(center.name)}
+                        onChange={() => handleToggle(center.name)}
+                        sx={{
+                          color: theme.palette.text.primary,
+                          "&.Mui-checked": {
+                            color: "black",
+                          },
+                          verticalAlign: "middle",
+                          marginTop: "-10px",
+                        }}
+                      />
+                    </Box>
+                    <Divider sx={{ mb: 2 }} />
+                  </Box>
+                ))
+              ) : filteredCBlocks && filteredCBlocks?.length > 0 ? (
+                filteredCBlocks?.map((center: any) => (
+                  <Box key={center.value}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 2,
+                      }}
+                    >
+                      <span style={{ color: "black" }}>{center.label}</span>
+                      <Checkbox
+                        checked={checkedCenters.includes(center.value)}
+                        onChange={() => handleToggle2(center.value)}
+                        sx={{
+                          color: theme.palette.text.primary,
+                          "&.Mui-checked": {
+                            color: "black",
+                          },
+                          verticalAlign: "middle",
+                          marginTop: "-10px",
+                        }}
+                      />
+                    </Box>
+                    <Divider sx={{ mb: 2 }} />
+                  </Box>
+                ))
+              ) : (
                 <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    mb: 2,
-                  }}
+                  width={"100%"}
+                  id="check"
+                  display={"flex"}
+                  flexDirection={"column"}
+                  alignItems={"center"}
                 >
-                  <span style={{ color: "black" }}>{center.name}</span>
-                  <Checkbox
-                    checked={checkedCenters.includes(center.name)}
-                    onChange={() => handleToggle(center.name)}
-                    sx={{
-                      color: theme.palette.text.primary,
-                      "&.Mui-checked": {
-                        color: "black",
-                      },
-                      verticalAlign: "middle",
-                      marginTop: "-10px",
-                    }}
+                  <Loader
+                    showBackdrop={false}
+                    loadingText={t("COMMON.LOADING")}
                   />
                 </Box>
-                <Divider sx={{ mb: 2 }} />
-              </Box>
-            ))
-          : filteredCBlocks?.map((center: any) => (
-              <Box key={center.value}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    mb: 2,
-                  }}
-                >
-                  <span style={{ color: "black" }}>{center.label}</span>
-                  <Checkbox
-                    checked={checkedCenters.includes(center.value)}
-                    onChange={() => handleToggle2(center.value)}
-                    sx={{
-                      color: theme.palette.text.primary,
-                      "&.Mui-checked": {
-                        color: "black",
-                      },
-                      verticalAlign: "middle",
-                      marginTop: "-10px",
-                    }}
-                  />
-                </Box>
-                <Divider sx={{ mb: 2 }} />
-              </Box>
-            ))}
-      </Box>
+              )}
+            </Box>
+          ) : (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              height="20vh"
+            >
+              <Typography marginTop="10px" textAlign={"center"}>
+                {t("COMMON.NO_CLASSES_FOUND")}
+              </Typography>
+            </Box>
+          )}
+        </div>
+      )}
     </CustomModal>
   );
 };
