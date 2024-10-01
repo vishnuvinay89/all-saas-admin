@@ -17,7 +17,9 @@ export interface Field {
     | "checkbox"
     | "radio"
     | "email"
-    | "time";
+    | "time"
+    | "date";
+
   label: string;
   order: string;
   coreField: number;
@@ -92,4 +94,3 @@ export interface CoursePlannerMetaData {
   role: string;
   medium: string;
 }
-

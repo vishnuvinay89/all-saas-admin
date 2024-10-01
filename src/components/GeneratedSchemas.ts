@@ -8,7 +8,7 @@ export const customFields = {
 };
 export const GenerateSchemaAndUiSchema = (
   formData: FormData,
-  t: (key: string) => string,
+  t: (key: string) => string
 ) => {
   const schema: JSONSchema7 = {
     //Form schema
@@ -21,7 +21,7 @@ export const GenerateSchemaAndUiSchema = (
   };
   const uiSchema: UiSchema = {}; //form ui schema
   let formValues: any = {};
-   console.log('FormData', formData)
+  console.log("FormData", formData);
   formData?.fields?.forEach((field: Field) => {
     const {
       label,
@@ -35,7 +35,7 @@ export const GenerateSchemaAndUiSchema = (
       dependsOn,
       pattern,
       required,
-      isRequired
+      isRequired,
     } = field;
     const fieldSchema: any = {
       title: t(`FORM.${label}`),
@@ -86,9 +86,9 @@ export const GenerateSchemaAndUiSchema = (
           oneOf: options?.map((opt: FieldOption) => ({
             const: opt.value,
             title:
-            t(`FORM.${opt.value}`) === `FORM.${opt.value}`
-              ? opt.value
-              : t(`FORM.${opt.value}`),
+              t(`FORM.${opt.value}`) === `FORM.${opt.value}`
+                ? opt.value
+                : t(`FORM.${opt.value}`),
           })),
         };
         fieldSchema.uniqueItems = true;
@@ -105,9 +105,14 @@ export const GenerateSchemaAndUiSchema = (
         }));
         fieldUiSchema["ui:widget"] = "CustomRadioWidget";
         break;
-        case 'time':
-        fieldSchema.type = 'string';
-        fieldSchema.format = 'time';
+      case "time":
+        fieldSchema.type = "string";
+        fieldSchema.format = "time";
+        break;
+      case "date": // New case for date
+        fieldSchema.type = "string";
+        fieldSchema.format = "date"; // Specify the format as 'date'
+        fieldUiSchema["ui:widget"] = "date"; // Optionally, you can set a custom widget
         break;
       default:
         break;
@@ -143,7 +148,7 @@ export const GenerateSchemaAndUiSchema = (
       fieldSchema.enumNames = options?.map((opt: FieldOption) =>
         t(`FORM.${opt.label}`) === `FORM.${opt.label}`
           ? opt.label
-          : t(`FORM.${opt.label}`),
+          : t(`FORM.${opt.label}`)
       );
       if (maxSelections) {
         fieldSchema.maxItems = maxSelections;
@@ -211,10 +216,10 @@ export const GenerateSchemaAndUiSchema = (
       fieldSchema.default = field.default;
     }
     if (field?.validation) {
-      if (field?.validation?.includes('numeric')) {
+      if (field?.validation?.includes("numeric")) {
         // fieldUiSchema['ui:field'] = 'NumberInputField';
       }
-      if (field?.validation?.includes('currentYear')) {
+      if (field?.validation?.includes("currentYear")) {
         fieldSchema.pattern = getCurrentYearPattern();
       }
       fieldSchema.validation = field.validation;

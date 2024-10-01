@@ -193,7 +193,6 @@ export const getCurrentYearPattern = () => {
 //   return initialFormData;
 // };
 
-
 export const mapFields = (formFields: any, Details: any) => {
   let initialFormData: any = {};
   console.log("Details", Details);
@@ -252,7 +251,10 @@ export const mapFields = (formFields: any, Details: any) => {
           initialFormData[item.name] = Details[item.name];
         }
       }
-    } else if (item.name === "attendance_starts_at" || item.name === "attendance_ends_at") {
+    } else if (
+      item.name === "attendance_starts_at" ||
+      item.name === "attendance_ends_at"
+    ) {
       // Special case for attendance timing fields
       initialFormData[item.name] = Details.params.self[item.name];
     } else {
@@ -266,4 +268,23 @@ export const mapFields = (formFields: any, Details: any) => {
 
   console.log("initialFormData", initialFormData);
   return initialFormData;
+};
+
+export const adjustTime = (timeStr: any, minutes: any) => {
+  // Create a new Date object based on today's date with the given time
+  const timeParts = timeStr.split(":");
+  const date = new Date();
+  date.setHours(parseInt(timeParts[0], 10));
+  date.setMinutes(parseInt(timeParts[1], 10));
+  date.setSeconds(parseInt(timeParts[2], 10));
+
+  // Adjust the date by the given number of minutes
+  date.setMinutes(date.getMinutes() + minutes);
+
+  // Format the result back to HH:MM:SS
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutesStr = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${hours}:${minutesStr}:${seconds}`;
 };

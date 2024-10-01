@@ -45,7 +45,7 @@ import { showToastMessage } from "@/components/Toastify";
 import AddNewCenters from "@/components/AddNewCenters";
 import { getCenterTableData } from "@/data/tableColumns";
 import { Theme } from "@mui/system";
-import { firstLetterInUpperCase, mapFields } from "@/utils/Helper";
+import { adjustTime, firstLetterInUpperCase, mapFields } from "@/utils/Helper";
 import SimpleModal from "@/components/SimpleModal";
 import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
@@ -754,6 +754,7 @@ const Center: React.FC = () => {
     const formData = data?.formData;
     //const schemaProperties = schema.properties;
 
+  
     // Initialize the API body similar to handleSubmit
     let cohortDetails: CohortDetails = {
       name: formData?.name,
@@ -898,7 +899,9 @@ const Center: React.FC = () => {
     event: React.FormEvent<any>
   ) => {
     const formData = data?.formData;
-    console.log("formData", centerFormData);
+
+    console.log("formDataOf", formData);
+    console.log("centerFormData", centerFormData);
 
     const schoolFieldOptions = centerFormData.fields.find(
       (item: any) => item.name === "nondependantschools"
@@ -914,18 +917,42 @@ const Center: React.FC = () => {
       (item: any) => item.value === formData.classes
     );
 
-    const slotFieldOptions = centerFormData.fields.find(
+    const slotFieldOptions = centerFormData?.fields.find(
       (item: any) => item.name === "slots"
     );
-    const slotField = slotFieldOptions.options.find(
-      (item: any) => item.value === formData.slots
+
+    const toTime = centerFormData?.fields.find(
+      (item: any) => item.name === formData.to_time
     );
+    const slotField = slotFieldOptions?.options.find(
+      (item: any) => item.value === formData?.slots
+    );
+    console.log("fromTime", formData.from_time);
+    console.log("toTime", formData.to_time);
+
+    const originalTime = formData.from_time;
+    const timeBefore = adjustTime(originalTime, -5); // 5 minutes before
+    const timeAfter = adjustTime(originalTime, 5); // 5 minutes after
+
+    const fromTimeOption = centerFormData.fields.find(
+      (item: any) => item.name === "from_time"
+    );
+
+    const toTimeOption = centerFormData.fields.find(
+      (item: any) => item.name === "to_time"
+    );
+
+    console.log("fromTimeOption", fromTimeOption);
+
+    // Extract the field IDs dynamically
+    const fromTimeFieldId = fromTimeOption?.fieldId || "";
+    const toTimeFieldId = toTimeOption?.fieldId || "";
 
     console.log(
       "cohortName",
       schoolField.label,
-      classField.label,
-      slotField.label
+      classField.label
+      // slotField.label
     );
 
     const reqParams = {
@@ -940,11 +967,10 @@ const Center: React.FC = () => {
     const response = await getCohortList(reqParams);
     const parentCohort = response?.results?.cohortDetails[0];
 
-    const { timePlus5, timeMinus5 } = getModifiedTimes(slotField.label);
+    // const { timePlus5, timeMinus5 } = getModifiedTimes(slotField.label);
 
     const newClassCohort = {
-      name:
-        schoolField.label + ", " + classField.label + ", " + slotField.label,
+      name: schoolField.label + ", " + classField.label + ", ",
       type: "COHORT",
       parentId: parentCohort.cohortId,
       params: {
@@ -952,8 +978,8 @@ const Center: React.FC = () => {
           allowed: 1,
           allow_late_marking: 1,
           restrict_attendance_timings: 1,
-          attendance_starts_at: timeMinus5,
-          attendance_ends_at: timePlus5,
+          attendance_starts_at: timeBefore,
+          attendance_ends_at: timeAfter,
           back_dated_attendance: 0,
           back_dated_attendance_allowed_days: 0,
           can_be_updated: 0,
@@ -969,6 +995,16 @@ const Center: React.FC = () => {
           capture_geoLocation: 0,
         },
       },
+      customFields: [
+        {
+          fieldId: fromTimeFieldId,
+          value: formData.from_time,
+        },
+        {
+          fieldId: toTimeFieldId,
+          value: formData.to_time,
+        },
+      ],
     };
     console.log("cohortDetails", newClassCohort);
     const cohortData = await createCohort(newClassCohort);
