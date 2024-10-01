@@ -140,7 +140,7 @@ const HeaderComponent = ({
     selectedCodes: string[]
   ) => {
     const getCentersObject = {
-      limit: 200,
+      limit: 0,
       offset: 0,
       filters: {
         // "type":"COHORT",

@@ -110,7 +110,7 @@ export const useLocationState = (
           userType === FormContextType.ADMIN_CENTER) {
           console.log("true");
           const object = {
-            limit: 200,
+            limit: 0,
             offset: 0,
             filters: {
               // "type": "COHORT",
@@ -136,7 +136,7 @@ export const useLocationState = (
           }
         } else {
           const getCentersObject = {
-            limit: 200,
+            limit: 0,
             offset: 0,
             filters: {
               // "type":"COHORT",
