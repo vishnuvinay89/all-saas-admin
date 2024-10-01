@@ -567,7 +567,7 @@ const UserTable: React.FC<UserTableProps> = ({
       console.log(userType, Role.TEAM_LEADER);
       if (userType !== "Team Leaders") {
         const getCentersObject = {
-          limit: 200,
+          limit: 0,
           offset: 0,
           filters: {
             type: "COHORT",
