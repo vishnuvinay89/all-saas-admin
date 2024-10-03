@@ -145,7 +145,7 @@ const Center: React.FC = () => {
 
   const [filters, setFilters] = useState<cohortFilterDetails>({
     type: CohortTypes.COHORT,
-    states: selectedStateCode,
+    // states: selectedStateCode,
     status: [statusValue],
   });
   const handleCloseAddLearnerModal = () => {
@@ -208,21 +208,12 @@ const Center: React.FC = () => {
         sort: sort,
         filters: filters,
       };
-      const resp = await queryClient.fetchQuery({
-        queryKey: [
-          QueryKeys.GET_COHORT_LIST,
-          data.limit,
-          data.offset,
-          JSON.stringify(data.filters),
-          JSON.stringify(data.sort),
-        ],
-        queryFn: () => getCohortList(data),
-      });
+      const resp = await getCohortList(data);
       if (resp) {
-        const result = resp?.results?.cohortDetails;
+        const result = await resp?.results?.cohortDetails;
         const resultData: centerData[] = [];
 
-        const cohortIds = result.map((item: any) => item.cohortId); // Extract cohort IDs
+        const cohortIds = result?.map((item: any) => item.cohortId); // Extract cohort IDs
 
         // Fetch member counts for each cohort
         const memberCounts = await Promise.all(
@@ -257,7 +248,11 @@ const Center: React.FC = () => {
           };
           resultData?.push(requiredData);
         });
-        setCohortData(resultData);
+        if (resultData) {
+          setCohortData(resultData);
+        }
+
+        console.log("resultData", resultData);
         const totalCount = resp?.count;
         setTotalCound(totalCount);
 
@@ -273,12 +268,14 @@ const Center: React.FC = () => {
         );
         const pageCount = Math.ceil(totalCount / pageLimit);
         setPageCount(pageCount);
-        setLoading(false);
+        // setLoading(false);
       }
     } catch (error) {
       setCohortData([]);
       setLoading(false);
       console.error("Error fetching user list:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -299,7 +296,7 @@ const Center: React.FC = () => {
 
   const getCohortMemberlistData = async (cohortId: string) => {
     const data = {
-      limit: 300,
+      limit: 0,
       page: 0,
       filters: {
         cohortId: cohortId,
@@ -361,7 +358,7 @@ const Center: React.FC = () => {
   useEffect(() => {
     fetchUserList();
     getFormData();
-  }, [pageOffset, pageLimit, sortBy, filters, filters.states, filters.status]);
+  }, [pageOffset, pageLimit, sortBy, filters, filters.status]);
 
   // handle functions
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
@@ -607,6 +604,7 @@ const Center: React.FC = () => {
 
       const cohortDetails = resp?.results?.cohortDetails?.[0] || {};
       setEditFormData(mapFields(formFields, cohortDetails));
+
       setLoading(false);
       setIsEditForm(true);
     }
@@ -752,20 +750,76 @@ const Center: React.FC = () => {
   ) => {
     setLoading(true);
     const formData = data?.formData;
-    //const schemaProperties = schema.properties;
+    const schoolFieldOptions = centerFormData.fields.find(
+      (item: any) => item.name === "nondependantschools"
+    );
+    const schoolField = schoolFieldOptions.options.find(
+      (item: any) => item.value === formData.nondependantschools
+    );
 
-  
+    const classFieldOptions = centerFormData.fields.find(
+      (item: any) => item.name === "classes"
+    );
+    const classField = classFieldOptions.options.find(
+      (item: any) => item.value === formData.classes
+    );
+    //const schemaProperties = schema.properties;
+    const originalTime = formData.from_time;
+    const timeBefore = adjustTime(originalTime, -5); // 5 minutes before
+    const timeAfter = adjustTime(originalTime, 5); // 5 minutes after
+
+    const fromTimeOption = centerFormData.fields.find(
+      (item: any) => item.name === "from_time"
+    );
+
+    const schoolOption = centerFormData.fields.find(
+      (item: any) => item.name === "nondependantschools"
+    );
+    const classOption = centerFormData.fields.find(
+      (item: any) => item.name === "classes"
+    );
+    const toTimeOption = centerFormData.fields.find(
+      (item: any) => item.name === "to_time"
+    );
+
+    console.log("fromTimeOption", fromTimeOption);
+
+    // Extract the field IDs dynamically
+    const fromTimeFieldId = fromTimeOption?.fieldId || "";
+    const toTimeFieldId = toTimeOption?.fieldId || "";
+    const schoolFieldId = schoolOption?.fieldId || "";
+    const classFieldId = classOption?.fieldId || "";
+
+    console.log("formDataFOR EDIT", formData);
+
     // Initialize the API body similar to handleSubmit
     let cohortDetails: CohortDetails = {
-      name: formData?.name,
-      customFields: [],
+      name: schoolField.label + ", " + classField.label + ", ",
+      customFields: [
+        {
+          fieldId: fromTimeFieldId,
+          value: formData.from_time,
+        },
+        {
+          fieldId: toTimeFieldId,
+          value: formData.to_time,
+        },
+        {
+          fieldId: schoolFieldId,
+          value: [schoolField.value],
+        },
+        {
+          fieldId: classFieldId,
+          value: [classField.value],
+        },
+      ],
       params: {
         self: {
           allowed: 1,
           allow_late_marking: 1,
           restrict_attendance_timings: 1,
-          attendance_starts_at: formData?.attendance_starts_at,
-          attendance_ends_at: formData?.attendance_ends_at,
+          attendance_starts_at: timeBefore,
+          attendance_ends_at: timeAfter,
           back_dated_attendance: 0,
           back_dated_attendance_allowed_days: 0,
           can_be_updated: 0,
@@ -801,6 +855,7 @@ const Center: React.FC = () => {
       }
       const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
+        fetchUserList();
         showToastMessage(t("CENTERS.CLASS_UPDATE_SUCCESSFULLY"), "success");
       } else {
         showToastMessage(t("CENTERS.CLASS_UPDATE_FAILED"), "error");
@@ -938,6 +993,12 @@ const Center: React.FC = () => {
       (item: any) => item.name === "from_time"
     );
 
+    const schoolOption = centerFormData.fields.find(
+      (item: any) => item.name === "nondependantschools"
+    );
+    const classOption = centerFormData.fields.find(
+      (item: any) => item.name === "classes"
+    );
     const toTimeOption = centerFormData.fields.find(
       (item: any) => item.name === "to_time"
     );
@@ -947,6 +1008,8 @@ const Center: React.FC = () => {
     // Extract the field IDs dynamically
     const fromTimeFieldId = fromTimeOption?.fieldId || "";
     const toTimeFieldId = toTimeOption?.fieldId || "";
+    const schoolFieldId = schoolOption?.fieldId || "";
+    const classFieldId = classOption?.fieldId || "";
 
     console.log(
       "cohortName",
@@ -1004,14 +1067,26 @@ const Center: React.FC = () => {
           fieldId: toTimeFieldId,
           value: formData.to_time,
         },
+        {
+          fieldId: schoolFieldId,
+          value: [schoolField.value],
+        },
+        {
+          fieldId: classFieldId,
+          value: [classField.value],
+        },
       ],
     };
-    console.log("cohortDetails", newClassCohort);
+
     const cohortData = await createCohort(newClassCohort);
+
     if (cohortData) {
       showToastMessage(t("CENTERS.CENTER_CREATED_SUCCESSFULLY"), "success");
       setOpenAddNewCohort(false);
       // onClose();
+    } else {
+      showToastMessage(t("CENTER.NOT_ABLE_CREATE_CENTER"), "error");
+      setOpenAddNewCohort(false);
     }
     fetchUserList();
   };
@@ -1106,6 +1181,7 @@ const Center: React.FC = () => {
       />
 
       <HeaderComponent {...userProps}>
+        {/* {console.log("cohortData",cohortData)} */}
         {loading ? (
           <Box
             width={"100%"}
@@ -1133,16 +1209,18 @@ const Center: React.FC = () => {
             onDelete={handleDelete}
           />
         ) : (
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            height="20vh"
-          >
-            <Typography marginTop="10px" textAlign={"center"}>
-              {t("COMMON.NO_CLASSES_FOUND")}
-            </Typography>
-          </Box>
+          !loading && (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              height="20vh"
+            >
+              <Typography marginTop="10px" textAlign={"center"}>
+                {t("COMMON.NO_CLASSES_FOUND")}
+              </Typography>
+            </Box>
+          )
         )}
 
         <AddNewCenters

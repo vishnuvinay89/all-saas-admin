@@ -143,7 +143,9 @@
     "UPDATE_CLASS": "Update Class",
     "CLASS_UPDATED_SUCCESS": "Class Updated Successfully!",
     "CLASS_ADDED_SUCCESS": "Class Added Successfully!",
-    "CLASS_NOT_FOUND": "Class not found"
+    "CLASS_NOT_FOUND": "Class not found",
+    "SCHOOL_NAME_REQUIRED": "School Name Required",
+    "SCHOOL_CODE_REQUIRED": "School Code Required"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -300,7 +302,10 @@
     "TAKEN_TC": "Taken TC",
     "ALLOCATION_CHANGE": "Allocation  Change",
     "INCORRECT_ENTRY": "Incorrect Entry",
-    "DUPLICATION_ENTRY": "Duplicate Entry"
+    "DUPLICATION_ENTRY": "Duplicate Entry",
+    "CENTER_CREATED_SUCCESSFULLY": "Center Created Successfully",
+    "NOT_ABLE_CREATE_CENTER": "Not Able To Create Center",
+    "NO_COHORT_ID_SELECTED":"No Cohort Id Selected"
   },
   "FORM": {
     "FULL_NAME": "Full Name",
@@ -397,12 +402,14 @@
     "PROGRAM": "Program",
     "IS_STUDENT_INVOLVED_IN_ANY_SUB_PROGRAM": "Is Student Involved In Any Sub Program",
     "SUB_PROGRAM": "Sub Program",
-    "VILLAGE_NAME":"Village Name",
-    "DATE_OF_JOINING":"Date Of joining",
-    "OLD_TEACHER_ID":"Old Teacher Id",
-    "DATE_OF_LEAVING":"Date Of Leaving",
-    "REASON_FOR_LEAVING":"Reason For Leaving",
-    "EMPLOYEE_ID":"Employee Id"
+    "VILLAGE_NAME": "Village Name",
+    "DATE_OF_JOINING": "Date Of joining",
+    "OLD_TEACHER_ID": "Old Teacher Id",
+    "DATE_OF_LEAVING": "Date Of Leaving",
+    "REASON_FOR_LEAVING": "Reason For Leaving",
+    "EMPLOYEE_ID": "Employee Id",
+    "FROM_TIME": "From Time",
+    "TO_TIME": "To Time"
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",

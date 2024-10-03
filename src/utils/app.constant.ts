@@ -88,6 +88,7 @@ export enum InputTypes {
   RADIO = "radio",
   NUMERIC = "numeric",
   TEXT = "text",
+  DROPDOWN = "drop_down"
 }
 export enum apiCatchingDuration {
   GETREADFORM = 36000000,

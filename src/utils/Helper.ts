@@ -196,6 +196,7 @@ export const getCurrentYearPattern = () => {
 export const mapFields = (formFields: any, Details: any) => {
   let initialFormData: any = {};
   console.log("Details", Details);
+  
 
   formFields?.fields.forEach((item: any) => {
     const customFieldValue = Details?.customFields?.find(
@@ -207,10 +208,13 @@ export const mapFields = (formFields: any, Details: any) => {
         return item.default;
       }
       if (item?.isMultiSelect) {
+        
         if (data[item.name] && item?.maxSelections > 1) {
           return [field?.value];
         } else if (item?.type === InputTypes.CHECKBOX) {
           return String(field?.value).split(",");
+        } else if (item?.type === InputTypes.DROPDOWN) {
+          return field?.code || null; 
         } else {
           return field?.value?.toLowerCase();
         }
@@ -237,6 +241,12 @@ export const mapFields = (formFields: any, Details: any) => {
           initialFormData[item.name] = [Details[item.name]];
         } else if (item?.type === "checkbox") {
           initialFormData[item.name] = String(Details[item.name]).split(",");
+        } else if (item?.type === "drop_down") {
+          const customField = Details.customFields.find(
+            (field: any) => field.fieldId === item.fieldId
+          );
+
+          initialFormData[item.name] = customField ? customField.code : null; // Ensure it uses 'code' or matches the expected enum
         } else {
           initialFormData[item.name] = Details[item.name];
         }
@@ -245,6 +255,7 @@ export const mapFields = (formFields: any, Details: any) => {
       } else if (item?.type === "numeric") {
         initialFormData[item.name] = Number(Details[item.name]);
       } else if (item?.type === "text" && Details[item.name]) {
+       
         initialFormData[item.name] = String(Details[item.name]);
       } else {
         if (Details[item.name]) {
