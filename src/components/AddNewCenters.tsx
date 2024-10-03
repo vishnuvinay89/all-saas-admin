@@ -168,9 +168,12 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
         }
       } else {
         showToastMessage("Please Input Data", "warning");
+        onClose();
       }
     } else {
+     
       showToastMessage(t("CENTER.NOT_ABLE_CREATE_CENTER"), "error");
+      onClose();
     }
   };
 

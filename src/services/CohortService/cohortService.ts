@@ -76,7 +76,7 @@ export const createUser = async (userData: any): Promise<any> => {
     return response?.data?.result;
   } catch (error) {
     console.error("error in getting cohort list", error);
-    return error 
+    return error;
     // throw error;
   }
 };
@@ -85,7 +85,7 @@ export const createCohort = async (userData: any): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/create`;
   try {
     const response = await post(apiUrl, userData);
-    return response?.data;
+    return response?.data ? response?.data :response;
   } catch (error) {
     console.error("error in getting cohort list", error);
     // throw error;
@@ -113,19 +113,16 @@ export const fetchCohortMemberList = async ({
   }
 };
 
-
-
 export const bulkCreateCohortMembers = async (payload: any): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohortmember/bulkCreate`;
   try {
     const response = await post(apiUrl, payload);
     return response.data;
   } catch (error) {
-    console.error('Error in bulk creating cohort members', error);
+    console.error("Error in bulk creating cohort members", error);
     throw error;
   }
 };
-
 
 export const updateCohortMemberStatus = async ({
   memberStatus,
@@ -138,10 +135,9 @@ export const updateCohortMemberStatus = async ({
       status: memberStatus,
       statusReason,
     });
-    console.log('data', response?.data);
     return response?.data;
   } catch (error) {
-    console.error('error in attendance report api ', error);
+    console.error("error in attendance report api ", error);
     // throw error;
   }
 };

@@ -63,10 +63,10 @@ const Menuitems = [
         title: "Class",
         href: "/class",
       },
-      {
-        title: "Slot",
-        href: "/slot",
-      },
+      // {
+      //   title: "Slot",
+      //   href: "/slot",
+      // },
     ],
   },
   showCoursePlanner && {
