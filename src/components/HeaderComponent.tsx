@@ -316,7 +316,7 @@ const HeaderComponent = ({
               );
               setBlocks(blockResult);
               if (!hasBlock && !hasDistrict) {
-                if (userType === Role.TEAM_LEADERS) {
+                if (userType === Role.TEAM_LEADERS || userType==="Centers") {
                   setSelectedBlock([t("COMMON.ALL_BLOCKS")]);
                   //setSelectedBlockCode("")
                   router.replace({

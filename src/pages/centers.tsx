@@ -118,6 +118,24 @@ const Center: React.FC = () => {
   const [isEditForm, setIsEditForm] = useState(false);
   const [statesInformation, setStatesInformation] = useState<any>([]);
   const [selectedRowData, setSelectedRowData] = useState<any>("");
+  const selectedBlockStore = useSubmittedButtonStore(
+    (state: any) => state.selectedBlockStore
+  );
+  const setSelectedBlockStore = useSubmittedButtonStore(
+    (state: any) => state.setSelectedBlockStore
+  );
+  const selectedDistrictStore = useSubmittedButtonStore(
+    (state: any) => state.selectedDistrictStore
+  );
+  const setSelectedDistrictStore = useSubmittedButtonStore(
+    (state: any) => state.setSelectedDistrictStore
+  );
+  const selectedCenterStore = useSubmittedButtonStore(
+    (state: any) => state.selectedCenterStore
+  );
+  const setSelectedCenterStore = useSubmittedButtonStore(
+    (state: any) => state.setSelectedCenterStore
+  );
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
   );
@@ -390,9 +408,35 @@ finalResult?.forEach((item: any, index: number) => {
   );
 
   const handleStateChange = async (selected: string[], code: string[]) => {
+    const newQuery = { ...router.query }; 
+ 
+    if (newQuery.center) {
+      delete newQuery.center;  
+    }
+    if (newQuery.district) {
+     delete newQuery.district;
+   }
+    if (newQuery.block) {
+      delete newQuery.block;
+    }
+    router.replace({
+      pathname: router.pathname,
+      query: { 
+        ...newQuery, 
+        state: code?.join(","), 
+      }
+    });
     setSelectedDistrict([]);
     setSelectedBlock([]);
     setSelectedState(selected);
+
+
+   // setSelectedCenterCode([])
+
+   
+    setSelectedBlockCode("");
+    setSelectedDistrictCode("");
+  
 
     if (selected[0] === "") {
       if (filters.status)
@@ -412,10 +456,21 @@ finalResult?.forEach((item: any, index: number) => {
   };
 
   const handleDistrictChange = (selected: string[], code: string[]) => {
+    const newQuery = { ...router.query }; 
+    console.log(selected)
+        if (newQuery.center) {
+          delete newQuery.center;  
+        }
+        if (newQuery.block) {
+          delete newQuery.block;
+        }
     setSelectedBlock([]);
     setSelectedDistrict(selected);
-
-    if (selected[0] === "") {
+    setSelectedBlockCode("");
+    localStorage.setItem('selectedDistrict', selected[0])
+    
+    setSelectedDistrictStore(selected[0])
+    if (selected[0] === "" ||  selected[0] === t("COMMON.ALL_DISTRICTS")) {
       if (filters.status) {
         setFilters({
           states: selectedStateCode,
@@ -426,7 +481,25 @@ finalResult?.forEach((item: any, index: number) => {
           states: selectedStateCode,
         });
       }
+      if (newQuery.district) {
+        delete newQuery.district;  
+      }
+      router.replace({
+        pathname: router.pathname,
+        query: { 
+          ...newQuery, 
+          state: selectedStateCode, 
+        }
+      });
     } else {
+      router.replace({
+        pathname: router.pathname,
+        query: { 
+          ...newQuery, 
+          state: selectedStateCode, 
+          district: code?.join(",") 
+        }
+      });
       const districts = code?.join(",");
       setSelectedDistrictCode(districts);
       if (filters.status) {
@@ -447,7 +520,31 @@ finalResult?.forEach((item: any, index: number) => {
   };
   const handleBlockChange = (selected: string[], code: string[]) => {
     setSelectedBlock(selected);
-    if (selected[0] === "") {
+    const newQuery = { ...router.query }; 
+    if (newQuery.center) {
+      delete newQuery.center;  
+    }
+    if (newQuery.block) {
+      delete newQuery.block;
+    }
+    console.log(code?.join(","))
+    
+    
+   
+    localStorage.setItem('selectedBlock', selected[0])
+    setSelectedBlockStore(selected[0])
+    if (selected[0] === "" || selected[0] === t("COMMON.ALL_BLOCKS")) {
+      if (newQuery.block) {
+        delete newQuery.block;
+      }
+      router.replace({
+        pathname: router.pathname,
+        query: { 
+          ...newQuery, 
+          state: selectedStateCode, 
+          district: selectedDistrictCode, 
+        }
+      });
       if (filters.status) {
         setFilters({
           states: selectedStateCode,
@@ -461,6 +558,15 @@ finalResult?.forEach((item: any, index: number) => {
         });
       }
     } else {
+      router.replace({
+        pathname: router.pathname,
+        query: { 
+          ...newQuery, 
+          state: selectedStateCode, 
+          district: selectedDistrictCode, 
+          block: code?.join(",") 
+        }
+      });
       const blocks = code?.join(",");
       setSelectedBlockCode(blocks);
       if (filters.status) {
@@ -749,32 +855,45 @@ finalResult?.forEach((item: any, index: number) => {
         // const result = response?.result?.values;
         if (typeof window !== "undefined" && window.localStorage) {
           const admin = localStorage.getItem("adminInfo");
-          if (admin) {
-            const stateField = JSON.parse(admin).customFields.find(
-              (field: any) => field.label === "STATES"
-            );
-            if (!stateField.value.includes(",")) {
+          if(admin)
+          {
+            const stateField = JSON.parse(admin).customFields.find((field: any) => field.label === "STATES");
+              if (!stateField.value.includes(',')) {
               setSelectedState([stateField.value]);
-              setSelectedStateCode(stateField.code);
-            }
-
-            const object = [
+              setSelectedStateCode(stateField.code)
+               if(selectedDistrictCode && selectedDistrict.length!==0 &&selectedDistrict[0]!==t("COMMON.ALL_DISTRICTS"))
               {
-                value: stateField.code,
-                label: stateField.value,
-              },
-            ];
-            // setStates(object);
-          }
+               
+                setFilters({
+                  states: stateField.code,
+                  districts: selectedDistrictCode,
+                  status: filters.status,
+                  type: CohortTypes.COHORT,
+
+                });
+              }
+              if(selectedBlockCode && selectedBlock.length!==0 && selectedBlock[0]!==t("COMMON.ALL_BLOCKS"))
+              {
+               setFilters({
+                  states: stateField.code,
+                  districts:selectedDistrictCode,
+                  blocks:selectedBlockCode,
+                  status: filters.status,
+                  type: CohortTypes.COHORT,
+
+                })
+              }
+           }
+           }
         }
-        //  setStates(result);
       } catch (error) {
         console.log(error);
       }
     };
-
+  
     fetchData();
-  }, []);
+  }, [selectedBlockCode, selectedDistrictCode]);
+
 
   const handleMemberClick = async (
     type: "active" | "archived",
@@ -873,6 +992,15 @@ finalResult?.forEach((item: any, index: number) => {
     statusValue: statusValue,
     setStatusValue: setStatusValue,
     showSort: true,
+    selectedBlockCode: selectedBlockCode,
+    setSelectedBlockCode:setSelectedBlockCode,
+    selectedDistrictCode: selectedDistrictCode,
+    setSelectedDistrictCode:setSelectedDistrictCode,
+     setSelectedStateCode:setSelectedStateCode,
+     setSelectedDistrict:setSelectedDistrict,
+     setSelectedBlock:setSelectedBlock
+
+
   };
 
   return (
