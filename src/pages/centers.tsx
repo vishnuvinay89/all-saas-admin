@@ -45,7 +45,7 @@ import { showToastMessage } from "@/components/Toastify";
 import AddNewCenters from "@/components/AddNewCenters";
 import { getCenterTableData } from "@/data/tableColumns";
 import { Theme } from "@mui/system";
-import { adjustTime, firstLetterInUpperCase, mapFields } from "@/utils/Helper";
+import { adjustTime, convertTo12HourFormat, firstLetterInUpperCase, mapFields } from "@/utils/Helper";
 import SimpleModal from "@/components/SimpleModal";
 import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
@@ -744,6 +744,7 @@ const Center: React.FC = () => {
   //   }
   // };
 
+
   const handleUpdateAction = async (
     data: IChangeEvent<any, RJSFSchema, any>,
     event: React.FormEvent<any>
@@ -782,6 +783,13 @@ const Center: React.FC = () => {
       (item: any) => item.name === "to_time"
     );
 
+    const slotFieldOptions = centerFormData?.fields.find(
+      (item: any) => item.name === "slots"
+    );
+
+    const slotField = slotFieldOptions?.options.find(
+      (item: any) => item.value === formData?.slots
+    );
     console.log("fromTimeOption", fromTimeOption);
 
     // Extract the field IDs dynamically
@@ -790,11 +798,20 @@ const Center: React.FC = () => {
     const schoolFieldId = schoolOption?.fieldId || "";
     const classFieldId = classOption?.fieldId || "";
 
-    console.log("formDataFOR EDIT", formData);
+
+    const getFromTime = convertTo12HourFormat(formData?.from_time);
+    const getToTime = convertTo12HourFormat(formData?.to_time);
 
     // Initialize the API body similar to handleSubmit
     let cohortDetails: CohortDetails = {
-      name: schoolField.label + ", " + classField.label + ", ",
+      name:
+        schoolField.label +
+        ", " +
+        classField.label +
+        ", " +
+        getFromTime +
+        " - " +
+        getToTime,
       customFields: [
         {
           fieldId: fromTimeFieldId,
@@ -1029,11 +1046,19 @@ const Center: React.FC = () => {
 
     const response = await getCohortList(reqParams);
     const parentCohort = response?.results?.cohortDetails[0];
-
-    // const { timePlus5, timeMinus5 } = getModifiedTimes(slotField.label);
+    const getFromTime = convertTo12HourFormat(formData?.from_time);
+    const getToTime = convertTo12HourFormat(formData?.to_time);
+    // const { timePlus5, timeMinus5 } = getModifiedTimes(slotField?.label);
 
     const newClassCohort = {
-      name: schoolField.label + ", " + classField.label + ", ",
+      name:
+        schoolField.label +
+        ", " +
+        classField.label +
+        ", " +
+        getFromTime +
+        " - " +
+        getToTime,
       type: "COHORT",
       parentId: parentCohort.cohortId,
       params: {
@@ -1092,9 +1117,9 @@ const Center: React.FC = () => {
   };
 
   const convertTo24HourFormat = (time12h: any) => {
-    const [time, modifier] = time12h.split(" ");
+    const [time, modifier] = time12h?.split(" ");
 
-    let [hours, minutes] = time.split(":");
+    let [hours, minutes] = time?.split(":");
     hours = parseInt(hours, 10);
 
     if (modifier === "PM" && hours !== 12) {
@@ -1120,7 +1145,7 @@ const Center: React.FC = () => {
   };
 
   const getModifiedTimes = (timeRange: any) => {
-    const startTime12h = timeRange.split(" - ")[0];
+    const startTime12h = timeRange?.split(" - ")[0];
     const startTime24h = convertTo24HourFormat(startTime12h);
 
     const timePlus5 = addMinutes(startTime24h, 5);
