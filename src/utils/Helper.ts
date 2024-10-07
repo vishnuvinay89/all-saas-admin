@@ -102,7 +102,7 @@ export const transformLabel = (label: string): string => {
 };
 
 export const transformArray = (arr: State[]): State[] => {
-  if (!arr) {
+  if (!arr || !Array.isArray(arr)) {
     return arr;
   }
   return arr?.map((item) => ({

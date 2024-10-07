@@ -191,7 +191,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
               md={inModal ? 12 : 4}
               lg={inModal ? 12 : isCenterSelection ? 3 : 4}
             >
-              {shouldRenderSelectCheckmarks && (
+              {shouldRenderSelectCheckmarks && blocks.length > 0 &&(
                 <MultipleSelectCheckmarks
                   names={capitalizeFirstLetterOfEachWordInArray(
                     blocks?.map((block) => block.label)
