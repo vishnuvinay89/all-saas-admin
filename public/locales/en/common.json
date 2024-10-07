@@ -150,7 +150,9 @@
     "CREATE_PLAN": "Create Plan",
     "VIEW_PLANS": "View Plans",
     "FOUNDATION_COURSE": "Foundation Course",
-    "MAIN_COURSE": "Main Course"
+    "MAIN_COURSE": "Main Course",
+    "WORKSPACE": "Workspace"
+
   },
   "FACILITATORS": {
     "STATE": "State",
@@ -219,6 +221,7 @@
     "NO_DATA_POST":"No data available for Learners Post-requisites",
     "FACILITATORS":"Facilitators Requisites",
     "NO_DATA":"No data available for Facilitators Requisites"
+    
 
   },
   "MASTER": {
@@ -390,5 +393,10 @@
     "ARCHIVED_LEARNERS": " Archived Learners",
     "CODE": "Code",
     "DISTRICT": "District"
+  },
+  "WORKSPACE": {
+    "EDITOR_WORKSPACE": "Editor Workspace",
+    "COURSE": "Course"
+
   }
 }
