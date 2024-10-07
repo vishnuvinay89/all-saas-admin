@@ -31,12 +31,12 @@ const nextConfig = {
   async rewrites() {
     return  [
       {
-        source: '/action/:path*', // Match any route starting with /action/
-        destination: '/api/proxy?path=/action/:path*', // Forward to the proxy API
+        source: '/action/:path*',
+        destination: '/api/proxy?path=/action/:path*',
       },
       {
-        source: '/api/:path*', // Match any route starting with /api/
-        destination: '/api/proxy?path=/api/:path*', // Forward to the proxy API
+        source: '/api/:path*',
+        destination: '/api/proxy?path=/api/:path*',
       }
     ];
   },
@@ -47,7 +47,7 @@ const nextConfig = {
         filename: 'static/chunks/remoteEntry.js',
         remotes: remotes(isServer),
         exposes: {
-          // Add exposed modules here, e.g., './Component': './path/to/component'
+
         },
         
       })
