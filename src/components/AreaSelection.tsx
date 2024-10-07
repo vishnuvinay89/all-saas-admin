@@ -191,12 +191,18 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
               md={inModal ? 12 : 4}
               lg={inModal ? 12 : isCenterSelection ? 3 : 4}
             >
-              {shouldRenderSelectCheckmarks && blocks.length > 0 &&(
+              {shouldRenderSelectCheckmarks &&(
                 <MultipleSelectCheckmarks
                   names={capitalizeFirstLetterOfEachWordInArray(
-                    blocks?.map((block) => block.label)
+                    blocks?.length > 0 ? blocks.map((block) => block.label) : []
+                    //  blocks.map((block) => block.label)
+
                   )}
-                  codes={blocks?.map((block) => block.value)}
+                  codes={
+                    
+                    blocks?.length > 0 ? blocks?.map((block) => block.value) : []
+                    // blocks?.map((block) => block.value)
+                  }
                   tagName={t("FACILITATORS.BLOCK")}
                   selectedCategories={capitalizeFirstLetterOfEachWordInArray(
                     selectedBlock
@@ -209,7 +215,7 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
                   }
                   overall={!inModal}
                   defaultValue={
-                    selectedDistrict?.length > 0 && blocks?.length === 0
+                    selectedDistrict?.length > 0 && (blocks?.length === 0)
                       ? t("COMMON.NO_BLOCKS")
                       : t("COMMON.ALL_BLOCKS")
                   }
