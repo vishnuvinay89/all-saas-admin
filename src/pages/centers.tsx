@@ -198,6 +198,8 @@ const Center: React.FC = () => {
   const fetchUserList = async () => {
     setLoading(true);
     try {
+      setCohortData([]);
+
       const limit = pageLimit;
       const offset = pageOffset * limit;
       const sort = sortBy;
@@ -208,18 +210,18 @@ const Center: React.FC = () => {
         sort: sort,
         filters: filters,
       };
-      // const resp = await getCohortList(data);
-      const resp = await queryClient.fetchQuery({
-        queryKey: [
-          QueryKeys.GET_COHORT_LIST,
-          data.limit,
-          data.offset,
-          JSON.stringify(data.filters),
-          JSON.stringify(data.sort),
-        ],
-        queryFn: () => getCohortList(data),
-      });
-
+      const resp = await getCohortList(data);
+      // const resp = await queryClient.fetchQuery({
+      //   queryKey: [
+      //     QueryKeys.GET_COHORT_LIST,
+      //     data.limit,
+      //     data.offset,
+      //     JSON.stringify(data.filters),
+      //     JSON.stringify(data.sort),
+      //   ],
+      //   queryFn: () => getCohortList(data),
+      // });
+console.log(resp)
       if (resp) {
         const result = resp?.results?.cohortDetails;
         const resultData: centerData[] = [];
@@ -282,7 +284,12 @@ finalResult?.forEach((item: any, index: number) => {
         setPageCount(pageCount);
         setLoading(false);
       }
+      else{
+        setCohortData([]);
+
+      }
     } catch (error) {
+      console.log("not data found")
       setCohortData([]);
       setLoading(false);
       console.error("Error fetching user list:", error);
@@ -312,16 +319,16 @@ finalResult?.forEach((item: any, index: number) => {
         cohortId: cohortId,
       },
     };
-
-    const response = await queryClient.fetchQuery({
-      queryKey: [
-        QueryKeys.GET_COHORT_MEMBER_LIST,
-        data.limit,
-        data.offset,
-        JSON.stringify(data.filters),
-      ],
-      queryFn: () => fetchCohortMemberList(data),
-    });
+const response=  await fetchCohortMemberList(data);
+    // const response = await queryClient.fetchQuery({
+    //   queryKey: [
+    //     QueryKeys.GET_COHORT_MEMBER_LIST,
+    //     data.limit,
+    //     data.offset,
+    //     JSON.stringify(data.filters),
+    //   ],
+    //   queryFn: () => fetchCohortMemberList(data),
+    // });
 
     if (response?.result) {
       const userDetails = response.result.userDetails;
@@ -472,13 +479,19 @@ finalResult?.forEach((item: any, index: number) => {
     setSelectedDistrictStore(selected[0])
     if (selected[0] === "" ||  selected[0] === t("COMMON.ALL_DISTRICTS")) {
       if (filters.status) {
+        console.log("true...")
         setFilters({
           states: selectedStateCode,
           status: filters.status,
+          type:"COHORT",
+
         });
       } else {
         setFilters({
+
           states: selectedStateCode,
+          type:"COHORT",
+
         });
       }
       if (newQuery.district) {
@@ -504,19 +517,25 @@ finalResult?.forEach((item: any, index: number) => {
       setSelectedDistrictCode(districts);
       if (filters.status) {
         setFilters({
+
           states: selectedStateCode,
           districts: districts,
           status: filters.status,
+          //type:"COHORT",
+
         });
       } else {
         setFilters({
+
           states: selectedStateCode,
           districts: districts,
+         // type:"COHORT",
+
         });
       }
     }
     setPageOffset(Numbers.ZERO);
-    fetchUserList();
+    // fetchUserList();
   };
   const handleBlockChange = (selected: string[], code: string[]) => {
     setSelectedBlock(selected);
@@ -547,14 +566,20 @@ finalResult?.forEach((item: any, index: number) => {
       });
       if (filters.status) {
         setFilters({
+
           states: selectedStateCode,
           districts: selectedDistrictCode,
           status: filters.status,
+          type:"COHORT",
+
         });
       } else {
         setFilters({
+
           states: selectedStateCode,
           districts: selectedDistrictCode,
+          type:"COHORT",
+
         });
       }
     } else {
@@ -571,16 +596,22 @@ finalResult?.forEach((item: any, index: number) => {
       setSelectedBlockCode(blocks);
       if (filters.status) {
         setFilters({
+
           states: selectedStateCode,
           districts: selectedDistrictCode,
           blocks: blocks,
           status: filters.status,
+          type:"COHORT",
+
         });
       } else {
         setFilters({
+
           states: selectedStateCode,
           districts: selectedDistrictCode,
           blocks: blocks,
+          type:"COHORT",
+
         });
       }
     }
@@ -865,6 +896,7 @@ finalResult?.forEach((item: any, index: number) => {
               {
                
                 setFilters({
+
                   states: stateField.code,
                   districts: selectedDistrictCode,
                   status: filters.status,
@@ -916,16 +948,16 @@ finalResult?.forEach((item: any, index: number) => {
         },
       };
 
-      // const result = await getCohortList(data);
-      const result = await queryClient.fetchQuery({
-        queryKey: [
-          QueryKeys.GET_COHORT_LIST,
-          data.limit,
-          data.offset,
-          data.filters,
-        ],
-        queryFn: () => getCohortList(data),
-      });
+      const result = await getCohortList(data);
+      // const result = await queryClient.fetchQuery({
+      //   queryKey: [
+      //     QueryKeys.GET_COHORT_LIST,
+      //     data.limit,
+      //     data.offset,
+      //     data.filters,
+      //   ],
+      //   queryFn: () => getCohortList(data),
+      // });
 
       if (!result || !result.results || !result.results.cohortDetails) {
         console.log("Invalid response structure or no cohort details found.");
@@ -968,6 +1000,7 @@ finalResult?.forEach((item: any, index: number) => {
       console.log("Error handling member click:", error);
     }
   };
+  console.log(cohortData);
 
   // props to send in header
   const userProps = {

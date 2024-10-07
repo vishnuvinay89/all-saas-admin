@@ -300,7 +300,7 @@ const HeaderComponent = ({
               // const response = await getStateBlockDistrictList(object);
               const result = response?.result?.values;
               const districtResult = await formatedDistricts();
-
+              let blockResult;
               setDistricts(districtResult);
               if (!hasDistrict) {
                 setSelectedDistrict([districtResult[0]?.label]);
@@ -310,14 +310,24 @@ const HeaderComponent = ({
                   districtResult[0]?.label
                 );
                 setSelectedDistrictStore(districtResult[0]?.label);
+                 blockResult = await formatedBlocks(
+                  districtResult[0]?.value
+                );
+                console.log(blockResult)
+                if(blockResult?.message ==="Request failed with status code 404")
+                  {
+                    setBlocks([]);
+                  }
+                  else
+                  {
+                    setBlocks(blockResult);
+
+                  }
               }
-              const blockResult = await formatedBlocks(
-                districtResult[0]?.value
-              );
-              setBlocks(blockResult);
+            
               if (!hasBlock && !hasDistrict) {
                 if (userType === Role.TEAM_LEADERS || userType==="Centers") {
-                  setSelectedBlock([t("COMMON.ALL_BLOCKS")]);
+                //  setSelectedBlock([t("COMMON.ALL_BLOCKS")]);
                   //setSelectedBlockCode("")
                   router.replace({
                     pathname: router.pathname,
@@ -328,11 +338,19 @@ const HeaderComponent = ({
                     },
                   });
                 } else {
-                  setSelectedBlock([blockResult[0]?.label]);
-                  setSelectedBlockCode(blockResult[0]?.value);
-                  localStorage.setItem("selectedBlock", blockResult[0]?.label);
-                  setSelectedBlockStore(blockResult[0]?.label);
-
+                  console.log(blockResult)
+                  if(blockResult?.message==="Request failed with status code 404")
+                  {
+                    setBlocks([]);
+                  }
+                  else{
+                    setSelectedBlock([blockResult[0]?.label]);
+                    setSelectedBlockCode(blockResult[0]?.value);
+                    localStorage.setItem("selectedBlock", blockResult[0]?.label);
+                    setSelectedBlockStore(blockResult[0]?.label);
+  
+                  }
+                 
                   router.replace({
                     pathname: router.pathname,
                     query: {
@@ -453,19 +471,38 @@ const HeaderComponent = ({
   // }, [blocks, selectedBlock, handleBlockChangeWrapper]);
 
   useEffect(() => {
-    const { state, district, block, center } = router.query;
+    const handleRouteparam = async() => 
     {
+      const { state, district, block, center } = router.query;
       if (state) {
         setSelectedStateCode(state.toString());
       }
-       console.log(selectedDistrict)
+       console.log(district?.toString())
       if (district) {
         setSelectedDistrictCode(district.toString());
         // setSelectedDistrict([selectedDistrictStore])
         setSelectedDistrict([localStorage.getItem("selectedDistrict")]);
         if (!localStorage.getItem("selectedDistrict")) {
           setSelectedDistrict([selectedDistrictStore]);
+          
         }
+        try{
+          const  blockResult = await formatedBlocks(
+            district?.toString()
+              );
+              console.log(blockResult.message)
+              if(blockResult.message==="Request failed with status code 404")
+              {
+                setBlocks([]);
+
+              }
+              else
+            setBlocks(blockResult);
+        }
+        catch{
+        //  console.log("hii")
+        }
+       
       }
      
 
@@ -491,7 +528,8 @@ const HeaderComponent = ({
    
       //  setInitialized(true)
     }
-  }, [router]);
+    handleRouteparam();
+  }, [router, userType]);
 
   return (
     <Box
