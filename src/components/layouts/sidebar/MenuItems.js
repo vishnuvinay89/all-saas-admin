@@ -66,6 +66,12 @@ const Menuitems = [
     icon: coursePannerIcon,
     href: "/course-planner",
   },
+  {
+    title: "SIDEBAR.WORKSPACE",
+    icon: dashboardIcon,
+    href: "/workspace",
+    
+  },
 ];
 
 export default Menuitems;

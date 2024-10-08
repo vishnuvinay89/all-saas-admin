@@ -14,6 +14,7 @@ import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material/s
 import customTheme from "../styles/customTheme";
 import "./../styles/style.css";
 
+
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 

@@ -83,3 +83,15 @@ ul.MuiList-root li.MuiMenuItem-root[data-value=""] {
 {
   font-weight: normal !important;
 }
+
+.sb-bg-color-primary {
+
+  display: none !important;
+}
+
+
+.css-14cfeht-MuiContainer-root {
+
+  background-color: white;
+
+}
