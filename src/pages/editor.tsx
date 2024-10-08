@@ -1,22 +1,24 @@
 import React from 'react'
-import dynamic from "next/dynamic";
+import dynamic from 'next/dynamic';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
-// @ts-ignore
-const Editor = dynamic(() => import('editor/Index'), { ssr: false });
 
-const editor = () => {
+// @ts-ignore
+const Editors = dynamic(() => import('editor/Editor'), { ssr: false });
+
+const Editor = () => {
   return (
-    <Editor />
+    <Editors />
   )
 }
 
-export default editor
+export default Editor
+
 
 export async function getStaticProps({ locale }: any) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["common"])),
-    },
-  };
-}
+    return {
+      props: {
+        ...(await serverSideTranslations(locale, ["common"])),
+      },
+    };
+  }

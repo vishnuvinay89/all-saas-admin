@@ -2,7 +2,9 @@
 /** @type {import('next').NextConfig} */
 import nextI18nextConfig from "./next-i18next.config.js";
 import { NextFederationPlugin } from '@module-federation/nextjs-mf';
-const url = process.env.REMOTE_EDITOR_URL
+// const url = process.env.REMOTE_EDITOR_URL
+const url = 'http://localhost:3000'
+
 
 const remotes = (isServer) => {
   const location = isServer ? 'ssr' : 'chunks';

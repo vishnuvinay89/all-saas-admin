@@ -9,7 +9,7 @@ const workspace = () => {
     const router = useRouter();
     const { t } = useTranslation();
     const navigateEditor = () => {
-        router.push('/editor')
+        router.push('/workspace/content/create');
     }
 
     return (
