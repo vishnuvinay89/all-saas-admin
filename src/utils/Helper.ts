@@ -299,3 +299,12 @@ export const adjustTime = (timeStr: any, minutes: any) => {
 
   return `${hours}:${minutesStr}:${seconds}`;
 };
+
+
+export const  convertTo12HourFormat=(time: any)=> {
+  const [hours, minutes] = time?.split(":").map(Number);
+  const period = hours >= 12 ? "PM" : "AM";
+  const convertedHours = hours % 12 || 12; // Converts 0 to 12 for midnight and noon
+
+  return `${convertedHours}:${String(minutes).padStart(2, "0")} ${period}`;
+}

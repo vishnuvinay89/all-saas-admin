@@ -34,6 +34,7 @@ interface AddSchoolModalProps {
     controllingField?: string;
   };
   districtId?: string;
+  validateDuplicateData: any;
 }
 
 export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({
@@ -43,6 +44,7 @@ export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({
   fieldId,
   initialValues = {},
   districtId,
+  validateDuplicateData,
 }) => {
   const [formData, setFormData] = useState({
     name: initialValues.name || "",
@@ -99,7 +101,10 @@ export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({
       return t("COMMON.INVALID_TEXT");
 
     const isUnique = (fieldName: string, value: string) => {
-      return true;
+      const exists = validateDuplicateData?.some(
+        (item: any) => item[fieldName] === value
+      );
+      return !exists; 
     };
 
     if (field === "name" && !isUnique("name", value)) {
@@ -143,9 +148,6 @@ export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({
     (e: React.ChangeEvent<HTMLInputElement | { value: unknown }>) => {
       let value = typeof e.target.value === "string" ? e.target.value : "";
 
-      // if (field === "value") {
-      //   value = value.toUpperCase().slice(0, 3);
-      // }
       setFormData((prev) => ({ ...prev, [field]: value }));
 
       let errorMessage: string | null = null;
@@ -162,6 +164,7 @@ export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({
           value,
           t("COMMON.SCHOOL_CODE_REQUIRED")
         );
+
       } else if (field === "controllingField") {
         errorMessage = validateField(
           field,
@@ -169,6 +172,7 @@ export const AddSchoolModal: React.FC<AddSchoolModalProps> = ({
           t("COMMON.CLUSTER_NAME_REQUIRED")
         );
       }
+
       setErrors((prev) => ({
         ...prev,
         [field]: errorMessage,
