@@ -117,6 +117,7 @@ const Block: React.FC = () => {
       }
     };
     fetchUserDetail();
+   
   }, []);
 
   useEffect(() => {
@@ -272,7 +273,7 @@ const Block: React.FC = () => {
       setLoading(false);
     }
   };
-
+  console.log("blockData2",blockData)
   useEffect(() => {
     fetchSchools(selectedCluster);
   }, [searchKeyword, selectedCluster, sortBy, pageOffset, pageLimit]);
@@ -558,6 +559,7 @@ const Block: React.FC = () => {
               }
             : {}
         }
+        validateDuplicateData = {blockData}
       />
 
       <ConfirmationModal

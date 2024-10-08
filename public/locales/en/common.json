@@ -145,7 +145,9 @@
     "CLASS_ADDED_SUCCESS": "Class Added Successfully!",
     "CLASS_NOT_FOUND": "Class not found",
     "SCHOOL_NAME_REQUIRED": "School Name Required",
-    "SCHOOL_CODE_REQUIRED": "School Code Required"
+    "SCHOOL_CODE_REQUIRED": "School Code Required",
+    "CLUSTER_NAME_REQUIRED": "Cluster Name Required",
+    "SCHOOL_CODE_NOT_UNIQUE": "School Code Not Unique"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -305,7 +307,7 @@
     "DUPLICATION_ENTRY": "Duplicate Entry",
     "CENTER_CREATED_SUCCESSFULLY": "Center Created Successfully",
     "NOT_ABLE_CREATE_CENTER": "Not Able To Create Center",
-    "NO_COHORT_ID_SELECTED":"No Cohort Id Selected"
+    "NO_COHORT_ID_SELECTED": "No Cohort Id Selected"
   },
   "FORM": {
     "FULL_NAME": "Full Name",
@@ -409,7 +411,9 @@
     "REASON_FOR_LEAVING": "Reason For Leaving",
     "EMPLOYEE_ID": "Employee Id",
     "FROM_TIME": "From Time",
-    "TO_TIME": "To Time"
+    "TO_TIME": "To Time",
+    "CLUSTER_NAME_REQUIRED": "Cluster Name Required",
+    "SCHOOL_CODE_NOT_UNIQUE": "School Code Not Unique"
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",
