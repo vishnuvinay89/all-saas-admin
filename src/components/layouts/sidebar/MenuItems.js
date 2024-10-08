@@ -69,7 +69,7 @@ const Menuitems = [
   {
     title: "SIDEBAR.WORKSPACE",
     icon: dashboardIcon,
-    href: "/workspace",
+    href: "/workspace/content/create",
     
   },
 ];
