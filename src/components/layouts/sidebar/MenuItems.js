@@ -3,7 +3,7 @@ import centerIcon from '../../../../public/images/centers.svg';
 import dashboardIcon from '../../../../public/images/dashboard.svg';
 import userIcon from '../../../../public/images/group.svg';
 import coursePannerIcon from '../../../../public/images/event_available.svg';
-
+const isBaseUrlDefined = typeof process.env.NEXT_PUBLIC_BASE_URL !== 'undefined';
 
 
 // 
@@ -66,12 +66,15 @@ const Menuitems = [
     icon: coursePannerIcon,
     href: "/course-planner",
   },
-  {
-    title: "SIDEBAR.WORKSPACE",
-    icon: dashboardIcon,
-    href: "/workspace/content/create",
-    
-  },
+  ...(isBaseUrlDefined
+    ? [
+        {
+          title: "SIDEBAR.WORKSPACE",
+          icon: dashboardIcon,
+          href: "/workspace/content/create",
+        },
+      ]
+    : []),
 ];
 
 export default Menuitems;
