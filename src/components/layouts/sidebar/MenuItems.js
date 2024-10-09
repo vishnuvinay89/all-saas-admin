@@ -3,7 +3,7 @@ import centerIcon from '../../../../public/images/centers.svg';
 import dashboardIcon from '../../../../public/images/dashboard.svg';
 import userIcon from '../../../../public/images/group.svg';
 import coursePannerIcon from '../../../../public/images/event_available.svg';
-const isBaseUrlDefined = typeof process.env.REMOTE_EDITOR_URL == 'undefined';
+const isBaseUrlDefined = !!process.env.REMOTE_EDITOR_URL;
 
 
 // 
