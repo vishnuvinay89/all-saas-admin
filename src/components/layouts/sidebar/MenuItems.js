@@ -3,7 +3,7 @@ import centerIcon from '../../../../public/images/centers.svg';
 import dashboardIcon from '../../../../public/images/dashboard.svg';
 import userIcon from '../../../../public/images/group.svg';
 import coursePannerIcon from '../../../../public/images/event_available.svg';
-const isBaseUrlDefined = !!process.env.REMOTE_EDITOR_URL;
+const ENV = process.env.NEXT_PUBLIC_ENV;
 
 
 // 
@@ -66,7 +66,7 @@ const Menuitems = [
     icon: coursePannerIcon,
     href: "/course-planner",
   },
-  ...(isBaseUrlDefined
+  ...(ENV === 'qa'
     ? [
         {
           title: "SIDEBAR.WORKSPACE",
