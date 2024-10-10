@@ -47,10 +47,6 @@ const nextConfig = {
         source: "/api/:path*", // Match /api/ routes
         destination: `${process.env.WORKSPACE_BASE_URL}/api/proxy?path=/api/:path*`, // Forward them to proxy.js
       },
-      {
-        source: "/assets/public/:path*", // Match any URL starting with /assets/public/
-        destination: `${process.env.CLOUD_STORAGE_URL}/:path*`, // Forward to S3, stripping "/assets/public"
-      },
     ];
   },
   webpack: (config, { isServer }) => {
