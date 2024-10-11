@@ -79,19 +79,10 @@ ul.MuiList-root li.MuiMenuItem-root[data-value=""] {
 .ka-thead-cell {
   font-weight: 600;
 }
-.ka-thead-cell-content
-{
+.ka-thead-cell-content {
   font-weight: normal !important;
 }
 
-.sb-bg-color-primary {
-
-  display: none !important;
-}
-
-
 .css-14cfeht-MuiContainer-root {
-
   background-color: white;
-
 }
