@@ -350,7 +350,7 @@ const ImportCsv = () => {
           >
             {t("COURSE_PLANNER.IMPORT_PLANNER")}
           </Button>
-          <Button
+          {/* <Button
             variant="outlined"
             sx={{
               borderRadius: "8px",
@@ -364,7 +364,7 @@ const ImportCsv = () => {
             onClick={handleRemoveFile}
           >
             {t("COURSE_PLANNER.REMOVE_FILE")}
-          </Button>
+          </Button> */}
           <Button
             sx={{
               borderRadius: "8px",
