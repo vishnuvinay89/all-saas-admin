@@ -191,6 +191,16 @@ const ImportCsv = () => {
     setSelectedFile(null);
   };
 
+  const handleDownloadCSV = () => {
+    const link = document.createElement("a");
+    link.href = "/Sample.csv"; 
+    link.download = "Sample.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
+
   const handleUpload = async () => {
     if (selectedFile) {
       const metaData: CoursePlannerMetaData = {
@@ -350,7 +360,7 @@ const ImportCsv = () => {
           >
             {t("COURSE_PLANNER.IMPORT_PLANNER")}
           </Button>
-          {/* <Button
+          <Button
             variant="outlined"
             sx={{
               borderRadius: "8px",
@@ -361,10 +371,10 @@ const ImportCsv = () => {
                 color: "#333333",
               },
             }}
-            onClick={handleRemoveFile}
+            onClick={handleDownloadCSV}
           >
-            {t("COURSE_PLANNER.REMOVE_FILE")}
-          </Button> */}
+            {t("COURSE_PLANNER.DOWNLOAD_SAMPLE_CSV")}
+          </Button>
           <Button
             sx={{
               borderRadius: "8px",
