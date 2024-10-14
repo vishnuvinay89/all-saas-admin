@@ -62,11 +62,6 @@ const Menuitems = [
     icon: coursePannerIcon,
     href: "/course-planner",
   },
-  {
-    title: "SIDEBAR.TEST_BUTTON",
-    icon: coursePannerIcon,
-    href: "/course-planner",
-  },
   ...(ENV === "true"
     ? [
         {
