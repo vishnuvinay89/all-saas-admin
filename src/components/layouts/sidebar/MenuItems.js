@@ -1,13 +1,11 @@
-import masterIcon from '../../../../public/images/database.svg';
-import centerIcon from '../../../../public/images/centers.svg';
-import dashboardIcon from '../../../../public/images/dashboard.svg';
-import userIcon from '../../../../public/images/group.svg';
-import coursePannerIcon from '../../../../public/images/event_available.svg';
+import masterIcon from "../../../../public/images/database.svg";
+import centerIcon from "../../../../public/images/centers.svg";
+import dashboardIcon from "../../../../public/images/dashboard.svg";
+import userIcon from "../../../../public/images/group.svg";
+import coursePannerIcon from "../../../../public/images/event_available.svg";
 const ENV = process.env.NEXT_PUBLIC_SHOW_WORKSPACE;
 
-
-// 
-
+//
 
 const Menuitems = [
   // {
@@ -40,8 +38,6 @@ const Menuitems = [
     ],
   },
 
-
-
   {
     title: "Master ",
     icon: masterIcon,
@@ -66,7 +62,12 @@ const Menuitems = [
     icon: coursePannerIcon,
     href: "/course-planner",
   },
-  ...(ENV === 'true'
+  {
+    title: "SIDEBAR.TEST_BUTTON",
+    icon: coursePannerIcon,
+    href: "/course-planner",
+  },
+  ...(ENV === "true"
     ? [
         {
           title: "SIDEBAR.WORKSPACE",
@@ -78,5 +79,3 @@ const Menuitems = [
 ];
 
 export default Menuitems;
-
-
