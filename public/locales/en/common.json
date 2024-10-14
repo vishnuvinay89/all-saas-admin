@@ -229,7 +229,8 @@
     "LEARNERS_POSTREQISITE":"Learners Post-requisites",
     "NO_DATA_POST":"No data available for Learners Post-requisites",
     "FACILITATORS":"Facilitators Requisites",
-    "NO_DATA":"No data available for Facilitators Requisites"
+    "NO_DATA":"No data available for Facilitators Requisites",
+    "DOWNLOAD_SAMPLE_CSV":"Download Sample CSV"
     
 
   },
