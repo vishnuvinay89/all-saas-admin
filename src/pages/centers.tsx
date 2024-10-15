@@ -381,7 +381,10 @@ const response=  await fetchCohortMemberList(data);
   };
 
   useEffect(() => {
-    fetchUserList();
+    if ((selectedBlockCode !== "") || (selectedDistrictCode !== "" && selectedBlockCode === "")  ){
+      fetchUserList();
+    }
+    // fetchUserList();
     getFormData();
   }, [pageOffset, pageLimit, sortBy, filters, filters.states, filters.status, createCenterStatus]);
 
