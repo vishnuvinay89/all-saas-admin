@@ -1002,9 +1002,10 @@ const response=  await fetchCohortMemberList(data);
       
 
       if (urlData) {
-        router.push(
-          `learners?state=${urlData.stateCode}&district=${urlData.districtCode}&block=${urlData.blockCode}&status=${urlData.type}`
-        );
+      //  localStorage.setItem("selectedBlock", selectedBlock[0])
+        // router.push(
+        //   `learners?state=${urlData.stateCode}&district=${urlData.districtCode}&block=${urlData.blockCode}&status=${urlData.type}`
+        // );
       }
 
       console.log("urlData", urlData);
