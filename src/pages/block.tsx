@@ -253,7 +253,8 @@ const Block: React.FC = () => {
         .filter((district: { label: any }) =>
           districtNameArr.includes(district.label)
         );
-      if (isFirstVisit) {
+      if (isFirstVisit) 
+      {
         if (
           filteredDistrictData.length > 0 &&
           selectedDistrict !== t("COMMON.ALL")
@@ -275,6 +276,16 @@ const Block: React.FC = () => {
       getFilteredCohortData();
     }
   }, [isFirstVisit, searchKeyword, pageLimit, pageOffset, stateCode]);
+
+
+  useEffect(() => {
+    if(districtData[0]?.value && isFirstVisit)
+    {
+      setSelectedDistrict(districtData[0]?.value);
+    setIsFirstVisit(false);
+    }
+
+  }, [districtData]);
 
   const fetchBlocks = async () => {
     try {
