@@ -93,7 +93,15 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
       fields: formResponse.fields.filter((field: any) => !field.isHidden),
     };
   }
-
+  useEffect(() => {
+    if (!open) {
+    setShowForm(false)
+    }
+    else
+    {
+      
+    }
+  }, [onClose, open]);
   useEffect(() => {
     const getAddLearnerFormData = async () => {
       const admin = localStorage.getItem("adminInfo");
