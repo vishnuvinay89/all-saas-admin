@@ -139,6 +139,13 @@ const Center: React.FC = () => {
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
   );
+ 
+  const createCenterStatus = useSubmittedButtonStore(
+    (state: any) => state.createCenterStatus
+  );
+  const setCreateCenterStatus = useSubmittedButtonStore(
+    (state: any) => state.setCreateCenterStatus
+  );
   const setAdminInformation = useSubmittedButtonStore(
     (state: any) => state.setAdminInformation
   );
@@ -374,7 +381,7 @@ const response=  await fetchCohortMemberList(data);
   useEffect(() => {
     fetchUserList();
     getFormData();
-  }, [pageOffset, pageLimit, sortBy, filters, filters.states, filters.status]);
+  }, [pageOffset, pageLimit, sortBy, filters, filters.states, filters.status, createCenterStatus]);
 
   // handle functions
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
