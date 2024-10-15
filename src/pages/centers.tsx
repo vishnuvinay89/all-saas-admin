@@ -15,6 +15,7 @@ import {
   CohortTypes,
   Numbers,
   QueryKeys,
+  Role,
   SORT,
   Status,
   Storage,
@@ -341,12 +342,12 @@ const response=  await fetchCohortMemberList(data);
     if (response?.result) {
       const userDetails = response.result.userDetails;
       const getActiveMembers = userDetails?.filter(
-        (member: any) => member?.status === Status.ACTIVE
+        (member: any) => member?.status === Status.ACTIVE && member?.role ===  Role.STUDENT
       );
       const totalActiveMembers = getActiveMembers?.length || 0;
 
       const getArchivedMembers = userDetails?.filter(
-        (member: any) => member?.status === Status.ARCHIVED
+        (member: any) => member?.status === Status.ARCHIVED && member?.role === Role.STUDENT
       );
       const totalArchivedMembers = getArchivedMembers?.length || 0;
 
