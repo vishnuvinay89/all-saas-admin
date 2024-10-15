@@ -50,3 +50,12 @@ const Editor = () => {
 };
 
 export default Editor;
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      noLayout: true,
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
