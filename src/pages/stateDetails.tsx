@@ -112,8 +112,8 @@ const StateDetails = () => {
         <IconButton onClick={handleBackClick}>
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h2">{card.state}</Typography>
-        <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
+        <Typography variant="h2">{tStore.state}</Typography>
+                <Box sx={{ display: "flex", gap: 3, alignItems: "center" }}>
         </Box>
       </Box>
       <Grid spacing={2} container sx={{ marginTop: "16px", ml: 2 }}>

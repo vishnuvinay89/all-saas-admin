@@ -276,6 +276,15 @@ const Block: React.FC = () => {
     }
   }, [isFirstVisit, searchKeyword, pageLimit, pageOffset, stateCode]);
 
+
+  useEffect(() => {
+    if(districtData[0]?.value && isFirstVisit)
+    {
+      setSelectedDistrict(districtData[0]?.value);
+    setIsFirstVisit(false);
+    }
+
+  }, [districtData]);
   const fetchBlocks = async () => {
     try {
       // const response = await queryClient.fetchQuery({
