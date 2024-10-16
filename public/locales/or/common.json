@@ -108,15 +108,8 @@
     "RENAME": "ପୁନର୍ନାମକରଣ",
     "CENTER_RENAMED": "କେନ୍ଦ୍ର ଶୁଭକାମନାର ସହିତ ପୁନର୍ନାମ କରାଯାଇଛି!",
     "SEND_REQUEST": "ଅନୁରୋଧ ପଠାନ୍ତୁ",
-    "REQUEST_TO_DELETE_HAS_BEEN_SENT": "ମିଟିବା ପାଇଁ ଅନୁରୋଧ ପଠାଇ ଦିଆଯାଇଛି",
-    "CENTER": "",
-    "SURE_DELETE_CENTER": "",
-    "CENTER_UPDATE_SUCCESSFULLY": "",
-    "CENTER_DELETE_SUCCESSFULLY": "",
-    "CENTER_CREATED_SUCCESSFULLY": "",
-    "SEARCHBAR_PLACEHOLDER": "",
-    "CENTER_UPDATE_FAILED": "",
-    "YOU_CANT_DELETE_CENTER_HAS_ACTIVE_LEARNERS": ""
+    "REQUEST_TO_DELETE_HAS_BEEN_SENT": "ମିଟିବା ପାଇଁ ଅନୁରୋଧ ପଠାଇ ଦିଆଯାଇଛି"
+    
   },
   "FORM": {
     "FULL_NAME": "ପୂର୍ଣ୍ଣ ନାମ",
