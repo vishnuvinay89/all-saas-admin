@@ -208,17 +208,18 @@ const Block: React.FC = () => {
         sort: sortBy,
       };
 
-      const response = await queryClient.fetchQuery({
-        queryKey: [
-          QueryKeys.FIELD_OPTION_READ,
-          reqParams.limit,
-          reqParams.offset,
-          searchKeyword || "",
-          CohortTypes.DISTRICT,
-          reqParams.sort.join(","),
-        ],
-        queryFn: () => getCohortList(reqParams),
-      });
+      // const response = await queryClient.fetchQuery({
+      //   queryKey: [
+      //     QueryKeys.FIELD_OPTION_READ,
+      //     reqParams.limit,
+      //     reqParams.offset,
+      //     searchKeyword || "",
+      //     CohortTypes.DISTRICT,
+      //     reqParams.sort.join(","),
+      //   ],
+      //   queryFn: () => getCohortList(reqParams),
+      // });
+      const response= await  getCohortList(reqParams)
 
       const cohortDetails = response?.results?.cohortDetails || [];
 
@@ -277,19 +278,26 @@ const Block: React.FC = () => {
 
   const fetchBlocks = async () => {
     try {
-      const response = await queryClient.fetchQuery({
-        queryKey: [
-          QueryKeys.FIELD_OPTION_READ,
+      // const response = await queryClient.fetchQuery({
+      //   queryKey: [
+      //     QueryKeys.FIELD_OPTION_READ,
+      //     selectedDistrict === t("COMMON.ALL") ? "" : selectedDistrict,
+      //     "blocks",
+      //   ],
+      //   queryFn: () =>
+      //     getBlocksForDistricts({
+      //       controllingfieldfk:
+      //         selectedDistrict === t("COMMON.ALL") ? "" : selectedDistrict,
+      //       fieldName: "blocks",
+      //     }),
+      // });
+
+
+      const response=await   getBlocksForDistricts({
+        controllingfieldfk:
           selectedDistrict === t("COMMON.ALL") ? "" : selectedDistrict,
-          "blocks",
-        ],
-        queryFn: () =>
-          getBlocksForDistricts({
-            controllingfieldfk:
-              selectedDistrict === t("COMMON.ALL") ? "" : selectedDistrict,
-            fieldName: "blocks",
-          }),
-      });
+        fieldName: "blocks",
+      })
       const blocks = response?.result?.values || [];
       setBlocksOptionRead(blocks);
 
@@ -335,19 +343,21 @@ const Block: React.FC = () => {
         sort: sortBy,
       };
 
-      const response = await queryClient.fetchQuery({
-        queryKey: [
-          QueryKeys.FIELD_OPTION_READ,
-          reqParams.limit,
-          reqParams.offset,
-          searchKeyword || "",
-          stateCode,
-          reqParams.filters.districts,
-          CohortTypes.BLOCK,
-          reqParams.sort.join(","),
-        ],
-        queryFn: () => getCohortList(reqParams),
-      });
+      // const response = await queryClient.fetchQuery({
+      //   queryKey: [
+      //     QueryKeys.FIELD_OPTION_READ,
+      //     reqParams.limit,
+      //     reqParams.offset,
+      //     searchKeyword || "",
+      //     stateCode,
+      //     reqParams.filters.districts,
+      //     CohortTypes.BLOCK,
+      //     reqParams.sort.join(","),
+      //   ],
+      //   queryFn: () => getCohortList(reqParams),
+      // });
+      const response= await  getCohortList(reqParams)
+
 
       const cohortDetails = response?.results?.cohortDetails || [];
       const filteredBlockData = cohortDetails
