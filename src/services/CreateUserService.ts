@@ -2,7 +2,7 @@ import { get, post, patch } from "./RestClient";
 import { createUserParam } from "../utils/Interfaces";
 import axios from "axios";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
-
+import config from "@/utils/urlConstants.json"
 export interface UserDetailParam {
   userData?: object;
 
@@ -14,7 +14,7 @@ export const getFormRead = async (
 ): Promise<any> => {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/form/read`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.FORM_READ}`,
       {
         params: {
           context,
@@ -47,7 +47,7 @@ export const getFormRead = async (
 
 
 export const createUser = async (userData: any): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/create`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.CREATE}`;
   try {
     const response = await post(apiUrl, userData);
     return response?.data?.result;
@@ -61,7 +61,7 @@ export const updateUser = async (
   userId: string,
   { userData, customFields }: UserDetailParam,
 ): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/update/${userId}`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.UPDATE}/${userId}`;
   try {
     const response = await patch(apiUrl, { userData, customFields });
     return response;

@@ -1,0 +1,29 @@
+{
+    "URLS": {
+        "READ" :"read",
+        "LIST" : "list",
+        "CREATE" : "create",
+        "UPDATE" : "update",
+        "FORM_READ":"form/read",
+        "FIELDS_OPTIONS": "fields/options/read",
+        "FIELDS_UPDATES" : "fields/update",
+        "AUTH_LOGIN" : "auth/login",
+        "AUTH_REFRESH" : "auth/refresh",
+        "AUTH_LOGOUT" : "auth/logout",
+        "AUTH" : "auth",
+        "COHORT_SEARCH": "cohort/search",
+        "MY_COHORTS":"cohort/mycohorts",
+        "COHORT_CREATE" : "cohort/create",
+        "COHORT_UPDATE" : "cohort/update",
+        "COHORT_MEMBER" : "cohortmember/list",
+        "COHORT_MEMBER_BULK" : "cohortmember/bulkCreate",
+        "COHORT_MEMBER_UPDATE":"cohortmember/update",
+        "FRAMEWORK_READ" : "api/framework/v1/read",
+        "COURSE_PLANNER" : "course-planner/upload",
+        "TARGET_SOLUTIONS" : "solutions/targetedSolutions",
+        "SOLUTIONS_DETAILS" : "solutions/details",
+        "USER_PROJECT_DETAILS" : "userProjects/details",
+        "FIELDS_OPTIONS_DELETE":"fields/options/delete",
+        "NOTIFICATIONS_SEND" : "notification/send"
+    }
+}

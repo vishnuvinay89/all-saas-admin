@@ -132,7 +132,7 @@ export const AddBlockModal: React.FC<AddBlockModalProps> = ({
         limit: 0,
         offset: 0,
         filters: {
-          states: stateCode,
+          // states: stateCode,
           type: CohortTypes.DISTRICT,
         },
       };

@@ -146,7 +146,6 @@ const HeaderComponent = ({
 
       //   fieldName: "districts",
       // };
-      // console.log(object);
       // const response = await getStateBlockDistrictList(object);
       const result = response?.result?.values;
 
@@ -201,9 +200,9 @@ const HeaderComponent = ({
       filters: {
         // "type":"COHORT",
         status: ["active"],
-        states: selectedStateCode,
-        districts: selectedDistrictCode,
-        blocks: selectedCodes[0],
+        // states: selectedStateCode,
+        // districts: selectedDistrictCode,
+        // blocks: selectedCodes[0],
         // "name": selected[0]
       },
     };
@@ -217,7 +216,6 @@ const HeaderComponent = ({
       queryFn: () => getCenterList(getCentersObject),
     });
     // const response = await getCenterList(getCentersObject);
-    console.log(response?.result?.results?.cohortDetails[0].cohortId);
     // setSelectedBlockCohortId(
     //   response?.result?.results?.cohortDetails[0].cohortId
     // );
@@ -230,7 +228,6 @@ const HeaderComponent = ({
         cohortId: item?.cohortId,
         name: item?.name,
       }));
-    console.log(dataArray);
     setAllCenters(cohortInfo);
     handleBlockChange(selected, selectedCodes);
   };
@@ -244,12 +241,10 @@ const HeaderComponent = ({
   useEffect(() => {
     const fetchData = async () => {
       const { state, district, center } = router.query;
-      console.log(router.asPath);
       const fullPath = router.asPath;
 
       // Extract query parameters
       const queryString = fullPath.split("?")[1]; // Get the part after '?'
-      console.log(queryString);
       const params = new URLSearchParams(queryString);
 
       // Check if 'block' is present
@@ -271,9 +266,7 @@ const HeaderComponent = ({
             const stateField = JSON.parse(admin).customFields.find(
               (field: any) => field.label === "STATES"
             );
-            console.log(stateField.value, stateField.code);
             if (stateField.value.includes(",")) {
-              console.log("The value contains more than one item.");
               setStateDefaultValue(t("COMMON.ALL_STATES"));
             } else {
               setStateDefaultValue(stateField.value);
@@ -296,24 +289,22 @@ const HeaderComponent = ({
 
               //   fieldName: "districts",
               // };
-              // console.log(object);
               // const response = await getStateBlockDistrictList(object);
               const result = response?.result?.values;
               const districtResult = await formatedDistricts();
               let blockResult;
               setDistricts(districtResult);
               if (!hasDistrict) {
-                setSelectedDistrict([districtResult[0]?.label]);
-                setSelectedDistrictCode(districtResult[0]?.value);
-                localStorage.setItem(
-                  "selectedDistrict",
-                  districtResult[0]?.label
-                );
-                setSelectedDistrictStore(districtResult[0]?.label);
+                // setSelectedDistrict([districtResult[0]?.label]);
+                // setSelectedDistrictCode(districtResult[0]?.value);
+                // localStorage.setItem(
+                //   "selectedDistrict",
+                //   districtResult[0]?.label
+                // );
+                // setSelectedDistrictStore(districtResult[0]?.label);
                  blockResult = await formatedBlocks(
                   districtResult[0]?.value
                 );
-                console.log(blockResult)
                 if(blockResult?.message ==="Request failed with status code 404")
                   {
                     setBlocks([]);
@@ -338,7 +329,6 @@ const HeaderComponent = ({
                     },
                   });
                 } else {
-                  console.log(blockResult)
                   if(blockResult?.message==="Request failed with status code 404")
                   {
                     setBlocks([]);
@@ -353,12 +343,12 @@ const HeaderComponent = ({
                  
                   router.replace({
                     pathname: router.pathname,
-                    query: {
-                      ...router.query,
-                      state: stateField.code,
-                      district: districtResult[0]?.value,
-                      block: blockResult[0]?.value,
-                    },
+                    // query: {
+                    //   ...router.query,
+                    //   state: stateField.code,
+                    //   district: districtResult[0]?.value,
+                    //   block: blockResult[0]?.value,
+                    // },
                   });
                 }
               }
@@ -369,9 +359,9 @@ const HeaderComponent = ({
                 filters: {
                   // "type":"COHORT",
                   status: ["active"],
-                  states: stateField.code,
-                  districts: districtResult[0]?.value,
-                  blocks: blockResult[0]?.value,
+                  // states: stateField.code,
+                  // districts: districtResult[0]?.value,
+                  // blocks: blockResult[0]?.value,
                   // "name": selected[0]
                 },
               };
@@ -385,13 +375,11 @@ const HeaderComponent = ({
                 queryFn: () => getCenterList(getCentersObject),
               });
               // const response = await getCenterList(getCentersObject);
-              console.log(centerResponse);
               // setSelectedBlockCohortId(
               //   response?.result?.results?.cohortDetails[0].cohortId
               // );
               //   const result = response?.result?.cohortDetails;
               const dataArray = centerResponse?.result?.results?.cohortDetails;
-              console.log(dataArray);
 
               const cohortInfo = dataArray
                 ?.filter((cohort: any) => cohort.type !== "BLOCK")
@@ -401,32 +389,28 @@ const HeaderComponent = ({
                 }));
               setAllCenters(cohortInfo);
 
-              console.log(dataArray);
-              console.log(userType);
               if (
                 !hasCenter &&
                 !hasBlock &&
                 !hasDistrict &&
                 userType !== Role.TEAM_LEADERS
               ) {
-                console.log(hasCenter);
                 setSelectedCenter([t("COMMON.ALL_CENTERS")]);
                 //  setSelectedCenterCode([cohortInfo[0]?.cohortId])
                 //   localStorage.setItem('selectedCenter',cohortInfo[0]?.name )
                 //  setSelectedCenterStore(cohortInfo[0]?.name)
                 router.replace({
                   pathname: router.pathname,
-                  query: {
-                    ...router.query,
-                    state: stateField.code,
-                    district: districtResult[0]?.value,
-                    block: blockResult[0]?.value,
-                    // center: cohortInfo[0]?.cohortId
-                  },
+                  // query: {
+                  //   ...router.query,
+                  //   state: stateField.code,
+                  //   district: districtResult[0]?.value,
+                  //   block: blockResult[0]?.value,
+                  //   // center: cohortInfo[0]?.cohortId
+                  // },
                 });
               }
 
-              console.log(cohortInfo);
             }
 
             const object = [
@@ -439,7 +423,6 @@ const HeaderComponent = ({
           }
         }
         //  setStates(result);
-        console.log(typeof states);
       } catch (error) {
         console.log(error);
       }
@@ -450,7 +433,6 @@ const HeaderComponent = ({
     }
   }, [shouldFetchDistricts, userType]);
   const handleChange = (event: React.SyntheticEvent, newValue: any) => {
-    console.log(newValue);
     setStatusValue(newValue);
   };
 
@@ -477,7 +459,6 @@ const HeaderComponent = ({
       if (state) {
         setSelectedStateCode(state.toString());
       }
-       console.log(district?.toString())
       if (district) {
         setSelectedDistrictCode(district.toString());
         // setSelectedDistrict([selectedDistrictStore])
@@ -490,7 +471,6 @@ const HeaderComponent = ({
           const  blockResult = await formatedBlocks(
             district?.toString()
               );
-              console.log(blockResult.message)
               if(blockResult.message==="Request failed with status code 404")
               {
                 setBlocks([]);
@@ -508,7 +488,6 @@ const HeaderComponent = ({
 
       if (block ) {
         setSelectedBlockCode(block.toString());
-        console.log(selectedBlockCode);
         // setSelectedBlock([selectedBlockStore])
         setSelectedBlock([localStorage.getItem("selectedBlock")]);
         if (!localStorage.getItem("selectedBlock"))
@@ -517,7 +496,6 @@ const HeaderComponent = ({
    
 
       if (center) {
-        console.log(center);
 
         setSelectedCenterCode([center.toString()]);
         // setSelectedCenter([selectedCenterStore])
@@ -604,7 +582,7 @@ const HeaderComponent = ({
                 }
                 value={Status.ACTIVE}
               />
-              <Tab
+              {/* <Tab
                 label={
                   <Box
                     sx={{
@@ -620,7 +598,7 @@ const HeaderComponent = ({
                   </Box>
                 }
                 value={Status.ARCHIVED}
-              />
+              /> */}
             </Tabs>
           </Box>
         )}

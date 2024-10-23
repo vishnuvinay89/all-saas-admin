@@ -11,7 +11,7 @@ import {
 
 import { frameworkId } from '../../app.config';
 import { findCommonAssociations, getAssociationsByName, getOptionsByCategory } from '@/utils/Helper';
-
+import config from "@/utils/urlConstants.json";
 interface FrameworkCategoriesProps {
   customFormData: any;
   onFieldsChange: (fields: any) => void;
@@ -79,7 +79,7 @@ const FrameworkCategories: React.FC<FrameworkCategoriesProps> = ({
     const handleBMGS = async () => {
       const userStateName = localStorage.getItem('stateName');
       try {
-        const url = `${process.env.NEXT_PUBLIC_SUNBIRDSAAS_API_URL}/api/framework/v1/read/${frameworkId}`;
+        const url = `${process.env.NEXT_PUBLIC_SUNBIRDSAAS_API_URL}/${config.URLS.FRAMEWORK_READ}/${frameworkId}`;
         const boardData = await fetch(url).then((res) => res.json());
         const frameworks = boardData?.result?.framework;
         setFramework(frameworks);

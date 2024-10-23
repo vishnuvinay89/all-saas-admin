@@ -1,5 +1,5 @@
 import { get, post } from "./RestClient";
-
+import config from "@/utils/urlConstants.json";
 interface LoginParams {
   username: string;
   password: string;
@@ -13,7 +13,7 @@ export const login = async ({
   username,
   password,
 }: LoginParams): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.AUTH_LOGIN}`;
 
   try {
     const response = await post(apiUrl, { username, password });
@@ -27,7 +27,7 @@ export const login = async ({
 export const refresh = async ({
   refresh_token,
 }: RefreshParams): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/refresh`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.AUTH_REFRESH}`;
   try {
     const response = await post(apiUrl, { refresh_token });
     return response?.data;
@@ -38,7 +38,7 @@ export const refresh = async ({
 };
 
 export const logout = async (refreshToken: string): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/logout`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.AUTH_LOGOUT}`;
   try {
     const response = await post(apiUrl, { refresh_token: refreshToken });
     return response;
@@ -49,7 +49,7 @@ export const logout = async (refreshToken: string): Promise<any> => {
 };
 
 export const getUserId = async (): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/auth`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.AUTH}`;
   try {
     const response = await get(apiUrl);
     return response?.data?.result;

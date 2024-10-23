@@ -1,12 +1,20 @@
 .ka-thead-background {
   z-index: 1;
   color: white;
- background: #a8a6a6;
-  background-color: #F8EFE7 !important;;
+background: #a8a6a6;
+  background-color: #2581C4 !important;
 }
 
 .ka-tbody .ka-tr {
   border-bottom: 2px solid #ececec;
+}
+
+.ka-tbody .ka-tr:nth-child(odd) {
+  background-color: #EAF2FF; /* Light blue shade for odd rows */
+}
+
+.ka-tbody .ka-tr:nth-child(even) {
+  background-color: #FFFFFF; /* White for even rows */
 }
 
 .table-cell {

@@ -2,11 +2,11 @@ import { CoursePlannerMetaData, GetSolutionDetailsParams, GetTargetedSolutionsPa
 import { post } from "./RestClient";
 import axios from 'axios';
 import { frameworkId } from "../../app.config";
-
+import config from "@/utils/urlConstants.json"
 
 
 export const getChannelDetails = async (): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_SUNBIRDSAAS_API_URL}/api/framework/v1/read/${frameworkId}`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_SUNBIRDSAAS_API_URL}/${config.URLS.FRAMEWORK_READ}/${frameworkId}`;
 
   try {
     const response = await axios.get(apiUrl);
@@ -18,7 +18,7 @@ export const getChannelDetails = async (): Promise<any> => {
 };
 
 export const getFrameworkDetails = async (frameworkId: string): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_SUNBIRDSAAS_API_URL}/api/framework/v1/read/${frameworkId}?categories=gradeLevel,medium,class,subject`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_SUNBIRDSAAS_API_URL}/${config.URLS.FRAMEWORK_READ}/${frameworkId}?categories=gradeLevel,medium,class,subject`;
 
   try {
     const response = await axios.get(apiUrl);
@@ -30,7 +30,7 @@ export const getFrameworkDetails = async (frameworkId: string): Promise<any> => 
 };
 
 export const uploadCoursePlanner = async (file: File, metaData: CoursePlannerMetaData): Promise<any> => {
-    const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/course-planner/upload`;
+    const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.COURSE_PLANNER}`;
     const formData = new FormData();
     formData.append('file', file);
     formData.append('metaData', JSON.stringify(metaData));
@@ -55,7 +55,7 @@ export const uploadCoursePlanner = async (file: File, metaData: CoursePlannerMet
     board,
     type,
   }: GetTargetedSolutionsParams): Promise<any> => {
-    const apiUrl: string = `${process.env.NEXT_PUBLIC_COURSE_PLANNER_API_URL}/solutions/targetedSolutions?type=improvementProject&currentScopeOnly=true`;
+    const apiUrl: string = `${process.env.NEXT_PUBLIC_COURSE_PLANNER_API_URL}/${config.URLS.TARGET_SOLUTIONS}?type=improvementProject&currentScopeOnly=true`;
   
     const headers = {
       'X-auth-token': localStorage.getItem('token'),
@@ -85,7 +85,7 @@ export const uploadCoursePlanner = async (file: File, metaData: CoursePlannerMet
   }
   
   export const getUserProjectDetails = async ({ id }: GetUserProjectDetailsParams): Promise<any> => {
-    const apiUrl: string = `${process.env.NEXT_PUBLIC_COURSE_PLANNER_API_URL}/userProjects/details/${id}`;
+    const apiUrl: string = `${process.env.NEXT_PUBLIC_COURSE_PLANNER_API_URL}/${config.URLS.USER_PROJECT_DETAILS}/${id}`;
   
     const headers = {
       'Authorization': localStorage.getItem('token'),
@@ -105,7 +105,7 @@ export const uploadCoursePlanner = async (file: File, metaData: CoursePlannerMet
   
   
   export const getSolutionDetails = async ({ id, role }: GetSolutionDetailsParams): Promise<any> => {
-    const apiUrl: string = `${process.env.NEXT_PUBLIC_COURSE_PLANNER_API_URL}/solutions/details/${id}`;
+    const apiUrl: string = `${process.env.NEXT_PUBLIC_COURSE_PLANNER_API_URL}/${config.URLS.SOLUTIONS_DETAILS}/${id}`;
   
     const headers = {
       'X-auth-token': localStorage.getItem('token'),
@@ -130,7 +130,7 @@ export const uploadCoursePlanner = async (file: File, metaData: CoursePlannerMet
     solutionId,
     role,
   }: GetUserProjectTemplateParams): Promise<any> => {
-    const apiUrl: string = `${process.env.NEXT_PUBLIC_COURSE_PLANNER_API_URL}/userProjects/details?templateId=${templateId}&solutionId=${solutionId}`;
+    const apiUrl: string = `${process.env.NEXT_PUBLIC_COURSE_PLANNER_API_URL}/${config.URLS.USER_PROJECT_DETAILS}?templateId=${templateId}&solutionId=${solutionId}`;
   
     const headers = {
       'X-auth-token': localStorage.getItem('token'),

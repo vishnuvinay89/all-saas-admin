@@ -148,6 +148,7 @@
     "REMEMBER_ME": "Remember Me"
   },
   "SIDEBAR": {
+    "COHORTS":"Cohorts",
     "HI": "hi",
     "DASHBOARD": "Dashboard",
     "MANAGE_USERS": "Manage Users",
