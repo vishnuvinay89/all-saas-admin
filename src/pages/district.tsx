@@ -212,8 +212,8 @@ const District: React.FC = () => {
         offset: 0,
         filters: {
           name: searchKeyword,
-          states: stateCode,
-          type: CohortTypes.DISTRICT,
+          // states: stateCode,
+          // type: CohortTypes.DISTRICT,
         },
         sort: sortBy,
       };
@@ -299,8 +299,8 @@ const District: React.FC = () => {
         limit: 0,
         offset: 0,
         filters: {
-          districts: districtValueForDelete,
-          type: CohortTypes.BLOCK,
+          // districts: districtValueForDelete,
+          // type: CohortTypes.BLOCK,
         },
         sort: sortBy,
       };

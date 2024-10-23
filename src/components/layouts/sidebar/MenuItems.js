@@ -1,11 +1,13 @@
-import masterIcon from "../../../../public/images/database.svg";
-import centerIcon from "../../../../public/images/centers.svg";
-import dashboardIcon from "../../../../public/images/dashboard.svg";
-import userIcon from "../../../../public/images/group.svg";
-import coursePannerIcon from "../../../../public/images/event_available.svg";
+import masterIcon from '../../../../public/images/database.svg';
+import centerIcon from '../../../../public/images/centers.svg';
+import dashboardIcon from '../../../../public/images/dashboard.svg';
+import userIcon from '../../../../public/images/group.svg';
+import coursePannerIcon from '../../../../public/images/event_available.svg';
 const ENV = process.env.NEXT_PUBLIC_SHOW_WORKSPACE;
 
-//
+
+// 
+
 
 const Menuitems = [
   // {
@@ -14,7 +16,7 @@ const Menuitems = [
   //   href: "/dashboard",
   // },
   {
-    title: "SIDEBAR.CENTERS",
+    title: "SIDEBAR.COHORTS",
     icon: centerIcon,
     href: "/centers",
   },
@@ -23,14 +25,14 @@ const Menuitems = [
     icon: userIcon,
     //  href: "/",
     subOptions: [
-      {
-        title: "SIDEBAR.TEAM_LEADERS",
-        href: "/team-leader",
-      },
-      {
-        title: "SIDEBAR.FACILITATORS",
-        href: "/faciliator",
-      },
+      // {
+      //   title: "SIDEBAR.TEAM_LEADERS",
+      //   href: "/team-leader",
+      // },
+      // {
+      //   title: "SIDEBAR.FACILITATORS",
+      //   href: "/faciliator",
+      // },
       {
         title: "SIDEBAR.LEARNERS",
         href: "/learners",
@@ -38,39 +40,43 @@ const Menuitems = [
     ],
   },
 
-  {
-    title: "Master ",
-    icon: masterIcon,
-    // href: "/",
-    subOptions: [
-      {
-        title: "MASTER.STATE",
-        href: "/state",
-      },
-      {
-        title: "MASTER.DISTRICTS",
-        href: "/district",
-      },
-      {
-        title: "MASTER.BLOCKS",
-        href: "/block",
-      },
-    ],
-  },
-  {
-    title: "SIDEBAR.COURSE_PLANNER",
-    icon: coursePannerIcon,
-    href: "/course-planner",
-  },
-  ...(ENV === "true"
-    ? [
-        {
-          title: "SIDEBAR.WORKSPACE",
-          icon: dashboardIcon,
-          href: "/workspace/content/create",
-        },
-      ]
-    : []),
+
+
+  // {
+  //   title: "Master ",
+  //   icon: masterIcon,
+  //   // href: "/",
+  //   subOptions: [
+  //     {
+  //       title: "MASTER.STATE",
+  //       href: "/state",
+  //     },
+  //     {
+  //       title: "MASTER.DISTRICTS",
+  //       href: "/district",
+  //     },
+  //     {
+  //       title: "MASTER.BLOCKS",
+  //       href: "/block",
+  //     },
+  //   ],
+  // },
+  // {
+  //   title: "SIDEBAR.COURSE_PLANNER",
+  //   icon: coursePannerIcon,
+  //   href: "/course-planner",
+  // },
+  // ...(ENV === 'true'
+  //   ? [
+  //       {
+  //         title: "SIDEBAR.WORKSPACE",
+  //         icon: dashboardIcon,
+  //         href: "/workspace/content/create",
+  //       },
+  //     ]
+  //   : []),
 ];
 
 export default Menuitems;
+
+

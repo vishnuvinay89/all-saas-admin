@@ -5,9 +5,9 @@ const customTheme = extendTheme({
     light: {
       palette: {
         primary: {
-          main: "#FDBE16",
+          main: "#2581C4",
           light: "#FFDEA1",
-          contrastText: "#EBE1D4",
+          contrastText: "#2581C4",
           "100": "#000000",
         },
         secondary: {
@@ -36,10 +36,10 @@ const customTheme = extendTheme({
           "500": "#969088",
           "600": "#B1AAA2",
           "700": "#DED8E1",
-          "800": "#F8EFE7",
+          "800": "#2581C4",
           "900": "#DADADA",
           A100: "#D0C5B4",
-          A200: "#4d4639",
+          A200: "#000033",
           A400: "#FFFFFF",
           A700: "#EDEDED",
           contrastText: " #3B383E",
@@ -61,7 +61,7 @@ const customTheme = extendTheme({
     dark: {
       palette: {
         primary: {
-          main: "#FDBE16",
+          main: "#000045F0",
           light: "#FFDEA1",
         },
         secondary: {
@@ -85,10 +85,10 @@ const customTheme = extendTheme({
           "500": "#969088",
           "600": "#B1AAA2",
           "700": "#DED8E1",
-          "800": "#F8EFE7",
+          "800": "#2581C4",
           "900": "#DADADA",
           A100: "#D0C5B4",
-          A200: "#4d4639",
+          A200: "#000033",
           A400: "#FFFFFF",
           A700: "#EDEDED",
         },
@@ -108,11 +108,11 @@ const customTheme = extendTheme({
       styleOverrides: {
         root: {
           borderRadius: "100px",
-          border: "1px solid #1E1B16",
-          color: "#1E1B16",
+          border: "1px solid ##FFFFFF",
+          color: "##FFFFFF",
         },
         containedPrimary: {
-          backgroundColor: "#FDBE16",
+          backgroundColor: "#000045F0",
           border: "none",
           //   '&:hover': {
           //     backgroundColor: '#FDBE161F'
@@ -120,7 +120,7 @@ const customTheme = extendTheme({
         },
         outlinedPrimary: {
           backgroundColor: "none",
-          border: "1px solid #1E1B16",
+          border: "1px solid ##FFFFFF",
           //   '&:hover': {
           //     backgroundColor: '#0D599E'
           //   }

@@ -1,6 +1,6 @@
 import { CohortMemberList } from "@/utils/Interfaces";
 import { get, post, put } from "../RestClient";
-
+import config  from "@/utils/urlConstants.json";
 export interface cohortListFilter {
   type: string;
   status: string[];
@@ -21,7 +21,7 @@ export interface UpdateCohortMemberStatusParams {
   membershipId: string | number;
 }
 export const getCohortList = async (data: cohortListData): Promise<any> => {
-  let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/search`;
+  let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.COHORT_SEARCH}`;
 
   try {
     const response = await post(apiUrl, data);
@@ -37,7 +37,7 @@ export const updateCohortUpdate = async (
   cohortDetails: any
 ): Promise<any> => {
   // const { name, status, type } = cohortDetails;
-  let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/update/${userId}`;
+  let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.COHORT_UPDATE}/${userId}`;
 
   try {
     const response = await put(apiUrl, cohortDetails);
@@ -52,7 +52,7 @@ export const getFormRead = async (
   context: string,
   contextType: string
 ): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/form/read?context=${context}&contextType=${contextType}`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.FORM_READ}?context=${context}&contextType=${contextType}`;
   try {
     let response = await get(apiUrl);
     const sortedFields = response?.data?.result.fields?.sort(
@@ -71,7 +71,7 @@ export const getFormRead = async (
   }
 };
 export const createUser = async (userData: any): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/create`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.CREATE}`;
   try {
     const response = await post(apiUrl, userData);
     return response?.data?.result;
@@ -82,7 +82,7 @@ export const createUser = async (userData: any): Promise<any> => {
 };
 
 export const createCohort = async (userData: any): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohort/create`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.COHORT_CREATE}`;
   try {
     const response = await post(apiUrl, userData);
     return response?.data;
@@ -97,7 +97,7 @@ export const fetchCohortMemberList = async ({
   offset,
   filters,
 }: CohortMemberList): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohortmember/list`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.COHORT_MEMBER}`;
   try {
     const response = await post(apiUrl, {
       limit,
@@ -115,7 +115,7 @@ export const fetchCohortMemberList = async ({
 
 
 export const bulkCreateCohortMembers = async (payload: any): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohortmember/bulkCreate`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.COHORT_MEMBER_BULK}`;
   try {
     const response = await post(apiUrl, payload);
     return response.data;
@@ -131,7 +131,7 @@ export const updateCohortMemberStatus = async ({
   statusReason,
   membershipId,
 }: UpdateCohortMemberStatusParams): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohortmember/update/${membershipId}`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.COHORT_MEMBER_UPDATE}/${membershipId}`;
   try {
     const response = await put(apiUrl, {
       status: memberStatus,

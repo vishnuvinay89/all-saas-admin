@@ -252,7 +252,7 @@ const Profile = () => {
         onClose={handleClose4}
         sx={{
           paddingTop: "0px",
-          //backgroundColor: "#F8EFE7",
+          //backgroundColor: "#EAF2FF",
         }}
         PaperProps={{
           sx: {
@@ -268,14 +268,14 @@ const Profile = () => {
         }}
       >
         <Box
-          sx={{ backgroundColor: "#F8EFE7", height: "56px", width: "100%" }}
+          sx={{ backgroundColor: "#EAF2FF", height: "56px", width: "100%" }}
         ></Box>
         <Box
           sx={{ display: "flex", justifyContent: "center", marginTop: "-25px" }}
         >
           <Box
             sx={{
-              backgroundColor: "#78590C",
+              backgroundColor: "#2581C4",
               width: "50px",
               height: "50px",
               borderRadius: "50%",

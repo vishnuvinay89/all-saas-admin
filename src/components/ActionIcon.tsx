@@ -75,7 +75,7 @@ const ActionIcon: React.FC<ActionCellProps> = ({
             alignItems: "center",
             cursor: "pointer",
             color: disable ? theme?.palette?.secondary.contrastText : "",
-            backgroundColor:"#F8EFE7",
+            backgroundColor:"#EAF2FF",
             p:"10px"
           }}
         >

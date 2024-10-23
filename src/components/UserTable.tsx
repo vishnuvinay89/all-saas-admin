@@ -378,14 +378,14 @@ setSelectedDistrictStore(selected[0])
      
       if (filters.status) {
         setFilters({
-          states: selectedStateCode,
+          // states: selectedStateCode,
           role: role,
           status: filters.status,
 
         });
       } else {
         setFilters({
-          states: selectedStateCode,
+          // states: selectedStateCode,
           role: role,
         });
       }
@@ -412,16 +412,16 @@ setSelectedDistrictStore(selected[0])
       setSelectedDistrictCode(districts);
       if (filters.status) {
         setFilters({
-          states: selectedStateCode,
-          districts: districts,
+          // states: selectedStateCode,
+          // districts: districts,
           role: role,
           status: filters.status,
 
         });
       } else {
         setFilters({
-          states: selectedStateCode,
-          districts: districts,
+          // states: selectedStateCode,
+          // districts: districts,
           role: role,
         });
       }
@@ -461,16 +461,16 @@ setSelectedDistrictStore(selected[0])
       });
       if (filters.status) {
         setFilters({
-          states: selectedStateCode,
-          districts: selectedDistrictCode,
+          // states: selectedStateCode,
+          // districts: selectedDistrictCode,
           role: role,
           status: filters.status,
 
         });
       } else {
         setFilters({
-          states: selectedStateCode,
-          districts: selectedDistrictCode,
+          // states: selectedStateCode,
+          // districts: selectedDistrictCode,
           role: role,
         });
       }
@@ -479,27 +479,27 @@ setSelectedDistrictStore(selected[0])
         pathname: router.pathname,
         query: { 
           ...newQuery, 
-          state: selectedStateCode, 
-          district: selectedDistrictCode, 
-          block: code?.join(",") 
+          // state: selectedStateCode, 
+          // district: selectedDistrictCode, 
+          // block: code?.join(",") 
         }
       });
       const blocks = code?.join(",");
       setSelectedBlockCode(blocks);
       if (filters.status) {
         setFilters({
-          states: selectedStateCode,
-          districts: selectedDistrictCode,
-          blocks: blocks,
+          // states: selectedStateCode,
+          // districts: selectedDistrictCode,
+          // blocks: blocks,
           role: role,
           status: filters.status,
 
         });
       } else {
         setFilters({
-          states: selectedStateCode,
-          districts: selectedDistrictCode,
-          blocks: blocks,
+          // states: selectedStateCode,
+          // districts: selectedDistrictCode,
+          // blocks: blocks,
           role: role,
         });
       }
@@ -551,9 +551,9 @@ console.log(code[0])
       if (filters.status) {
 
         setFilters({
-          states: selectedStateCode,
-          districts: selectedDistrictCode,
-          blocks: selectedBlockCode,
+          // states: selectedStateCode,
+          // districts: selectedDistrictCode,
+          // blocks: selectedBlockCode,
           role: role,
           status: filters.status,
 
@@ -561,9 +561,9 @@ console.log(code[0])
       } else {
 
         setFilters({
-          states: selectedStateCode,
-          districts: selectedDistrictCode,
-          blocks: selectedBlockCode,
+          // states: selectedStateCode,
+          // districts: selectedDistrictCode,
+          // blocks: selectedBlockCode,
           role: role,
         });
       }
@@ -767,9 +767,9 @@ console.log(code[0])
       filters: {
         // "type":"COHORT",
         status: ["active"],
-        states: rowData.stateCode,
-        districts: rowData.districtCode,
-        blocks: rowData.blockCode
+        // states: rowData.stateCode,
+        // districts: rowData.districtCode,
+        // blocks: rowData.blockCode
         // "name": selected[0]
       },
     };

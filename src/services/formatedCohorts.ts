@@ -33,8 +33,8 @@ export const formatedDistricts = async () => {
         offset: 0,
         filters: {
          // name: searchKeyword,
-          states: adminState.code,
-          type: CohortTypes.DISTRICT,
+          // states: adminState.code,
+          // type: CohortTypes.DISTRICT,
                   status: ["active"]
 
         },
@@ -79,9 +79,9 @@ export const formatedBlocks = async (districtCode: string) => {
       offset: 0,
       filters: {
         // name: searchKeyword,
-        states: adminState.code,
-        districts: districtCode,
-        type: CohortTypes.BLOCK,
+        // states: adminState.code,
+        // districts: districtCode,
+        // type: CohortTypes.BLOCK,
         status: ["active"],
       },
       sort: ["name", "asc"],

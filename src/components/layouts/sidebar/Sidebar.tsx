@@ -42,10 +42,10 @@ const Sidebar = ({
     <Box
       p={2}
       height="100%"
-      bgcolor="#F8EFDA
+      bgcolor="#FFFFFF
 "
       sx={{
-        background: "linear-gradient(to bottom, white, #F8EFDA)",
+        background: "linear-gradient(to bottom, white, #FFFFFF)",
       }}
     >
       <LogoIcon />

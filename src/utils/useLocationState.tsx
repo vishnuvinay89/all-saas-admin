@@ -427,9 +427,9 @@ export const useLocationState = (
         filters: {
           // "type":"COHORT",
           status: ["active"],
-          states: stateField.code,
-          districts: data.districtCode,
-          blocks: data.blockCode
+          // states: stateField.code,
+          // districts: data.districtCode,
+          // blocks: data.blockCode
           // "name": selected[0]
         },
       };

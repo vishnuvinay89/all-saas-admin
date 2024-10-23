@@ -1,14 +1,14 @@
 import { post, get } from "./RestClient";
-
+import config from "@/utils/urlConstants.json";
 export interface userListParam {
   limit?: number;
   //  page: number;
   filters: {
     role?: string;
     status?: string;
-    states?: string;
-    districts?: string;
-    blocks?: string;
+    // states?: string;
+    // districts?: string;
+    // blocks?: string;
   };
   fields?: any;
   sort?: object;
@@ -23,7 +23,7 @@ export const userList = async ({
   offset,
   fields,
 }: userListParam): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/list`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.LIST}`;
   try {
     const response = await post(apiUrl, {
       limit,
@@ -47,7 +47,7 @@ export const cohortMemberList = async ({
   offset,
   fields,
 }: userListParam): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/cohortmember/list`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.COHORT_MEMBER}`;
   try {
     const response = await post(apiUrl, {
       limit,
@@ -67,7 +67,7 @@ export const getUserDetailsInfo = async (
   userId?: string | string[],
   fieldValue: boolean = true
 ): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/read/${userId}?fieldvalue=${fieldValue}`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.READ}/${userId}?fieldvalue=${fieldValue}`;
   try {
     const response = await get(apiUrl);
     return response?.data?.result;

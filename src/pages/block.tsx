@@ -202,7 +202,7 @@ const Block: React.FC = () => {
         offset: 0,
         filters: {
           name: searchKeyword,
-          states: stateCode,
+          // states: stateCode,
           type: CohortTypes.DISTRICT,
         },
         sort: sortBy,
@@ -343,10 +343,10 @@ const Block: React.FC = () => {
         offset: 0,
         filters: {
           name: searchKeyword,
-          states: stateCode,
-          districts:
-            selectedDistrict === t("COMMON.ALL") ? "" : selectedDistrict,
-          type: CohortTypes.BLOCK,
+          // states: stateCode,
+          // districts:
+          //   selectedDistrict === t("COMMON.ALL") ? "" : selectedDistrict,
+          // type: CohortTypes.BLOCK,
           status: [statusValue],
         },
         sort: sortBy,
@@ -436,7 +436,7 @@ const Block: React.FC = () => {
         limit: 0,
         offset: 0,
         filters: {
-          blocks: parentIdBlock, //cohort id of block
+          // blocks: parentIdBlock, //cohort id of block
         },
       };
 

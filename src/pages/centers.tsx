@@ -154,9 +154,9 @@ const Center: React.FC = () => {
 
   const [filters, setFilters] = useState<cohortFilterDetails>({
     type: CohortTypes.COHORT,
-    states: selectedStateCode,
+    states: "",
     status: [statusValue],
-    districts: selectedDistrictCode,
+    districts: "",
   });
   const handleCloseAddLearnerModal = () => {
     setOpenAddNewCohort(false);
@@ -184,7 +184,7 @@ const Center: React.FC = () => {
 
         setFilters({
           type: "COHORT",
-          states: object[0]?.value,
+          states: "",
           status: filters.status,
         });
       }
@@ -442,12 +442,12 @@ const response=  await fetchCohortMemberList(data);
       pathname: router.pathname,
       query: { 
         ...newQuery, 
-        state: code?.join(","), 
+        state: "", 
       }
     });
-    setSelectedDistrict([]);
-    setSelectedBlock([]);
-    setSelectedState(selected);
+    // setSelectedDistrict([]);
+    // setSelectedBlock([]);
+    // setSelectedState(selected);
 
 
    // setSelectedCenterCode([])
@@ -467,10 +467,10 @@ const response=  await fetchCohortMemberList(data);
       if (filters.status)
         setFilters({
           type: "COHORT",
-          states: stateCodes,
+          states: "",
           status: filters.status,
         });
-      else setFilters({ type: "COHORT", states: stateCodes });
+      else setFilters({ type: "COHORT", states: "" });
     }
   };
 
@@ -486,14 +486,14 @@ const response=  await fetchCohortMemberList(data);
     setSelectedBlock([]);
     setSelectedDistrict(selected);
     setSelectedBlockCode("");
-    localStorage.setItem('selectedDistrict', selected[0])
+    // localStorage.setItem('selectedDistrict', selected[0])
     
     setSelectedDistrictStore(selected[0])
     if (selected[0] === "" ||  selected[0] === t("COMMON.ALL_DISTRICTS")) {
       if (filters.status) {
         console.log("true...")
         setFilters({
-          states: selectedStateCode,
+          states: "",
           status: filters.status,
           type:"COHORT",
 
@@ -501,7 +501,7 @@ const response=  await fetchCohortMemberList(data);
       } else {
         setFilters({
 
-          states: selectedStateCode,
+          states: "",
           type:"COHORT",
 
         });
@@ -513,7 +513,7 @@ const response=  await fetchCohortMemberList(data);
         pathname: router.pathname,
         query: { 
           ...newQuery, 
-          state: selectedStateCode, 
+          state: "", 
         }
       });
     } else {
@@ -521,8 +521,8 @@ const response=  await fetchCohortMemberList(data);
         pathname: router.pathname,
         query: { 
           ...newQuery, 
-          state: selectedStateCode, 
-          district: code?.join(",") 
+          // state: selectedStateCode, 
+          // district: code?.join(",") 
         }
       });
       const districts = code?.join(",");
@@ -530,8 +530,8 @@ const response=  await fetchCohortMemberList(data);
       if (filters.status) {
         setFilters({
 
-          states: selectedStateCode,
-          districts: districts,
+          states: "",
+          districts: "",
           status: filters.status,
           //type:"COHORT",
 
@@ -539,8 +539,8 @@ const response=  await fetchCohortMemberList(data);
       } else {
         setFilters({
 
-          states: selectedStateCode,
-          districts: districts,
+          states: "",
+          districts: "",
          // type:"COHORT",
 
         });
@@ -572,15 +572,15 @@ const response=  await fetchCohortMemberList(data);
         pathname: router.pathname,
         query: { 
           ...newQuery, 
-          state: selectedStateCode, 
-          district: selectedDistrictCode, 
+          // state: selectedStateCode, 
+          // district: selectedDistrictCode, 
         }
       });
       if (filters.status) {
         setFilters({
 
-          states: selectedStateCode,
-          districts: selectedDistrictCode,
+          states: "",
+          districts: "",
           status: filters.status,
           type:"COHORT",
 
@@ -588,8 +588,8 @@ const response=  await fetchCohortMemberList(data);
       } else {
         setFilters({
 
-          states: selectedStateCode,
-          districts: selectedDistrictCode,
+          states: "",
+          districts: "",
           type:"COHORT",
 
         });
@@ -599,19 +599,19 @@ const response=  await fetchCohortMemberList(data);
         pathname: router.pathname,
         query: { 
           ...newQuery, 
-          state: selectedStateCode, 
-          district: selectedDistrictCode, 
-          block: code?.join(",") 
+          // state: selectedStateCode, 
+          // district: selectedDistrictCode, 
+          // block: code?.join(",") 
         }
       });
-      const blocks = code?.join(",");
-      setSelectedBlockCode(blocks);
+      // const blocks = code?.join(",");
+      // setSelectedBlockCode(blocks);
       if (filters.status) {
         setFilters({
 
-          states: selectedStateCode,
-          districts: selectedDistrictCode,
-          blocks: blocks,
+          states: "",
+          districts: "",
+          blocks: "",
           status: filters.status,
           type:"COHORT",
 
@@ -619,9 +619,9 @@ const response=  await fetchCohortMemberList(data);
       } else {
         setFilters({
 
-          states: selectedStateCode,
-          districts: selectedDistrictCode,
-          blocks: blocks,
+          states: "",
+          districts: "",
+          blocks: "",
           type:"COHORT",
 
         });
@@ -909,8 +909,8 @@ const response=  await fetchCohortMemberList(data);
                
                 setFilters({
 
-                  states: stateField.code,
-                  districts: selectedDistrictCode,
+                  states: "",
+                  districts: "",
                   status: filters.status,
                   type: CohortTypes.COHORT,
 
@@ -919,9 +919,9 @@ const response=  await fetchCohortMemberList(data);
               if(selectedBlockCode && selectedBlock.length!==0 && selectedBlock[0]!==t("COMMON.ALL_BLOCKS"))
               {
                setFilters({
-                  states: stateField.code,
-                  districts:selectedDistrictCode,
-                  blocks:selectedBlockCode,
+                  states: "",
+                  districts:"",
+                  blocks:"",
                   status: filters.status,
                   type: CohortTypes.COHORT,
 
@@ -1017,7 +1017,7 @@ const response=  await fetchCohortMemberList(data);
 
   // props to send in header
   const userProps = {
-    userType: t("SIDEBAR.CENTERS"),
+    userType: t("SIDEBAR.COHORTS"),
     searchPlaceHolder: t("CENTERS.SEARCHBAR_PLACEHOLDER"),
     selectedState: selectedState,
     selectedStateCode: selectedStateCode,

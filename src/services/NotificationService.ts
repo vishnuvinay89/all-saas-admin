@@ -1,6 +1,6 @@
 import { SendCredentialsRequest } from '@/utils/Interfaces';
 import { post } from './RestClient';
-
+import config from "@/utils/urlConstants.json"
 export const sendCredentialService = async ({
   isQueue,
   context,
@@ -8,7 +8,7 @@ export const sendCredentialService = async ({
   replacements,
   email,
 }: SendCredentialsRequest): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_NOTIFICATION_BASE_URL}/notification/send`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_NOTIFICATION_BASE_URL}/${config.URLS.NOTIFICATIONS_SEND}`;
   try {
     const response = await post(apiUrl, {
       isQueue,

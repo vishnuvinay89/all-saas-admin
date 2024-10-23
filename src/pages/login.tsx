@@ -17,7 +17,7 @@ import Checkbox from "@mui/material/Checkbox";
 import Image from "next/image";
 import Loader from "../components/Loader";
 import MenuItem from "@mui/material/MenuItem";
-import appLogo from "../../public/images/appLogo.png";
+import appLogo from "../../public/logo.png";
 import config from "../../config.json";
 import { getUserId, login } from "../services/LoginService";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -28,12 +28,15 @@ import { telemetryFactory } from "@/utils/telemetry";
 import { logEvent } from "@/utils/googleAnalytics";
 import { showToastMessage } from "@/components/Toastify";
 import Link from "@mui/material/Link";
-import loginImage from "../../public/loginImage.jpg";
+// import loginImage from "../../public/loginImage.jpg";
+import loginImage from "../../public/all-saas-login.png";
 import { useUserIdStore } from "@/store/useUserIdStore";
 import { getUserDetailsInfo } from "@/services/UserList";
 import { Storage } from "@/utils/app.constant";
 import useSubmittedButtonStore from "@/utils/useSharedState";
 import { Role } from "@/utils/app.constant";
+import PersonIcon from "@mui/icons-material/Person";
+import KeyIcon from "@mui/icons-material/VpnKey";
 
 const LoginPage = () => {
   const { t } = useTranslation();
@@ -249,7 +252,7 @@ const LoginPage = () => {
           md={6}
           sx={{
             background: `url(${loginImage.src}) no-repeat center center`,
-            backgroundSize: "cover",
+            backgroundSize: "contain",
             height: "100vh",
           }}
         />
@@ -278,7 +281,7 @@ const LoginPage = () => {
               display="flex"
               flexDirection="column"
               alignItems="center"
-              bgcolor={theme.palette.warning.A200}
+            
               p={2}
               borderRadius={2}
             >
@@ -321,19 +324,48 @@ const LoginPage = () => {
               fullWidth
               id="username"
               InputLabelProps={{ shrink: true }}
+              // label={t("LOGIN_PAGE.USERNAME")}
+              placeholder={t("LOGIN_PAGE.USERNAME_PLACEHOLDER")}
+              value={username}
+              onChange={handleUsernameChange}
+              error={usernameError}
+              margin="normal"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <PersonIcon />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "20px", // Adjust the value as needed for more or less rounding
+                },
+              }}
+            />
+            {/* <TextField
+              fullWidth
+              id="username"
+              InputLabelProps={{ shrink: true }}
               label={t("LOGIN_PAGE.USERNAME")}
               placeholder={t("LOGIN_PAGE.USERNAME_PLACEHOLDER")}
               value={username}
               onChange={handleUsernameChange}
               error={usernameError}
               margin="normal"
-            />
+            /> */}
+            
             <TextField
               fullWidth
               type={showPassword ? "text" : "password"}
               id="password"
               InputLabelProps={{ shrink: true }}
               InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <KeyIcon />
+                  </InputAdornment>
+                ),
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
@@ -347,13 +379,18 @@ const LoginPage = () => {
                   </InputAdornment>
                 ),
               }}
-              label={t("LOGIN_PAGE.PASSWORD")}
+               // label={t("LOGIN_PAGE.PASSWORD")}
               placeholder={t("LOGIN_PAGE.PASSWORD_PLACEHOLDER")}
               value={password}
               onChange={handlePasswordChange}
               error={passwordError}
               margin="normal"
               inputRef={passwordRef}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "20px", // Adjust the value as needed for more or less rounding
+                },
+              }}
             />
 
             <Box
