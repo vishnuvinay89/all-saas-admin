@@ -1,24 +1,22 @@
-import masterIcon from '../../../../public/images/database.svg';
-import centerIcon from '../../../../public/images/centers.svg';
-import dashboardIcon from '../../../../public/images/dashboard.svg';
-import userIcon from '../../../../public/images/group.svg';
-import coursePannerIcon from '../../../../public/images/event_available.svg';
+import masterIcon from "../../../../public/images/database.svg";
+import centerIcon from "../../../../public/images/centers.svg";
+import dashboardIcon from "../../../../public/images/dashboard.svg";
+import userIcon from "../../../../public/images/group.svg";
+import coursePannerIcon from "../../../../public/images/event_available.svg";
 const ENV = process.env.NEXT_PUBLIC_SHOW_WORKSPACE;
 
-
-// 
-
+//
 
 const Menuitems = [
-  // {
-  //   title: "SIDEBAR.DASHBOARD",
-  //   icon: dashboardIcon,
-  //   href: "/dashboard",
-  // },
   {
-    title: "SIDEBAR.COHORTS",
+    title: "SIDEBAR.TENANT",
+    icon: dashboardIcon,
+    href: "/tenant",
+  },
+  {
+    title: "COHORTS.COHORTS",
     icon: centerIcon,
-    href: "/centers",
+    href: "/cohorts",
   },
   {
     title: "SIDEBAR.MANAGE_USERS",
@@ -39,8 +37,6 @@ const Menuitems = [
       },
     ],
   },
-
-
 
   // {
   //   title: "Master ",
@@ -78,5 +74,3 @@ const Menuitems = [
 ];
 
 export default Menuitems;
-
-

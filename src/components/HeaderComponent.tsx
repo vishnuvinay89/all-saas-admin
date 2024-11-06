@@ -70,6 +70,7 @@ const HeaderComponent = ({
   showAddNew = true,
   showStateDropdown = true,
   showFilter = true,
+  statusArchived,
   handleSearch,
   handleAddUserClick,
   selectedCenter,
@@ -558,50 +559,72 @@ const HeaderComponent = ({
         }}
       >
         {showFilter && (
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <Tabs
-              value={statusValue}
-              onChange={handleFilterChange}
-              aria-label="Tabs where selection follows focus"
-              selectionFollowsFocus
-            >
-              <Tab
-                label={
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      color:
-                        statusValue === Status.ACTIVE
-                          ? theme.palette.primary["100"]
-                          : "inherit",
-                    }}
-                  >
-                    {t("COMMON.ACTIVE")}
-                  </Box>
-                }
-                value={Status.ACTIVE}
-              />
-              {/* <Tab
-                label={
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      color:
-                        statusValue === Status.ARCHIVED
-                          ? theme.palette.primary["100"]
-                          : "inherit",
-                    }}
-                  >
-                    {t("COMMON.ARCHIVED")}
-                  </Box>
-                }
-                value={Status.ARCHIVED}
-              /> */}
-            </Tabs>
+  <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+    <Tabs
+      value={statusValue}
+      onChange={handleFilterChange}
+      aria-label="Tabs where selection follows focus"
+      selectionFollowsFocus
+    >
+      <Tab
+        label={
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              color:
+                statusValue === Status.ACTIVE
+                  ? theme.palette.primary["100"]
+                  : "inherit",
+            }}
+          >
+            {t("COMMON.ACTIVE")}
           </Box>
-        )}
+        }
+        value={Status.ACTIVE}
+      />
+      {/* Uncomment this section if you need the INACTIVE tab
+      <Tab
+        label={
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              color:
+                statusValue === Status.INACTIVE
+                  ? theme.palette.primary["100"]
+                  : "inherit",
+            }}
+          >
+            {t("COMMON.INACTIVE")}
+          </Box>
+        }
+        value={Status.INACTIVE}
+      />
+      */}
+      {statusArchived && (
+        <Tab
+          label={
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                color:
+                  statusValue === Status.ARCHIVED
+                    ? theme.palette.primary["100"]
+                    : "inherit",
+              }}
+            >
+              {t("COMMON.ARCHIVED")}
+            </Box>
+          }
+          value={Status.ARCHIVED}
+        />
+      )}
+    </Tabs>
+  </Box>
+)}
+
         <Box
           sx={{
             display: "flex",

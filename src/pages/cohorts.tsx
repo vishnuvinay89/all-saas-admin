@@ -7,9 +7,13 @@ import Pagination from "@mui/material/Pagination";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import {
+  cohortCreate,
+  deleteCohort,
   fetchCohortMemberList,
   getCohortList,
+  rolesList,
   updateCohortUpdate,
+  userCreate,
 } from "@/services/CohortService/cohortService";
 import {
   CohortTypes,
@@ -34,9 +38,13 @@ import {
 import { CustomField } from "@/utils/Interfaces";
 import { showToastMessage } from "@/components/Toastify";
 import AddNewCenters from "@/components/AddNewCenters";
-import { getCenterTableData } from "@/data/tableColumns";
+import { getCenterTableData, getCohortTableData } from "@/data/tableColumns";
 import { Theme } from "@mui/system";
-import { firstLetterInUpperCase, mapFields , transformLabel} from "@/utils/Helper";
+import {
+  firstLetterInUpperCase,
+  mapFields,
+  transformLabel,
+} from "@/utils/Helper";
 import SimpleModal from "@/components/SimpleModal";
 import { IChangeEvent } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
@@ -44,6 +52,9 @@ import DynamicForm from "@/components/DynamicForm";
 import useSubmittedButtonStore from "@/utils/useSharedState";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
+import cohortSchema from "./cohortSchema.json";
+import AddIcon from "@mui/icons-material/Add";
+import userJsonSchema from "./userSchema.json";
 
 type cohortFilterDetails = {
   type?: string;
@@ -99,8 +110,8 @@ const Center: React.FC = () => {
   const [inputName, setInputName] = React.useState<string>("");
   const [loading, setLoading] = useState<boolean | undefined>(undefined);
   const [userId, setUserId] = useState("");
-  const [schema, setSchema] = React.useState<any>();
-  const [uiSchema, setUiSchema] = React.useState<any>();
+  const [schema] = React.useState(cohortSchema);
+  const [userSchema, setUserSchema] = React.useState(userJsonSchema);
   const [openAddNewCohort, setOpenAddNewCohort] =
     React.useState<boolean>(false);
   const [statusValue, setStatusValue] = useState(Status.ACTIVE);
@@ -120,6 +131,8 @@ const Center: React.FC = () => {
   const [isEditForm, setIsEditForm] = useState(false);
   const [statesInformation, setStatesInformation] = useState<any>([]);
   const [selectedRowData, setSelectedRowData] = useState<any>("");
+  const [Addmodalopen, setAddmodalopen] = React.useState<any>(false);
+
   const selectedBlockStore = useSubmittedButtonStore(
     (state: any) => state.selectedBlockStore
   );
@@ -141,7 +154,7 @@ const Center: React.FC = () => {
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
   );
- 
+
   const createCenterStatus = useSubmittedButtonStore(
     (state: any) => state.createCenterStatus
   );
@@ -152,11 +165,48 @@ const Center: React.FC = () => {
     (state: any) => state.setAdminInformation
   );
 
+  const uiSchema = {
+    district: {
+      "ui:widget": "",
+      "ui:options": {},
+    },
+    status: {
+      "ui:widget": "CustomRadioWidget",
+      "ui:options": {},
+    },
+
+    block: {
+      "ui:widget": "",
+      "ui:options": {},
+    },
+  };
+  const userUiSchema = {
+    name: {
+      "ui:widget": "text",
+      "ui:placeholder": "Enter your full name",
+      "ui:help": "Full name, only letters and spaces are allowed.",
+    },
+    username: {
+      "ui:widget": "text",
+      "ui:placeholder": "Enter your username",
+    },
+    password: {
+      "ui:widget": "password",
+      "ui:placeholder": "Enter a secure password",
+      "ui:help":
+        "Password must be at least 8 characters long, with at least one letter and one number.",
+    },
+    role: {
+      "ui:widget": "select",
+      "ui:placeholder": "Select a role",
+    },
+  };
+
   const [filters, setFilters] = useState<cohortFilterDetails>({
-    type: CohortTypes.COHORT,
-    states: "",
+    type: "cohort",
+    // states: "",
     status: [statusValue],
-    districts: "",
+    // districts: "",
   });
   const handleCloseAddLearnerModal = () => {
     setOpenAddNewCohort(false);
@@ -172,26 +222,25 @@ const Center: React.FC = () => {
         const stateField: any = JSON.parse(admin).customFields.find(
           (field: any) => field.label === "STATES"
         );
-        const object = [
-          {
-            value: stateField.code,
-            label: stateField.value,
-          },
-        ];
+        // const object = [
+        //   {
+        //     value: stateField.code,
+        //     label: stateField.value,
+        //   },
+        // ];
 
-        setStatesInformation(object);
-        setSelectedStateCode(object[0]?.value);
+        // setStatesInformation(object);
+        // setSelectedStateCode(object[0]?.value);
 
         setFilters({
-          type: "COHORT",
-          states: "",
+          type: "cohort",
+          // states: "",
           status: filters.status,
         });
       }
     }
   };
 
-  // use api calls
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
       const userId = localStorage.getItem(Storage.USER_ID) || "";
@@ -203,6 +252,38 @@ const Center: React.FC = () => {
     // getCohortMemberlistData();
     getAdminInformation();
   }, []);
+  useEffect(() => {
+    const fetchRoles = async () => {
+      const obj = {
+        limit: "10",
+        page: 1,
+        filters: {
+          tenantId: selectedRowData?.tenantId,
+        },
+      };
+      const response = await rolesList(obj);
+
+      if (response?.result) {
+        const rolesOptions = response.result.map((role) => ({
+          const: role.roleId,
+          title: role.title,
+        }));
+
+        setUserSchema((prevSchema) => ({
+          ...prevSchema,
+          properties: {
+            ...prevSchema.properties,
+            role: {
+              ...prevSchema.properties.role,
+              oneOf: rolesOptions,
+            },
+          },
+        }));
+      }
+    };
+
+    fetchRoles();
+  }, [Addmodalopen]);
 
   const fetchUserList = async () => {
     setLoading(true);
@@ -230,7 +311,6 @@ const Center: React.FC = () => {
       //   ],
       //   queryFn: () => getCohortList(data),
       // });
-console.log(resp)
       if (resp) {
         const result = resp?.results?.cohortDetails;
         const resultData: centerData[] = [];
@@ -243,10 +323,10 @@ console.log(resp)
             return await getCohortMemberlistData(cohortId);
           })
         );
-console.log(result)
-const finalResult=  result
-?.filter((cohort: any) => cohort.type === "COHORT")
-finalResult?.forEach((item: any, index: number) => {
+        const finalResult = result?.filter(
+          (cohort: any) => cohort.type === "cohort"
+        );
+        finalResult?.forEach((item: any, index: number) => {
           const cohortType =
             item?.customFields?.find(
               (field: any) => field.label === "TYPE_OF_COHORT"
@@ -263,6 +343,7 @@ finalResult?.forEach((item: any, index: number) => {
           const requiredData = {
             name: item?.name,
             status: item?.status,
+            tenantId: item?.tenantId,
             updatedBy: item?.updatedBy,
             createdBy: item?.createdBy,
             createdAt: item?.createdAt,
@@ -274,7 +355,6 @@ finalResult?.forEach((item: any, index: number) => {
           };
           resultData?.push(requiredData);
         });
-        console.log(resultData)
         setCohortData(resultData);
         const totalCount = resp?.count;
         setTotalCound(totalCount);
@@ -292,13 +372,11 @@ finalResult?.forEach((item: any, index: number) => {
         const pageCount = Math.ceil(totalCount / pageLimit);
         setPageCount(pageCount);
         setLoading(false);
-      }
-      else{
+      } else {
         setCohortData([]);
-
       }
     } catch (error) {
-      console.log("not data found")
+      console.log("not data found");
       setCohortData([]);
       setLoading(false);
       console.error("Error fetching user list:", error);
@@ -328,7 +406,7 @@ finalResult?.forEach((item: any, index: number) => {
         cohortId: cohortId,
       },
     };
-const response=  await fetchCohortMemberList(data);
+    const response = await fetchCohortMemberList(data);
     // const response = await queryClient.fetchQuery({
     //   queryKey: [
     //     QueryKeys.GET_COHORT_MEMBER_LIST,
@@ -342,12 +420,14 @@ const response=  await fetchCohortMemberList(data);
     if (response?.result) {
       const userDetails = response.result.userDetails;
       const getActiveMembers = userDetails?.filter(
-        (member: any) => member?.status === Status.ACTIVE && member?.role ===  Role.STUDENT
+        (member: any) =>
+          member?.status === Status.ACTIVE && member?.role === Role.STUDENT
       );
       const totalActiveMembers = getActiveMembers?.length || 0;
 
       const getArchivedMembers = userDetails?.filter(
-        (member: any) => member?.status === Status.ARCHIVED && member?.role === Role.STUDENT
+        (member: any) =>
+          member?.status === Status.ARCHIVED && member?.role === Role.STUDENT
       );
       const totalArchivedMembers = getArchivedMembers?.length || 0;
 
@@ -368,9 +448,6 @@ const response=  await fetchCohortMemberList(data);
       const response = await getFormRead("cohorts", "cohort");
       if (response) {
         const { schema, uiSchema } = GenerateSchemaAndUiSchema(response, t);
-
-        setSchema(schema);
-        setUiSchema(uiSchema);
       } else {
         console.log("Unexpected response format");
       }
@@ -381,12 +458,23 @@ const response=  await fetchCohortMemberList(data);
   };
 
   useEffect(() => {
-    if ((selectedBlockCode !== "") || (selectedDistrictCode !== "" && selectedBlockCode === "")  ){
+    if (
+      selectedBlockCode !== "" ||
+      (selectedDistrictCode !== "" && selectedBlockCode === "")
+    ) {
       fetchUserList();
     }
-    // fetchUserList();
-    getFormData();
-  }, [pageOffset, pageLimit, sortBy, filters, filters.states, filters.status, createCenterStatus]);
+    fetchUserList();
+    // getFormData();
+  }, [
+    pageOffset,
+    pageLimit,
+    sortBy,
+    filters,
+    filters.states,
+    filters.status,
+    createCenterStatus,
+  ]);
 
   // handle functions
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
@@ -427,122 +515,112 @@ const response=  await fetchCohortMemberList(data);
   );
 
   const handleStateChange = async (selected: string[], code: string[]) => {
-    const newQuery = { ...router.query }; 
- 
+    const newQuery = { ...router.query };
+
     if (newQuery.center) {
-      delete newQuery.center;  
+      delete newQuery.center;
     }
     if (newQuery.district) {
-     delete newQuery.district;
-   }
+      delete newQuery.district;
+    }
     if (newQuery.block) {
       delete newQuery.block;
     }
     router.replace({
       pathname: router.pathname,
-      query: { 
-        ...newQuery, 
-        state: "", 
-      }
+      query: {
+        ...newQuery,
+        state: "",
+      },
     });
     // setSelectedDistrict([]);
     // setSelectedBlock([]);
     // setSelectedState(selected);
 
+    // setSelectedCenterCode([])
 
-   // setSelectedCenterCode([])
-
-   
     setSelectedBlockCode("");
     setSelectedDistrictCode("");
-  
 
     if (selected[0] === "") {
       if (filters.status)
-        setFilters({ type: "COHORT", status: filters.status });
+        setFilters({ type: "cohort", status: filters.status });
       // else setFilters({ role: role });
     } else {
       const stateCodes = code?.join(",");
       setSelectedStateCode(stateCodes);
       if (filters.status)
         setFilters({
-          type: "COHORT",
+          type: "cohort",
           states: "",
           status: filters.status,
         });
-      else setFilters({ type: "COHORT", states: "" });
+      else setFilters({ type: "cohort", states: "" });
     }
   };
 
   const handleDistrictChange = (selected: string[], code: string[]) => {
-    const newQuery = { ...router.query }; 
-    console.log(selected)
-        if (newQuery.center) {
-          delete newQuery.center;  
-        }
-        if (newQuery.block) {
-          delete newQuery.block;
-        }
+    const newQuery = { ...router.query };
+    console.log(selected);
+    if (newQuery.center) {
+      delete newQuery.center;
+    }
+    if (newQuery.block) {
+      delete newQuery.block;
+    }
     setSelectedBlock([]);
     setSelectedDistrict(selected);
     setSelectedBlockCode("");
     // localStorage.setItem('selectedDistrict', selected[0])
-    
-    setSelectedDistrictStore(selected[0])
-    if (selected[0] === "" ||  selected[0] === t("COMMON.ALL_DISTRICTS")) {
+
+    setSelectedDistrictStore(selected[0]);
+    if (selected[0] === "" || selected[0] === t("COMMON.ALL_DISTRICTS")) {
       if (filters.status) {
-        console.log("true...")
+        console.log("true...");
         setFilters({
           states: "",
           status: filters.status,
-          type:"COHORT",
-
+          type: "cohort",
         });
       } else {
         setFilters({
-
           states: "",
-          type:"COHORT",
-
+          type: "cohort",
         });
       }
       if (newQuery.district) {
-        delete newQuery.district;  
+        delete newQuery.district;
       }
       router.replace({
         pathname: router.pathname,
-        query: { 
-          ...newQuery, 
-          state: "", 
-        }
+        query: {
+          ...newQuery,
+          state: "",
+        },
       });
     } else {
       router.replace({
         pathname: router.pathname,
-        query: { 
-          ...newQuery, 
-          // state: selectedStateCode, 
-          // district: code?.join(",") 
-        }
+        query: {
+          ...newQuery,
+          // state: selectedStateCode,
+          // district: code?.join(",")
+        },
       });
       const districts = code?.join(",");
       setSelectedDistrictCode(districts);
       if (filters.status) {
         setFilters({
-
           states: "",
           districts: "",
           status: filters.status,
-          //type:"COHORT",
-
+          type: "cohort",
         });
       } else {
         setFilters({
-
           states: "",
           districts: "",
-         // type:"COHORT",
-
+          type: "cohort",
         });
       }
     }
@@ -551,79 +629,69 @@ const response=  await fetchCohortMemberList(data);
   };
   const handleBlockChange = (selected: string[], code: string[]) => {
     setSelectedBlock(selected);
-    const newQuery = { ...router.query }; 
+    const newQuery = { ...router.query };
     if (newQuery.center) {
-      delete newQuery.center;  
+      delete newQuery.center;
     }
     if (newQuery.block) {
       delete newQuery.block;
     }
-    console.log(code?.join(","))
-    
-    
-   
-    localStorage.setItem('selectedBlock', selected[0])
-    setSelectedBlockStore(selected[0])
+    console.log(code?.join(","));
+
+    localStorage.setItem("selectedBlock", selected[0]);
+    setSelectedBlockStore(selected[0]);
     if (selected[0] === "" || selected[0] === t("COMMON.ALL_BLOCKS")) {
       if (newQuery.block) {
         delete newQuery.block;
       }
       router.replace({
         pathname: router.pathname,
-        query: { 
-          ...newQuery, 
-          // state: selectedStateCode, 
-          // district: selectedDistrictCode, 
-        }
+        query: {
+          ...newQuery,
+          // state: selectedStateCode,
+          // district: selectedDistrictCode,
+        },
       });
       if (filters.status) {
         setFilters({
-
           states: "",
           districts: "",
           status: filters.status,
-          type:"COHORT",
-
+          type: "cohort",
         });
       } else {
         setFilters({
-
           states: "",
           districts: "",
-          type:"COHORT",
-
+          type: "cohort",
         });
       }
     } else {
       router.replace({
         pathname: router.pathname,
-        query: { 
-          ...newQuery, 
-          // state: selectedStateCode, 
-          // district: selectedDistrictCode, 
-          // block: code?.join(",") 
-        }
+        query: {
+          ...newQuery,
+          // state: selectedStateCode,
+          // district: selectedDistrictCode,
+          // block: code?.join(",")
+        },
       });
       // const blocks = code?.join(",");
       // setSelectedBlockCode(blocks);
       if (filters.status) {
         setFilters({
-
           states: "",
           districts: "",
           blocks: "",
           status: filters.status,
-          type:"COHORT",
-
+          type: "cohort",
         });
       } else {
         setFilters({
-
           states: "",
           districts: "",
           blocks: "",
-          type:"COHORT",
-
+          type: "cohort",
         });
       }
     }
@@ -638,9 +706,9 @@ const response=  await fetchCohortMemberList(data);
       let cohortDetails = {
         status: Status.ARCHIVED,
       };
-      const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
+      const resp = await deleteCohort(selectedCohortId);
       if (resp?.responseCode === 200) {
-        showToastMessage(t("CENTERS.CENTER_DELETE_SUCCESSFULLY"), "success");
+        showToastMessage(t("COHORTS.DELETE_SUCCESSFULLY"), "success");
         const cohort = cohortData?.find(
           (item: any) => item.cohortId == selectedCohortId
         );
@@ -648,11 +716,10 @@ const response=  await fetchCohortMemberList(data);
           cohort.status = Status.ARCHIVED;
         }
       } else {
-        console.log("Cohort Not Archived");
+        showToastMessage("Cohort Not Archived", "error");
       }
       setSelectedCohortId("");
     } else {
-      console.log("No Cohort Selected");
       setSelectedCohortId("");
     }
     fetchUserList();
@@ -740,16 +807,13 @@ const response=  await fetchCohortMemberList(data);
       let data = {
         filters: {
           cohortId: cohortId,
+          type: "cohort",
         },
         limit: Numbers.TWENTY,
         offset: 0,
       };
       const resp = await getCohortList(data);
-      const formFields = await getFormRead("cohorts", "cohort");
-
-      const cohortDetails = resp?.results?.cohortDetails?.[0] || {};
-
-      setEditFormData(mapFields(formFields, cohortDetails));
+      setEditFormData(mapFields(schema, rowData));
       setLoading(false);
       setIsEditForm(true);
     }
@@ -773,8 +837,17 @@ const response=  await fetchCohortMemberList(data);
     setLoading(false);
   };
 
+  const handleAdd = (rowData: any) => {
+    console.log({ rowData });
+    setSelectedRowData({ ...rowData });
+    setLoading(true);
+    setAddmodalopen(true);
+    setLoading(false);
+  };
+
   // add  extra buttons
   const extraActions: any = [
+    { name: t("COMMON.ADD"), onClick: handleAdd, icon: AddIcon },
     { name: t("COMMON.EDIT"), onClick: handleEdit, icon: EditIcon },
     { name: t("COMMON.DELETE"), onClick: handleDelete, icon: DeleteIcon },
   ];
@@ -806,52 +879,52 @@ const response=  await fetchCohortMemberList(data);
     const formData = data?.formData;
     const schemaProperties = schema.properties;
 
-    let apiBody: any = {
-      customFields: [],
-    };
-    Object.entries(formData).forEach(([fieldKey, fieldValue]) => {
-      const fieldSchema = schemaProperties[fieldKey];
-      const fieldId = fieldSchema?.fieldId;
+    // let apiBody: any = {
+    //   customFields: [],
+    // };
+    // Object.entries(formData).forEach(([fieldKey, fieldValue]) => {
+    //   const fieldSchema = schemaProperties[fieldKey];
+    //   const fieldId = fieldSchema?.fieldId;
 
-      console.log(
-        `FieldID: ${fieldId}, FieldValue: ${JSON.stringify(fieldSchema)}, type: ${typeof fieldValue}`
-      );
+    //   console.log(
+    //     `FieldID: ${fieldId}, FieldValue: ${JSON.stringify(fieldSchema)}, type: ${typeof fieldValue}`
+    //   );
 
-      if (fieldId === null || fieldId === "null") {
-        if (typeof fieldValue !== "object") {
-          apiBody[fieldKey] = fieldValue;
-        }
-      } else {
-        if (
-          fieldSchema?.hasOwnProperty("isDropdown") ||
-          fieldSchema?.hasOwnProperty("isCheckbox") ||
-          fieldSchema?.type === "radio"
-        ) {
-          apiBody.customFields.push({
-            fieldId: fieldId,
-            value: Array.isArray(fieldValue) ? fieldValue : [fieldValue],
-          });
-        } else {
-          if (fieldSchema?.checkbox && fieldSchema.type === "array") {
-            if (String(fieldValue).length != 0) {
-              apiBody.customFields.push({
-                fieldId: fieldId,
-                value: String(fieldValue).split(","),
-              });
-            }
-          } else {
-            if (fieldId) {
-              apiBody.customFields.push({
-                fieldId: fieldId,
-                value: String(fieldValue),
-              });
-            }
-          }
-        }
-      }
-    });
+    //   if (fieldId === null || fieldId === "null") {
+    //     if (typeof fieldValue !== "object") {
+    //       apiBody[fieldKey] = fieldValue;
+    //     }
+    //   } else {
+    //     if (
+    //       fieldSchema?.hasOwnProperty("isDropdown") ||
+    //       fieldSchema?.hasOwnProperty("isCheckbox") ||
+    //       fieldSchema?.type === "radio"
+    //     ) {
+    //       apiBody.customFields.push({
+    //         fieldId: fieldId,
+    //         value: Array.isArray(fieldValue) ? fieldValue : [fieldValue],
+    //       });
+    //     } else {
+    //       if (fieldSchema?.checkbox && fieldSchema.type === "array") {
+    //         if (String(fieldValue).length != 0) {
+    //           apiBody.customFields.push({
+    //             fieldId: fieldId,
+    //             value: String(fieldValue).split(","),
+    //           });
+    //         }
+    //       } else {
+    //         if (fieldId) {
+    //           apiBody.customFields.push({
+    //             fieldId: fieldId,
+    //             value: String(fieldValue),
+    //           });
+    //         }
+    //       }
+    //     }
+    //   }
+    // });
 
-    const customFields = apiBody?.customFields;
+    // const customFields = apiBody?.customFields;
     try {
       setLoading(true);
       setConfirmButtonDisable(true);
@@ -861,7 +934,9 @@ const response=  await fetchCohortMemberList(data);
       }
       let cohortDetails = {
         name: formData?.name,
-        customFields: customFields,
+        status: formData?.status,
+        type: formData?.type,
+        // customFields: customFields,
       };
       const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
@@ -898,46 +973,49 @@ const response=  await fetchCohortMemberList(data);
         // const result = response?.result?.values;
         if (typeof window !== "undefined" && window.localStorage) {
           const admin = localStorage.getItem("adminInfo");
-          if(admin)
-          {
-            const stateField = JSON.parse(admin).customFields.find((field: any) => field.label === "STATES");
-              if (!stateField.value.includes(',')) {
+          if (admin) {
+            const stateField = JSON.parse(admin).customFields.find(
+              (field: any) => field.label === "STATES"
+            );
+            if (!stateField.value.includes(",")) {
               setSelectedState([stateField.value]);
-              setSelectedStateCode(stateField.code)
-               if(selectedDistrictCode && selectedDistrict.length!==0 &&selectedDistrict[0]!==t("COMMON.ALL_DISTRICTS"))
-              {
-               
+              setSelectedStateCode(stateField.code);
+              if (
+                selectedDistrictCode &&
+                selectedDistrict.length !== 0 &&
+                selectedDistrict[0] !== t("COMMON.ALL_DISTRICTS")
+              ) {
                 setFilters({
-
                   states: "",
                   districts: "",
                   status: filters.status,
-                  type: CohortTypes.COHORT,
-
+                  type: "cohort",
                 });
               }
-              if(selectedBlockCode && selectedBlock.length!==0 && selectedBlock[0]!==t("COMMON.ALL_BLOCKS"))
-              {
-               setFilters({
+              if (
+                selectedBlockCode &&
+                selectedBlock.length !== 0 &&
+                selectedBlock[0] !== t("COMMON.ALL_BLOCKS")
+              ) {
+                setFilters({
                   states: "",
-                  districts:"",
-                  blocks:"",
+                  districts: "",
+                  blocks: "",
                   status: filters.status,
-                  type: CohortTypes.COHORT,
-
-                })
+                  // type: CohortTypes.COHORT,
+                  type: "cohort",
+                });
               }
-           }
-           }
+            }
+          }
         }
       } catch (error) {
         console.log(error);
       }
     };
-  
+
     fetchData();
   }, [selectedBlockCode, selectedDistrictCode]);
-
 
   const handleMemberClick = async (
     type: "active" | "archived",
@@ -999,10 +1077,9 @@ const response=  await fetchCohortMemberList(data);
           "Incomplete location data (state, district, block) for the cohort."
         );
       }
-      
 
       if (urlData) {
-      //  localStorage.setItem("selectedBlock", selectedBlock[0])
+        //  localStorage.setItem("selectedBlock", selectedBlock[0])
         // router.push(
         //   `learners?state=${urlData.stateCode}&district=${urlData.districtCode}&block=${urlData.blockCode}&status=${urlData.type}`
         // );
@@ -1013,12 +1090,56 @@ const response=  await fetchCohortMemberList(data);
       console.log("Error handling member click:", error);
     }
   };
-  console.log(cohortData);
+  const handleAddmodal = () => {
+    setAddmodalopen(false);
+  };
+
+  const handleAddAction = async (data: any) => {
+    setLoading(true);
+    const formData = data?.formData;
+
+    console.log({ formData, selectedRowData });
+    try {
+      setLoading(true);
+      setConfirmButtonDisable(true);
+
+      let obj = {
+        name: formData?.name,
+        username: formData?.username,
+        password: formData?.password,
+        tenantCohortRoleMapping: [
+          {
+            roleId: formData?.role,
+            tenantId: selectedRowData?.tenantId,
+            cohortId: [selectedRowData?.cohortId],
+          },
+        ],
+      };
+      const resp = await userCreate(obj);
+      console.log({ resp });
+
+      if (resp?.responseCode === 200 || resp?.responseCode === 201) {
+        showToastMessage(t("COHORTS.CREATE_SUCCESSFULLY"), "success");
+        setLoading(false);
+      } else {
+        showToastMessage(t("COHORTS.CREATE_FAILED"), "error");
+      }
+    } catch (error) {
+      console.error("Error updating cohort:", error);
+      showToastMessage(t("COHORTS.CREATE_FAILED"), "error");
+    } finally {
+      setLoading(false);
+      setConfirmButtonDisable(false);
+      handleAddmodal();
+      onCloseEditMOdel();
+      setIsEditForm(false);
+    }
+  };
 
   // props to send in header
   const userProps = {
-    userType: t("SIDEBAR.COHORTS"),
-    searchPlaceHolder: t("CENTERS.SEARCHBAR_PLACEHOLDER"),
+    userType: t("COHORTS.COHORTS"),
+    searchPlaceHolder: t("COHORTS.SEARCH_COHORT"),
     selectedState: selectedState,
     selectedStateCode: selectedStateCode,
     selectedDistrict: selectedDistrict,
@@ -1027,26 +1148,26 @@ const response=  await fetchCohortMemberList(data);
     selectedBlock: selectedBlock,
     selectedSort: selectedSort,
     selectedFilter: selectedFilter,
+    statusArchived: true,
     handleStateChange: handleStateChange,
     handleDistrictChange: handleDistrictChange,
     handleBlockChange: handleBlockChange,
     handleSortChange: handleSortChange,
     handleFilterChange: handleFilterChange,
     handleSearch: handleSearch,
-    showAddNew: true,
+    showAddNew: false,
+
     handleAddUserClick: handleAddUserClick,
     statusValue: statusValue,
     setStatusValue: setStatusValue,
     showSort: true,
     selectedBlockCode: selectedBlockCode,
-    setSelectedBlockCode:setSelectedBlockCode,
+    setSelectedBlockCode: setSelectedBlockCode,
     selectedDistrictCode: selectedDistrictCode,
-    setSelectedDistrictCode:setSelectedDistrictCode,
-     setSelectedStateCode:setSelectedStateCode,
-     setSelectedDistrict:setSelectedDistrict,
-     setSelectedBlock:setSelectedBlock
-
-
+    setSelectedDistrictCode: setSelectedDistrictCode,
+    setSelectedStateCode: setSelectedStateCode,
+    setSelectedDistrict: setSelectedDistrict,
+    setSelectedBlock: setSelectedBlock,
   };
 
   return (
@@ -1086,7 +1207,8 @@ const response=  await fetchCohortMemberList(data);
           </Box>
         ) : cohortData?.length > 0 ? (
           <KaTableComponent
-            columns={getCenterTableData(t, isMobile)}
+            columns={getCohortTableData(t, isMobile)}
+            addAction={true}
             data={cohortData}
             limit={pageLimit}
             offset={pageOffset}
@@ -1097,6 +1219,7 @@ const response=  await fetchCohortMemberList(data);
             pageSizes={pageSizeArray}
             extraActions={extraActions}
             showIcons={true}
+            onAdd={handleAdd}
             onEdit={handleEdit}
             onDelete={handleDelete}
             handleMemberClick={handleMemberClick}
@@ -1126,7 +1249,7 @@ const response=  await fetchCohortMemberList(data);
           open={isEditForm}
           onClose={onCloseEditForm}
           showFooter={false}
-          modalTitle={t("COMMON.UPDATE_CENTER")}
+          modalTitle={t("COHORTS.UPDATE_COHORT")}
         >
           {schema && uiSchema && (
             <DynamicForm
@@ -1180,6 +1303,67 @@ const response=  await fetchCohortMemberList(data);
                   }}
                 >
                   {t("COMMON.UPDATE")}
+                </Button>
+              </Box>
+            </DynamicForm>
+          )}
+        </SimpleModal>
+        <SimpleModal
+          open={Addmodalopen}
+          onClose={handleAddmodal}
+          showFooter={false}
+          modalTitle={t("USER.ADD_NEW_USER")}
+        >
+          {userSchema && userUiSchema && (
+            <DynamicForm
+              schema={userSchema}
+              uiSchema={userUiSchema}
+              onSubmit={handleAddAction}
+              onChange={handleChangeForm}
+              onError={handleError}
+              widgets={{}}
+              showErrorList={true}
+              customFields={customFields}
+              formData={editFormData}
+              id="update-center-form"
+            >
+              <Box
+                style={{
+                  display: "flex",
+                  justifyContent: "right",
+                  marginTop: "20px",
+                }}
+                gap={2}
+              >
+                <Button
+                  variant="outlined"
+                  type="button"
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    width: "auto",
+                    height: "40px",
+                    marginLeft: "10px",
+                  }}
+                  onClick={handleAddmodal}
+                >
+                  {t("COMMON.CANCEL")}
+                </Button>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    width: "auto",
+                    height: "40px",
+                    marginLeft: "10px",
+                  }}
+                  onClick={() => {
+                    setSubmittedButtonStatus(true);
+                  }}
+                >
+                  {t("COMMON.ADD")}
                 </Button>
               </Box>
             </DynamicForm>

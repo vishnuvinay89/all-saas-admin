@@ -1,10 +1,8 @@
 // next.config.mjs
 /** @type {import('next').NextConfig} */
 import nextI18nextConfig from "./next-i18next.config.js";
-const url = process.env.WORKSPACE_BASE_URL;
+const url = process.env.NEXT_PUBLIC_BASE_URL;
 // const url = "http://localhost:3000";
-
-
 
 const nextConfig = {
   eslint: {
@@ -14,7 +12,14 @@ const nextConfig = {
   trailingSlash: false,
   reactStrictMode: true,
   i18n: nextI18nextConfig.i18n,
-
- };
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: "/api/:path*",
+  //       destination: "https://all-saas-keycloak.tekdinext.com/api/",
+  //     },
+  //   ];
+  // },
+};
 
 export default nextConfig;

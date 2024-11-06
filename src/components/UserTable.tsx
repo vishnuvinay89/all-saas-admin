@@ -696,7 +696,7 @@ console.log(code[0])
         setFormData(mapFields(teacherFormData, response));
         //  handleOpenAddFacilitatorModal();
       } else if (Role.TEAM_LEADER === role) {
-        formFields = await getFormRead("USERS", "TEAM LEADER");
+        // formFields = await getFormRead("USERS", "TEAM LEADER");
         setFormData(mapFields(teamLeaderFormData, response));
         // handleOpenAddTeamLeaderModal();
       }
@@ -995,10 +995,10 @@ console.log(code[0])
       }
     };
     console.log(data )
-    if ((selectedBlockCode !== "") || (selectedDistrictCode !== "" && selectedBlockCode === "") || (userType===Role.TEAM_LEADERS && selectedDistrictCode!=="") ){
-      fetchUserList();
-    }
-   // fetchUserList();
+    // if ((selectedBlockCode !== "") || (selectedDistrictCode !== "" && selectedBlockCode === "") || (userType===Role.TEAM_LEADERS && selectedDistrictCode!=="") ){
+    //   fetchUserList();
+    // }
+   fetchUserList();
 
   }, [
     pageOffset,
@@ -1446,6 +1446,7 @@ console.log(selectedBlockStore)
     </Box>
   );
   const userProps = {
+    showAddNew: false,
     userType: userType,
     searchPlaceHolder: searchPlaceholder,
     selectedState: selectedState,
@@ -1474,7 +1475,9 @@ console.log(selectedBlockStore)
      setSelectedCenter:setSelectedCenter,
      selectedCenterCode:selectedCenterCode,
      setSelectedCenterCode: setSelectedCenterCode,
-     setSelectedStateCode:setSelectedStateCode
+     setSelectedStateCode:setSelectedStateCode,
+    //  statusArchived:true,
+
   };
   
 
@@ -1493,11 +1496,11 @@ console.log(selectedBlockStore)
       ) : data?.length !== 0 && loading === false ? (
         <KaTableComponent
           columns={
-            role === Role.TEAM_LEADER
-              ? getTLTableColumns(t, isMobile)
-              : getUserTableColumns(t, isMobile)
+            // role === Role.TEAM_LEADER
+              getTLTableColumns(t, isMobile)
+              // : getUserTableColumns(t, isMobile)
           }
-          reassignCohort={handleReassignCohort}
+          // reassignCohort={handleReassignCohort}
           data={data}
           limit={pageLimit}
           offset={pageOffset}
@@ -1511,7 +1514,7 @@ console.log(selectedBlockStore)
           pagination={pagination}
          // reassignCohort={reassignCohort}
           noDataMessage={data?.length === 0 ? t("COMMON.NO_USER_FOUND") : ""}
-          reassignType={userType===Role.TEAM_LEADERS?  t("COMMON.REASSIGN_BLOCKS"):  t("COMMON.REASSIGN_CENTERS")}
+          // reassignType={userType===Role.TEAM_LEADERS?  t("COMMON.REASSIGN_BLOCKS"):  t("COMMON.REASSIGN_CENTERS")}
         />
       ) : (
         loading === false &&
