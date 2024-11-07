@@ -126,16 +126,18 @@
     "DELETE_FROM_BLOCK_WARNING": "Do you want to delete user from block?",
     "DELETE_FROM_CENTER_WARNING": "Do you want to delete user from center?",
     "DELETE_FROM_CENTERS_WARNING": "Do you want to delete user from centers?",
-   "NO_CENTER_AVAILABLE": "No centers available",
+    "NO_CENTER_AVAILABLE": "No centers available",
     "NO_BLOCK_AVAILABLE": "No blocks available",
     "PLEASE_SELECT_BLOCK_LIST": "Please select block from block list",
     "ALL_CENTERS": "All centers",
     "NO_CENTERS": "No centers",
     "MULTIPLE_TEAM_LEADERS_ASSIGNED": "Selected block {{selectedBlockForTL}} already has {{assignedTeamLeader}} Team Leaders assigned.",
-    "SINGLE_TEAM_LEADERS_ASSIGNED":"Selected block {{selectedBlockForTL}} already has {{assignedTeamLeader}} Team Leader assigned.",
-    "CONTINUE_ASSIGNED_TEAM_LEADER":"Still do you want to continue to assign team leader to {{selectedBlockForTL}}",
-    "ASSIGNED_TEAM_LEADERS":"{{assignedTeamLeaderNames}} and more..",
-    "CONTINUE":"Continue"
+    "SINGLE_TEAM_LEADERS_ASSIGNED": "Selected block {{selectedBlockForTL}} already has {{assignedTeamLeader}} Team Leader assigned.",
+    "CONTINUE_ASSIGNED_TEAM_LEADER": "Still do you want to continue to assign team leader to {{selectedBlockForTL}}",
+    "ASSIGNED_TEAM_LEADERS": "{{assignedTeamLeaderNames}} and more..",
+    "CONTINUE": "Continue",
+    "ADD_NEW_TENANT": "Add New Tenant",
+    "CREATE_ROLE": "Create Role"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -148,7 +150,6 @@
     "REMEMBER_ME": "Remember Me"
   },
   "SIDEBAR": {
-    "COHORTS":"Cohorts",
     "HI": "hi",
     "DASHBOARD": "Dashboard",
     "MANAGE_USERS": "Manage Users",
@@ -161,8 +162,8 @@
     "VIEW_PLANS": "View Plans",
     "FOUNDATION_COURSE": "Foundation Course",
     "MAIN_COURSE": "Main Course",
-    "WORKSPACE": "Workspace"
-
+    "WORKSPACE": "Workspace",
+    "TENANT": "Tenant"
   },
   "FACILITATORS": {
     "STATE": "State",
@@ -200,7 +201,14 @@
     "ADMIN_UPDATED_SUCCESSFULLY": "Admin has been successfully updated!"
   },
   "COHORTS": {
-    "SEARCHBAR_PLACEHOLDER": "Search Center.."
+    "SEARCHBAR_PLACEHOLDER": "Search Center..",
+    "COHORTS": "Cohorts",
+    "CREATE_SUCCESSFULLY": "Cohort Created Successfully",
+    "CREATE_FAILED": "Cohort Creation Failed",
+    "ADD_NEW_COHORT": "Add New Cohort",
+    "UPDATE_COHORT": "Update Cohort",
+    "SEARCH_COHORT": "Search Cohort",
+    "DELETE_SUCCESSFULLY": "Cohort Deleted Successfully"
   },
   "COURSE_PLANNER": {
     "GRADE": "Grade",
@@ -225,13 +233,13 @@
     "RESOURCES": "Resources",
     "TOPIC": "Topic",
     "DURATION/MONTH": "Duration/Month",
-    "LEARNERS_PREREQISITE":"Learners Pre-requisites",
-    "NO_DATA_PRE":"No data available for Learners Pre-requisites",
-    "LEARNERS_POSTREQISITE":"Learners Post-requisites",
-    "NO_DATA_POST":"No data available for Learners Post-requisites",
-    "FACILITATORS":"Facilitators Requisites",
-    "NO_DATA":"No data available for Facilitators Requisites",
-    "DOWNLOAD_SAMPLE_CSV":"Download Sample CSV"
+    "LEARNERS_PREREQISITE": "Learners Pre-requisites",
+    "NO_DATA_PRE": "No data available for Learners Pre-requisites",
+    "LEARNERS_POSTREQISITE": "Learners Post-requisites",
+    "NO_DATA_POST": "No data available for Learners Post-requisites",
+    "FACILITATORS": "Facilitators Requisites",
+    "NO_DATA": "No data available for Facilitators Requisites",
+    "DOWNLOAD_SAMPLE_CSV": "Download Sample CSV"
   },
   "MASTER": {
     "STATE": "States",
@@ -360,9 +368,9 @@
     "SCIENCE": "Science",
     "SOCIAL_SCIENCE": "Social Science",
     "LIFE_SKILLS": "Life Skills",
-    "BOARD":"Board",
-    "MEDIUM":"Medium",
-    "GRADE":"Grade"
+    "BOARD": "Board",
+    "MEDIUM": "Medium",
+    "GRADE": "Grade"
   },
   "FORM_ERROR_MESSAGES": {
     "INVALID_INPUT": "Invalid Input.",
@@ -399,6 +407,8 @@
     "AGE": "Age",
     "GENDER": "Gender",
     "MOBILE": "Mobile",
+    "ASSIGNED_ROLE": "Assign Role",
+    "ROLE": "Role",
     "ARCHIVED_MEMBERS": "Archived Members",
     "ACTIVE_MEMBERS": "Active Members",
     "ACTIVE_LEARNERS": "Active Learners",
@@ -409,6 +419,28 @@
   "WORKSPACE": {
     "EDITOR_WORKSPACE": "Editor Workspace",
     "COURSE": "Course"
-
+  },
+  "TENANT": {
+    "TENANT": "Tenant",
+    "UPDATE_TENANT": "Update Tenant",
+    "CREATE_SUCCESSFULLY": "Tenant Created Successfully",
+    "DELETE_SUCCESSFULLY": "Tenant Deleted Successfully",
+    "UPDATE_SUCCESSFULLY": "Tenant Updated Successfully",
+    "FAILED_TO_UPDATE": "Failed to Update Tenant",
+    "FAILED_TO_DELETE:": "Failed to Delete Tenant",
+    "SEARCH": "Search Tenant",
+    "ROLE_ASSIGNED": "Role Created Successfully",
+    "ROLE_ASSIGNED_fAILED": "Role Assigned Failed"
+  },
+  "USER": {
+    "ADD_NEW_USER": "Add New User",
+    "UPDATE_USER": "Update User",
+    "CREATE_SUCCESSFULLY": "User Created Successfully",
+    "DELETE_SUCCESSFULLY": "User Deleted Successfully",
+    "UPDATE_SUCCESSFULLY": "User Updated Successfully",
+    "FAILED_TO_UPDATE": "Failed to Update User",
+    "FAILED_TO_DELETE:": "Failed to Delete User",
+    "SEARCH": "Search User",
+    "NO_USER_FOUND": "Users not found"
   }
 }

@@ -1,0 +1,35 @@
+{
+  "title": "",
+  "description": "",
+  "type": "object",
+  "required": ["name", "username", "password", "role"],
+  "properties": {
+    "name": {
+      "title": "Full Name",
+      "fieldId": null,
+      "type": "string",
+      "pattern": "^[a-zA-Z][a-zA-Z ]*[a-zA-Z]$",
+      "validation": []
+    },
+    "username": {
+      "title": "Username",
+      "fieldId": null,
+      "type": "string",
+      "validation": []
+    },
+    "password": {
+      "title": "Password",
+      "fieldId": null,
+      "type": "string",
+      "validation": [],
+      "minLength": 5
+    },
+    "role": {
+      "title": "Role",
+      "type": "string",
+      "oneOf": [],
+      "validation": []
+    }
+  },
+  "dependencies": {}
+}

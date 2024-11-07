@@ -25,6 +25,8 @@ const CustomRadioWidget: React.FC<WidgetProps> = ({
   options,
   onChange,
 }) => {
+  const selectedValue = value || options?.default || '';
+
   const handleChange = (event: any) => {
     onChange(event.target.value);
   };
@@ -32,7 +34,7 @@ const CustomRadioWidget: React.FC<WidgetProps> = ({
   return (
     <div>
       <FormLabel component="legend">{label}</FormLabel>
-      <RadioGroup id={id} value={value} onChange={handleChange} row>
+      <RadioGroup id={id} value={selectedValue} onChange={handleChange} row>
         {options?.enumOptions?.map((option: any) => (
           <FormControlLabel
             key={option.value}

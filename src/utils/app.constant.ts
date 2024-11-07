@@ -3,9 +3,10 @@ export enum Role {
   TEACHER = "Teacher",
   TEAM_LEADER = "Team Leader",
   TEAM_LEADERS = "Team Leaders",
-
-  ADMIN = "Admin",
+  ADMIN = "admin",
   LEARNERS = "Learners",
+  LEARNER = "Learner",
+  TENANT_ADMIN="Tenant Admin",
   FACILITATORS = "Facilitators",
 }
 
@@ -49,6 +50,8 @@ export enum DataKey {
   UPDATED_AT = "updatedAt",
   CREATED_AT = "createdAt",
   ACTIONS = "actions",
+  // ROLE="role",
+  ASSIGNED_ROLES = "roleDefine",
   CREATED_BY = "createdBy",
   UPDATED_BY = "updatedBy",
   STATUS = "status",

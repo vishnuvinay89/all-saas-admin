@@ -1,12 +1,12 @@
 import React from "react";
 import { useTranslation } from "next-i18next";
-import { Box, Typography, Tooltip,useTheme } from "@mui/material";
+import { Box, Typography, Tooltip,useTheme, Button } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import deleteIcon from '../../public/images/deleteIcon.svg';
 import editIcon from '../../public/images/editIcon.svg';
 import cohortIcon from '../../public/images/apartment.svg';
-
+import addIcon from '../../public/images/addIcon.svg';
 
 import Image from "next/image";
 
@@ -17,20 +17,26 @@ interface ActionCellProps {
   reassignType?: string;
   rowData: any;
   disable: boolean;
+  addAction?: boolean;
   userAction?:boolean
+  roleButton?:boolean
+  onAdd:(rowData:any)=>void;
 }
 
 const ActionIcon: React.FC<ActionCellProps> = ({
   rowData,
   onEdit,
   onDelete,
+  onAdd,
   reassignCohort,
+  roleButton=false,
+  addAction=false,
   userAction=false,
   disable = false,
   reassignType
 }) => {
   const { t } = useTranslation();
-  const theme = useTheme<any>();
+  const theme = useTheme<any>();  
   return (
     <Box
       sx={{
@@ -41,6 +47,55 @@ const ActionIcon: React.FC<ActionCellProps> = ({
         pointerEvents: disable ? "none" : "auto",
       }}
     >
+     {roleButton && (
+  <Tooltip title={t("COMMON.ADD")}>
+    <Button
+      onClick={() => {
+        onAdd(rowData);
+      }}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        cursor: "pointer",
+        color: disable ? theme?.palette?.secondary.contrastText : "",
+        backgroundColor: "#EAF2FF",
+        p: "10px",
+        "&:hover": {
+          backgroundColor: "#d0e5ff", // Optional: adjust hover color
+        },
+      }}
+    >
+      {/* Optional typography or icon within the button */}
+      <Typography variant="body2" fontFamily={"Poppins"}>
+        {t("COMMON.ADD")}
+      </Typography>
+    </Button>
+  </Tooltip>
+)}
+
+      {addAction&&<Tooltip title={t("COMMON.ADD")}>
+        <Box
+          onClick={() => {
+            onAdd(rowData);
+          }}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            cursor: "pointer",
+            color: disable ? theme?.palette?.secondary.contrastText : "",
+            backgroundColor:"#EAF2FF",
+            p:"10px"
+          }}
+        >
+        <Image src={addIcon} alt="" />
+{/* 
+          <Typography variant="body2" fontFamily={"Poppins"}>
+            {t("COMMON.DELETE")}
+          </Typography> */}
+        </Box>
+      </Tooltip>}
       <Tooltip title={t("COMMON.EDIT")}>
         <Box
           onClick={() => {
@@ -85,7 +140,7 @@ const ActionIcon: React.FC<ActionCellProps> = ({
             {t("COMMON.DELETE")}
           </Typography> */}
         </Box>
-      </Tooltip>
+      </Tooltip> 
 
      { userAction && ( <Tooltip title={reassignType}>
         <Box

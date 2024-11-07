@@ -1,10 +1,12 @@
 import { firstLetterInUpperCase } from "@/utils/Helper";
 import { DataKey, DateFormat, Status } from "@/utils/app.constant";
 import {
+  Button,
   Checkbox,
   Chip,
   Paper,
   Theme,
+  Tooltip,
   Typography,
   useMediaQuery,
 } from "@mui/material";
@@ -28,6 +30,10 @@ interface KaTableComponentProps {
   pageSizes?: any;
   onDelete?: any;
   onEdit?: any;
+  onAdd?: any;
+  rolebtnFunc?: any;
+  addAction?: boolean;
+  roleButton?: boolean;
   reassignCohort?: any;
   onChange?: any;
   extraActions: {
@@ -52,6 +58,10 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   paginationEnable = true,
   onEdit,
   onDelete,
+  onAdd,
+  rolebtnFunc,
+  addAction,
+  roleButton,
   reassignCohort,
   pageSizes,
   noDataMessage,
@@ -126,12 +136,52 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                     <ActionIcon
                       rowData={props.rowData}
                       onEdit={onEdit}
+                      onAdd={onAdd}
+                      addAction={addAction}
                       reassignCohort={reassignCohort}
                       onDelete={onDelete}
-                      userAction={props.rowData?.userId}
+                      // userAction={props.rowData?.userId}
                       disable={props.rowData?.status === Status.ARCHIVED}
                       reassignType={reassignType}
                     />
+                  );
+                }
+                // if (props.column.key === DataKey.ROLE) {
+                //   return (
+                //     <Typography variant="body2" fontFamily={"Poppins"}>
+                //       {props?.rowData?.domain ? props?.rowData?.domain : "-"}
+                //     </Typography>
+                //   );
+                // }
+                if (props.column.key === DataKey.ASSIGNED_ROLES && roleButton) {
+                  return (
+                    <Tooltip title={t("COMMON.ASSIGN_ROLE")}>
+                      <Button
+                        onClick={() => {
+                          rolebtnFunc(props.rowData);
+                        }}
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifySelf: "center",
+                          cursor: "pointer",
+                          color:
+                            props.rowData?.status === Status.ARCHIVED
+                              ? theme?.palette?.secondary.contrastText
+                              : "",
+                          backgroundColor: "#EAF2FF",
+                          p: "4px",
+                          "&:hover": {
+                            backgroundColor: "#d0e5ff", // Optional: adjust hover color
+                          },
+                        }}
+                      >
+                        <Typography variant="body2" fontFamily={"Poppins"}>
+                          {t("COMMON.CREATE_ROLE")}
+                        </Typography>
+                      </Button>
+                    </Tooltip>
                   );
                 }
                 if (

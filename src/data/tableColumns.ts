@@ -58,6 +58,7 @@ export const getTLTableColumns = (t: any, isMobile: boolean) => {
     { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130 },
     { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 160 },
     { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 160 },
+    // { key: "roleDefine", titleKey: "TABLE_TITLE.ROLE", width: 130 },
     {
       key: "actions",
       titleKey: "TABLE_TITLE.ACTIONS",
@@ -72,8 +73,8 @@ export const getTLTableColumns = (t: any, isMobile: boolean) => {
 export const getCenterTableData = (t: any, isMobile: boolean) => {
   const configs: ColumnConfig[] = [
     { key: "name", titleKey: "TABLE_TITLE.NAME", width: 130 },
-    { key: "customFieldValues", titleKey: "TABLE_TITLE.TYPE", width: 130 },
-    { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130 },
+    // { key: "customFieldValues", titleKey: "TABLE_TITLE.ROLE", width: 130 },
+    // { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130 },
     // { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130 },
     { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 130 },
     { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 130 },
@@ -88,6 +89,32 @@ export const getCenterTableData = (t: any, isMobile: boolean) => {
       titleKey: "TABLE_TITLE.ARCHIVED_LEARNERS",
       width: 130,
     },
+    { key: "roleDefine", titleKey: "COMMON.CREATE_ROLE", width: 130 },
+    { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 },
+  ];
+
+  return generateColumns(t, configs, isMobile);
+};
+export const getCohortTableData = (t: any, isMobile: boolean) => {
+  const configs: ColumnConfig[] = [
+    { key: "name", titleKey: "TABLE_TITLE.NAME", width: 130 },
+    { key: "customFieldValues", titleKey: "TABLE_TITLE.TYPE", width: 130 },
+    // { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130 },
+    // { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130 },
+    { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 130 },
+    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 130 },
+
+    {
+      key: "totalActiveMembers",
+      titleKey: "TABLE_TITLE.ACTIVE_LEARNERS",
+      width: 130,
+    },
+    {
+      key: "totalArchivedMembers",
+      titleKey: "TABLE_TITLE.ARCHIVED_LEARNERS",
+      width: 130,
+    },
+    // { key: "roleDefine", titleKey: "TABLE_TITLE.ROLE", width: 130 },
     { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 },
   ];
 

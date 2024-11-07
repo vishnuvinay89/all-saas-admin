@@ -1,5 +1,5 @@
 import { CohortMemberList } from "@/utils/Interfaces";
-import { get, post, put } from "../RestClient";
+import { deleteApi, get, patch, post, put } from "../RestClient";
 import config  from "@/utils/urlConstants.json";
 export interface cohortListFilter {
   type: string;
@@ -14,6 +14,7 @@ export interface cohortListData {
   offset?: Number;
   filter?: any;
   status?: any;
+  type?:'cohort' ;
 }
 export interface UpdateCohortMemberStatusParams {
   memberStatus: string;
@@ -22,7 +23,6 @@ export interface UpdateCohortMemberStatusParams {
 }
 export const getCohortList = async (data: cohortListData): Promise<any> => {
   let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.COHORT_SEARCH}`;
-
   try {
     const response = await post(apiUrl, data);
     return response?.data?.result;
@@ -144,3 +144,132 @@ export const updateCohortMemberStatus = async ({
     // throw error;
   }
 };
+
+export const cohortCreate = async (data: cohortListData): Promise<any> => {
+  let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.COHORT_CREATE}`;
+
+  try {
+    const response = await post(apiUrl, data);
+    return response?.data;
+  } catch (error) {
+    console.error("Error in Getting cohort List Details", error);
+    return error;
+  }
+};
+
+export const getTenantLists = async (
+
+): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.TENANT_LIST}`;
+  try {
+    let response = await get(apiUrl);
+    console.log({response});
+    
+        return response?.data?.result;
+      } catch (error) {
+        console.error("Error in Getting tenant List Details", error);
+        return error;
+      }
+       
+  }
+
+
+  export const deleteCohort = async (
+    // status:any,
+    option: string
+  ): Promise<any> => {
+    
+    const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.COHORT_DELETE}/${option}`;
+    const requestBody = {};
+    const requestHeaders = {};
+  
+    try {
+      const response = await deleteApi(apiUrl, requestBody, requestHeaders);      
+      return response?.data;
+    } catch (error) {
+      console.error(`Error deleting`, error);
+      return error;
+    }
+  };
+  export const deleteTenant = async (
+    // status:any,
+    option: string
+  ): Promise<any> => {
+    
+    const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.TENANT_DELETE}?id=${option}`;
+    const requestBody = {};
+    const requestHeaders = {};
+  
+    try {
+      const response = await deleteApi(apiUrl, requestBody, requestHeaders);      
+      return response?.data;
+    } catch (error) {
+      console.error(`Error deleting`, error);
+      return error;
+    }
+  };
+  export const tenantCreate = async (data: cohortListData): Promise<any> => {
+    let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.TENANT_CREATE}`;
+  
+    try {
+      const response = await post(apiUrl, data);
+      console.log({response});
+      
+      return response?.data;
+    } catch (error) {
+      console.error("Error in Getting cohort List Details", error);
+      return error;
+    }
+  };
+  export const roleCreate = async (data: cohortListData): Promise<any> => {
+    let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.ROLE_CREATE}`;
+  
+    try {
+      const response = await post(apiUrl, data);
+      console.log({response});
+      
+      return response?.data;
+    } catch (error) {
+      console.error("Error in Getting cohort List Details", error);
+      return error;
+    }
+  };
+  export const updateTenant = async (
+    userId: string,
+    cohortDetails: any
+  ): Promise<any> => {
+    // const { name, status, type } = cohortDetails;
+    let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.TENANT_UPDATE}?id=${userId}`;
+  
+    try {
+      const response = await patch(apiUrl, cohortDetails);
+      return response?.data;
+    } catch (error) {
+      console.error("Error in updating cohort details", error);
+      throw error;
+    }
+  };
+  export const rolesList = async (data: cohortListData): Promise<any> => {
+    let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.ROLES_LIST}`;
+  
+    try {
+      const response = await post(apiUrl, data);
+      console.log({response});
+      
+      return response?.data;
+    } catch (error) {
+      console.error("Error in Getting cohort List Details", error);
+      return error;
+    }
+  };
+  export const userCreate = async (data: cohortListData): Promise<any> => {
+    let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.USER_CREATE}`;
+  
+    try {
+      const response = await post(apiUrl, data);
+      return response?.data;
+    } catch (error) {
+      console.error("Error in Getting cohort List Details", error);
+      return error;
+    }
+  };

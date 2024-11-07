@@ -1,0 +1,23 @@
+{
+  "title": "",
+  "description": "",
+  "type": "object",
+  "required": ["name", "domain"],
+  "properties": {
+    "name": {
+      "title": "Full Name",
+      "fieldId": null,
+      "type": "string",
+      "pattern": "^[a-zA-Z][a-zA-Z ]*[a-zA-Z]$",
+      "validation": []
+    },
+    "domain": {
+      "title": "Domain",
+      "fieldId": null,
+      "type": "string",
+      "readonly": true,
+      "validation": []
+    }
+  },
+  "dependencies": {}
+}

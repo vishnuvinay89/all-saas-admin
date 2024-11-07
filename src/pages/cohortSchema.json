@@ -1,0 +1,44 @@
+{
+  "title": "",
+  "description": "",
+  "type": "object",
+  "required": ["name", "status", "type"],
+  "properties": {
+    "name": {
+      "title": "Full Name",
+      "fieldId": null,
+      "type": "string",
+      "pattern": "^[a-zA-Z][a-zA-Z ]*[a-zA-Z]$",
+      "validation": []
+    },
+    "type": {
+      "title": "Type",
+      "fieldId": null,
+      "type": "string",
+      "default": "cohort",
+      "validation": []
+    },
+    "status": {
+      "title": "Status",
+      "type": "string",
+      "oneOf": [
+        {
+          "const": "active",
+          "title": "Active"
+        },
+        {
+          "const": "inactive",
+          "title": "Inactive"
+        },
+        {
+          "const": "archived",
+          "title": "Archived"
+        }
+      ],
+      "default": "active",
+      "readonly": true,
+      "validation": []
+    }
+  },
+  "dependencies": {}
+}

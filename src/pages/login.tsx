@@ -73,7 +73,7 @@ const LoginPage = () => {
 
       const token = localStorage.getItem("token");
       if (token) {
-        router.push("/centers");
+        router.push("/tenant");
       }
     }
   }, []);
@@ -157,7 +157,7 @@ const LoginPage = () => {
         {
           setAdminInformation(userInfo);
 
-          router.push("/centers");
+          router.push("/tenant");
 
         }
 
@@ -190,7 +190,7 @@ const LoginPage = () => {
               ? localStorage.setItem("refreshToken", refreshToken)
               : localStorage.removeItem("refreshToken");
 
-            const userResponse = await getUserId();
+            const userResponse = await getUserId();            
             localStorage.setItem("userId", userResponse?.userId);
             // Update Zustand store
             setUserId(userResponse?.userId || "");
