@@ -264,7 +264,7 @@ const Center: React.FC = () => {
       const response = await rolesList(obj);
 
       if (response?.result) {
-        const rolesOptions = response.result.map((role) => ({
+        const rolesOptions = response.result.map((role : any) => ({
           const: role.roleId,
           title: role.title,
         }));
@@ -1103,7 +1103,18 @@ const Center: React.FC = () => {
       setLoading(true);
       setConfirmButtonDisable(true);
 
-      let obj = {
+      interface UserCreateData {
+        name: string;
+        username: string;
+        password: string;
+        tenantCohortRoleMapping: Array<{
+          roleId: string;
+          tenantId: string;
+          cohortId: string[];
+        }>;
+      }
+
+      let obj: UserCreateData = {
         name: formData?.name,
         username: formData?.username,
         password: formData?.password,
@@ -1115,7 +1126,7 @@ const Center: React.FC = () => {
           },
         ],
       };
-      const resp = await userCreate(obj);
+      const resp = await userCreate(obj as any);
       console.log({ resp });
 
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {

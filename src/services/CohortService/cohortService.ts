@@ -10,7 +10,7 @@ export interface cohortListFilter {
 }
 
 export interface cohortListData {
-  limit?: Number;
+  limit?: string | number;
   offset?: Number;
   filter?: any;
   status?: any;
