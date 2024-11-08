@@ -39,7 +39,7 @@ jobs:
       - name: List Contents (dist directory)
         run: |
           echo "Contents of the dist directory (in reverse order):"
-          ls -lr dist
+          ls -lr 
 
       - name: Install AWS CLI
         run: |
