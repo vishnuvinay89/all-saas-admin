@@ -162,7 +162,7 @@ const Tenant: React.FC = () => {
   const [Addmodalopen, setAddmodalopen] = React.useState<any>(false);
   const [selectedRole, setSelectedRole] = useState("");
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
-  const [selectedRowData, setSelectedRowData] = useState(null);
+  const [selectedRowData, setSelectedRowData] = useState<any>("");
   const [roles, setRoles] = useState([]);
 
   const uiSchema = {
@@ -914,7 +914,7 @@ const Tenant: React.FC = () => {
       setLoading(true);
       setConfirmButtonDisable(true);
 
-      let obj = {
+      let obj= {
         name: formData?.name,
         cohortId: selectedRowData?.cohortId,
         tenantId: selectedRowData?.tenantId,
@@ -942,7 +942,6 @@ const Tenant: React.FC = () => {
       setIsEditForm(false);
     }
   };
-
   const handleAddUserClick = () => {
     setOpenAddNewCohort(true);
   };
@@ -1096,7 +1095,7 @@ const Tenant: React.FC = () => {
     localStorage.setItem("tenantRoles", JSON.stringify(existingRoles));
   };
 
-  const openRoleModal = (rowData) => {
+  const openRoleModal = (rowData: Record<string, unknown>) => {
     setSelectedRowData(rowData);
     setIsRoleModalOpen(true);
   };
@@ -1106,7 +1105,7 @@ const Tenant: React.FC = () => {
     setSelectedRowData(null); // Clear selection on close
   };
 
-  const handleRoleChange = (event) => {
+  const handleRoleChange = (event : any) => {
     setSelectedRole(event.target.value);
   };
 
@@ -1121,9 +1120,9 @@ const Tenant: React.FC = () => {
     }
   };
 
-  const onAssignRole = async (rowData, role) => {
+  const onAssignRole = async (rowData: any, role:any) => {
     try {
-      const payload = {
+      const payload :any = {
         tenantId: rowData?.tenantId,
         roles: [
           {
@@ -1167,7 +1166,7 @@ const Tenant: React.FC = () => {
         console.log({ response });
 
         if (response?.result) {
-          const rolesData = response?.result.map((role) => ({
+          const rolesData = response?.result.map((role:any) => ({
             roleId: role?.roleId,
             title: role?.title,
           }));
@@ -1179,7 +1178,7 @@ const Tenant: React.FC = () => {
 
     fetchRoles();
   }, [isRoleModalOpen, selectedRowData]);
-  const capitalizeFirstLetter = (string) => {
+  const capitalizeFirstLetter = (string:any) => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   };
 

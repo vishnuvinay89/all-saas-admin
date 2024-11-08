@@ -9,6 +9,7 @@ import {
   Tooltip,
   Typography,
   useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { format } from "date-fns";
 import { ITableProps, Table } from "ka-table";
@@ -74,6 +75,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
+  const theme = useTheme<any>();
 
   const handleCheckboxChange = (rowId: number) => {
     setSelectedRowIds((prevSelected) =>
