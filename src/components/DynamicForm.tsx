@@ -209,7 +209,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             default: {
               const validRange = currentYearPattern.test(pattern);
               if (!validRange) {
-                error.message = t("FORM_ERROR_MESSAGES.ENTER_VALID_YEAR");
+                error.message = t("FORM_ERROR_MESSAGES.ENTER_VALID_DATA");
               }
               break;
             }
