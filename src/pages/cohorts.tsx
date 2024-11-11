@@ -200,6 +200,21 @@ const Center: React.FC = () => {
       "ui:widget": "select",
       "ui:placeholder": "Select a role",
     },
+    mobileNo: {
+      "ui:widget": "text",
+      "ui:placeholder": "Enter your 10-digit mobile number",
+      "ui:help": "Please enter a valid 10-digit mobile number.",
+    },
+    email: {
+      "ui:widget": "text",
+      "ui:placeholder": "Enter your email address",
+      "ui:options": {},
+    },
+    dob: {
+      "ui:widget": "date",
+      "ui:placeholder": "Select your date of birth",
+      "ui:help": "Date of birth in YYYY-MM-DD format.",
+    },
   };
 
   const [filters, setFilters] = useState<cohortFilterDetails>({
@@ -264,7 +279,7 @@ const Center: React.FC = () => {
       const response = await rolesList(obj);
 
       if (response?.result) {
-        const rolesOptions = response.result.map((role : any) => ({
+        const rolesOptions = response.result.map((role: any) => ({
           const: role.roleId,
           title: role.title,
         }));
