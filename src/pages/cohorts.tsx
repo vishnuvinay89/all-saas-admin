@@ -1142,7 +1142,6 @@ const Center: React.FC = () => {
         ],
       };
       const resp = await userCreate(obj as any);
-      console.log({ resp });
 
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
         showToastMessage(t("COHORTS.CREATE_SUCCESSFULLY"), "success");
