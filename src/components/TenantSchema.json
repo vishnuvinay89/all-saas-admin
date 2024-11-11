@@ -6,17 +6,18 @@
   "properties": {
     "name": {
       "title": "Full Name",
-      "fieldId": null,
       "type": "string",
       "pattern": "^[a-zA-Z][a-zA-Z ]*[a-zA-Z]$",
-      "validation": []
+      "fieldId": null,
+      "validation": [],
+      "description": "Enter your full name; only letters and spaces are allowed."
     },
     "domain": {
       "title": "Domain",
-      "fieldId": null,
       "type": "string",
-      "readonly": true,
-      "validation": []
+      "fieldId": null,
+      "validation": [],
+      "description": "Enter the domain name for your tenant."
     }
   },
   "dependencies": {}

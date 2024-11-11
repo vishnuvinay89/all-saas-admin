@@ -166,32 +166,51 @@ const Tenant: React.FC = () => {
   const [roles, setRoles] = useState([]);
 
   const uiSchema = {
-    district: {
-      "ui:widget": "",
-      "ui:options": {},
+    name: {
+      "ui:widget": "text",
+      "ui:placeholder": "Enter your full name",
+      "ui:help": "Only letters and spaces are allowed.",
     },
-    status: {
-      "ui:widget": "CustomRadioWidget",
-      "ui:options": {},
+    domain: {
+      "ui:widget": "text",
+      "ui:placeholder": "Enter the domain name for your tenant",
+      "ui:help": "This will be the unique identifier for your tenant.",
     },
-
-    block: {
-      "ui:widget": "",
-      "ui:options": {},
-    },
+    // status: {
+    //   "ui:widget": "CustomRadioWidget",
+    //   "ui:options": {},
+    // },
   };
+
   const cohortUiSchema = {
+    name: {
+      "ui:widget": "text",
+      "ui:placeholder": "Enter full name",
+      "ui:options": {},
+    },
+    type: {
+      "ui:widget": "text",
+      // "ui:placeholder": "Select type",
+      // "ui:options": {
+      //   defaultValue: "cohort",
+      // },
+      "ui:disabled": true, // This will make the field readonly
+    },
     district: {
-      "ui:widget": "",
+      "ui:widget": "text",
+      "ui:placeholder": "Enter district",
       "ui:options": {},
     },
     status: {
       "ui:widget": "CustomRadioWidget",
-      "ui:options": {},
+      "ui:options": {
+        defaultValue: "active",
+      },
+      "ui:disabled": true,
     },
-
     block: {
-      "ui:widget": "",
+      "ui:widget": "text",
+      "ui:placeholder": "Enter block",
       "ui:options": {},
     },
   };
@@ -914,7 +933,7 @@ const Tenant: React.FC = () => {
       setLoading(true);
       setConfirmButtonDisable(true);
 
-      let obj= {
+      let obj = {
         name: formData?.name,
         cohortId: selectedRowData?.cohortId,
         tenantId: selectedRowData?.tenantId,
@@ -1105,7 +1124,7 @@ const Tenant: React.FC = () => {
     setSelectedRowData(null); // Clear selection on close
   };
 
-  const handleRoleChange = (event : any) => {
+  const handleRoleChange = (event: any) => {
     setSelectedRole(event.target.value);
   };
 
@@ -1120,9 +1139,9 @@ const Tenant: React.FC = () => {
     }
   };
 
-  const onAssignRole = async (rowData: any, role:any) => {
+  const onAssignRole = async (rowData: any, role: any) => {
     try {
-      const payload :any = {
+      const payload: any = {
         tenantId: rowData?.tenantId,
         roles: [
           {
@@ -1166,7 +1185,7 @@ const Tenant: React.FC = () => {
         console.log({ response });
 
         if (response?.result) {
-          const rolesData = response?.result.map((role:any) => ({
+          const rolesData = response?.result.map((role: any) => ({
             roleId: role?.roleId,
             title: role?.title,
           }));
@@ -1178,7 +1197,7 @@ const Tenant: React.FC = () => {
 
     fetchRoles();
   }, [isRoleModalOpen, selectedRowData]);
-  const capitalizeFirstLetter = (string:any) => {
+  const capitalizeFirstLetter = (string: any) => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   };
 

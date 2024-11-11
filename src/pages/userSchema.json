@@ -11,6 +11,30 @@
       "pattern": "^[a-zA-Z][a-zA-Z ]*[a-zA-Z]$",
       "validation": []
     },
+    "mobileNo": {
+      "title": "Mobile Number",
+      "fieldId": null,
+      "type": "string",
+      "pattern": "^\\d{10}$",
+      "validation": [],
+      "description": "Enter a 10-digit mobile number."
+    },
+    "dob": {
+      "title": "Date of Birth",
+      "fieldId": null,
+      "type": "string",
+      "format": "date",
+      "validation": [],
+      "description": "Enter date of birth in DD/MM/YYYY format."
+    },
+    "email": {
+      "title": "Email Address",
+      "type": "string",
+      "format": "email",
+      "pattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
+      "validation": ["required"],
+      "description": "Enter a valid email address."
+    },
     "username": {
       "title": "Username",
       "fieldId": null,
@@ -21,8 +45,8 @@
       "title": "Password",
       "fieldId": null,
       "type": "string",
-      "validation": [],
-      "minLength": 5
+      "minLength": 5,
+      "validation": []
     },
     "role": {
       "title": "Role",
