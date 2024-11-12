@@ -164,6 +164,9 @@ const Tenant: React.FC = () => {
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState<any>("");
   const [roles, setRoles] = useState([]);
+  const [updateBtnDisabled, setUpdateBtnDisabled] = React.useState(true);
+  const [addBtnDisabled, setAddBtnDisabled] = React.useState(true);
+  const [addFormData, setAddFormData] = useState({});
 
   const uiSchema = {
     name: {
@@ -254,6 +257,7 @@ const Tenant: React.FC = () => {
     districts: "",
   });
   const handleCloseAddLearnerModal = () => {
+    setUpdateBtnDisabled(true);
     setOpenAddNewCohort(false);
   };
   const isMobile = useMediaQuery((theme: Theme) =>
@@ -653,6 +657,7 @@ const Tenant: React.FC = () => {
 
   const handleCloseModal = () => {
     setConfirmationModalOpen(false);
+    setUpdateBtnDisabled(true);
   };
 
   const handleActionForDelete = async (selectedRowData: RowData) => {
@@ -811,10 +816,12 @@ const Tenant: React.FC = () => {
 
   const onCloseEditMOdel = () => {
     setIsEditModalOpen(false);
+    setUpdateBtnDisabled(true);
   };
 
   const onCloseEditForm = () => {
     setIsEditForm(false);
+    setUpdateBtnDisabled(true);
   };
   const handleInputName = (event: ChangeEvent<HTMLInputElement>) => {
     const updatedName = event.target.value;
@@ -822,7 +829,9 @@ const Tenant: React.FC = () => {
   };
 
   const handleChangeForm = (event: IChangeEvent<any>) => {
-    console.log("Form data changed:", event.formData);
+    setUpdateBtnDisabled(false);
+    setAddBtnDisabled(false);
+    // console.log("Form data changed:", event.formData);
   };
   const handleError = () => {
     console.log("error");
@@ -834,64 +843,6 @@ const Tenant: React.FC = () => {
   ) => {
     setLoading(true);
     const formData = data?.formData;
-    // const schemaProperties = schema.properties;
-
-    // const fieldSchema = schemaProperties[fieldKey];
-    // const fieldId = fieldSchema?.fieldId;
-
-    //   console.log(
-    //     `FieldID: ${fieldId}, FieldValue: ${JSON.stringify(fieldSchema)}, type: ${typeof fieldValue}`
-    //   );
-
-    // let apiBody: any = {
-    //   customFields: [],
-    // };
-    // Object.entries(formData).forEach(([fieldKey, fieldValue]) => {
-    // const fieldSchema = schemaProperties[fieldKey];
-    // const fieldId = fieldSchema?.fieldId;
-
-    // console.log(
-    //   `FieldID: ${fieldId}, FieldValue: ${JSON.stringify(fieldSchema)}, type: ${typeof fieldValue}`
-    // );
-
-    // if (fieldId === null || fieldId === "null") {
-    //   if (typeof fieldValue !== "object") {
-    //     apiBody[fieldKey] = fieldValue;
-    //   }
-    // } else {
-    //   if (
-    //     fieldSchema?.hasOwnProperty("isDropdown") ||
-    //     fieldSchema?.hasOwnProperty("isCheckbox") ||
-    //     fieldSchema?.type === "radio"
-    //   ) {
-    //     apiBody.customFields.push({
-    //       fieldId: fieldId,
-    //       value: Array.isArray(fieldValue) ? fieldValue : [fieldValue],
-    //     });
-    //   } else {
-    //     if (fieldSchema?.checkbox && fieldSchema.type === "array") {
-    //       if (String(fieldValue).length != 0) {
-    //         apiBody.customFields.push({
-    //           fieldId: fieldId,
-    //           value: String(fieldValue).split(","),
-    //         });
-    //       }
-    //     } else {
-    //       if (fieldId) {
-    //         apiBody.customFields.push({
-    //           fieldId: fieldId,
-    //           value: String(fieldValue),
-    //         });
-    //       }
-    //     }
-    //   }
-    // }
-    // };
-
-    // const customFields = apiBody?.customFields;
-    // console.log({customFields});
-    console.log({ selectedCohortId, selectedRowData });
-
     try {
       setLoading(true);
       setConfirmButtonDisable(true);
@@ -966,6 +917,7 @@ const Tenant: React.FC = () => {
   };
   const handleAddmodal = () => {
     setAddmodalopen(false);
+    setAddFormData({});
   };
 
   useEffect(() => {
@@ -1270,7 +1222,7 @@ const Tenant: React.FC = () => {
             widgets={{}}
             showErrorList={true}
             customFields={customFields}
-            formData={editFormData}
+            formData={addFormData}
             id="update-center-form"
           >
             <Box
@@ -1307,6 +1259,7 @@ const Tenant: React.FC = () => {
                   height: "40px",
                   marginLeft: "10px",
                 }}
+                disabled={addBtnDisabled}
                 onClick={() => {
                   setSubmittedButtonStatus(true);
                 }}
@@ -1415,7 +1368,8 @@ const Tenant: React.FC = () => {
                 <Button
                   variant="contained"
                   type="submit"
-                  form="update-center-form" // Add this line
+                  form="update-center-form"
+                  disabled={updateBtnDisabled}
                   sx={{
                     fontSize: "14px",
                     fontWeight: "500",
