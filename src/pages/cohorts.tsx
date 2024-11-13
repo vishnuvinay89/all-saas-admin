@@ -1093,7 +1093,6 @@ const Center: React.FC = () => {
     setLoading(true);
     const formData = data?.formData;
 
-    console.log({ formData, selectedRowData });
     try {
       setLoading(true);
       setConfirmButtonDisable(true);
@@ -1102,6 +1101,8 @@ const Center: React.FC = () => {
         name: string;
         username: string;
         password: string;
+        mobile: string;
+        email: string;
         tenantCohortRoleMapping: Array<{
           roleId: string;
           tenantId: string;
@@ -1111,6 +1112,8 @@ const Center: React.FC = () => {
 
       let obj: UserCreateData = {
         name: formData?.name,
+        mobile: formData?.mobileNo,
+        email: formData?.email,
         username: formData?.username,
         password: formData?.password,
         tenantCohortRoleMapping: [
@@ -1122,7 +1125,6 @@ const Center: React.FC = () => {
         ],
       };
       const resp = await userCreate(obj as any);
-      console.log({ resp });
 
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
         showToastMessage(t("COHORTS.CREATE_SUCCESSFULLY"), "success");

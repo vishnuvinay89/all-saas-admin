@@ -50,11 +50,11 @@ export const getUserTableColumns = (t: any, isMobile: boolean) => {
 export const getTLTableColumns = (t: any, isMobile: boolean) => {
   const configs: ColumnConfig[] = [
     { key: "name", titleKey: "TABLE_TITLE.NAME", width: 130 },
-    { key: "age", titleKey: "TABLE_TITLE.AGE", width: 70 },
-    { key: "gender", titleKey: "TABLE_TITLE.GENDER", width: 90 },
-    { key: "district", titleKey: "TABLE_TITLE.DISTRICT_BLOCK", width: 150 },
-    // { key: "blocks", titleKey: "TABLE_TITLE.BLOCK", width: 130 },
-    { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130 },
+    { key: "mobile", titleKey: "TABLE_TITLE.MOBILE", width: 70 },
+    { key: "email", titleKey: "TABLE_TITLE.EMAIL", width: 90 },
+    { key: "username", titleKey: "TABLE_TITLE.USERNAME", width: 150 },
+    { key: "role", titleKey: "TABLE_TITLE.ROLE", width: 130 },
+    // { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130 },
     { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130 },
     { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 160 },
     { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 160 },
