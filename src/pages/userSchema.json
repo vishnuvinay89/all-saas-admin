@@ -15,7 +15,7 @@
       "title": "Mobile Number",
       "fieldId": null,
       "type": "string",
-      "pattern": "^\\d{10}$",
+      "pattern": "^[6-9]\\d{9}$",
       "validation": [],
       "description": "Enter a 10-digit mobile number."
     },
