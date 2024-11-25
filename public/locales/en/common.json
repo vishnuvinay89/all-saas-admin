@@ -415,7 +415,9 @@
     "ACTIVE_LEARNERS": "Active Learners",
     "ARCHIVED_LEARNERS": " Archived Learners",
     "CODE": "Code",
-    "DISTRICT": "District"
+    "DISTRICT": "District",
+    "EMAIL": "Email",
+    "USERNAME": "Username"
   },
   "WORKSPACE": {
     "EDITOR_WORKSPACE": "Editor Workspace",

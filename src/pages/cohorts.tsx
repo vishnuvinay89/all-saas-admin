@@ -132,6 +132,9 @@ const Center: React.FC = () => {
   const [statesInformation, setStatesInformation] = useState<any>([]);
   const [selectedRowData, setSelectedRowData] = useState<any>("");
   const [Addmodalopen, setAddmodalopen] = React.useState<any>(false);
+  const [updateBtnDisabled, setUpdateBtnDisabled] = React.useState(true);
+  const [addFormData, setAddFormData] = useState({});
+  const [addBtnDisabled, setAddBtnDisabled] = useState(true);
 
   const selectedBlockStore = useSubmittedButtonStore(
     (state: any) => state.selectedBlockStore
@@ -166,17 +169,34 @@ const Center: React.FC = () => {
   );
 
   const uiSchema = {
+    name: {
+      "ui:widget": "text",
+      "ui:placeholder": "Enter full name",
+      "ui:options": {},
+    },
+    type: {
+      "ui:widget": "text",
+      // "ui:placeholder": "Select type",
+      // "ui:options": {
+      //   defaultValue: "cohort",
+      // },
+      "ui:disabled": true, // This will make the field readonly
+    },
     district: {
-      "ui:widget": "",
+      "ui:widget": "text",
+      "ui:placeholder": "Enter district",
       "ui:options": {},
     },
     status: {
       "ui:widget": "CustomRadioWidget",
-      "ui:options": {},
+      "ui:options": {
+        defaultValue: "active",
+      },
+      // "ui:disabled": true,
     },
-
     block: {
-      "ui:widget": "",
+      "ui:widget": "text",
+      "ui:placeholder": "Enter block",
       "ui:options": {},
     },
   };
@@ -202,19 +222,19 @@ const Center: React.FC = () => {
     },
     mobileNo: {
       "ui:widget": "text",
-      "ui:placeholder": "Enter your 10-digit mobile number",
-      "ui:help": "Please enter a valid 10-digit mobile number.",
+      "ui:placeholder": "Mobile number",
+      // "ui:help": "Please enter a valid 10-digit mobile number.",
     },
     email: {
       "ui:widget": "text",
       "ui:placeholder": "Enter your email address",
       "ui:options": {},
     },
-    dob: {
-      "ui:widget": "date",
-      "ui:placeholder": "Select your date of birth",
-      "ui:help": "Date of birth in YYYY-MM-DD format.",
-    },
+    // dob: {
+    //   "ui:widget": "date",
+    //   "ui:placeholder": "Select your date of birth",
+    //   // "ui:help": "Date of birth in YYYY-MM-DD format.",
+    // },
   };
 
   const [filters, setFilters] = useState<cohortFilterDetails>({
@@ -225,6 +245,7 @@ const Center: React.FC = () => {
   });
   const handleCloseAddLearnerModal = () => {
     setOpenAddNewCohort(false);
+    setUpdateBtnDisabled(true);
   };
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
@@ -714,6 +735,7 @@ const Center: React.FC = () => {
 
   const handleCloseModal = () => {
     setConfirmationModalOpen(false);
+    setUpdateBtnDisabled(true);
   };
 
   const handleActionForDelete = async () => {
@@ -869,10 +891,12 @@ const Center: React.FC = () => {
 
   const onCloseEditMOdel = () => {
     setIsEditModalOpen(false);
+    setUpdateBtnDisabled(true);
   };
 
   const onCloseEditForm = () => {
     setIsEditForm(false);
+    setUpdateBtnDisabled(true);
   };
   const handleInputName = (event: ChangeEvent<HTMLInputElement>) => {
     const updatedName = event.target.value;
@@ -880,10 +904,12 @@ const Center: React.FC = () => {
   };
 
   const handleChangeForm = (event: IChangeEvent<any>) => {
+    setUpdateBtnDisabled(false);
+    setAddBtnDisabled(false);
     console.log("Form data changed:", event.formData);
   };
-  const handleError = () => {
-    console.log("error");
+  const handleError = (error: any) => {
+    console.log("error", error);
   };
 
   const handleUpdateAction = async (
@@ -893,53 +919,6 @@ const Center: React.FC = () => {
     setLoading(true);
     const formData = data?.formData;
     const schemaProperties = schema.properties;
-
-    // let apiBody: any = {
-    //   customFields: [],
-    // };
-    // Object.entries(formData).forEach(([fieldKey, fieldValue]) => {
-    //   const fieldSchema = schemaProperties[fieldKey];
-    //   const fieldId = fieldSchema?.fieldId;
-
-    //   console.log(
-    //     `FieldID: ${fieldId}, FieldValue: ${JSON.stringify(fieldSchema)}, type: ${typeof fieldValue}`
-    //   );
-
-    //   if (fieldId === null || fieldId === "null") {
-    //     if (typeof fieldValue !== "object") {
-    //       apiBody[fieldKey] = fieldValue;
-    //     }
-    //   } else {
-    //     if (
-    //       fieldSchema?.hasOwnProperty("isDropdown") ||
-    //       fieldSchema?.hasOwnProperty("isCheckbox") ||
-    //       fieldSchema?.type === "radio"
-    //     ) {
-    //       apiBody.customFields.push({
-    //         fieldId: fieldId,
-    //         value: Array.isArray(fieldValue) ? fieldValue : [fieldValue],
-    //       });
-    //     } else {
-    //       if (fieldSchema?.checkbox && fieldSchema.type === "array") {
-    //         if (String(fieldValue).length != 0) {
-    //           apiBody.customFields.push({
-    //             fieldId: fieldId,
-    //             value: String(fieldValue).split(","),
-    //           });
-    //         }
-    //       } else {
-    //         if (fieldId) {
-    //           apiBody.customFields.push({
-    //             fieldId: fieldId,
-    //             value: String(fieldValue),
-    //           });
-    //         }
-    //       }
-    //     }
-    //   }
-    // });
-
-    // const customFields = apiBody?.customFields;
     try {
       setLoading(true);
       setConfirmButtonDisable(true);
@@ -1107,13 +1086,13 @@ const Center: React.FC = () => {
   };
   const handleAddmodal = () => {
     setAddmodalopen(false);
+    setAddFormData({});
   };
 
   const handleAddAction = async (data: any) => {
     setLoading(true);
     const formData = data?.formData;
 
-    console.log({ formData, selectedRowData });
     try {
       setLoading(true);
       setConfirmButtonDisable(true);
@@ -1122,6 +1101,8 @@ const Center: React.FC = () => {
         name: string;
         username: string;
         password: string;
+        mobile: string;
+        email: string;
         tenantCohortRoleMapping: Array<{
           roleId: string;
           tenantId: string;
@@ -1131,6 +1112,8 @@ const Center: React.FC = () => {
 
       let obj: UserCreateData = {
         name: formData?.name,
+        mobile: formData?.mobileNo,
+        email: formData?.email,
         username: formData?.username,
         password: formData?.password,
         tenantCohortRoleMapping: [
@@ -1315,7 +1298,8 @@ const Center: React.FC = () => {
                 <Button
                   variant="contained"
                   type="submit"
-                  form="update-center-form" // Add this line
+                  form="update-center-form"
+                  disabled={updateBtnDisabled}
                   sx={{
                     fontSize: "14px",
                     fontWeight: "500",
@@ -1349,7 +1333,7 @@ const Center: React.FC = () => {
               widgets={{}}
               showErrorList={true}
               customFields={customFields}
-              formData={editFormData}
+              formData={addFormData}
               id="update-center-form"
             >
               <Box
@@ -1377,6 +1361,7 @@ const Center: React.FC = () => {
                 <Button
                   variant="contained"
                   type="submit"
+                  disabled={addBtnDisabled}
                   sx={{
                     fontSize: "14px",
                     fontWeight: "500",

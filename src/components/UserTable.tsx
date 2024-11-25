@@ -766,7 +766,6 @@ const UserTable: React.FC<UserTableProps> = ({
     }
     //const userData="";
   };
-
   const handleSearch = (keyword: string) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -1076,7 +1075,6 @@ const UserTable: React.FC<UserTableProps> = ({
               // }
 
               // )
-
               // if( selectedDistrict.length===0 ||selectedDistrict[0]==="All Districts")
               // {
               //   const newQuery = { ...router.query };
@@ -1281,7 +1279,6 @@ const UserTable: React.FC<UserTableProps> = ({
 
   //   // Handle replacement when state, district, block, and center are all selected
   //   if (selectedStateCode !==""&& selectedDistrictCode!=="" && selectedBlockCode!=="" && selectedCenter.length !== 0) {
-
   //     if (userType !== Role.TEAM_LEADERS) {
   //       router.replace({
   //         pathname: router.pathname,
@@ -1364,7 +1361,7 @@ const UserTable: React.FC<UserTableProps> = ({
       handleCloseDeleteModal();
       showToastMessage(t("COMMON.USER_DELETE_SUCCSSFULLY"), "success");
     } catch (error) {
-      console.log("error while deleting entry", error);
+      console.log(error);
     }
   };
 

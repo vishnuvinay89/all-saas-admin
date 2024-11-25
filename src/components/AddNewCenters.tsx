@@ -4,7 +4,10 @@ import {
   customFields,
 } from "@/components/GeneratedSchemas";
 import SimpleModal from "@/components/SimpleModal";
-import { createCohort, tenantCreate } from "@/services/CohortService/cohortService";
+import {
+  createCohort,
+  tenantCreate,
+} from "@/services/CohortService/cohortService";
 import { CohortTypes, FormContextType } from "@/utils/app.constant";
 import { useLocationState } from "@/utils/useLocationState";
 import { Box, Button, Typography } from "@mui/material";
@@ -25,7 +28,6 @@ interface CohortDetails {
   name?: string;
   domain?: any;
   status?: string;
-  
 }
 
 interface AddLearnerModalProps {
@@ -38,7 +40,7 @@ interface AddLearnerModalProps {
 
 const uiSchema = {
   district: {
-    "ui:widget": '',
+    "ui:widget": "",
     "ui:options": {},
   },
   status: {
@@ -47,10 +49,10 @@ const uiSchema = {
   },
 
   block: {
-    "ui:widget": '',
+    "ui:widget": "",
     "ui:options": {},
   },
-}
+};
 
 const AddNewCenters: React.FC<AddLearnerModalProps> = ({
   open,
@@ -62,6 +64,8 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
   const [schema] = useState(Tenatschema);
   const [showForm, setShowForm] = useState(false);
   const { t } = useTranslation();
+  const [updateBtnDisabled, setUpdateBtnDisabled] = React.useState(true);
+
   const roleType = FormContextType.ADMIN_CENTER;
   const {
     selectedBlockCohortId,
@@ -70,44 +74,44 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
     selectedBlockCode,
     dynamicFormForBlock,
   } = useLocationState(open, onClose, roleType);
-  
+
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
   );
 
   const handleSubmit = async (
-    data: IChangeEvent<any, RJSFSchema, any>, 
+    data: IChangeEvent<any, RJSFSchema, any>,
     event: React.FormEvent<any>
-  ) => {    
+  ) => {
     const formData = data?.formData;
-      if (!formData) {
+    if (!formData) {
       showToastMessage("Form data is required", "error");
       return;
     }
-  
+
     const cohortDetails: CohortDetails = {
       name: formData?.name,
       domain: formData?.domain,
       // status: formData?.status,
     };
-  
-    const cohortData = await tenantCreate(cohortDetails);    
-    if (cohortData?.responseCode=== 200|| cohortData?.responseCode===201) {
+
+    const cohortData = await tenantCreate(cohortDetails);
+    if (cohortData?.responseCode === 200 || cohortData?.responseCode === 201) {
       showToastMessage(t("TENANT.CREATE_SUCCESSFULLY"), "success");
       onClose();
     } else {
       showToastMessage("Please Input Data", "warning");
     }
   };
-  
+
   const handleChange = (data: IChangeEvent<any>) => {
+    setUpdateBtnDisabled(false);
     console.log("Form changed:", data.formData);
   };
 
   const handleError = (errors: any) => {
     console.log("Form errors:", errors);
-  }
-  
+  };
 
   return (
     <SimpleModal
@@ -125,8 +129,8 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
             widgets={{}}
             showErrorList={true}
             customFields={customFields}
-            onChange={handleChange}  
-            onError={handleError}  
+            onChange={handleChange}
+            onError={handleError}
             id="new-center-form"
           >
             <Box
@@ -151,6 +155,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
               <Button
                 variant="contained"
                 type="submit"
+                disabled={updateBtnDisabled}
                 onClick={() => setSubmittedButtonStatus(true)}
                 sx={{
                   fontSize: "14px",
