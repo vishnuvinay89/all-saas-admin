@@ -89,8 +89,7 @@ const Center: React.FC = () => {
   const state = adminInformation?.customFields?.find(
     (item: any) => item?.label === "STATES"
   );
-  const getUserStateName = state ? state.value : null;
-  const stateCode = state ? state?.code : null;
+
   // handle states
   const [selectedState, setSelectedState] = React.useState<string[]>([]);
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
@@ -100,8 +99,6 @@ const Center: React.FC = () => {
   const [cohortData, setCohortData] = useState<cohortFilterDetails[]>([]);
   const [pageSize, setPageSize] = React.useState<string | number>(10);
   const [confirmationModalOpen, setConfirmationModalOpen] =
-    React.useState<boolean>(false);
-  const [confirmationModalOpenForActive, setConfirmationModalOpenForActive] =
     React.useState<boolean>(false);
   const [selectedCohortId, setSelectedCohortId] = React.useState<string>("");
   const [editModelOpen, setIsEditModalOpen] = React.useState<boolean>(false);
@@ -129,9 +126,8 @@ const Center: React.FC = () => {
   const [totalCount, setTotalCound] = useState<number>(0);
   const [editFormData, setEditFormData] = useState<any>([]);
   const [isEditForm, setIsEditForm] = useState(false);
-  const [statesInformation, setStatesInformation] = useState<any>([]);
   const [selectedRowData, setSelectedRowData] = useState<any>("");
-  const [Addmodalopen, setAddmodalopen] = React.useState<any>(false);
+  const [Addmodalopen, setAddmodalopen] = React.useState(false);
   const [updateBtnDisabled, setUpdateBtnDisabled] = React.useState(true);
   const [addFormData, setAddFormData] = useState({});
   const [addBtnDisabled, setAddBtnDisabled] = useState(true);
@@ -284,42 +280,10 @@ const Center: React.FC = () => {
     }
 
     // get form data for center create
-    getAddCenterFormData();
+    // getAddCenterFormData();
     // getCohortMemberlistData();
     getAdminInformation();
   }, []);
-  useEffect(() => {
-    const fetchRoles = async () => {
-      const obj = {
-        limit: "10",
-        page: 1,
-        filters: {
-          tenantId: selectedRowData?.tenantId,
-        },
-      };
-      const response = await rolesList(obj);
-
-      if (response?.result) {
-        const rolesOptions = response.result.map((role: any) => ({
-          const: role.roleId,
-          title: role.title,
-        }));
-
-        setUserSchema((prevSchema) => ({
-          ...prevSchema,
-          properties: {
-            ...prevSchema.properties,
-            role: {
-              ...prevSchema.properties.role,
-              oneOf: rolesOptions,
-            },
-          },
-        }));
-      }
-    };
-
-    fetchRoles();
-  }, [Addmodalopen]);
 
   const fetchUserList = async () => {
     setLoading(true);
@@ -336,65 +300,31 @@ const Center: React.FC = () => {
         sort: sort,
         filters: filters,
       };
+
+      // Call getCohortList API
       const resp = await getCohortList(data);
-      // const resp = await queryClient.fetchQuery({
-      //   queryKey: [
-      //     QueryKeys.GET_COHORT_LIST,
-      //     data.limit,
-      //     data.offset,
-      //     JSON.stringify(data.filters),
-      //     JSON.stringify(data.sort),
-      //   ],
-      //   queryFn: () => getCohortList(data),
-      // });
+
       if (resp) {
         const result = resp?.results?.cohortDetails;
-        const resultData: centerData[] = [];
 
-        const cohortIds = result.map((item: any) => item.cohortId); // Extract cohort IDs
+        // Map response data to required format
+        const resultData = result?.map((item: any) => ({
+          name: item?.name,
+          type: item?.type === "cohort" ? "Cohort" : item?.type,
+          status: item?.status,
+          tenantId: item?.tenantId,
+          updatedBy: item?.updatedBy,
+          createdBy: item?.createdBy,
+          createdAt: item?.createdAt,
+          updatedAt: item?.updatedAt,
+          cohortId: item?.cohortId,
+        }));
 
-        // Fetch member counts for each cohort
-        const memberCounts = await Promise.all(
-          cohortIds?.map(async (cohortId: string) => {
-            return await getCohortMemberlistData(cohortId);
-          })
-        );
-        const finalResult = result?.filter(
-          (cohort: any) => cohort.type === "cohort"
-        );
-        finalResult?.forEach((item: any, index: number) => {
-          const cohortType =
-            item?.customFields?.find(
-              (field: any) => field.label === "TYPE_OF_COHORT"
-            )?.value ?? "-";
+        setCohortData(resultData || []);
 
-          const formattedCohortType =
-            cohortType !== "-" ? firstLetterInUpperCase(cohortType) : "-";
-
-          const counts = memberCounts[index] || {
-            totalActiveMembers: 0,
-            totalArchivedMembers: 0,
-          };
-
-          const requiredData = {
-            name: item?.name,
-            status: item?.status,
-            tenantId: item?.tenantId,
-            updatedBy: item?.updatedBy,
-            createdBy: item?.createdBy,
-            createdAt: item?.createdAt,
-            updatedAt: item?.updatedAt,
-            cohortId: item?.cohortId,
-            customFieldValues: cohortType[0] ? transformLabel(cohortType) : "-",
-            totalActiveMembers: counts?.totalActiveMembers,
-            totalArchivedMembers: counts?.totalArchivedMembers,
-          };
-          resultData?.push(requiredData);
-        });
-        setCohortData(resultData);
+        // Pagination and count handling
         const totalCount = resp?.count;
         setTotalCound(totalCount);
-
         setPagination(totalCount > 10);
         setPageSizeArray(
           totalCount > 15
@@ -407,30 +337,14 @@ const Center: React.FC = () => {
         );
         const pageCount = Math.ceil(totalCount / pageLimit);
         setPageCount(pageCount);
-        setLoading(false);
       } else {
         setCohortData([]);
       }
     } catch (error) {
-      console.log("not data found");
+      console.error("Error fetching cohort list:", error);
       setCohortData([]);
+    } finally {
       setLoading(false);
-      console.error("Error fetching user list:", error);
-    }
-  };
-
-  const getFormData = async () => {
-    try {
-      const res = await getFormRead("cohorts", "cohort");
-      if (res && res?.fields) {
-        const formDatas = res?.fields;
-        setFormData(formDatas);
-      } else {
-        console.log("No response Data");
-      }
-    } catch (error) {
-      showToastMessage(t("COMMON.ERROR_MESSAGE_SOMETHING_WRONG"), "error");
-      console.log("Error fetching form data:", error);
     }
   };
 
@@ -955,61 +869,61 @@ const Center: React.FC = () => {
     setOpenAddNewCohort(true);
   };
 
-  useEffect(() => {
-    const fetchData = () => {
-      try {
-        const object = {
-          // "limit": 20,
-          // "offset": 0,
-          fieldName: "states",
-        };
-        // const response = await getStateBlockDistrictList(object);
-        // const result = response?.result?.values;
-        if (typeof window !== "undefined" && window.localStorage) {
-          const admin = localStorage.getItem("adminInfo");
-          if (admin) {
-            const stateField = JSON.parse(admin).customFields.find(
-              (field: any) => field.label === "STATES"
-            );
-            if (!stateField.value.includes(",")) {
-              setSelectedState([stateField.value]);
-              setSelectedStateCode(stateField.code);
-              if (
-                selectedDistrictCode &&
-                selectedDistrict.length !== 0 &&
-                selectedDistrict[0] !== t("COMMON.ALL_DISTRICTS")
-              ) {
-                setFilters({
-                  states: "",
-                  districts: "",
-                  status: filters.status,
-                  type: "cohort",
-                });
-              }
-              if (
-                selectedBlockCode &&
-                selectedBlock.length !== 0 &&
-                selectedBlock[0] !== t("COMMON.ALL_BLOCKS")
-              ) {
-                setFilters({
-                  states: "",
-                  districts: "",
-                  blocks: "",
-                  status: filters.status,
-                  // type: CohortTypes.COHORT,
-                  type: "cohort",
-                });
-              }
-            }
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = () => {
+  //     try {
+  //       const object = {
+  //         // "limit": 20,
+  //         // "offset": 0,
+  //         fieldName: "states",
+  //       };
+  //       // const response = await getStateBlockDistrictList(object);
+  //       // const result = response?.result?.values;
+  //       if (typeof window !== "undefined" && window.localStorage) {
+  //         const admin = localStorage.getItem("adminInfo");
+  //         if (admin) {
+  //           const stateField = JSON.parse(admin).customFields.find(
+  //             (field: any) => field.label === "STATES"
+  //           );
+  //           if (!stateField.value.includes(",")) {
+  //             setSelectedState([stateField.value]);
+  //             setSelectedStateCode(stateField.code);
+  //             if (
+  //               selectedDistrictCode &&
+  //               selectedDistrict.length !== 0 &&
+  //               selectedDistrict[0] !== t("COMMON.ALL_DISTRICTS")
+  //             ) {
+  //               setFilters({
+  //                 states: "",
+  //                 districts: "",
+  //                 status: filters.status,
+  //                 type: "cohort",
+  //               });
+  //             }
+  //             if (
+  //               selectedBlockCode &&
+  //               selectedBlock.length !== 0 &&
+  //               selectedBlock[0] !== t("COMMON.ALL_BLOCKS")
+  //             ) {
+  //               setFilters({
+  //                 states: "",
+  //                 districts: "",
+  //                 blocks: "",
+  //                 status: filters.status,
+  //                 // type: CohortTypes.COHORT,
+  //                 type: "cohort",
+  //               });
+  //             }
+  //           }
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
 
-    fetchData();
-  }, [selectedBlockCode, selectedDistrictCode]);
+  //   fetchData();
+  // }, [selectedBlockCode, selectedDistrictCode]);
 
   const handleMemberClick = async (
     type: "active" | "archived",
@@ -1092,7 +1006,6 @@ const Center: React.FC = () => {
   const handleAddAction = async (data: any) => {
     setLoading(true);
     const formData = data?.formData;
-
     try {
       setLoading(true);
       setConfirmButtonDisable(true);

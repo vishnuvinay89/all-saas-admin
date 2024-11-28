@@ -18,7 +18,7 @@ export interface userListParam {
 export const userList = async ({
   limit,
   //  page,
-  // filters,
+  filters,
   sort,
   offset,
   fields,
@@ -27,7 +27,7 @@ export const userList = async ({
   try {
     const response = await post(apiUrl, {
       limit,
-      // filters,
+      filters,
       sort,
       offset,
       fields,
@@ -72,7 +72,6 @@ export const getUserDetailsInfo = async (
     const response = await get(apiUrl);
     return response?.data?.result;
   } catch (error) {
-    console.error("error in fetching user details", error);
     return error;
   }
 };

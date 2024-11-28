@@ -32,6 +32,7 @@
     "TENANT_UPDATE": "tenant/update",
     "ROLE_CREATE": "rbac/roles/create",
     "ROLES_LIST": "rbac/roles/list/roles",
-    "USER_CREATE": "create"
+    "USER_CREATE": "create",
+    "USER_DELETE": "delete"
   }
 }

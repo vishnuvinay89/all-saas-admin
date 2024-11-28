@@ -158,13 +158,11 @@ export const cohortCreate = async (data: cohortListData): Promise<any> => {
 };
 
 export const getTenantLists = async (
-
+data:any
 ): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.TENANT_LIST}`;
   try {
-    let response = await get(apiUrl);
-    console.log({response});
-    
+    let response = await get(apiUrl,data);    
         return response?.data?.result;
       } catch (error) {
         console.error("Error in Getting tenant List Details", error);
@@ -270,6 +268,23 @@ export const getTenantLists = async (
       return response?.data;
     } catch (error) {
       console.error("Error in Getting cohort List Details", error);
+      return error;
+    }
+  };
+
+  export const deleteUser = async (
+    userId: string
+  ): Promise<any> => {
+    
+    const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.USER_DELETE}/${userId}`;
+    const requestBody = {};
+    const requestHeaders = {};
+  
+    try {
+      const response = await deleteApi(apiUrl, requestBody, requestHeaders);      
+      return response?.data;
+    } catch (error) {
+      console.error(`Error deleting`, error);
       return error;
     }
   };

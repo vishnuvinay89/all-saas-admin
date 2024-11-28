@@ -50,14 +50,14 @@ export const getUserTableColumns = (t: any, isMobile: boolean) => {
 export const getTLTableColumns = (t: any, isMobile: boolean) => {
   const configs: ColumnConfig[] = [
     { key: "name", titleKey: "TABLE_TITLE.NAME", width: 130 },
-    { key: "mobile", titleKey: "TABLE_TITLE.MOBILE", width: 70 },
-    { key: "email", titleKey: "TABLE_TITLE.EMAIL", width: 90 },
-    { key: "username", titleKey: "TABLE_TITLE.USERNAME", width: 150 },
-    { key: "role", titleKey: "TABLE_TITLE.ROLE", width: 130 },
+    { key: "mobile", titleKey: "TABLE_TITLE.MOBILE", width: 130 },
+    { key: "email", titleKey: "TABLE_TITLE.EMAIL", width: 130 },
+    { key: "username", titleKey: "TABLE_TITLE.USERNAME", width: 130 },
+    { key: "role", titleKey: "TABLE_TITLE.ROLE", width: 100 },
     // { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130 },
     { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130 },
-    { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 160 },
-    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 160 },
+    { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 130 },
+    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 130 },
     // { key: "roleDefine", titleKey: "TABLE_TITLE.ROLE", width: 130 },
     {
       key: "actions",
@@ -70,25 +70,25 @@ export const getTLTableColumns = (t: any, isMobile: boolean) => {
   return generateColumns(t, configs, isMobile);
 };
 
-export const getCenterTableData = (t: any, isMobile: boolean) => {
+export const getTenantTableData = (t: any, isMobile: boolean) => {
   const configs: ColumnConfig[] = [
     { key: "name", titleKey: "TABLE_TITLE.NAME", width: 130 },
-    // { key: "customFieldValues", titleKey: "TABLE_TITLE.ROLE", width: 130 },
+    { key: "domain", titleKey: "TABLE_TITLE.DOMAIN", width: 130 },
     // { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130 },
     // { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130 },
     { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 130 },
     { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 130 },
 
-    {
-      key: "totalActiveMembers",
-      titleKey: "TABLE_TITLE.ACTIVE_LEARNERS",
-      width: 130,
-    },
-    {
-      key: "totalArchivedMembers",
-      titleKey: "TABLE_TITLE.ARCHIVED_LEARNERS",
-      width: 130,
-    },
+    // {
+    //   key: "totalActiveMembers",
+    //   titleKey: "TABLE_TITLE.ACTIVE_LEARNERS",
+    //   width: 130,
+    // },
+    // {
+    //   key: "totalArchivedMembers",
+    //   titleKey: "TABLE_TITLE.ARCHIVED_LEARNERS",
+    //   width: 130,
+    // },
     { key: "roleDefine", titleKey: "COMMON.CREATE_ROLE", width: 130 },
     { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 },
   ];
@@ -98,22 +98,22 @@ export const getCenterTableData = (t: any, isMobile: boolean) => {
 export const getCohortTableData = (t: any, isMobile: boolean) => {
   const configs: ColumnConfig[] = [
     { key: "name", titleKey: "TABLE_TITLE.NAME", width: 130 },
-    { key: "customFieldValues", titleKey: "TABLE_TITLE.TYPE", width: 130 },
+    { key: "type", titleKey: "TABLE_TITLE.TYPE", width: 90 },
     // { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130 },
     // { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130 },
     { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 130 },
     { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 130 },
 
-    {
-      key: "totalActiveMembers",
-      titleKey: "TABLE_TITLE.ACTIVE_LEARNERS",
-      width: 130,
-    },
-    {
-      key: "totalArchivedMembers",
-      titleKey: "TABLE_TITLE.ARCHIVED_LEARNERS",
-      width: 130,
-    },
+    // {
+    //   key: "totalActiveMembers",
+    //   titleKey: "TABLE_TITLE.ACTIVE_LEARNERS",
+    //   width: 130,
+    // },
+    // {
+    //   key: "totalArchivedMembers",
+    //   titleKey: "TABLE_TITLE.ARCHIVED_LEARNERS",
+    //   width: 130,
+    // },
     // { key: "roleDefine", titleKey: "TABLE_TITLE.ROLE", width: 130 },
     { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 },
   ];

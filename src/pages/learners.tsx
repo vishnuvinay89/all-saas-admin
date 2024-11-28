@@ -10,7 +10,9 @@ const Learners: React.FC = () => {
   const { t } = useTranslation();
   const [openAddLearnerModal, setOpenAddLearnerModal] = React.useState(false);
   const [submitValue, setSubmitValue] = React.useState<boolean>(false);
-  const setSubmittedButtonStatus = useSubmittedButtonStore((state:any) => state.setSubmittedButtonStatus);
+  const setSubmittedButtonStatus = useSubmittedButtonStore(
+    (state: any) => state.setSubmittedButtonStatus
+  );
 
   const handleOpenAddLearnerModal = () => {
     setOpenAddLearnerModal(true);
@@ -19,7 +21,7 @@ const Learners: React.FC = () => {
     setSubmitValue(true);
   };
   const handleCloseAddLearnerModal = () => {
-    setSubmittedButtonStatus(false)
+    setSubmittedButtonStatus(false);
     setOpenAddLearnerModal(false);
   };
   const handleAddLearnerClick = () => {
