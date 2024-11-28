@@ -38,7 +38,7 @@ import {
 import { CustomField } from "@/utils/Interfaces";
 import { showToastMessage } from "@/components/Toastify";
 import AddNewCenters from "@/components/AddNewCenters";
-import { getCenterTableData, getCohortTableData } from "@/data/tableColumns";
+import { getCohortTableData } from "@/data/tableColumns";
 import { Theme } from "@mui/system";
 import {
   firstLetterInUpperCase,
@@ -176,7 +176,7 @@ const Center: React.FC = () => {
       // "ui:options": {
       //   defaultValue: "cohort",
       // },
-      "ui:disabled": true, // This will make the field readonly
+      "ui:disabled": true,
     },
     district: {
       "ui:widget": "text",
@@ -196,6 +196,7 @@ const Center: React.FC = () => {
       "ui:options": {},
     },
   };
+
   const userUiSchema = {
     name: {
       "ui:widget": "text",
@@ -279,11 +280,43 @@ const Center: React.FC = () => {
       setUserId(userId);
     }
 
-    // get form data for center create
     // getAddCenterFormData();
     // getCohortMemberlistData();
     getAdminInformation();
   }, []);
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      const obj = {
+        limit: "10",
+        page: 1,
+        filters: {
+          tenantId: selectedRowData?.tenantId,
+        },
+      };
+      const response = await rolesList(obj);
+
+      if (response?.result) {
+        const rolesOptions = response.result.map((role: any) => ({
+          const: role.roleId,
+          title: role.title,
+        }));
+
+        setUserSchema((prevSchema) => ({
+          ...prevSchema,
+          properties: {
+            ...prevSchema.properties,
+            role: {
+              ...prevSchema.properties.role,
+              oneOf: rolesOptions,
+            },
+          },
+        }));
+      }
+    };
+
+    fetchRoles();
+  }, [Addmodalopen]);
 
   const fetchUserList = async () => {
     setLoading(true);
@@ -935,8 +968,6 @@ const Center: React.FC = () => {
       return;
     }
 
-    console.log(`${type} members clicked`, count, `for cohort`, cohortId);
-
     try {
       let data = {
         limit: 0,
@@ -1000,6 +1031,7 @@ const Center: React.FC = () => {
   };
   const handleAddmodal = () => {
     setAddmodalopen(false);
+    setAddBtnDisabled(true);
     setAddFormData({});
   };
 
@@ -1244,7 +1276,7 @@ const Center: React.FC = () => {
               onChange={handleChangeForm}
               onError={handleError}
               widgets={{}}
-              showErrorList={true}
+              showErrorList={false}
               customFields={customFields}
               formData={addFormData}
               id="update-center-form"
