@@ -3,12 +3,11 @@
   "required": ["name", "status", "type"],
   "properties": {
     "name": {
-      "title": "Full Name",
+      "title": "Cohort Name",
       "type": "string",
-      "pattern": "^[a-zA-Z][a-zA-Z ]*[a-zA-Z]$",
       "fieldId": null,
       "validation": [],
-      "description": "Enter the full name, using only letters and spaces."
+      "description": "Enter the cohort name."
     },
     "type": {
       "title": "Type",

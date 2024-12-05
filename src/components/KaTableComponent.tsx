@@ -180,7 +180,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                         }}
                       >
                         <Typography variant="body2" fontFamily={"Poppins"}>
-                          {t("COMMON.CREATE_ROLE")}
+                          {t("COMMON.ENABLE_ROLE")}
                         </Typography>
                       </Button>
                     </Tooltip>

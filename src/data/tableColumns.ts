@@ -89,7 +89,7 @@ export const getTenantTableData = (t: any, isMobile: boolean) => {
     //   titleKey: "TABLE_TITLE.ARCHIVED_LEARNERS",
     //   width: 130,
     // },
-    { key: "roleDefine", titleKey: "COMMON.CREATE_ROLE", width: 130 },
+    { key: "roleDefine", titleKey: "COMMON.ENABLE_ROLE", width: 130 },
     { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 },
   ];
 

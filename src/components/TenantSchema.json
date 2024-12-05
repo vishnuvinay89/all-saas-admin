@@ -5,12 +5,11 @@
   "required": ["name", "domain"],
   "properties": {
     "name": {
-      "title": "Full Name",
+      "title": "Tenant Name",
       "type": "string",
-      "pattern": "^[a-zA-Z][a-zA-Z ]*[a-zA-Z]$",
       "fieldId": null,
       "validation": [],
-      "description": "Enter your full name; only letters and spaces are allowed."
+      "description": "Enter tenant name."
     },
     "domain": {
       "title": "Domain",

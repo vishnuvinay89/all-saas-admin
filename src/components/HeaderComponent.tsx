@@ -14,7 +14,6 @@ import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 import { QueryKeys, Role, Status } from "@/utils/app.constant";
-import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import {
   getCenterList,
   getStateBlockDistrictList,
