@@ -149,7 +149,8 @@
     "PASSWORD_PLACEHOLDER": "Enter password",
     "USERNAME_PASSWORD_NOT_CORRECT": "The username or password you entered is incorrect",
     "FORGOT_PASSWORD": "Forgot Password?",
-    "REMEMBER_ME": "Remember Me"
+    "REMEMBER_ME": "Remember Me",
+    "ACCESS_DENIED": "You do not have access to the portal. Please check your username or password."
   },
   "SIDEBAR": {
     "HI": "hi",

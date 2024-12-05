@@ -2,7 +2,7 @@
   "title": "",
   "description": "",
   "type": "object",
-  "required": ["name", "username", "password", "role"],
+  "required": ["name", "username", "password", "mobileNo", "email", "role"],
   "properties": {
     "name": {
       "title": "Full Name",
@@ -16,16 +16,14 @@
       "fieldId": null,
       "type": "string",
       "pattern": "^[6-9]\\d{9}$",
-      "validation": [],
-      "description": "Enter a 10-digit mobile number."
+      "validation": ["mobile"]
     },
     "email": {
       "title": "Email Address",
       "type": "string",
       "format": "email",
       "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$",
-      "validation": ["required"],
-      "description": "Enter a valid email address."
+      "validation": ["required"]
     },
     "username": {
       "title": "Username",
@@ -37,7 +35,6 @@
       "title": "Password",
       "fieldId": null,
       "type": "string",
-      "minLength": 5,
       "validation": []
     },
     "role": {

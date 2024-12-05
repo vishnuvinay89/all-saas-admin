@@ -206,6 +206,7 @@ const Center: React.FC = () => {
     username: {
       "ui:widget": "text",
       "ui:placeholder": "Enter your username",
+      "ui:help": "Username must be at least 3 characters long.",
     },
     password: {
       "ui:widget": "password",
@@ -216,16 +217,18 @@ const Center: React.FC = () => {
     role: {
       "ui:widget": "select",
       "ui:placeholder": "Select a role",
+      // "ui:help": "Select a role.",
     },
     mobileNo: {
       "ui:widget": "text",
       "ui:placeholder": "Mobile number",
-      // "ui:help": "Please enter a valid 10-digit mobile number.",
+      "ui:help": "Enter a valid 10-digit mobile number.",
     },
     email: {
-      "ui:widget": "text",
+      // "ui:widget": "text",
       "ui:placeholder": "Enter your email address",
-      "ui:options": {},
+      "ui:help": "Enter a valid email address.",
+      // "ui:options": {},
     },
     // dob: {
     //   "ui:widget": "date",
@@ -544,7 +547,6 @@ const Center: React.FC = () => {
 
   const handleDistrictChange = (selected: string[], code: string[]) => {
     const newQuery = { ...router.query };
-    console.log(selected);
     if (newQuery.center) {
       delete newQuery.center;
     }
@@ -559,7 +561,6 @@ const Center: React.FC = () => {
     setSelectedDistrictStore(selected[0]);
     if (selected[0] === "" || selected[0] === t("COMMON.ALL_DISTRICTS")) {
       if (filters.status) {
-        console.log("true...");
         setFilters({
           states: "",
           status: filters.status,
@@ -619,7 +620,6 @@ const Center: React.FC = () => {
     if (newQuery.block) {
       delete newQuery.block;
     }
-    console.log(code?.join(","));
 
     localStorage.setItem("selectedBlock", selected[0]);
     setSelectedBlockStore(selected[0]);
@@ -723,7 +723,6 @@ const Center: React.FC = () => {
   };
 
   const handleSearch = (keyword: string) => {
-    console.log("keyword", keyword?.length);
     setPageOffset(Numbers.ZERO);
     setPageCount(Numbers.ONE);
     if (keyword?.length > 3) {
@@ -757,6 +756,11 @@ const Center: React.FC = () => {
       setFilters((prevFilters) => ({
         ...prevFilters,
         status: [Status.ACTIVE],
+      }));
+    } else if (newValue === Status.INACTIVE) {
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        status: [Status.INACTIVE],
       }));
     } else if (newValue === Status.ARCHIVED) {
       setFilters((prevFilters) => ({
@@ -822,7 +826,6 @@ const Center: React.FC = () => {
   };
 
   const handleAdd = (rowData: any) => {
-    console.log({ rowData });
     setSelectedRowData({ ...rowData });
     setLoading(true);
     setAddmodalopen(true);
@@ -853,41 +856,47 @@ const Center: React.FC = () => {
   const handleChangeForm = (event: IChangeEvent<any>) => {
     setUpdateBtnDisabled(false);
     setAddBtnDisabled(false);
-    console.log("Form data changed:", event.formData);
   };
   const handleError = (error: any) => {
     console.log("error", error);
   };
-
   const handleUpdateAction = async (
     data: IChangeEvent<any, RJSFSchema, any>,
     event: React.FormEvent<any>
   ) => {
     setLoading(true);
     const formData = data?.formData;
-    const schemaProperties = schema.properties;
+
     try {
-      setLoading(true);
-      setConfirmButtonDisable(true);
       if (!selectedCohortId) {
         showToastMessage(t("CENTERS.NO_COHORT_ID_SELECTED"), "error");
         return;
       }
-      let cohortDetails = {
-        name: formData?.name,
-        status: formData?.status,
-        type: formData?.type,
-        // customFields: customFields,
+
+      const getChangedFields = (newData: any, oldData: any) => {
+        const changes: Record<string, any> = {};
+        Object.keys(newData).forEach((key) => {
+          if (newData[key] !== oldData[key]) {
+            changes[key] = newData[key];
+          }
+        });
+        return changes;
       };
-      const resp = await updateCohortUpdate(selectedCohortId, cohortDetails);
+
+      const changedFields = getChangedFields(formData, editFormData);
+
+      if (Object.keys(changedFields).length === 0) {
+        showToastMessage(t("CENTERS.NO_CHANGES_TO_UPDATE"), "info");
+        setLoading(false);
+        return;
+      }
+      const resp = await updateCohortUpdate(selectedCohortId, changedFields);
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
         showToastMessage(t("CENTERS.CENTER_UPDATE_SUCCESSFULLY"), "success");
-        setLoading(false);
       } else {
         showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
       }
     } catch (error) {
-      console.error("Error updating cohort:", error);
       showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
     } finally {
       setLoading(false);
@@ -1023,8 +1032,6 @@ const Center: React.FC = () => {
         //   `learners?state=${urlData.stateCode}&district=${urlData.districtCode}&block=${urlData.blockCode}&status=${urlData.type}`
         // );
       }
-
-      console.log("urlData", urlData);
     } catch (error) {
       console.log("Error handling member click:", error);
     }
@@ -1102,6 +1109,7 @@ const Center: React.FC = () => {
     selectedSort: selectedSort,
     selectedFilter: selectedFilter,
     statusArchived: true,
+    statusInactive: true,
     handleStateChange: handleStateChange,
     handleDistrictChange: handleDistrictChange,
     handleBlockChange: handleBlockChange,
@@ -1109,7 +1117,6 @@ const Center: React.FC = () => {
     handleFilterChange: handleFilterChange,
     handleSearch: handleSearch,
     showAddNew: false,
-
     handleAddUserClick: handleAddUserClick,
     statusValue: statusValue,
     setStatusValue: setStatusValue,

@@ -71,6 +71,7 @@ const HeaderComponent = ({
   showStateDropdown = true,
   showFilter = true,
   statusArchived,
+  statusInactive,
   handleSearch,
   handleAddUserClick,
   selectedCenter,
@@ -587,6 +588,25 @@ const HeaderComponent = ({
         value={Status.INACTIVE}
       />
       */}
+              {statusInactive && (
+                <Tab
+                  label={
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        color:
+                          statusValue === Status.INACTIVE
+                            ? theme.palette.primary["100"]
+                            : "inherit",
+                      }}
+                    >
+                      {t("COMMON.INACTIVE")}
+                    </Box>
+                  }
+                  value={Status.INACTIVE}
+                />
+              )}
               {statusArchived && (
                 <Tab
                   label={
