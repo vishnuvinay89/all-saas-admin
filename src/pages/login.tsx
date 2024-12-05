@@ -141,26 +141,19 @@ const LoginPage = () => {
 
         const userInfo = response?.userData;
         //set user info in zustand store
-        if (typeof window !== 'undefined' && window.localStorage) {
-          localStorage.setItem('adminInfo', JSON.stringify(userInfo))
-          localStorage.setItem('stateName', userInfo?.customFields[0]?.value);        
+        if (typeof window !== "undefined" && window.localStorage) {
+          localStorage.setItem("adminInfo", JSON.stringify(userInfo));
+          localStorage.setItem("stateName", userInfo?.customFields[0]?.value);
         }
-        if(userInfo.role!==Role.ADMIN)
-        {
-          const errorMessage = t("LOGIN_PAGE.USERNAME_PASSWORD_NOT_CORRECT");
+
+        if (userInfo.role !== Role.ADMIN) {
+          const errorMessage = t("LOGIN_PAGE.ACCESS_DENIED");
           showToastMessage(errorMessage, "error");
           localStorage.removeItem("token");
-
-  
-        }
-        else
-        {
+        } else {
           setAdminInformation(userInfo);
-
           router.push("/tenant");
-
         }
-
       }
     } catch (error) {
       console.log(error);
@@ -190,7 +183,7 @@ const LoginPage = () => {
               ? localStorage.setItem("refreshToken", refreshToken)
               : localStorage.removeItem("refreshToken");
 
-            const userResponse = await getUserId();            
+            const userResponse = await getUserId();
             localStorage.setItem("userId", userResponse?.userId);
             // Update Zustand store
             setUserId(userResponse?.userId || "");
@@ -281,7 +274,6 @@ const LoginPage = () => {
               display="flex"
               flexDirection="column"
               alignItems="center"
-            
               p={2}
               borderRadius={2}
             >
@@ -354,7 +346,7 @@ const LoginPage = () => {
               error={usernameError}
               margin="normal"
             /> */}
-            
+
             <TextField
               fullWidth
               type={showPassword ? "text" : "password"}
@@ -379,7 +371,7 @@ const LoginPage = () => {
                   </InputAdornment>
                 ),
               }}
-               // label={t("LOGIN_PAGE.PASSWORD")}
+              // label={t("LOGIN_PAGE.PASSWORD")}
               placeholder={t("LOGIN_PAGE.PASSWORD_PLACEHOLDER")}
               value={password}
               onChange={handlePasswordChange}

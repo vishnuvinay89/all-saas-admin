@@ -4,10 +4,18 @@ import axios from "axios";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import config from "@/utils/urlConstants.json"
 export interface UserDetailParam {
-  userData?: object;
-
+  userData?: {
+    name: any;
+    role: any;
+    userId: any;
+    username: any;
+    mobileNo: any;
+    email: any;
+    status: string;
+  };
   customFields?: any;
 }
+
 export const getFormRead = async (
   context: string,
   contextType: string,
@@ -59,11 +67,11 @@ export const createUser = async (userData: any): Promise<any> => {
 
 export const updateUser = async (
   userId: string,
-  { userData, customFields }: UserDetailParam,
+  userData: any,
 ): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.UPDATE}/${userId}`;
   try {
-    const response = await patch(apiUrl, { userData, customFields });
+    const response = await patch(apiUrl, { userData });
     return response;
   } catch (error) {
     console.error("error in fetching user details", error);

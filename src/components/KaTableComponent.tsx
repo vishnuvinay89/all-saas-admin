@@ -157,7 +157,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                 // }
                 if (props.column.key === DataKey.ASSIGNED_ROLES && roleButton) {
                   return (
-                    <Tooltip title={t("COMMON.ASSIGN_ROLE")}>
+                    <Tooltip title={t("COMMON.CREATE_ROLE")}>
                       <Button
                         onClick={() => {
                           rolebtnFunc(props.rowData);

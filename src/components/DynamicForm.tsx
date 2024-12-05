@@ -11,6 +11,16 @@ import MultiSelectDropdown from "./form/MultiSelectDropdown";
 const FormWithMaterialUI = withTheme(MaterialUITheme);
 import { getCurrentYearPattern } from "@/utils/Helper";
 
+interface UiSchema {
+  [key: string]: {
+    "ui:widget"?: string;
+    "ui:placeholder"?: string;
+    "ui:help"?: string;
+    "ui:options"?: object;
+    [key: string]: any;
+  };
+}
+
 interface DynamicFormProps {
   schema: any;
   uiSchema: object;
@@ -65,10 +75,9 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
   const handleError = (errors: any) => {
     if (errors.length === 0) {
-      console.log("No errors");
       // You can perform any additional action here when there are no errors
     }
-    console.log("handle error1");
+
     if (errors.length > 0) {
       const property = errors[0].property?.replace(/^root\./, "");
       const errorField = document.querySelector(
@@ -91,8 +100,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     event: IChangeEvent<any, RJSFSchema, any>,
     formEvent: React.FormEvent<any>
   ) => {
-    console.log("Submit button clicked");
-
     onSubmit(event, formEvent);
   };
 
@@ -112,7 +119,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     };
 
     const cleanedFormData = cleanAndReplace(event.formData);
-    console.log("Form data changed:", cleanedFormData);
 
     setLocalFormData(cleanedFormData);
     setUserEnteredEmail(cleanedFormData?.email);
@@ -121,24 +127,29 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
   const transformErrors = (errors: any) => {
     const currentYearPattern = new RegExp(getCurrentYearPattern());
-
-    console.log("errors", errors);
     errors.length === 0 ? setNoError(true) : setNoError(false);
 
-    console.log("schema", schema);
+    let updatedUiSchema: UiSchema = { ...uiSchema }; // Ensure the type is UiSchema
 
     return errors?.map((error: any) => {
+      const property = error.property ? error.property.substring(1) : ""; // Check if error.property exists
+
+      if (!property) {
+        return error;
+      }
+
+      if (updatedUiSchema[property] && updatedUiSchema[property]["ui:help"]) {
+        delete updatedUiSchema[property]["ui:help"];
+      }
+
       switch (error.name) {
         case "required": {
-          console.log(submittedButtonStatus);
           error.message = submittedButtonStatus
             ? t("FORM_ERROR_MESSAGES.THIS_IS_REQUIRED_FIELD")
             : "";
           break;
         }
         case "maximum": {
-          const property = error.property.substring(1);
-
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
             if (property === "age") {
               error.message = t(
@@ -152,12 +163,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           break;
         }
         case "minimum": {
-          const property = error.property.substring(1);
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
             error.message = t("FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR", {
               minLength: schema.properties?.[property]?.minLength,
             });
-
             if (property === "age") {
               error.message = t(
                 "FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR_AGE",
@@ -165,15 +174,19 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                   minLength: schema.properties?.[property]?.minLength,
                 }
               );
-              //  error.message = `Age should be greater than or equal to ${error?.params?.limit}`
             }
           }
           break;
         }
         case "pattern": {
           const pattern = error?.params?.pattern;
-          console.log(pattern);
-          const property = error.property.substring(1);
+
+          const shouldSkipDefaultValidation =
+            schema.properties?.[property]?.skipDefaultValidation;
+          if (shouldSkipDefaultValidation) {
+            error.message = "";
+            break;
+          }
 
           switch (pattern) {
             case "^[a-zA-Z][a-zA-Z ]*[a-zA-Z]$": {
@@ -182,16 +195,16 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               );
               break;
             }
-            case "^[0-9]{10}$": {
+            case "^[6-9]\\d{9}$": {
+              const validations = schema.properties?.[property]?.validation;
               if (
-                schema.properties?.[property]?.validation?.includes("mobile")
+                validations?.includes("mobile") ||
+                validations?.includes("mobileNo")
               ) {
                 error.message = t(
                   "FORM_ERROR_MESSAGES.ENTER_VALID_MOBILE_NUMBER"
                 );
-              } else if (
-                schema.properties?.[property]?.validation?.includes(".age")
-              ) {
+              } else if (validations?.includes(".age")) {
                 error.message = t("age must be valid");
               } else {
                 error.message = t(
@@ -200,6 +213,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               }
               break;
             }
+
             case "^d{10}$": {
               error.message = t(
                 "FORM_ERROR_MESSAGES.CHARACTERS_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
@@ -217,7 +231,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           break;
         }
         case "minLength": {
-          const property = error.property.substring(1);
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
             error.message = t("FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR", {
               minLength: schema.properties?.[property]?.minLength,
@@ -226,7 +239,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           break;
         }
         case "maxLength": {
-          const property = error.property.substring(1);
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
             error.message = t("FORM_ERROR_MESSAGES.MAX_LENGTH_DIGITS_ERROR", {
               maxLength: schema.properties?.[property]?.maxLength,
@@ -238,15 +250,21 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           const format = error?.params?.format;
           switch (format) {
             case "email": {
-              error.message = t("FORM_ERROR_MESSAGES.ENTER_VALID_EMAIL");
+              error.message = t("");
+              break;
             }
           }
         }
       }
 
+      if (!error.message && updatedUiSchema[property]) {
+        error.message = updatedUiSchema[property]["ui:help"];
+      }
+
       return error;
     });
   };
+
   useEffect(() => {
     // setSubmittedButtonStatus(false);
   }, []);

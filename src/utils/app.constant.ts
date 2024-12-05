@@ -16,7 +16,7 @@ export enum Status {
   ACTIVE = "active",
   ACTIVE_LABEL = "Active",
   ALL_LABEL = "All",
-  INACTIVE = "InActive",
+  INACTIVE = "inactive",
 }
 export enum SORT {
   ASCENDING = "asc",

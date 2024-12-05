@@ -137,7 +137,9 @@
     "ASSIGNED_TEAM_LEADERS": "{{assignedTeamLeaderNames}} and more..",
     "CONTINUE": "Continue",
     "ADD_NEW_TENANT": "Add New Tenant",
-    "CREATE_ROLE": "Create Role"
+    "CREATE_ROLE": "Create Role",
+    "USER_DELETE_FAILED": "User deletion failed",
+    "ASSIGN_ROLE": "Assign Role"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -147,7 +149,8 @@
     "PASSWORD_PLACEHOLDER": "Enter password",
     "USERNAME_PASSWORD_NOT_CORRECT": "The username or password you entered is incorrect",
     "FORGOT_PASSWORD": "Forgot Password?",
-    "REMEMBER_ME": "Remember Me"
+    "REMEMBER_ME": "Remember Me",
+    "ACCESS_DENIED": "You do not have access to the portal. Please check your username or password."
   },
   "SIDEBAR": {
     "HI": "hi",
@@ -417,7 +420,8 @@
     "CODE": "Code",
     "DISTRICT": "District",
     "EMAIL": "Email",
-    "USERNAME": "Username"
+    "USERNAME": "Username",
+    "DOMAIN": "Domain"
   },
   "WORKSPACE": {
     "EDITOR_WORKSPACE": "Editor Workspace",
@@ -444,6 +448,10 @@
     "FAILED_TO_UPDATE": "Failed to Update User",
     "FAILED_TO_DELETE:": "Failed to Delete User",
     "SEARCH": "Search User",
-    "NO_USER_FOUND": "Users not found"
+    "NO_USER_FOUND": "Users not found",
+    "USER_NOT_FOUND": "User not found",
+    "UPDATE_USER_DETAILS": "Update User Details",
+    "DELETE_USER_DETAILS": "Delete User Details",
+    "DELETE_USER_CONFIRMATION_MESSAGE": "Are you sure you want to Archived this user?"
   }
 }

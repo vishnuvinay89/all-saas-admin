@@ -43,7 +43,7 @@ import { customFields } from "@/components/GeneratedSchemas";
 import { CustomField } from "@/utils/Interfaces";
 import { showToastMessage } from "@/components/Toastify";
 import AddNewCenters from "@/components/AddNewCenters";
-import { getCenterTableData } from "@/data/tableColumns";
+import { getTenantTableData } from "@/data/tableColumns";
 import { Theme } from "@mui/system";
 import {
   firstLetterInUpperCase,
@@ -310,16 +310,20 @@ const Tenant: React.FC = () => {
       const limit = pageLimit;
       const offset = pageOffset * limit;
       const sort = sortBy;
+      let data = {
+        filters: filters,
+        limit: pageLimit,
+        offset: pageOffset * limit,
+        sort: sortBy,
+      };
+      console.log({ filters });
 
-      const resp = await getTenantLists();
-      console.log({ resp });
+      const resp = await getTenantLists(data);
 
       if (resp) {
         const resultData: TenantData[] = [];
 
         resp.forEach((item: any) => {
-          console.log({ item });
-
           const requiredData: TenantData = {
             name: item.name || "-",
             status: item?.status ? item?.status : "Active",
@@ -365,77 +369,77 @@ const Tenant: React.FC = () => {
     fetchTenantList();
   }, [openAddNewCohort]);
 
-  const getFormData = async () => {
-    try {
-      const res = await getFormRead("cohorts", "cohort");
-      if (res && res?.fields) {
-        const formDatas = res?.fields;
-        setFormData(formDatas);
-      } else {
-        console.log("No response Data");
-      }
-    } catch (error) {
-      showToastMessage(t("COMMON.ERROR_MESSAGE_SOMETHING_WRONG"), "error");
-      console.log("Error fetching form data:", error);
-    }
-  };
+  // const getFormData = async () => {
+  //   try {
+  //     const res = await getFormRead("cohorts", "cohort");
+  //     if (res && res?.fields) {
+  //       const formDatas = res?.fields;
+  //       setFormData(formDatas);
+  //     } else {
+  //       console.log("No response Data");
+  //     }
+  //   } catch (error) {
+  //     showToastMessage(t("COMMON.ERROR_MESSAGE_SOMETHING_WRONG"), "error");
+  //     console.log("Error fetching form data:", error);
+  //   }
+  // };
 
-  const getCohortMemberlistData = async (cohortId: string) => {
-    const data = {
-      limit: 0,
-      offset: 0,
-      filters: {
-        cohortId: cohortId,
-      },
-    };
-    const response = await fetchCohortMemberList(data);
-    // const response = await queryClient.fetchQuery({
-    //   queryKey: [
-    //     QueryKeys.GET_COHORT_MEMBER_LIST,
-    //     data.limit,
-    //     data.offset,
-    //     JSON.stringify(data.filters),
-    //   ],
-    //   queryFn: () => fetchCohortMemberList(data),
-    // });
+  // const getCohortMemberlistData = async (cohortId: string) => {
+  //   const data = {
+  //     limit: 0,
+  //     offset: 0,
+  //     filters: {
+  //       cohortId: cohortId,
+  //     },
+  //   };
+  //   const response = await fetchCohortMemberList(data);
+  //   // const response = await queryClient.fetchQuery({
+  //   //   queryKey: [
+  //   //     QueryKeys.GET_COHORT_MEMBER_LIST,
+  //   //     data.limit,
+  //   //     data.offset,
+  //   //     JSON.stringify(data.filters),
+  //   //   ],
+  //   //   queryFn: () => fetchCohortMemberList(data),
+  //   // });
 
-    if (response?.result) {
-      const userDetails = response.result.userDetails;
-      const getActiveMembers = userDetails?.filter(
-        (member: any) =>
-          member?.status === Status.ACTIVE && member?.role === Role.STUDENT
-      );
-      const totalActiveMembers = getActiveMembers?.length || 0;
+  //   if (response?.result) {
+  //     const userDetails = response.result.userDetails;
+  //     const getActiveMembers = userDetails?.filter(
+  //       (member: any) =>
+  //         member?.status === Status.ACTIVE && member?.role === Role.STUDENT
+  //     );
+  //     const totalActiveMembers = getActiveMembers?.length || 0;
 
-      const getArchivedMembers = userDetails?.filter(
-        (member: any) =>
-          member?.status === Status.ARCHIVED && member?.role === Role.STUDENT
-      );
-      const totalArchivedMembers = getArchivedMembers?.length || 0;
+  //     const getArchivedMembers = userDetails?.filter(
+  //       (member: any) =>
+  //         member?.status === Status.ARCHIVED && member?.role === Role.STUDENT
+  //     );
+  //     const totalArchivedMembers = getArchivedMembers?.length || 0;
 
-      return {
-        totalActiveMembers,
-        totalArchivedMembers,
-      };
-    }
+  //     return {
+  //       totalActiveMembers,
+  //       totalArchivedMembers,
+  //     };
+  //   }
 
-    return {
-      totalActiveMembers: 0,
-      totalArchivedMembers: 0,
-    };
-  };
+  //   return {
+  //     totalActiveMembers: 0,
+  //     totalArchivedMembers: 0,
+  //   };
+  // };
 
-  useEffect(() => {
-    getFormData();
-  }, [
-    pageOffset,
-    pageLimit,
-    sortBy,
-    filters,
-    filters.states,
-    filters.status,
-    createCenterStatus,
-  ]);
+  // useEffect(() => {
+  //   getFormData();
+  // }, [
+  //   pageOffset,
+  //   pageLimit,
+  //   sortBy,
+  //   filters,
+  //   filters.states,
+  //   filters.status,
+  //   createCenterStatus,
+  // ]);
 
   // handle functions
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
@@ -661,7 +665,6 @@ const Tenant: React.FC = () => {
   };
 
   const handleActionForDelete = async (selectedRowData: RowData) => {
-    console.log({ selectedRowData });
     if (selectedRowData) {
       let cohortDetails = {
         status: Status.ARCHIVED,
@@ -680,7 +683,6 @@ const Tenant: React.FC = () => {
       }
       setSelectedCohortId("");
     } else {
-      console.log("No Cohort Selected");
       setSelectedCohortId("");
     }
     fetchTenantList();
@@ -702,6 +704,7 @@ const Tenant: React.FC = () => {
   const handleSearch = (keyword: string) => {
     setPageOffset(Numbers.ZERO);
     setPageCount(Numbers.ONE);
+    fetchTenantList();
     if (keyword?.length > 3) {
       if (cohortData?.length > 0) {
         setFilters((prevFilters) => ({
@@ -755,8 +758,6 @@ const Tenant: React.FC = () => {
   };
 
   const handleEdit = async (rowData: any) => {
-    console.log({ rowData });
-
     setLoading(true);
     // Handle edit action here
     // setIsEditModalOpen(true);
@@ -773,7 +774,7 @@ const Tenant: React.FC = () => {
         limit: Numbers.TWENTY,
         offset: 0,
       };
-      const resp = await getTenantLists();
+      const resp = await getTenantLists(data);
 
       setEditFormData(mapFields(schema, rowData));
       setLoading(false);
@@ -782,8 +783,6 @@ const Tenant: React.FC = () => {
     setLoading(false);
     setConfirmButtonDisable(false);
   };
-
-  console.log({ editFormData });
 
   const handleDelete = (rowData: any) => {
     setLoading(true);
@@ -831,7 +830,6 @@ const Tenant: React.FC = () => {
   const handleChangeForm = (event: IChangeEvent<any>) => {
     setUpdateBtnDisabled(false);
     setAddBtnDisabled(false);
-    // console.log("Form data changed:", event.formData);
   };
   const handleError = () => {
     console.log("error");
@@ -879,7 +877,6 @@ const Tenant: React.FC = () => {
     setLoading(true);
     const formData = data?.formData;
 
-    console.log({ formData, selectedRowData });
     try {
       setLoading(true);
       setConfirmButtonDisable(true);
@@ -892,7 +889,6 @@ const Tenant: React.FC = () => {
         type: formData?.type,
       };
       const resp = await cohortCreate(obj);
-      console.log({ resp });
 
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
         showToastMessage(t("COHORTS.CREATE_SUCCESSFULLY"), "success");
@@ -986,8 +982,7 @@ const Tenant: React.FC = () => {
     }
 
     try {
-      const result = await getTenantLists();
-      console.log({ result });
+      const result = await getTenantLists(filters);
 
       // const result = await queryClient.fetchQuery({
       //   queryKey: [
@@ -1082,8 +1077,6 @@ const Tenant: React.FC = () => {
 
   const handleRoleSave = () => {
     if (selectedRole) {
-      console.log({ selectedRowData, selectedRole });
-
       onAssignRole(selectedRowData, selectedRole);
       closeRoleModal();
     } else {
@@ -1103,7 +1096,6 @@ const Tenant: React.FC = () => {
       };
 
       const result = await roleCreate(payload);
-      console.log({ result });
 
       if (result?.responseCode === 200 || result?.responseCode === 201) {
         const roleData = {
@@ -1120,8 +1112,6 @@ const Tenant: React.FC = () => {
     }
   };
 
-  console.log({ selectedRowData });
-
   useEffect(() => {
     const fetchRoles = async () => {
       if (selectedRowData) {
@@ -1134,7 +1124,6 @@ const Tenant: React.FC = () => {
         };
 
         const response = await rolesList(obj);
-        console.log({ response });
 
         if (response?.result) {
           const rolesData = response?.result.map((role: any) => ({
@@ -1142,7 +1131,6 @@ const Tenant: React.FC = () => {
             title: role?.title,
           }));
           setRoles(rolesData);
-          console.log("Roles set:", rolesData);
         }
       }
     };
@@ -1283,7 +1271,7 @@ const Tenant: React.FC = () => {
           </Box>
         ) : cohortData?.length > 0 ? (
           <KaTableComponent
-            columns={getCenterTableData(t, isMobile)}
+            columns={getTenantTableData(t, isMobile)}
             addAction={true}
             rolebtnFunc={openRoleModal}
             data={cohortData}
@@ -1429,6 +1417,7 @@ const Tenant: React.FC = () => {
             </Button>
             <Button
               variant="contained"
+              disabled={!selectedRole}
               onClick={handleRoleSave}
               sx={{
                 fontSize: "14px",

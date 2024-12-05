@@ -66,11 +66,12 @@ const HeaderComponent = ({
   handleBlockChange,
   handleSortChange,
   handleFilterChange,
-  showSort = true,
+  showSort = false,
   showAddNew = true,
   showStateDropdown = true,
   showFilter = true,
   statusArchived,
+  statusInactive,
   handleSearch,
   handleAddUserClick,
   selectedCenter,
@@ -303,23 +304,19 @@ const HeaderComponent = ({
                 //   districtResult[0]?.label
                 // );
                 // setSelectedDistrictStore(districtResult[0]?.label);
-                 blockResult = await formatedBlocks(
-                  districtResult[0]?.value
-                );
-                if(blockResult?.message ==="Request failed with status code 404")
-                  {
-                    setBlocks([]);
-                  }
-                  else
-                  {
-                    setBlocks(blockResult);
-
-                  }
+                blockResult = await formatedBlocks(districtResult[0]?.value);
+                if (
+                  blockResult?.message === "Request failed with status code 404"
+                ) {
+                  setBlocks([]);
+                } else {
+                  setBlocks(blockResult);
+                }
               }
-            
+
               if (!hasBlock && !hasDistrict) {
-                if (userType === Role.TEAM_LEADERS || userType==="Centers") {
-                //  setSelectedBlock([t("COMMON.ALL_BLOCKS")]);
+                if (userType === Role.TEAM_LEADERS || userType === "Centers") {
+                  //  setSelectedBlock([t("COMMON.ALL_BLOCKS")]);
                   //setSelectedBlockCode("")
                   router.replace({
                     pathname: router.pathname,
@@ -330,18 +327,21 @@ const HeaderComponent = ({
                     },
                   });
                 } else {
-                  if(blockResult?.message==="Request failed with status code 404")
-                  {
+                  if (
+                    blockResult?.message ===
+                    "Request failed with status code 404"
+                  ) {
                     setBlocks([]);
-                  }
-                  else{
+                  } else {
                     setSelectedBlock([blockResult[0]?.label]);
                     setSelectedBlockCode(blockResult[0]?.value);
-                    localStorage.setItem("selectedBlock", blockResult[0]?.label);
+                    localStorage.setItem(
+                      "selectedBlock",
+                      blockResult[0]?.label
+                    );
                     setSelectedBlockStore(blockResult[0]?.label);
-  
                   }
-                 
+
                   router.replace({
                     pathname: router.pathname,
                     // query: {
@@ -411,7 +411,6 @@ const HeaderComponent = ({
                   // },
                 });
               }
-
             }
 
             const object = [
@@ -454,8 +453,7 @@ const HeaderComponent = ({
   // }, [blocks, selectedBlock, handleBlockChangeWrapper]);
 
   useEffect(() => {
-    const handleRouteparam = async() => 
-    {
+    const handleRouteparam = async () => {
       const { state, district, block, center } = router.query;
       if (state) {
         setSelectedStateCode(state.toString());
@@ -466,47 +464,35 @@ const HeaderComponent = ({
         setSelectedDistrict([localStorage.getItem("selectedDistrict")]);
         if (!localStorage.getItem("selectedDistrict")) {
           setSelectedDistrict([selectedDistrictStore]);
-          
         }
-        try{
-          const  blockResult = await formatedBlocks(
-            district?.toString()
-              );
-              if(blockResult.message==="Request failed with status code 404")
-              {
-                setBlocks([]);
-
-              }
-              else
-            setBlocks(blockResult);
+        try {
+          const blockResult = await formatedBlocks(district?.toString());
+          if (blockResult.message === "Request failed with status code 404") {
+            setBlocks([]);
+          } else setBlocks(blockResult);
+        } catch {
+          //  console.log("hii")
         }
-        catch{
-        //  console.log("hii")
-        }
-       
       }
-     
 
-      if (block ) {
+      if (block) {
         setSelectedBlockCode(block.toString());
         // setSelectedBlock([selectedBlockStore])
         setSelectedBlock([localStorage.getItem("selectedBlock")]);
         if (!localStorage.getItem("selectedBlock"))
           setSelectedBlock([selectedBlockStore]);
       }
-   
 
       if (center) {
-
         setSelectedCenterCode([center.toString()]);
         // setSelectedCenter([selectedCenterStore])
         setSelectedCenter([localStorage.getItem("selectedCenter")]);
         if (!localStorage.getItem("selectedCenter"))
           setSelectedCenter([selectedCenterStore]);
       }
-   
+
       //  setInitialized(true)
-    }
+    };
     handleRouteparam();
   }, [router, userType]);
 
@@ -559,31 +545,31 @@ const HeaderComponent = ({
         }}
       >
         {showFilter && (
-  <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-    <Tabs
-      value={statusValue}
-      onChange={handleFilterChange}
-      aria-label="Tabs where selection follows focus"
-      selectionFollowsFocus
-    >
-      <Tab
-        label={
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              color:
-                statusValue === Status.ACTIVE
-                  ? theme.palette.primary["100"]
-                  : "inherit",
-            }}
-          >
-            {t("COMMON.ACTIVE")}
-          </Box>
-        }
-        value={Status.ACTIVE}
-      />
-      {/* Uncomment this section if you need the INACTIVE tab
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs
+              value={statusValue}
+              onChange={handleFilterChange}
+              aria-label="Tabs where selection follows focus"
+              selectionFollowsFocus
+            >
+              <Tab
+                label={
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      color:
+                        statusValue === Status.ACTIVE
+                          ? theme.palette.primary["100"]
+                          : "inherit",
+                    }}
+                  >
+                    {t("COMMON.ACTIVE")}
+                  </Box>
+                }
+                value={Status.ACTIVE}
+              />
+              {/* Uncomment this section if you need the INACTIVE tab
       <Tab
         label={
           <Box
@@ -602,28 +588,47 @@ const HeaderComponent = ({
         value={Status.INACTIVE}
       />
       */}
-      {statusArchived && (
-        <Tab
-          label={
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                color:
-                  statusValue === Status.ARCHIVED
-                    ? theme.palette.primary["100"]
-                    : "inherit",
-              }}
-            >
-              {t("COMMON.ARCHIVED")}
-            </Box>
-          }
-          value={Status.ARCHIVED}
-        />
-      )}
-    </Tabs>
-  </Box>
-)}
+              {statusInactive && (
+                <Tab
+                  label={
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        color:
+                          statusValue === Status.INACTIVE
+                            ? theme.palette.primary["100"]
+                            : "inherit",
+                      }}
+                    >
+                      {t("COMMON.INACTIVE")}
+                    </Box>
+                  }
+                  value={Status.INACTIVE}
+                />
+              )}
+              {statusArchived && (
+                <Tab
+                  label={
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        color:
+                          statusValue === Status.ARCHIVED
+                            ? theme.palette.primary["100"]
+                            : "inherit",
+                      }}
+                    >
+                      {t("COMMON.ARCHIVED")}
+                    </Box>
+                  }
+                  value={Status.ARCHIVED}
+                />
+              )}
+            </Tabs>
+          </Box>
+        )}
 
         <Box
           sx={{
@@ -674,7 +679,7 @@ const HeaderComponent = ({
             </Box>
           )}
         </Box>
-        {showAddNew && (
+        {showSort && (
           <Box
             sx={{
               display: "flex",
@@ -696,6 +701,7 @@ const HeaderComponent = ({
                     height: "40px",
                     marginLeft: "5px",
                     fontSize: "14px",
+                    position: "relative",
                     backgroundColor: theme.palette.secondary["100"],
                   }}
                 >
