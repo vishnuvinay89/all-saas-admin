@@ -32,7 +32,7 @@ interface DynamicFormProps {
   onChange: (event: IChangeEvent<any>) => void;
   onError: (errors: any) => void;
   showErrorList: boolean;
-  id?: string; // Optional id prop
+  id?: string;
 
   widgets?: {
     [key: string]: React.FC<WidgetProps<any, RJSFSchema, any>>;
@@ -127,9 +127,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
   const transformErrors = (errors: any) => {
     const currentYearPattern = new RegExp(getCurrentYearPattern());
+
     errors.length === 0 ? setNoError(true) : setNoError(false);
 
-    let updatedUiSchema: UiSchema = { ...uiSchema }; // Ensure the type is UiSchema
+    let updatedUiSchema: UiSchema = { ...uiSchema };
 
     return errors?.map((error: any) => {
       const property = error.property ? error.property.substring(1) : ""; // Check if error.property exists
@@ -266,7 +267,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   };
 
   useEffect(() => {
-    // setSubmittedButtonStatus(false);
+    setSubmittedButtonStatus(false);
   }, []);
   return (
     <div className="shreyas shinde">

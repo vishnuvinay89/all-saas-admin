@@ -201,7 +201,7 @@ const Center: React.FC = () => {
     name: {
       "ui:widget": "text",
       "ui:placeholder": "Enter your full name",
-      "ui:help": "Full name, only letters and spaces are allowed.",
+      "ui:help": "Full name, numbers, letters and spaces are allowed.",
     },
     username: {
       "ui:widget": "text",

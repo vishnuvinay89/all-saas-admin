@@ -165,7 +165,7 @@ const Tenant: React.FC = () => {
   const [selectedRowData, setSelectedRowData] = useState<any>("");
   const [roles, setRoles] = useState([]);
   const [updateBtnDisabled, setUpdateBtnDisabled] = React.useState(true);
-  const [addBtnDisabled, setAddBtnDisabled] = React.useState(true);
+  const [addBtnDisabled, setAddBtnDisabled] = React.useState(false);
   const [addFormData, setAddFormData] = useState({});
 
   const uiSchema = {
@@ -188,7 +188,7 @@ const Tenant: React.FC = () => {
   const cohortUiSchema = {
     name: {
       "ui:widget": "text",
-      "ui:placeholder": "Enter full name",
+      "ui:placeholder": "Enter Cohort Name",
       "ui:options": {},
     },
     type: {
@@ -197,7 +197,7 @@ const Tenant: React.FC = () => {
       // "ui:options": {
       //   defaultValue: "cohort",
       // },
-      "ui:disabled": true, // This will make the field readonly
+      "ui:disabled": true,
     },
     district: {
       "ui:widget": "text",
@@ -1216,8 +1216,8 @@ const Tenant: React.FC = () => {
             <Box
               style={{
                 display: "flex",
-                justifyContent: "right", // Centers the button horizontally
-                marginTop: "20px", // Adjust margin as needed
+                justifyContent: "right",
+                marginTop: "20px",
               }}
               gap={2}
             >
@@ -1236,10 +1236,12 @@ const Tenant: React.FC = () => {
               >
                 {t("COMMON.CANCEL")}
               </Button>
+
               <Button
                 variant="contained"
                 type="submit"
-                form="update-center-form" // Add this line
+                form="update-center-form"
+                disabled={addBtnDisabled}
                 sx={{
                   fontSize: "14px",
                   fontWeight: "500",
@@ -1247,7 +1249,6 @@ const Tenant: React.FC = () => {
                   height: "40px",
                   marginLeft: "10px",
                 }}
-                disabled={addBtnDisabled}
                 onClick={() => {
                   setSubmittedButtonStatus(true);
                 }}

@@ -139,7 +139,8 @@
     "ADD_NEW_TENANT": "Add New Tenant",
     "CREATE_ROLE": "Create Role",
     "USER_DELETE_FAILED": "User deletion failed",
-    "ASSIGN_ROLE": "Assign Role"
+    "ASSIGN_ROLE": "Assign Role",
+    "ENABLE_ROLE": "Enable Role"
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
