@@ -1,4 +1,3 @@
-
 name: Deployment on the All-saas-dev Frontend Server
 on:
   workflow_dispatch:
