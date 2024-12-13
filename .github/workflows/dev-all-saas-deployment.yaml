@@ -1,8 +1,8 @@
-name: Deployment on the All-saas-dev Frontend Server
+name: Deployment on the All-saas-user-microservice Dev
 on:
   workflow_dispatch:
 jobs:
-  ALL-SAAS-DEV-DEPLOYMENT:
+  ALL-SAAS-USER-MICROSERVICE-DEPLOYMENT:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -15,9 +15,5 @@ jobs:
           port: ${{ secrets.PORT_DEV }}
           script: |
             cd ${{ secrets.TARGET_DEV_DIR }}
-            if [ -f .env ]; then
-            rm .env
-            fi
-            echo "${{ secrets.DEV_ENV }}" > .env
             ls -ltra
             ./deploy.sh
