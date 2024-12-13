@@ -1,4 +1,4 @@
-name: Deployment on the All-saas-user-microservice Dev
+name: Deployment on the All-admin Dev
 on:
   workflow_dispatch:
 jobs:
