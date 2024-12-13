@@ -5,7 +5,7 @@ on:
       - all-sass-0.1  
       
 jobs:
-  ALL-SAAS-USER-MICROSERVICE-DEPLOYMENT:
+  ALL-SAAS-ADMIN:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
