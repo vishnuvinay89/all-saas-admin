@@ -41,12 +41,8 @@
       "type": "string",
       "oneOf": [
         {
-          "title": "Cohort Admin",
-          "const": "cohort_admin"
-        },
-        {
-          "title": "Learner",
-          "const": "learner"
+          "title": "Tenant Admin",
+          "const": "tenant_admin"
         }
       ],
       "validation": []

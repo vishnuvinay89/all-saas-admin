@@ -42,7 +42,7 @@ import { getFormRead } from "@/services/CreateUserService";
 import { customFields } from "@/components/GeneratedSchemas";
 import { CustomField } from "@/utils/Interfaces";
 import { showToastMessage } from "@/components/Toastify";
-import AddNewCenters from "@/components/AddNewCenters";
+import AddNewTenant from "@/components/AddNewTenant";
 import { getTenantTableData } from "@/data/tableColumns";
 import { Theme } from "@mui/system";
 import {
@@ -60,6 +60,7 @@ import { useRouter } from "next/router";
 import tenantSchema from "../components/TenantSchema.json";
 import { getTenantLists } from "@/services/CohortService/cohortService";
 import cohortSchemajson from "./cohortSchema.json";
+import userJsonSchema from "./tenantAdminSchema.json";
 
 type cohortFilterDetails = {
   type?: string;
@@ -125,7 +126,7 @@ const Tenant: React.FC = () => {
   const getUserStateName = state ? state.value : null;
   const stateCode = state ? state?.code : null;
   // handle states
-  const [selectedState, setSelectedState] = React.useState<string[]>([]);
+  const [selectedTenant, setSelectedTenant] = React.useState<string[]>([]);
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
   const [selectedBlock, setSelectedBlock] = React.useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState("Sort");
@@ -161,12 +162,15 @@ const Tenant: React.FC = () => {
   const [isEditForm, setIsEditForm] = useState(false);
   const [Addmodalopen, setAddmodalopen] = React.useState<any>(false);
   const [selectedRole, setSelectedRole] = useState("");
-  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+  const [isCreateTenantAdminModalOpen, setIsCreateTenantAdminModalOpen] =
+    useState(false);
   const [selectedRowData, setSelectedRowData] = useState<any>("");
-  const [roles, setRoles] = useState([]);
+  const [adminRole, setAdminRole] = useState("");
   const [updateBtnDisabled, setUpdateBtnDisabled] = React.useState(true);
   const [addBtnDisabled, setAddBtnDisabled] = React.useState(false);
   const [addFormData, setAddFormData] = useState({});
+  const [tenantAdminSchema, setTenantAdminSchema] =
+    React.useState(userJsonSchema);
 
   const uiSchema = {
     name: {
@@ -174,14 +178,51 @@ const Tenant: React.FC = () => {
       "ui:placeholder": "Enter your full name",
       "ui:help": "Only letters and spaces are allowed.",
     },
-    domain: {
-      "ui:widget": "text",
-      "ui:placeholder": "Enter the domain name for your tenant",
-      "ui:help": "This will be the unique identifier for your tenant.",
+    status: {
+      "ui:widget": "CustomRadioWidget",
+      "ui:options": {
+        defaultValue: "active",
+      },
+      "ui:disabled": true,
     },
-    // status: {
-    //   "ui:widget": "CustomRadioWidget",
-    //   "ui:options": {},
+  };
+  const tenantAdminUiSchmea = {
+    name: {
+      "ui:widget": "text",
+      "ui:placeholder": "Enter your full name",
+      "ui:help": "Full name, numbers, letters and spaces are allowed.",
+    },
+    username: {
+      "ui:widget": "text",
+      "ui:placeholder": "Enter your username",
+      "ui:help": "Username must be at least 3 characters long.",
+    },
+    password: {
+      "ui:widget": "password",
+      "ui:placeholder": "Enter a secure password",
+      "ui:help":
+        "Password must be at least 8 characters long, with at least one letter and one number.",
+    },
+    role: {
+      "ui:widget": "select",
+      "ui:placeholder": "Select a role",
+      // "ui:help": "Select a role.",
+    },
+    mobileNo: {
+      "ui:widget": "text",
+      "ui:placeholder": "Mobile number",
+      "ui:help": "Enter a valid 10-digit mobile number.",
+    },
+    email: {
+      // "ui:widget": "text",
+      "ui:placeholder": "Enter your email address",
+      "ui:help": "Enter a valid email address.",
+      // "ui:options": {},
+    },
+    // dob: {
+    //   "ui:widget": "date",
+    //   "ui:placeholder": "Select your date of birth",
+    //   // "ui:help": "Date of birth in YYYY-MM-DD format.",
     // },
   };
 
@@ -230,22 +271,11 @@ const Tenant: React.FC = () => {
   const setSelectedDistrictStore = useSubmittedButtonStore(
     (state: any) => state.setSelectedDistrictStore
   );
-  const selectedCenterStore = useSubmittedButtonStore(
-    (state: any) => state.selectedCenterStore
-  );
-  const setSelectedCenterStore = useSubmittedButtonStore(
-    (state: any) => state.setSelectedCenterStore
-  );
+
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
   );
 
-  const createCenterStatus = useSubmittedButtonStore(
-    (state: any) => state.createCenterStatus
-  );
-  const setCreateCenterStatus = useSubmittedButtonStore(
-    (state: any) => state.setCreateCenterStatus
-  );
   const setAdminInformation = useSubmittedButtonStore(
     (state: any) => state.setAdminInformation
   );
@@ -292,9 +322,10 @@ const Tenant: React.FC = () => {
 
   // use api calls
   useEffect(() => {
-    if (typeof window !== "undefined" && window.localStorage) {
-      const userId = localStorage.getItem(Storage.USER_ID) || "";
-      setUserId(userId);
+    if (typeof window !== "undefined") {
+      const getRole = JSON.parse(localStorage.getItem("adminInfo") || "{}");
+      setAdminRole(getRole?.role);
+      setUserId(getRole?.userId);
     }
 
     // get form data for center create
@@ -316,7 +347,6 @@ const Tenant: React.FC = () => {
         offset: pageOffset * limit,
         sort: sortBy,
       };
-      console.log({ filters });
 
       const resp = await getTenantLists(data);
 
@@ -902,7 +932,7 @@ const Tenant: React.FC = () => {
     } finally {
       setLoading(false);
       setConfirmButtonDisable(false);
-      handleAddmodal();
+      handleCloseAddModal();
       onCloseEditMOdel();
       fetchTenantList();
       setIsEditForm(false);
@@ -911,8 +941,10 @@ const Tenant: React.FC = () => {
   const handleAddUserClick = () => {
     setOpenAddNewCohort(true);
   };
-  const handleAddmodal = () => {
+
+  const handleCloseAddModal = () => {
     setAddmodalopen(false);
+    setIsCreateTenantAdminModalOpen(false);
     setAddFormData({});
   };
 
@@ -933,7 +965,7 @@ const Tenant: React.FC = () => {
               (field: any) => field.label === "STATES"
             );
             if (!stateField.value.includes(",")) {
-              setSelectedState([stateField.value]);
+              // setSelectedState([stateField.value]);
               setSelectedStateCode(stateField.code);
               if (
                 selectedDistrictCode &&
@@ -1061,13 +1093,18 @@ const Tenant: React.FC = () => {
     localStorage.setItem("tenantRoles", JSON.stringify(existingRoles));
   };
 
-  const openRoleModal = (rowData: Record<string, unknown>) => {
+  // const openRoleModal = (rowData: Record<string, unknown>) => {
+  //   setSelectedRowData(rowData);
+  //   setIsRoleModalOpen(true);
+  // };
+
+  const handleCreateTenantAdmin = (rowData: any) => {
     setSelectedRowData(rowData);
-    setIsRoleModalOpen(true);
+    setIsCreateTenantAdminModalOpen(true);
   };
 
   const closeRoleModal = () => {
-    setIsRoleModalOpen(false);
+    setIsCreateTenantAdminModalOpen(false);
     setSelectedRowData(null); // Clear selection on close
   };
 
@@ -1112,40 +1149,39 @@ const Tenant: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchRoles = async () => {
-      if (selectedRowData) {
-        const obj = {
-          limit: "10",
-          page: 1,
-          filters: {
-            tenantId: selectedRowData?.tenantId,
-          },
-        };
+  // useEffect(() => {
+  //   const fetchRoles = async () => {
+  //     if (selectedRowData) {
+  //       const obj = {
+  //         limit: "10",
+  //         page: 1,
+  //         filters: {
+  //           tenantId: selectedRowData?.tenantId,
+  //         },
+  //       };
 
-        const response = await rolesList(obj);
+  //       const response = await rolesList(obj);
 
-        if (response?.result) {
-          const rolesData = response?.result.map((role: any) => ({
-            roleId: role?.roleId,
-            title: role?.title,
-          }));
-          setRoles(rolesData);
-        }
-      }
-    };
+  //       if (response?.result) {
+  //         const rolesData = response?.result?.map((role: any) => ({
+  //           roleId: role?.roleId,
+  //           title: role?.title,
+  //         }));
+  //         setRoles(rolesData);
+  //       }
+  //     }
+  //   };
 
-    fetchRoles();
-  }, [isRoleModalOpen, selectedRowData]);
-  const capitalizeFirstLetter = (string: any) => {
-    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-  };
+  //   fetchRoles();
+  // }, [isCreateTenantAdminModalOpen, selectedRowData]);
 
   const role = [Role.TENANT_ADMIN, Role.LEARNER];
+
   const userProps = {
     userType: t("TENANT.TENANT"),
     searchPlaceHolder: t("TENANT.SEARCH"),
-    selectedState: selectedState,
+    // selectedState: selectedState,
+    selectedTenant: selectedTenant,
     selectedStateCode: selectedStateCode,
     selectedDistrict: selectedDistrict,
     // selectedDistrictCode: selectedDistrictCode,
@@ -1159,6 +1195,7 @@ const Tenant: React.FC = () => {
     handleSortChange: handleSortChange,
     handleFilterChange: handleFilterChange,
     handleSearch: handleSearch,
+    // showAddNew: adminRole === "tenant_admin" ? true : false,
     showAddNew: true,
     statusArchived: false,
     handleAddUserClick: handleAddUserClick,
@@ -1196,7 +1233,7 @@ const Tenant: React.FC = () => {
 
       <SimpleModal
         open={Addmodalopen}
-        onClose={handleAddmodal}
+        onClose={handleCloseAddModal}
         showFooter={false}
         modalTitle={t("COHORTS.ADD_NEW_COHORT")}
       >
@@ -1232,7 +1269,7 @@ const Tenant: React.FC = () => {
                   height: "40px",
                   marginLeft: "10px",
                 }}
-                onClick={handleAddmodal}
+                onClick={handleCloseAddModal}
               >
                 {t("COMMON.CANCEL")}
               </Button>
@@ -1272,9 +1309,9 @@ const Tenant: React.FC = () => {
           </Box>
         ) : cohortData?.length > 0 ? (
           <KaTableComponent
-            columns={getTenantTableData(t, isMobile)}
+            columns={getTenantTableData(t, isMobile, adminRole)}
             addAction={true}
-            rolebtnFunc={openRoleModal}
+            addBtnFunc={handleCreateTenantAdmin}
             data={cohortData}
             limit={pageLimit}
             roleButton
@@ -1304,7 +1341,7 @@ const Tenant: React.FC = () => {
           </Box>
         )}
 
-        <AddNewCenters
+        <AddNewTenant
           open={openAddNewCohort}
           onClose={handleCloseAddLearnerModal}
           formData={formdata}
@@ -1377,8 +1414,8 @@ const Tenant: React.FC = () => {
           )}
         </SimpleModal>
 
-        <SimpleModal
-          open={isRoleModalOpen}
+        {/* <SimpleModal
+          open={isCreateTenantAdminModalOpen}
           onClose={closeRoleModal}
           modalTitle={`Create Role for ${selectedRowData ? selectedRowData?.name : ""}`}
         >
@@ -1429,6 +1466,68 @@ const Tenant: React.FC = () => {
               Save
             </Button>
           </Box>
+        </SimpleModal> */}
+        <SimpleModal
+          open={isCreateTenantAdminModalOpen}
+          onClose={handleCloseAddModal}
+          showFooter={false}
+          modalTitle={t("TENANT.ADD_NEW_TENANT_ADMIN")}
+        >
+          {tenantAdminSchema && tenantAdminUiSchmea && (
+            <DynamicForm
+              schema={tenantAdminSchema}
+              uiSchema={tenantAdminUiSchmea}
+              onSubmit={handleAddAction}
+              onChange={handleChangeForm}
+              onError={handleError}
+              widgets={{}}
+              showErrorList={false}
+              customFields={customFields}
+              formData={addFormData}
+              id="update-center-form"
+            >
+              <Box
+                style={{
+                  display: "flex",
+                  justifyContent: "right",
+                  marginTop: "20px",
+                }}
+                gap={2}
+              >
+                <Button
+                  variant="outlined"
+                  type="button"
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    width: "auto",
+                    height: "40px",
+                    marginLeft: "10px",
+                  }}
+                  onClick={handleCloseAddModal}
+                >
+                  {t("COMMON.CANCEL")}
+                </Button>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={addBtnDisabled}
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    width: "auto",
+                    height: "40px",
+                    marginLeft: "10px",
+                  }}
+                  onClick={() => {
+                    setSubmittedButtonStatus(true);
+                  }}
+                >
+                  {t("COMMON.ADD")}
+                </Button>
+              </Box>
+            </DynamicForm>
+          )}
         </SimpleModal>
       </HeaderComponent>
     </>

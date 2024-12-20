@@ -212,7 +212,9 @@
     "ADD_NEW_COHORT": "Add New Cohort",
     "UPDATE_COHORT": "Update Cohort",
     "SEARCH_COHORT": "Search Cohort",
-    "DELETE_SUCCESSFULLY": "Cohort Deleted Successfully"
+    "DELETE_SUCCESSFULLY": "Cohort Deleted Successfully",
+    "ALL_STATES": "All States",
+    "COHORT_MEMBER": "Cohort Member"
   },
   "COURSE_PLANNER": {
     "GRADE": "Grade",
@@ -422,7 +424,8 @@
     "DISTRICT": "District",
     "EMAIL": "Email",
     "USERNAME": "Username",
-    "DOMAIN": "Domain"
+    "DOMAIN": "Domain",
+    "CREATE_TENANT_ADMIN": "Create Tenant Admin"
   },
   "WORKSPACE": {
     "EDITOR_WORKSPACE": "Editor Workspace",
@@ -438,7 +441,10 @@
     "FAILED_TO_DELETE:": "Failed to Delete Tenant",
     "SEARCH": "Search Tenant",
     "ROLE_ASSIGNED": "Role Created Successfully",
-    "ROLE_ASSIGNED_fAILED": "Role Assigned Failed"
+    "ROLE_ASSIGNED_fAILED": "Role Assigned Failed",
+    "TENANT_MEMBER": "Tenant Member",
+    "ALL_TENANTS": "All Tenants",
+    "ADD_NEW_TENANT_ADMIN": "Add New Tenant Admin"
   },
   "USER": {
     "ADD_NEW_USER": "Add New User",

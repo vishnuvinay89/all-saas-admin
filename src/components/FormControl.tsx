@@ -34,7 +34,7 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
   names,
   codes,
   tagName,
-  selectedCategories,
+  selectedCategories = [],
   onCategoryChange,
   disabled = false,
   overall = false,

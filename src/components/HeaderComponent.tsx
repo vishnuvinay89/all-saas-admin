@@ -67,7 +67,7 @@ const HeaderComponent = ({
   handleFilterChange,
   showSort = false,
   showAddNew = true,
-  showStateDropdown = true,
+  showStateDropdown = false,
   showFilter = true,
   statusArchived,
   statusInactive,
@@ -86,6 +86,17 @@ const HeaderComponent = ({
   selectedCenterCode,
   setSelectedCenterCode,
   setSelectedStateCode,
+  showTenantCohortDropDown = true,
+  tenants,
+  cohorts,
+  selectedTenant,
+  selectedCohort,
+  handleTenantChange,
+  handleCohortChange,
+  cohortDefaultValue,
+  tenantDefaultValue,
+  isTenantShow,
+  isCohortShow,
 }: any) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -506,13 +517,13 @@ const HeaderComponent = ({
         borderRadius: "8px",
       }}
     >
-      {!showStateDropdown && (
+      {/* {!showStateDropdown && (
         <Typography variant="h1" sx={{ mt: isMobile ? "12px" : "20px" }}>
           {userType}
         </Typography>
-      )}
+      )} */}
 
-      {showStateDropdown && (
+      {/* {showStateDropdown && (
         <AreaSelection
           states={transformArray(states)}
           districts={transformArray(districts)}
@@ -534,6 +545,24 @@ const HeaderComponent = ({
           selectedCenter={selectedCenter}
           handleCenterChangeWrapper={handleCenterChangeWrapper}
           userType={userType}
+        />
+      )} */}
+      {showTenantCohortDropDown && (
+        <AreaSelection
+          tenants={transformArray(tenants)}
+          cohorts={transformArray(cohorts)}
+          selectedTenant={selectedTenant}
+          selectedCohort={selectedCohort}
+          handleTenantChange={handleTenantChange}
+          handleCohortChange={handleCohortChange}
+          isMobile={isMobile}
+          tenantDefaultValue={tenantDefaultValue}
+          cohortDefaultValue={cohortDefaultValue}
+          userType={userType}
+          isMediumScreen={isMediumScreen}
+          inModal={false}
+          isTenantShow={isTenantShow}
+          isCohortShow={isCohortShow}
         />
       )}
 
