@@ -341,7 +341,7 @@ const Center: React.FC = () => {
       const resp = await getCohortList(data);
 
       if (resp) {
-        const result = resp?.results?.cohortDetails;
+        const result = resp?.results;
 
         // Map response data to required format
         const resultData = result?.map((item: any) => ({

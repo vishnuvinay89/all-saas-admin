@@ -146,7 +146,7 @@ const LoginPage = () => {
           localStorage.setItem("stateName", userInfo?.customFields[0]?.value);
         }
 
-        if (userInfo.role !== Role.ADMIN) {
+        if (userInfo.role !== Role.ADMIN && !(userInfo.isSuperAdmin) ) {
           const errorMessage = t("LOGIN_PAGE.ACCESS_DENIED");
           showToastMessage(errorMessage, "error");
           localStorage.removeItem("token");
