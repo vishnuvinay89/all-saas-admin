@@ -1325,7 +1325,8 @@ const UserTable: React.FC<UserTableProps> = ({
     setSelectedCenterCode: setSelectedCenterCode,
     setSelectedStateCode: setSelectedStateCode,
     statusArchived: true,
-
+    isTenantShow: true,
+    isCohortShow: true,
     //  statusArchived:true,
   };
 

@@ -32,7 +32,7 @@ interface KaTableComponentProps {
   onDelete?: any;
   onEdit?: any;
   onAdd?: any;
-  rolebtnFunc?: any;
+  addBtnFunc?: any;
   addAction?: boolean;
   roleButton?: boolean;
   reassignCohort?: any;
@@ -60,7 +60,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   onEdit,
   onDelete,
   onAdd,
-  rolebtnFunc,
+  addBtnFunc,
   addAction,
   roleButton,
   reassignCohort,
@@ -157,10 +157,10 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                 // }
                 if (props.column.key === DataKey.ASSIGNED_ROLES && roleButton) {
                   return (
-                    <Tooltip title={t("COMMON.CREATE_ROLE")}>
+                    <Tooltip title={t("TABLE_TITLE.CREATE_TENANT_ADMIN")}>
                       <Button
                         onClick={() => {
-                          rolebtnFunc(props.rowData);
+                          addBtnFunc(props.rowData);
                         }}
                         sx={{
                           display: "flex",
@@ -172,15 +172,15 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                             props.rowData?.status === Status.ARCHIVED
                               ? theme?.palette?.secondary.contrastText
                               : "",
-                          backgroundColor: "#EAF2FF",
-                          p: "4px",
-                          "&:hover": {
-                            backgroundColor: "#d0e5ff", // Optional: adjust hover color
-                          },
+                          // backgroundColor: "#EAF2FF",
+                          // p: "4px",
+                          // "&:hover": {
+                          //   backgroundColor: "#d0e5ff",
+                          // },
                         }}
                       >
                         <Typography variant="body2" fontFamily={"Poppins"}>
-                          {t("COMMON.ENABLE_ROLE")}
+                          {t("TABLE_TITLE.CREATE_TENANT_ADMIN")}
                         </Typography>
                       </Button>
                     </Tooltip>

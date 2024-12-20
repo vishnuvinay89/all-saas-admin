@@ -70,15 +70,16 @@ export const getTLTableColumns = (t: any, isMobile: boolean) => {
   return generateColumns(t, configs, isMobile);
 };
 
-export const getTenantTableData = (t: any, isMobile: boolean) => {
+export const getTenantTableData = (t: any, isMobile: boolean,role:string) => {
+  console.log({role});
+  
   const configs: ColumnConfig[] = [
     { key: "name", titleKey: "TABLE_TITLE.NAME", width: 130 },
-    { key: "domain", titleKey: "TABLE_TITLE.DOMAIN", width: 130 },
     // { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130 },
     // { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130 },
     { key: "createdAt", titleKey: "TABLE_TITLE.CREATED_DATE", width: 130 },
-    { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 130 },
-
+    // { key: "updatedAt", titleKey: "TABLE_TITLE.UPDATED_DATE", width: 130 },
+  
     // {
     //   key: "totalActiveMembers",
     //   titleKey: "TABLE_TITLE.ACTIVE_LEARNERS",
@@ -89,9 +90,13 @@ export const getTenantTableData = (t: any, isMobile: boolean) => {
     //   titleKey: "TABLE_TITLE.ARCHIVED_LEARNERS",
     //   width: 130,
     // },
-    { key: "roleDefine", titleKey: "COMMON.ENABLE_ROLE", width: 130 },
-    { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 },
+    { key: "status", titleKey: "TABLE_TITLE.STATUS", width: 90 },
+    
+    ...(role === "super_admin" ? [{ key: "roleDefine", titleKey: "TABLE_TITLE.CREATE_TENANT_ADMIN", width: 130 }] : []),
+    
+    ...(role==="super_admin" ?[{ key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 }]:[]),
   ];
+  
 
   return generateColumns(t, configs, isMobile);
 };

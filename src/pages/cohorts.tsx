@@ -37,7 +37,7 @@ import {
 } from "@/components/GeneratedSchemas";
 import { CustomField } from "@/utils/Interfaces";
 import { showToastMessage } from "@/components/Toastify";
-import AddNewCenters from "@/components/AddNewCenters";
+import AddNewCenters from "@/components/AddNewTenant";
 import { getCohortTableData } from "@/data/tableColumns";
 import { Theme } from "@mui/system";
 import {
@@ -680,6 +680,9 @@ const Center: React.FC = () => {
     }
   };
 
+  const handleTenantChange = (selected: any) => {
+    console.log({ selected });
+  };
   const handleCloseModal = () => {
     setConfirmationModalOpen(false);
     setUpdateBtnDisabled(true);
@@ -1100,6 +1103,8 @@ const Center: React.FC = () => {
   const userProps = {
     userType: t("COHORTS.COHORTS"),
     searchPlaceHolder: t("COHORTS.SEARCH_COHORT"),
+    showTenantCohortDropDown: true,
+    isTenantShow: true,
     selectedState: selectedState,
     selectedStateCode: selectedStateCode,
     selectedDistrict: selectedDistrict,
@@ -1110,7 +1115,8 @@ const Center: React.FC = () => {
     selectedFilter: selectedFilter,
     statusArchived: true,
     statusInactive: true,
-    handleStateChange: handleStateChange,
+    handleTenantChange: handleTenantChange,
+    // handleStateChange: handleStateChange,
     handleDistrictChange: handleDistrictChange,
     handleBlockChange: handleBlockChange,
     handleSortChange: handleSortChange,
