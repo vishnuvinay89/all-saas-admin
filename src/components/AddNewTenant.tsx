@@ -39,18 +39,16 @@ interface AddLearnerModalProps {
 }
 
 const uiSchema = {
-  district: {
-    "ui:widget": "",
-    "ui:options": {},
-  },
-  status: {
-    "ui:widget": "CustomRadioWidget",
-    "ui:options": {},
+  name: {
+    "ui:widget": "text",
+    "ui:placeholder": "Enter your full name",
+    // "ui:help": "Only letters and spaces are allowed.",
   },
 
-  block: {
-    "ui:widget": "",
-    "ui:options": {},
+  domain: {
+    "ui:widget": "text",
+    "ui:placeholder": "Enter the domain name for your tenant",
+    "ui:help": "This will be the unique identifier for your tenant.",
   },
 };
 
@@ -62,7 +60,6 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
   userId,
 }) => {
   const [schema] = useState(Tenatschema);
-  const [showForm, setShowForm] = useState(false);
   const { t } = useTranslation();
   const [updateBtnDisabled, setUpdateBtnDisabled] = React.useState(true);
 
@@ -88,14 +85,17 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
       showToastMessage("Form data is required", "error");
       return;
     }
+    console.log({ formData });
 
     const cohortDetails: CohortDetails = {
       name: formData?.name,
-      domain: formData?.domain,
+      domain: formData?.domain ? formData?.domain : " ",
       // status: formData?.status,
     };
 
     const cohortData = await tenantCreate(cohortDetails);
+    console.log({ cohortData });
+
     if (cohortData?.responseCode === 200 || cohortData?.responseCode === 201) {
       showToastMessage(t("TENANT.CREATE_SUCCESSFULLY"), "success");
       onClose();
@@ -131,7 +131,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
             customFields={customFields}
             onChange={handleChange}
             onError={handleError}
-            id="new-center-form"
+            // id="new-center-form"
           >
             <Box
               sx={{

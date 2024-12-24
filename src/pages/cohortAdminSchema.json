@@ -1,14 +1,13 @@
 {
-  "title": "",
-  "description": "",
   "type": "object",
-  "required": ["name", "username", "password", "mobileNo", "email", "role"],
+  "required": ["name", "username", "password"],
   "properties": {
     "name": {
-      "title": "Full Name",
-      "fieldId": null,
+      "title": "Cohort Name",
       "type": "string",
-      "validation": []
+      "fieldId": null,
+      "validation": [],
+      "description": "Enter the cohort name."
     },
     "mobileNo": {
       "title": "Mobile Number",
@@ -36,15 +35,18 @@
       "type": "string",
       "validation": []
     },
+
     "role": {
       "title": "Role",
       "type": "string",
+      "readOnly": true,
       "oneOf": [
         {
-          "title": "Learner",
-          "const": "learner"
+          "title": "Cohort Admin",
+          "const": "cohort_admin"
         }
       ],
+      "default": "cohort_admin",
       "validation": []
     }
   },

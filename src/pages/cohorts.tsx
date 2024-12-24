@@ -11,6 +11,7 @@ import {
   deleteCohort,
   fetchCohortMemberList,
   getCohortList,
+  getTenantLists,
   rolesList,
   updateCohortUpdate,
   userCreate,
@@ -55,6 +56,7 @@ import { useRouter } from "next/router";
 import cohortSchema from "./cohortSchema.json";
 import AddIcon from "@mui/icons-material/Add";
 import userJsonSchema from "./userSchema.json";
+import cohortASchema from "./cohortAdminSchema.json";
 
 type cohortFilterDetails = {
   type?: string;
@@ -91,7 +93,8 @@ const Center: React.FC = () => {
   );
 
   // handle states
-  const [selectedState, setSelectedState] = React.useState<string[]>([]);
+  const [cohortAdminSchema] = useState(cohortASchema);
+  const [selectedTenant, setSelectedTenant] = React.useState<string[]>([]);
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
   const [selectedBlock, setSelectedBlock] = React.useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState("Sort");
@@ -107,12 +110,12 @@ const Center: React.FC = () => {
   const [inputName, setInputName] = React.useState<string>("");
   const [loading, setLoading] = useState<boolean | undefined>(undefined);
   const [userId, setUserId] = useState("");
+  const [adminRole, setAdminRole] = useState<boolean>();
   const [schema] = React.useState(cohortSchema);
   const [userSchema, setUserSchema] = React.useState(userJsonSchema);
   const [openAddNewCohort, setOpenAddNewCohort] =
     React.useState<boolean>(false);
   const [statusValue, setStatusValue] = useState(Status.ACTIVE);
-
   const [pageCount, setPageCount] = useState(Numbers.ONE);
   const [pageOffset, setPageOffset] = useState(Numbers.ZERO);
   const [pageLimit, setPageLimit] = useState(Numbers.TEN);
@@ -125,12 +128,16 @@ const Center: React.FC = () => {
   const [formdata, setFormData] = useState<any>();
   const [totalCount, setTotalCound] = useState<number>(0);
   const [editFormData, setEditFormData] = useState<any>([]);
+  const [listOfTenants, setListOfTenants] = useState<any>([]);
   const [isEditForm, setIsEditForm] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState<any>("");
   const [Addmodalopen, setAddmodalopen] = React.useState(false);
   const [updateBtnDisabled, setUpdateBtnDisabled] = React.useState(true);
   const [addFormData, setAddFormData] = useState({});
   const [addBtnDisabled, setAddBtnDisabled] = useState(true);
+  const [previousTenantId, setPreviousTenantId] = useState<string | null>(null);
+  const [isCreateCohortAdminModalOpen, setIsCreateCohortAdminModalOpen] =
+    useState(false);
 
   const selectedBlockStore = useSubmittedButtonStore(
     (state: any) => state.selectedBlockStore
@@ -236,9 +243,48 @@ const Center: React.FC = () => {
     //   // "ui:help": "Date of birth in YYYY-MM-DD format.",
     // },
   };
+  const cohortAdminUiSchema = {
+    name: {
+      "ui:widget": "text",
+      "ui:placeholder": "Enter your full name",
+      "ui:help": "Full name, numbers, letters and spaces are allowed.",
+    },
+    username: {
+      "ui:widget": "text",
+      "ui:placeholder": "Enter your username",
+      "ui:help": "Username must be at least 3 characters long.",
+    },
+    password: {
+      "ui:widget": "password",
+      "ui:placeholder": "Enter a secure password",
+      "ui:help":
+        "Password must be at least 8 characters long, with at least one letter and one number.",
+    },
+    role: {
+      "ui:widget": "select",
+      "ui:placeholder": "Select a role",
+      // "ui:help": "Select a role.",
+    },
+    mobileNo: {
+      "ui:widget": "text",
+      "ui:placeholder": "Mobile number",
+      "ui:help": "Enter a valid 10-digit mobile number.",
+    },
+    email: {
+      // "ui:widget": "text",
+      "ui:placeholder": "Enter your email address",
+      "ui:help": "Enter a valid email address.",
+      // "ui:options": {},
+    },
+    // dob: {
+    //   "ui:widget": "date",
+    //   "ui:placeholder": "Select your date of birth",
+    //   // "ui:help": "Date of birth in YYYY-MM-DD format.",
+    // },
+  };
 
   const [filters, setFilters] = useState<cohortFilterDetails>({
-    type: "cohort",
+    type: CohortTypes.COHORT,
     // states: "",
     status: [statusValue],
     // districts: "",
@@ -278,9 +324,14 @@ const Center: React.FC = () => {
   };
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.localStorage) {
-      const userId = localStorage.getItem(Storage.USER_ID) || "";
-      setUserId(userId);
+    if (typeof window !== "undefined") {
+      const getRole = JSON.parse(localStorage.getItem("adminInfo") || "{}");
+      setAdminRole(
+        getRole?.tenantData?.[0]?.roleName == "tenant admin"
+          ? true
+          : false || getRole?.isSuperAdmin
+      );
+      setUserId(getRole?.userId);
     }
 
     // getAddCenterFormData();
@@ -288,38 +339,38 @@ const Center: React.FC = () => {
     getAdminInformation();
   }, []);
 
-  useEffect(() => {
-    const fetchRoles = async () => {
-      const obj = {
-        limit: "10",
-        page: 1,
-        filters: {
-          tenantId: selectedRowData?.tenantId,
-        },
-      };
-      const response = await rolesList(obj);
+  // useEffect(() => {
+  //   const fetchRoles = async () => {
+  //     const obj = {
+  //       limit: "10",
+  //       page: 1,
+  //       filters: {
+  //         tenantId: selectedRowData?.tenantId,
+  //       },
+  //     };
+  //     const response = await rolesList(obj);
 
-      if (response?.result) {
-        const rolesOptions = response.result.map((role: any) => ({
-          const: role.roleId,
-          title: role.title,
-        }));
+  //     if (response?.result) {
+  //       const rolesOptions = response.result.map((role: any) => ({
+  //         const: role.roleId,
+  //         title: role.title,
+  //       }));
 
-        setUserSchema((prevSchema) => ({
-          ...prevSchema,
-          properties: {
-            ...prevSchema.properties,
-            role: {
-              ...prevSchema.properties.role,
-              oneOf: rolesOptions,
-            },
-          },
-        }));
-      }
-    };
+  //       setUserSchema((prevSchema) => ({
+  //         ...prevSchema,
+  //         properties: {
+  //           ...prevSchema.properties,
+  //           role: {
+  //             ...prevSchema.properties.role,
+  //             oneOf: rolesOptions,
+  //           },
+  //         },
+  //       }));
+  //     }
+  //   };
 
-    fetchRoles();
-  }, [Addmodalopen]);
+  //   fetchRoles();
+  // }, [Addmodalopen]);
 
   const fetchUserList = async () => {
     setLoading(true);
@@ -341,7 +392,7 @@ const Center: React.FC = () => {
       const resp = await getCohortList(data);
 
       if (resp) {
-        const result = resp?.results?.cohortDetails;
+        const result = resp?.results;
 
         // Map response data to required format
         const resultData = result?.map((item: any) => ({
@@ -444,14 +495,18 @@ const Center: React.FC = () => {
   };
 
   useEffect(() => {
-    if (
-      selectedBlockCode !== "" ||
-      (selectedDistrictCode !== "" && selectedBlockCode === "")
-    ) {
-      fetchUserList();
-    }
-    fetchUserList();
-    // getFormData();
+    const fetchData = async () => {
+      if (
+        selectedBlockCode !== "" ||
+        (selectedDistrictCode !== "" && selectedBlockCode === "")
+      ) {
+        await fetchUserList();
+      }
+      await fetchUserList();
+      // getFormData();
+    };
+
+    fetchData();
   }, [
     pageOffset,
     pageLimit,
@@ -680,11 +735,27 @@ const Center: React.FC = () => {
     }
   };
 
-  const handleTenantChange = (selected: any) => {
-    console.log({ selected });
+  const handleTenantChange = (
+    selectedNames: string[],
+    selectedCodes: string[]
+  ) => {
+    if (selectedNames && selectedCodes) {
+      const tenantId = selectedCodes.join(",");
+
+      setSelectedTenant(selectedNames);
+
+      setFilters((prevFilter) => ({
+        ...prevFilter,
+        tenantId: tenantId,
+      }));
+    } else {
+      console.log("No valid tenants selected");
+    }
   };
+
   const handleCloseModal = () => {
     setConfirmationModalOpen(false);
+    setIsCreateCohortAdminModalOpen(false);
     setUpdateBtnDisabled(true);
   };
 
@@ -804,6 +875,7 @@ const Center: React.FC = () => {
         offset: 0,
       };
       const resp = await getCohortList(data);
+      setFormData(rowData);
       setEditFormData(mapFields(schema, rowData));
       setLoading(false);
       setIsEditForm(true);
@@ -829,11 +901,21 @@ const Center: React.FC = () => {
   };
 
   const handleAdd = (rowData: any) => {
+    console.log("fnction called");
+
+    // const tenantId = rowData?.tenantId;
+    // const currentTenantId = localStorage.getItem("tenantId");
+    // setPreviousTenantId(currentTenantId);
+    // if (tenantId) {
+    //   localStorage.setItem("tenantId", tenantId);
+    //   console.log("Modal opened, Tenant ID set:", tenantId);
+    // }
     setSelectedRowData({ ...rowData });
     setLoading(true);
     setAddmodalopen(true);
     setLoading(false);
   };
+  console.log({ previousTenantId });
 
   // add  extra buttons
   const extraActions: any = [
@@ -1040,6 +1122,13 @@ const Center: React.FC = () => {
     }
   };
   const handleAddmodal = () => {
+    // if (previousTenantId) {
+    //   localStorage.setItem("tenantId", previousTenantId);
+    //   console.log("Modal closed, Tenant ID restored:", previousTenantId);
+    // } else {
+    //   localStorage.removeItem("tenantId");
+    //   console.log("Modal closed, Tenant ID removed");
+    // }
     setAddmodalopen(false);
     setAddBtnDisabled(true);
     setAddFormData({});
@@ -1065,6 +1154,19 @@ const Center: React.FC = () => {
         }>;
       }
 
+      const roleObj = {
+        limit: "10",
+        page: 1,
+        filters: {
+          tenantId: selectedRowData?.tenantId,
+        },
+      };
+      const response = await rolesList(roleObj);
+      const matchedRole = response?.result?.find(
+        (role: any) => role.code === formData?.role
+      );
+      const roleId = matchedRole ? matchedRole?.roleId : null;
+
       let obj: UserCreateData = {
         name: formData?.name,
         mobile: formData?.mobileNo,
@@ -1073,23 +1175,26 @@ const Center: React.FC = () => {
         password: formData?.password,
         tenantCohortRoleMapping: [
           {
-            roleId: formData?.role,
+            roleId: roleId,
             tenantId: selectedRowData?.tenantId,
             cohortId: [selectedRowData?.cohortId],
           },
         ],
       };
-      const resp = await userCreate(obj as any);
+      const resp = await userCreate(obj as any, selectedRowData?.tenantId);
+      console.log({ selectedRowData, matchedRole, formData, response, resp });
 
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
-        showToastMessage(t("COHORTS.CREATE_SUCCESSFULLY"), "success");
+        showToastMessage(t("USER.CREATE_SUCCESSFULLY"), "success");
         setLoading(false);
+      } else if (resp?.responseCode === 403) {
+        showToastMessage(t("USER.USER_ALREADY_EXIST"), "error");
       } else {
-        showToastMessage(t("COHORTS.CREATE_FAILED"), "error");
+        showToastMessage(t("USER.FAILED_TO_CREATE"), "error");
       }
     } catch (error) {
       console.error("Error updating cohort:", error);
-      showToastMessage(t("COHORTS.CREATE_FAILED"), "error");
+      showToastMessage(t("USER.FAILED_TO_CREATE"), "error");
     } finally {
       setLoading(false);
       setConfirmButtonDisable(false);
@@ -1098,14 +1203,91 @@ const Center: React.FC = () => {
       setIsEditForm(false);
     }
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await getTenantLists(filters);
+      setListOfTenants(result);
+    };
 
-  // props to send in header
+    fetchData();
+  }, [filters]);
+
+  const handleCreateCohortAdmin = (rowData: any) => {
+    setSelectedRowData(rowData);
+    setIsCreateCohortAdminModalOpen(true);
+  };
+
+  const handleAddCohortAdminAction = async (
+    data: IChangeEvent<any, RJSFSchema, any>,
+    event: React.FormEvent<any>
+  ) => {
+    setLoading(true);
+    const formData = data?.formData;
+
+    try {
+      setLoading(true);
+      setConfirmButtonDisable(true);
+
+      const roleObj = {
+        limit: "10",
+        page: 1,
+        filters: {
+          tenantId: selectedRowData?.tenantId,
+        },
+      };
+      const response = await rolesList(roleObj);
+      console.log({ selectedRowData, response, formData });
+
+      const cohortAdminRole = response?.result.find(
+        (item: any) => item.code === "cohort_admin"
+      );
+
+      let obj = {
+        name: formData?.name,
+        username: formData?.username,
+        password: formData?.password,
+        mobile: formData?.mobileNo ? formData?.mobileNo : "",
+        email: formData?.email ? formData?.email : "",
+
+        tenantCohortRoleMapping: [
+          {
+            roleId: cohortAdminRole.roleId,
+            tenantId: selectedRowData?.tenantId,
+            cohortId: [selectedRowData?.cohortId],
+          },
+        ],
+      };
+      const resp = await userCreate(obj as any, selectedRowData?.tenantId);
+
+      if (resp?.responseCode === 200 || resp?.responseCode === 201) {
+        showToastMessage(
+          t("COHORTS.COHORT_ADMIN_CREATE_SUCCESSFULLY"),
+          "success"
+        );
+        setLoading(false);
+      } else {
+        showToastMessage(t("COHORTS.COHORT_ADMIN_CREATE_FAILED"), "error");
+      }
+    } catch (error) {
+      console.error("Error updating cohort:", error);
+      showToastMessage(t("COHORTS.CREATE_FAILED"), "error");
+    } finally {
+      setLoading(false);
+      setConfirmButtonDisable(false);
+      handleCloseModal();
+      onCloseEditMOdel();
+      fetchUserList();
+      setIsEditForm(false);
+    }
+  };
+
   const userProps = {
+    tenants: listOfTenants,
     userType: t("COHORTS.COHORTS"),
     searchPlaceHolder: t("COHORTS.SEARCH_COHORT"),
     showTenantCohortDropDown: true,
     isTenantShow: true,
-    selectedState: selectedState,
+    // selectedState: selectedState,
     selectedStateCode: selectedStateCode,
     selectedDistrict: selectedDistrict,
     // selectedDistrictCode: selectedDistrictCode,
@@ -1115,6 +1297,7 @@ const Center: React.FC = () => {
     selectedFilter: selectedFilter,
     statusArchived: true,
     statusInactive: true,
+    selectedTenant: selectedTenant,
     handleTenantChange: handleTenantChange,
     // handleStateChange: handleStateChange,
     handleDistrictChange: handleDistrictChange,
@@ -1173,11 +1356,13 @@ const Center: React.FC = () => {
           </Box>
         ) : cohortData?.length > 0 ? (
           <KaTableComponent
-            columns={getCohortTableData(t, isMobile)}
+            columns={getCohortTableData(t, isMobile, adminRole)}
             addAction={true}
             data={cohortData}
             limit={pageLimit}
+            roleButton
             offset={pageOffset}
+            addCohortBtnFunc={handleCreateCohortAdmin}
             paginationEnable={totalCount > Numbers.TEN}
             PagesSelector={PagesSelector}
             pagination={pagination}
@@ -1198,7 +1383,7 @@ const Center: React.FC = () => {
             height="20vh"
           >
             <Typography marginTop="10px" textAlign={"center"}>
-              {t("COMMON.NO_CENTER_FOUND")}
+              {t("COMMON.NO_COHORT_FOUND")}
             </Typography>
           </Box>
         )}
@@ -1275,6 +1460,7 @@ const Center: React.FC = () => {
             </DynamicForm>
           )}
         </SimpleModal>
+
         <SimpleModal
           open={Addmodalopen}
           onClose={handleAddmodal}
@@ -1313,6 +1499,69 @@ const Center: React.FC = () => {
                     marginLeft: "10px",
                   }}
                   onClick={handleAddmodal}
+                >
+                  {t("COMMON.CANCEL")}
+                </Button>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={addBtnDisabled}
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    width: "auto",
+                    height: "40px",
+                    marginLeft: "10px",
+                  }}
+                  onClick={() => {
+                    setSubmittedButtonStatus(true);
+                  }}
+                >
+                  {t("COMMON.ADD")}
+                </Button>
+              </Box>
+            </DynamicForm>
+          )}
+        </SimpleModal>
+
+        <SimpleModal
+          open={isCreateCohortAdminModalOpen}
+          onClose={handleCloseModal}
+          showFooter={false}
+          modalTitle={t("COHORTS.ADD_NEW_COHORT_ADMIN")}
+        >
+          {cohortAdminSchema && cohortAdminUiSchema && (
+            <DynamicForm
+              schema={cohortAdminSchema}
+              uiSchema={cohortAdminUiSchema}
+              onSubmit={handleAddCohortAdminAction}
+              onChange={handleChangeForm}
+              onError={handleError}
+              widgets={{}}
+              showErrorList={false}
+              customFields={customFields}
+              formData={addFormData}
+              id="update-center-form"
+            >
+              <Box
+                style={{
+                  display: "flex",
+                  justifyContent: "right",
+                  marginTop: "20px",
+                }}
+                gap={2}
+              >
+                <Button
+                  variant="outlined"
+                  type="button"
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    width: "auto",
+                    height: "40px",
+                    marginLeft: "10px",
+                  }}
+                  onClick={handleCloseModal}
                 >
                   {t("COMMON.CANCEL")}
                 </Button>

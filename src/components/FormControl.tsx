@@ -59,7 +59,7 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
       selectedNames = defaultValue ? [defaultValue] : [];
     }
 
-    const selectedCodes = selectedNames?.map(
+    const selectedCodes = selectedNames.map(
       (name) => codes[names.indexOf(name)]
     );
 
@@ -74,19 +74,36 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
           labelId="multiple-checkbox-label"
           id="multiple-checkbox"
           value={
-            selectedCategories?.length === 0 || selectedCategories[0] === ""
-              ? defaultValue
-                ? [defaultValue]
-                : ""
-              : selectedCategories
+            // If no categories are selected (empty or invalid selection), show default value or the first name from 'names'
+            selectedCategories?.length <= 0 || selectedCategories[0] === ""
+              ? names?.length > 1
+                ? [names[0]] // If there are multiple tenants, default to the first one
+                : defaultValue
+                  ? [defaultValue]
+                  : [] // Else, use defaultValue or empty array
+              : selectedCategories // If categories are selected, use selectedCategories
           }
-          onChange={handleChange}
+          onChange={handleChange} // Handle the change event for the selection
           input={<OutlinedInput label={tagName} />}
           renderValue={(selected) => {
+            // Ensure selected is always an array, even if one item is selected
             const selectedArray = Array.isArray(selected)
               ? selected
               : [selected];
-            return selectedArray.join(", ");
+
+            // Get the corresponding names for the selected tenant IDs
+            const selectedNames = selectedArray
+              .map((tenantId) => {
+                const index = codes.indexOf(tenantId); // Find the corresponding name using `codes`
+                return index >= 0 ? names[index] : tenantId; // Map tenantId to name or return tenantId if not found
+              })
+              .filter((name) => name !== ""); // Filter out empty values
+
+            // Return single or multiple selected names
+            if (selectedNames.length === 1) {
+              return selectedNames[0]; // Return single selected name
+            }
+            return selectedNames.join(", "); // Join multiple selected names with commas
           }}
           MenuProps={MenuProps}
         >
@@ -96,6 +113,7 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
             </MenuItem>
           )}
 
+          {/* Render menu items for available names */}
           {names?.map((name) => (
             <MenuItem key={name} value={name}>
               <ListItemText primary={name} />

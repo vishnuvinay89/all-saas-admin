@@ -107,7 +107,8 @@ export const transformArray = (arr: State[]): State[] => {
   }
   return arr?.map((item) => ({
     ...item,
-    label: transformLabel(item.label),
+    label: transformLabel(item?.name),
+    value:item?.tenantId
   }));
 };
 

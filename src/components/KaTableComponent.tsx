@@ -33,6 +33,7 @@ interface KaTableComponentProps {
   onEdit?: any;
   onAdd?: any;
   addBtnFunc?: any;
+  addCohortBtnFunc?: any;
   addAction?: boolean;
   roleButton?: boolean;
   reassignCohort?: any;
@@ -48,6 +49,7 @@ interface KaTableComponentProps {
   pagination?: boolean;
   reassignType?: string;
   handleMemberClick?: any;
+  allowEditIcon?: boolean;
 }
 
 const KaTableComponent: React.FC<KaTableComponentProps> = ({
@@ -61,6 +63,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   onDelete,
   onAdd,
   addBtnFunc,
+  addCohortBtnFunc,
   addAction,
   roleButton,
   reassignCohort,
@@ -69,6 +72,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
   pagination = true,
   reassignType,
   handleMemberClick,
+  allowEditIcon,
 }) => {
   const [selectedRowIds, setSelectedRowIds] = useState<number[]>([]);
   const { t } = useTranslation();
@@ -142,6 +146,7 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                       addAction={addAction}
                       reassignCohort={reassignCohort}
                       onDelete={onDelete}
+                      allowEditIcon={allowEditIcon}
                       // userAction={props.rowData?.userId}
                       disable={props.rowData?.status === Status.ARCHIVED}
                       reassignType={reassignType}
@@ -181,6 +186,40 @@ const KaTableComponent: React.FC<KaTableComponentProps> = ({
                       >
                         <Typography variant="body2" fontFamily={"Poppins"}>
                           {t("TABLE_TITLE.CREATE_TENANT_ADMIN")}
+                        </Typography>
+                      </Button>
+                    </Tooltip>
+                  );
+                }
+                if (
+                  props.column.key === DataKey.CREATE_COHORT_ADMIN &&
+                  roleButton
+                ) {
+                  return (
+                    <Tooltip title={t("TABLE_TITLE.CREATE_COHORT_ADMIN")}>
+                      <Button
+                        onClick={() => {
+                          addCohortBtnFunc(props.rowData);
+                        }}
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifySelf: "center",
+                          cursor: "pointer",
+                          color:
+                            props.rowData?.status === Status.ARCHIVED
+                              ? theme?.palette?.secondary.contrastText
+                              : "",
+                          // backgroundColor: "#EAF2FF",
+                          // p: "4px",
+                          // "&:hover": {
+                          //   backgroundColor: "#d0e5ff",
+                          // },
+                        }}
+                      >
+                        <Typography variant="body2" fontFamily={"Poppins"}>
+                          {t("TABLE_TITLE.CREATE_COHORT_ADMIN")}
                         </Typography>
                       </Button>
                     </Tooltip>

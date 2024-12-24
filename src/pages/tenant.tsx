@@ -38,7 +38,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import Loader from "@/components/Loader";
-import { getFormRead } from "@/services/CreateUserService";
+import { createUser, getFormRead } from "@/services/CreateUserService";
 import { customFields } from "@/components/GeneratedSchemas";
 import { CustomField } from "@/utils/Interfaces";
 import { showToastMessage } from "@/components/Toastify";
@@ -165,7 +165,7 @@ const Tenant: React.FC = () => {
   const [isCreateTenantAdminModalOpen, setIsCreateTenantAdminModalOpen] =
     useState(false);
   const [selectedRowData, setSelectedRowData] = useState<any>("");
-  const [adminRole, setAdminRole] = useState("");
+  const [adminRole, setAdminRole] = useState();
   const [updateBtnDisabled, setUpdateBtnDisabled] = React.useState(true);
   const [addBtnDisabled, setAddBtnDisabled] = React.useState(false);
   const [addFormData, setAddFormData] = useState({});
@@ -240,10 +240,21 @@ const Tenant: React.FC = () => {
       // },
       "ui:disabled": true,
     },
-    district: {
+    username: {
       "ui:widget": "text",
-      "ui:placeholder": "Enter district",
-      "ui:options": {},
+      "ui:placeholder": "Enter your username",
+      "ui:help": "Username must be at least 3 characters long.",
+    },
+    password: {
+      "ui:widget": "password",
+      "ui:placeholder": "Enter a secure password",
+      "ui:help":
+        "Password must be at least 8 characters long, with at least one letter and one number.",
+    },
+    role: {
+      "ui:widget": "select",
+      "ui:placeholder": "Select a role",
+      // "ui:help": "Select a role.",
     },
     status: {
       "ui:widget": "CustomRadioWidget",
@@ -251,11 +262,6 @@ const Tenant: React.FC = () => {
         defaultValue: "active",
       },
       "ui:disabled": true,
-    },
-    block: {
-      "ui:widget": "text",
-      "ui:placeholder": "Enter block",
-      "ui:options": {},
     },
   };
 
@@ -324,7 +330,7 @@ const Tenant: React.FC = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const getRole = JSON.parse(localStorage.getItem("adminInfo") || "{}");
-      setAdminRole(getRole?.role);
+      setAdminRole(getRole?.isSuperAdmin);
       setUserId(getRole?.userId);
     }
 
@@ -830,6 +836,7 @@ const Tenant: React.FC = () => {
     setLoading(false);
   };
   const handleAdd = (rowData: any) => {
+    // localStorage.setItem("tenantId", rowData?.tenantId);
     setSelectedRowData({ ...rowData });
     setLoading(true);
     setAddmodalopen(true);
@@ -925,6 +932,63 @@ const Tenant: React.FC = () => {
         setLoading(false);
       } else {
         showToastMessage(t("COHORTS.CREATE_FAILED"), "error");
+      }
+    } catch (error) {
+      console.error("Error updating cohort:", error);
+      showToastMessage(t("COHORTS.CREATE_FAILED"), "error");
+    } finally {
+      // localStorage?.setItem("tenantId", "undefined");
+      setLoading(false);
+      setConfirmButtonDisable(false);
+      handleCloseAddModal();
+      onCloseEditMOdel();
+      fetchTenantList();
+      setIsEditForm(false);
+    }
+  };
+  const handleAddTenantAdminAction = async (
+    data: IChangeEvent<any, RJSFSchema, any>,
+    event: React.FormEvent<any>
+  ) => {
+    setLoading(true);
+    const formData = data?.formData;
+
+    try {
+      setLoading(true);
+      setConfirmButtonDisable(true);
+
+      const roleObj = {
+        limit: "10",
+        page: 1,
+        filters: {
+          tenantId: selectedRowData?.tenantId,
+        },
+      };
+      const response = await rolesList(roleObj);
+      const tenantAdminRole = response?.result.find(
+        (item: any) => item.code === "tenant_admin"
+      );
+
+      let obj = {
+        name: formData?.name,
+        username: formData?.username,
+        password: formData?.password,
+        mobile: formData?.mobileNo ? formData?.mobileNo : "",
+        email: formData?.email ? formData?.email : "",
+        tenantCohortRoleMapping: [
+          {
+            roleId: tenantAdminRole.roleId,
+            tenantId: selectedRowData?.tenantId,
+          },
+        ],
+      };
+      const resp = await createUser(obj);
+
+      if (resp?.responseCode === 200 || resp?.responseCode === 201) {
+        showToastMessage(t("TENANT.TENANT_ADMIN_CREATE"), "success");
+        setLoading(false);
+      } else {
+        showToastMessage(t("TENANT.TENANT_ADMIN_FAILED_TO_CREATE"), "error");
       }
     } catch (error) {
       console.error("Error updating cohort:", error);
@@ -1195,9 +1259,9 @@ const Tenant: React.FC = () => {
     handleSortChange: handleSortChange,
     handleFilterChange: handleFilterChange,
     handleSearch: handleSearch,
-    // showAddNew: adminRole === "tenant_admin" ? true : false,
-    showAddNew: true,
-    statusArchived: false,
+    showAddNew: adminRole == true ? true : false,
+    // showAddNew: true,
+    statusArchived: true,
     handleAddUserClick: handleAddUserClick,
     statusValue: statusValue,
     setStatusValue: setStatusValue,
@@ -1323,6 +1387,7 @@ const Tenant: React.FC = () => {
             pageSizes={pageSizeArray}
             extraActions={extraActions}
             showIcons={true}
+            allowEditIcon={adminRole == true ? false : true}
             onEdit={handleEdit}
             onAdd={handleAdd}
             onDelete={handleDelete}
@@ -1336,7 +1401,7 @@ const Tenant: React.FC = () => {
             height="20vh"
           >
             <Typography marginTop="10px" textAlign={"center"}>
-              {t("COMMON.NO_CENTER_FOUND")}
+              {t("COMMON.NO_TENANT_FOUND")}
             </Typography>
           </Box>
         )}
@@ -1477,7 +1542,7 @@ const Tenant: React.FC = () => {
             <DynamicForm
               schema={tenantAdminSchema}
               uiSchema={tenantAdminUiSchmea}
-              onSubmit={handleAddAction}
+              onSubmit={handleAddTenantAdminAction}
               onChange={handleChangeForm}
               onError={handleError}
               widgets={{}}

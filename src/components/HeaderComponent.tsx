@@ -31,6 +31,7 @@ import { userAgent } from "next/server";
 interface State {
   value: string;
   label: string;
+  tenantId?: string;
 }
 
 interface District {
@@ -278,7 +279,7 @@ const HeaderComponent = ({
             const stateField = JSON.parse(admin).customFields.find(
               (field: any) => field.label === "STATES"
             );
-            if (stateField.value.includes(",")) {
+            if (stateField?.value?.includes(",")) {
               setStateDefaultValue(t("COMMON.ALL_STATES"));
             } else {
               setStateDefaultValue(stateField.value);

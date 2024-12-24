@@ -50,6 +50,7 @@ const LoginPage = () => {
   const [lang, setLang] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState(lang);
   const [language, setLanguage] = useState(selectedLanguage);
+  const [adminInfo, setAdminInfo] = useState();
 
   const theme = useTheme<any>();
   const router = useRouter();
@@ -136,17 +137,19 @@ const LoginPage = () => {
       }
       const fieldValue = true;
       if (userId) {
-        console.log("true");
         const response = await getUserDetailsInfo(userId, fieldValue);
 
         const userInfo = response?.userData;
+        setAdminInfo(userInfo);
+        const tenantId = userInfo?.tenantData?.[0]?.tenantId;
+        localStorage.setItem("tenantId", tenantId);
         //set user info in zustand store
         if (typeof window !== "undefined" && window.localStorage) {
           localStorage.setItem("adminInfo", JSON.stringify(userInfo));
           localStorage.setItem("stateName", userInfo?.customFields[0]?.value);
         }
 
-        if (userInfo.role !== Role.ADMIN) {
+        if (userInfo.tenantData?.[0]?.roleName === Role.LOGIN_LEARNER) {
           const errorMessage = t("LOGIN_PAGE.ACCESS_DENIED");
           showToastMessage(errorMessage, "error");
           localStorage.removeItem("token");
@@ -185,7 +188,6 @@ const LoginPage = () => {
 
             const userResponse = await getUserId();
             localStorage.setItem("userId", userResponse?.userId);
-            // Update Zustand store
             setUserId(userResponse?.userId || "");
 
             localStorage.setItem("name", userResponse?.name);
@@ -391,7 +393,7 @@ const LoginPage = () => {
               marginTop="1.2rem"
               className="remember-me-checkbox"
             >
-              {/* <Checkbox
+              <Checkbox
                 onChange={(e) => setRememberMe(e.target.checked)}
                 checked={rememberMe}
               />
@@ -414,7 +416,7 @@ const LoginPage = () => {
                 }}
               >
                 {t("LOGIN_PAGE.REMEMBER_ME")}
-              </Typography> */}
+              </Typography>
             </Box>
             <Box marginTop="2rem" textAlign="center">
               <Button
