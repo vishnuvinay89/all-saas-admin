@@ -260,7 +260,7 @@ data:any
       return error;
     }
   };
-  export const userCreate = async (data: cohortListData): Promise<any> => {
+  export const userCreate = async (data: cohortListData,userTenantId:string): Promise<any> => {
     let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.USER_CREATE}`;
   
     try {

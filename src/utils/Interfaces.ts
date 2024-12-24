@@ -1,6 +1,6 @@
 export interface State {
-  value: string;
-  label: string;
+  tenantId: any;
+  label: any;
 }
 
 export interface FieldOption {

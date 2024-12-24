@@ -176,12 +176,20 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
               lg={inModal ? 12 : isCenterSelection ? 6 : 6}
             >
               <MultipleSelectCheckmarks
-                names={tenants?.map(
-                  (tenant: any) =>
-                    tenant.label?.toLowerCase().charAt(0).toUpperCase() +
-                    tenant.label?.toLowerCase().slice(1)
-                )}
-                codes={tenants?.map((tenant: any) => tenant.value)}
+                names={
+                  Array.isArray(tenants)
+                    ? tenants.map(
+                        (tenant: any) =>
+                          tenant.label?.toLowerCase().charAt(0).toUpperCase() +
+                          tenant.label?.toLowerCase().slice(1)
+                      )
+                    : []
+                }
+                codes={
+                  Array.isArray(tenants)
+                    ? tenants.map((tenant: Tenant) => tenant.value)
+                    : []
+                }
                 tagName={t("TENANT.TENANT_MEMBER")}
                 selectedCategories={selectedTenant}
                 onCategoryChange={handleTenantChange}
@@ -200,16 +208,25 @@ const AreaSelection: React.FC<DropdownBoxProps> = ({
               lg={inModal ? 12 : isCenterSelection ? 6 : 6}
             >
               <MultipleSelectCheckmarks
-                names={cohorts?.map((cohort: any) => cohort.label)}
-                codes={cohorts?.map((cohort) => cohort.value)}
+                names={
+                  Array.isArray(cohorts)
+                    ? cohorts.map((cohort: any) => cohort.label)
+                    : []
+                }
+                codes={
+                  Array.isArray(cohorts)
+                    ? cohorts.map((cohort: any) => cohort.cohortId)
+                    : []
+                }
                 tagName={t("COHORTS.COHORT_MEMBER")}
                 selectedCategories={selectedCohort}
                 onCategoryChange={handleCohortChange}
-                disabled={
-                  cohorts?.length <= 0 ||
-                  (selectedTenant?.length === 0 &&
-                    tenantDefaultValue === t("COHORTS.ALL_STATES"))
-                }
+                // disabled={
+                //   !Array.isArray(cohorts) ||
+                //   cohorts.length <= 0 ||
+                //   (selectedTenant?.length === 0 &&
+                //     tenantDefaultValue === t("COHORTS.ALL_STATES"))
+                // }
                 overall={!inModal}
                 defaultValue={cohortDefaultValue}
               />

@@ -55,14 +55,16 @@ instance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response.data.responseCode === 401 && !originalRequest._retry) {
+    if (error?.response?.data?.responseCode === 401 && !originalRequest._retry) {
       if (error?.response?.request?.responseURL.includes("/auth/refresh")) {
+        // alert("logout")
         window.location.href = "/logout";
       } else {
         originalRequest._retry = true;
         try {
           const accessToken = await refreshToken();
           if (!accessToken) {
+            // alert("logout-2")
             window.location.href = "/logout";
           } else {
             originalRequest.headers.Authorization = `Bearer ${accessToken}`;

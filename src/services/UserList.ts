@@ -14,24 +14,17 @@ export interface userListParam {
   sort?: object;
   offset?: number;
 }
+export interface learnerListParam {
+  payload: any;
+}
 
 export const userList = async ({
-  limit,
-  //  page,
-  filters,
-  sort,
-  offset,
-  fields,
-}: userListParam): Promise<any> => {
+ payload
+}: learnerListParam): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.LIST}`;
   try {
-    const response = await post(apiUrl, {
-      limit,
-      filters,
-      sort,
-      offset,
-      fields,
-    });
+    const response = await post(apiUrl,payload);
+    
     return response?.data?.result;
   } catch (error) {
     console.error("error in getting user list", error);
