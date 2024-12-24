@@ -394,7 +394,11 @@ const UserTable: React.FC<UserTableProps> = ({
           role: "learner",
         });
       // else setFilters({ role: role });
-      else setFilters({});
+      else
+        setFilters({
+          role: "learner",
+          status: [statusValue],
+        });
     } else {
       const stateCodes = code?.join(",");
       setSelectedStateCode(stateCodes);
@@ -1564,7 +1568,7 @@ const UserTable: React.FC<UserTableProps> = ({
         handleCloseModal={() => setConfirmationModalOpen(false)}
         modalOpen={confirmationModalOpen}
       />
-
+      {/* 
       <ReassignCenterModal
         open={isReassignCohortModalOpen}
         onClose={handleCloseReassignModal}
@@ -1578,9 +1582,9 @@ const UserTable: React.FC<UserTableProps> = ({
         districtCode={districtCode}
         cohortId={cohortId}
         centers={assignedCenters}
-      />
+      /> */}
 
-      <CommonUserModal
+      {/* <CommonUserModal
         open={openAddLearnerModal}
         onClose={handleCloseAddLearnerModal}
         formData={formData}
@@ -1594,7 +1598,7 @@ const UserTable: React.FC<UserTableProps> = ({
               ? FormContextType.TEACHER
               : FormContextType.TEAM_LEADER
         }
-      />
+      /> */}
     </HeaderComponent>
   );
 };

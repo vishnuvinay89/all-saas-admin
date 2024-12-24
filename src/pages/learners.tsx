@@ -42,12 +42,12 @@ const Learners: React.FC = () => {
              onSubmit={handleModalSubmit}
 
             /> */}
-      <CommonUserModal
+      {/* <CommonUserModal
         open={openAddLearnerModal}
         onClose={handleCloseAddLearnerModal}
         onSubmit={handleModalSubmit}
         userType={FormContextType.STUDENT}
-      />
+      /> */}
     </>
   );
 };
