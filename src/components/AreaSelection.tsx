@@ -7,24 +7,24 @@ import { capitalizeFirstLetterOfEachWordInArray } from "@/utils/Helper";
 import { useMediaQuery } from "@mui/material";
 import { Role } from "@/utils/app.constant";
 
-interface State {
-  value: string;
-  label: string;
-}
+// interface State {
+//   value: string;
+//   label: string;
+// }
 
-interface District {
-  value: string;
-  label: string;
-}
+// interface District {
+//   value: string;
+//   label: string;
+// }
 
-interface Block {
-  value: string;
-  label: string;
-}
-interface Centers {
-  cohortId: string;
-  name: string;
-}
+// interface Block {
+//   value: string;
+//   label: string;
+// }
+// interface Centers {
+//   cohortId: string;
+//   name: string;
+// }
 interface Tenant {
   value: string;
   label: string;

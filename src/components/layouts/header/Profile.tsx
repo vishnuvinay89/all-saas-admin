@@ -361,7 +361,7 @@ const Profile = () => {
           </Box>
         </Box>
       </Menu>
-      {openEditModal && (
+      {/* {openEditModal && (
         <CommonUserModal
           open={openEditModal}
           onClose={handleCloseAddLearnerModal}
@@ -371,7 +371,7 @@ const Profile = () => {
           onSubmit={handleModalSubmit}
           userType={userType}
         />
-      )}
+      )} */}
     </>
   );
 };

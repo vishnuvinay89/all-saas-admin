@@ -1,7 +1,7 @@
 import FingerprintJS from "fingerprintjs2";
 import { getUserDetailsInfo } from "../services/UserList";
 import { Role, FormContextType, FormValues, InputTypes } from "./app.constant";
-import { State } from "./Interfaces";
+import { Cohort, State ,Tenant} from "./Interfaces";
 import { useQueryClient } from '@tanstack/react-query';
 
 interface Value {
@@ -101,7 +101,7 @@ export const transformLabel = (label: string): string => {
     .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize the first letter of each word
 };
 
-export const transformArray = (arr: State[]): State[] => {
+export const transformArray = (arr: Tenant[]): Cohort[] => {
   if (!arr || !Array.isArray(arr)) {
     return arr;
   }

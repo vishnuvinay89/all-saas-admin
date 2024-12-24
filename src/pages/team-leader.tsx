@@ -12,7 +12,9 @@ const TeamLeader: React.FC = () => {
     handleOpenAddTeamLeaderModal();
   };
   const [submitValue, setSubmitValue] = React.useState<boolean>(false);
-  const setSubmittedButtonStatus = useSubmittedButtonStore((state:any) => state.setSubmittedButtonStatus);
+  const setSubmittedButtonStatus = useSubmittedButtonStore(
+    (state: any) => state.setSubmittedButtonStatus
+  );
 
   const [openAddTeamLeaderModal, setOpenAddTeamLeaderModal] =
     React.useState(false);
@@ -23,7 +25,7 @@ const TeamLeader: React.FC = () => {
     setSubmitValue(true);
   };
   const handleCloseAddTeamLeaderModal = () => {
-    setSubmittedButtonStatus(false)
+    setSubmittedButtonStatus(false);
 
     setOpenAddTeamLeaderModal(false);
   };
@@ -38,12 +40,12 @@ const TeamLeader: React.FC = () => {
         parentState={submitValue}
       />
 
-      <CommonUserModal
+      {/* <CommonUserModal
         open={openAddTeamLeaderModal}
         onClose={handleCloseAddTeamLeaderModal}
         onSubmit={handleModalSubmit}
         userType={FormContextType.TEAM_LEADER}
-      />
+      /> */}
     </>
   );
 };
