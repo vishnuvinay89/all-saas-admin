@@ -9,18 +9,6 @@
       "validation": [],
       "description": "Enter the cohort name."
     },
-    "username": {
-      "title": "Username",
-      "fieldId": null,
-      "type": "string",
-      "validation": []
-    },
-    "password": {
-      "title": "Password",
-      "fieldId": null,
-      "type": "string",
-      "validation": []
-    },
     "type": {
       "title": "Type",
       "type": "string",
@@ -42,19 +30,6 @@
       "readOnly": true,
       "validation": [],
       "description": "The current status of the cohort, this field is read-only."
-    },
-
-    "role": {
-      "title": "Role",
-      "type": "string",
-      "oneOf": [
-        {
-          "title": "Learner",
-          "const": "learner"
-        }
-      ],
-      "validation": []
     }
-  },
-  "dependencies": {}
+  }
 }

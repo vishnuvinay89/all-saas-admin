@@ -1,6 +1,8 @@
 import { CohortMemberList } from "@/utils/Interfaces";
 import { deleteApi, get, patch, post, put } from "../RestClient";
 import config  from "@/utils/urlConstants.json";
+import axios from 'axios';
+
 export interface cohortListFilter {
   type: string;
   status: string[];
@@ -251,26 +253,34 @@ data:any
     let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.ROLES_LIST}`;
   
     try {
-      const response = await post(apiUrl, data);
-      console.log({response});
-      
+      const response = await post(apiUrl, data);      
       return response?.data;
     } catch (error) {
       console.error("Error in Getting cohort List Details", error);
       return error;
     }
   };
-  export const userCreate = async (data: cohortListData,userTenantId:string): Promise<any> => {
-    let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.USER_CREATE}`;
+
+  export const userCreate = async (data: cohortListData, userTenantId: string): Promise<any> => {
+    const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.USER_CREATE}`;
   
     try {
-      const response = await post(apiUrl, data);
-      return response?.data;
+      const token=localStorage.getItem('token')
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type':'application/json',
+        'tenantid': userTenantId ,
+      };
+  
+      const response = await axios.post(apiUrl, data, { headers });
+      console.log({response});
+      return response?.data;  
     } catch (error) {
-      console.error("Error in Getting cohort List Details", error);
-      return error;
+      console.error('Error in Creating User:', error);
+      return error ; 
     }
   };
+  
 
   export const deleteUser = async (
     userId: string

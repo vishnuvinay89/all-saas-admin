@@ -251,11 +251,11 @@ const Tenant: React.FC = () => {
       "ui:help":
         "Password must be at least 8 characters long, with at least one letter and one number.",
     },
-    role: {
-      "ui:widget": "select",
-      "ui:placeholder": "Select a role",
-      // "ui:help": "Select a role.",
-    },
+    // role: {
+    //   "ui:widget": "select",
+    //   "ui:placeholder": "Select a role",
+    //   // "ui:help": "Select a role.",
+    // },
     status: {
       "ui:widget": "CustomRadioWidget",
       "ui:options": {
@@ -403,7 +403,7 @@ const Tenant: React.FC = () => {
 
   useEffect(() => {
     fetchTenantList();
-  }, [openAddNewCohort]);
+  }, [openAddNewCohort, filters]);
 
   // const getFormData = async () => {
   //   try {
@@ -761,7 +761,6 @@ const Tenant: React.FC = () => {
     newValue: any
   ) => {
     setStatusValue(newValue);
-
     setSelectedFilter(newValue);
     setPageSize(Numbers.TEN);
     setPageLimit(Numbers.TEN);
@@ -1261,11 +1260,12 @@ const Tenant: React.FC = () => {
     handleSearch: handleSearch,
     showAddNew: adminRole == true ? true : false,
     // showAddNew: true,
+    showSearch: false,
     statusArchived: true,
     handleAddUserClick: handleAddUserClick,
     statusValue: statusValue,
     setStatusValue: setStatusValue,
-    showSort: true,
+    showSort: false,
     selectedBlockCode: selectedBlockCode,
     setSelectedBlockCode: setSelectedBlockCode,
     selectedDistrictCode: selectedDistrictCode,
