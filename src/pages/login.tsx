@@ -141,8 +141,6 @@ const LoginPage = () => {
 
         const userInfo = response?.userData;
         setAdminInfo(userInfo);
-        const tenantId = userInfo?.tenantData?.[0]?.tenantId;
-        localStorage.setItem("tenantId", tenantId);
         //set user info in zustand store
         if (typeof window !== "undefined" && window.localStorage) {
           localStorage.setItem("adminInfo", JSON.stringify(userInfo));
