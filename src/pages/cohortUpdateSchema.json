@@ -1,0 +1,34 @@
+{
+  "type": "object",
+  "required": ["name", "status", "type"],
+  "properties": {
+    "name": {
+      "title": "Cohort Name",
+      "type": "string",
+      "fieldId": null,
+      "validation": [],
+      "description": "Enter the cohort name."
+    },
+    "type": {
+      "title": "Type",
+      "type": "string",
+      "default": "cohort",
+      "fieldId": null,
+      "validation": [],
+      "description": "Indicates the type of user or entity."
+    },
+
+    "status": {
+      "title": "Status",
+      "type": "string",
+      "oneOf": [
+        { "const": "active", "title": "Active" },
+        { "const": "inactive", "title": "Inactive" },
+        { "const": "archived", "title": "Archived" }
+      ],
+      "default": "active",
+      "validation": [],
+      "description": "The current status of the cohort, this field is read-only."
+    }
+  }
+}

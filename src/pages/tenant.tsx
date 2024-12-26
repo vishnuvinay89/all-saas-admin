@@ -375,18 +375,21 @@ const Tenant: React.FC = () => {
 
         setCohortData(resultData);
         const totalCount = resp.length;
+
         // setTotalCount(totalCount);   // Set the total count
 
-        setPagination(totalCount > 10);
-        setPageSizeArray(
-          totalCount > 15
-            ? [5, 10, 15]
-            : totalCount > 10
-              ? [5, 10]
-              : totalCount > 5
-                ? [5]
-                : []
-        );
+        setPagination(totalCount >= 10);
+        let pageSizeArrayCount: any = [];
+
+        if (totalCount > 15) {
+          pageSizeArrayCount = [5, 10, 15];
+        } else if (totalCount >= 10) {
+          pageSizeArrayCount = [5, 10];
+        } else if (totalCount > 5) {
+          pageSizeArrayCount = [5];
+        }
+
+        setPageSizeArray(pageSizeArrayCount);
         const pageCount = Math.ceil(totalCount / pageLimit);
         setPageCount(pageCount);
       } else {
@@ -1380,7 +1383,7 @@ const Tenant: React.FC = () => {
             limit={pageLimit}
             roleButton
             offset={pageOffset}
-            paginationEnable={totalCount > Numbers.TEN}
+            paginationEnable={totalCount >= Numbers.TEN}
             PagesSelector={PagesSelector}
             pagination={pagination}
             PageSizeSelector={PageSizeSelectorFunction}
