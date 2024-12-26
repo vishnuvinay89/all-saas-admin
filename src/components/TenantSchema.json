@@ -10,11 +10,6 @@
       "fieldId": null,
       "validation": [],
       "description": "Enter tenant name."
-    },
-    "domain": {
-      "title": "Domain",
-      "type": "string",
-      "fieldId": null
     }
   },
   "dependencies": {}

@@ -901,8 +901,6 @@ const Center: React.FC = () => {
   };
 
   const handleAdd = (rowData: any) => {
-    console.log("fnction called");
-
     // const tenantId = rowData?.tenantId;
     // const currentTenantId = localStorage.getItem("tenantId");
     // setPreviousTenantId(currentTenantId);
@@ -915,7 +913,6 @@ const Center: React.FC = () => {
     setAddmodalopen(true);
     setLoading(false);
   };
-  console.log({ previousTenantId });
 
   // add  extra buttons
   const extraActions: any = [
@@ -1161,7 +1158,7 @@ const Center: React.FC = () => {
           tenantId: selectedRowData?.tenantId,
         },
       };
-      const response = await rolesList(roleObj);
+      const response = await rolesList(roleObj, selectedRowData?.tenantId);
       const matchedRole = response?.result?.find(
         (role: any) => role.code === formData?.role
       );
@@ -1182,8 +1179,6 @@ const Center: React.FC = () => {
         ],
       };
       const resp = await userCreate(obj as any, selectedRowData?.tenantId);
-      console.log({ selectedRowData, matchedRole, formData, response, resp });
-
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
         showToastMessage(t("USER.CREATE_SUCCESSFULLY"), "success");
         setLoading(false);
@@ -1235,9 +1230,8 @@ const Center: React.FC = () => {
           tenantId: selectedRowData?.tenantId,
         },
       };
-      const response = await rolesList(roleObj);
-      console.log({ selectedRowData, response, formData });
 
+      const response = await rolesList(roleObj, selectedRowData?.tenantId);
       const cohortAdminRole = response?.result.find(
         (item: any) => item.code === "cohort_admin"
       );
@@ -1246,8 +1240,8 @@ const Center: React.FC = () => {
         name: formData?.name,
         username: formData?.username,
         password: formData?.password,
-        mobile: formData?.mobileNo ? formData?.mobileNo : "",
-        email: formData?.email ? formData?.email : "",
+        mobile: formData?.mobileNo,
+        email: formData?.email,
 
         tenantCohortRoleMapping: [
           {
