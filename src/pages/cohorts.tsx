@@ -80,6 +80,14 @@ interface centerData {
   customFieldValues?: string;
 }
 
+interface Roles {
+  code: string;
+  roleId: string;
+}
+
+interface RoleList {
+  result: Roles[];
+}
 const Center: React.FC = () => {
   // use hooks
   const queryClient = useQueryClient();
@@ -137,6 +145,7 @@ const Center: React.FC = () => {
   const [updateBtnDisabled, setUpdateBtnDisabled] = React.useState(true);
   const [addFormData, setAddFormData] = useState({});
   const [addBtnDisabled, setAddBtnDisabled] = useState(true);
+  const [roleList, setRolelist] = useState<RoleList | undefined>(undefined);
   const [previousTenantId, setPreviousTenantId] = useState<string | null>(null);
   const [isCreateCohortAdminModalOpen, setIsCreateCohortAdminModalOpen] =
     useState(false);
@@ -903,8 +912,6 @@ const Center: React.FC = () => {
   };
 
   const handleAdd = (rowData: any) => {
-    console.log("fnction called");
-
     // const tenantId = rowData?.tenantId;
     // const currentTenantId = localStorage.getItem("tenantId");
     // setPreviousTenantId(currentTenantId);
@@ -917,7 +924,6 @@ const Center: React.FC = () => {
     setAddmodalopen(true);
     setLoading(false);
   };
-  console.log({ previousTenantId });
 
   // add  extra buttons
   const extraActions: any = [
@@ -1156,18 +1162,10 @@ const Center: React.FC = () => {
         }>;
       }
 
-      const roleObj = {
-        limit: "10",
-        page: 1,
-        filters: {
-          tenantId: selectedRowData?.tenantId,
-        },
-      };
-      const response = await rolesList(roleObj);
-      const matchedRole = response?.result?.find(
+      const matchedRole = roleList?.result?.find(
         (role: any) => role.code === formData?.role
       );
-      const roleId = matchedRole ? matchedRole?.roleId : null;
+      const roleId = matchedRole ? matchedRole?.roleId : "";
 
       let obj: UserCreateData = {
         name: formData?.name,
@@ -1184,8 +1182,6 @@ const Center: React.FC = () => {
         ],
       };
       const resp = await userCreate(obj as any, selectedRowData?.tenantId);
-      console.log({ selectedRowData, matchedRole, formData, response, resp });
-
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
         showToastMessage(t("USER.CREATE_SUCCESSFULLY"), "success");
         setLoading(false);
@@ -1219,6 +1215,22 @@ const Center: React.FC = () => {
     setIsCreateCohortAdminModalOpen(true);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const roleObj = {
+        limit: "10",
+        page: 1,
+        filters: {
+          tenantId: selectedRowData?.tenantId,
+        },
+      };
+
+      const response = await rolesList(roleObj, selectedRowData?.tenantId);
+      setRolelist(response);
+    };
+    fetchData();
+  }, [isCreateCohortAdminModalOpen, Addmodalopen]);
+
   const handleAddCohortAdminAction = async (
     data: IChangeEvent<any, RJSFSchema, any>,
     event: React.FormEvent<any>
@@ -1230,17 +1242,7 @@ const Center: React.FC = () => {
       setLoading(true);
       setConfirmButtonDisable(true);
 
-      const roleObj = {
-        limit: "10",
-        page: 1,
-        filters: {
-          tenantId: selectedRowData?.tenantId,
-        },
-      };
-      const response = await rolesList(roleObj);
-      console.log({ selectedRowData, response, formData });
-
-      const cohortAdminRole = response?.result.find(
+      const cohortAdminRole = roleList?.result.find(
         (item: any) => item.code === "cohort_admin"
       );
 
@@ -1248,12 +1250,12 @@ const Center: React.FC = () => {
         name: formData?.name,
         username: formData?.username,
         password: formData?.password,
-        mobile: formData?.mobileNo ? formData?.mobileNo : "",
-        email: formData?.email ? formData?.email : "",
+        mobile: formData?.mobileNo,
+        email: formData?.email,
 
         tenantCohortRoleMapping: [
           {
-            roleId: cohortAdminRole.roleId,
+            roleId: cohortAdminRole?.roleId,
             tenantId: selectedRowData?.tenantId,
             cohortId: [selectedRowData?.cohortId],
           },

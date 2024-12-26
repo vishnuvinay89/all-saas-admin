@@ -927,7 +927,7 @@ const Tenant: React.FC = () => {
         status: formData?.status,
         type: formData?.type,
       };
-      const resp = await cohortCreate(obj);
+      const resp = await cohortCreate(obj, selectedRowData?.tenantId);
 
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
         showToastMessage(t("COHORTS.CREATE_SUCCESSFULLY"), "success");
@@ -966,7 +966,7 @@ const Tenant: React.FC = () => {
           tenantId: selectedRowData?.tenantId,
         },
       };
-      const response = await rolesList(roleObj);
+      const response = await rolesList(roleObj, selectedRowData?.tenantId);
       const tenantAdminRole = response?.result.find(
         (item: any) => item.code === "tenant_admin"
       );
@@ -975,8 +975,8 @@ const Tenant: React.FC = () => {
         name: formData?.name,
         username: formData?.username,
         password: formData?.password,
-        mobile: formData?.mobileNo ? formData?.mobileNo : "",
-        email: formData?.email ? formData?.email : "",
+        mobile: formData?.mobileNo,
+        email: formData?.email,
         tenantCohortRoleMapping: [
           {
             roleId: tenantAdminRole.roleId,
@@ -1264,7 +1264,7 @@ const Tenant: React.FC = () => {
     showAddNew: adminRole == true ? true : false,
     // showAddNew: true,
     showSearch: false,
-    statusArchived: true,
+    statusArchived: false,
     handleAddUserClick: handleAddUserClick,
     statusValue: statusValue,
     setStatusValue: setStatusValue,
