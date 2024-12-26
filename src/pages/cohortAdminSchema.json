@@ -7,7 +7,7 @@
       "type": "string",
       "fieldId": null,
       "validation": [],
-      "description": "Enter the cohort name."
+      "description": "Enter Full Name."
     },
     "mobileNo": {
       "title": "Mobile Number",
