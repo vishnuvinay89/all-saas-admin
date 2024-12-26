@@ -375,13 +375,14 @@ const Tenant: React.FC = () => {
 
         setCohortData(resultData);
         const totalCount = resp.length;
+
         // setTotalCount(totalCount);   // Set the total count
 
-        setPagination(totalCount > 10);
+        setPagination(totalCount >= 10);
         setPageSizeArray(
           totalCount > 15
             ? [5, 10, 15]
-            : totalCount > 10
+            : totalCount >= 10
               ? [5, 10]
               : totalCount > 5
                 ? [5]
@@ -1275,6 +1276,8 @@ const Tenant: React.FC = () => {
     setSelectedBlock: setSelectedBlock,
   };
 
+  console.log(totalCount >= Numbers.TEN, "totalCount > Numbers.FIVE");
+
   return (
     <>
       <ConfirmationModal
@@ -1380,7 +1383,7 @@ const Tenant: React.FC = () => {
             limit={pageLimit}
             roleButton
             offset={pageOffset}
-            paginationEnable={totalCount > Numbers.TEN}
+            paginationEnable={totalCount >= Numbers.TEN}
             PagesSelector={PagesSelector}
             pagination={pagination}
             PageSizeSelector={PageSizeSelectorFunction}

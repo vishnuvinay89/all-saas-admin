@@ -57,6 +57,7 @@ import cohortSchema from "./cohortSchema.json";
 import AddIcon from "@mui/icons-material/Add";
 import userJsonSchema from "./userSchema.json";
 import cohortASchema from "./cohortAdminSchema.json";
+import updateCohortSchema from "./cohortUpdateSchema.json";
 
 type cohortFilterDetails = {
   type?: string;
@@ -112,6 +113,7 @@ const Center: React.FC = () => {
   const [userId, setUserId] = useState("");
   const [adminRole, setAdminRole] = useState<boolean>();
   const [schema] = React.useState(cohortSchema);
+  const [cohortUpdateSchema] = React.useState(updateCohortSchema);
   const [userSchema, setUserSchema] = React.useState(userJsonSchema);
   const [openAddNewCohort, setOpenAddNewCohort] =
     React.useState<boolean>(false);
@@ -1402,9 +1404,9 @@ const Center: React.FC = () => {
           showFooter={false}
           modalTitle={t("COHORTS.UPDATE_COHORT")}
         >
-          {schema && uiSchema && (
+          {cohortUpdateSchema && uiSchema && (
             <DynamicForm
-              schema={schema}
+              schema={cohortUpdateSchema}
               uiSchema={uiSchema}
               onSubmit={handleUpdateAction}
               onChange={handleChangeForm}
@@ -1419,14 +1421,14 @@ const Center: React.FC = () => {
                 style={{
                   display: "flex",
                   justifyContent: "right", // Centers the button horizontally
-                  marginTop: "20px", // Adjust margin as needed
+                  marginTop: "20px",
                 }}
                 gap={2}
               >
                 <Button
                   variant="outlined"
                   type="submit"
-                  form="update-center-form" // Add this line
+                  form="update-center-form"
                   sx={{
                     fontSize: "14px",
                     fontWeight: "500",

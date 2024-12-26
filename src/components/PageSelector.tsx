@@ -5,7 +5,6 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useTranslation } from "next-i18next";
 import React from "react";
 
-
 export interface IPageSelectorProps {
   handleChange: (event: SelectChangeEvent) => void;
   pageSize: number;
@@ -26,7 +25,9 @@ const PageSizeSelector = ({ handleChange, pageSize, options }: any) => {
 
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }}>
-      <InputLabel id="page-size-selector-label">{t("COMMON.PAGE_SIZE")}</InputLabel>
+      <InputLabel id="page-size-selector-label">
+        {t("COMMON.PAGE_SIZE")}
+      </InputLabel>
       <Select
         labelId="page-size-selector-label"
         id="page-size-selector"
