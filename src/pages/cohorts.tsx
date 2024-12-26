@@ -79,6 +79,14 @@ interface centerData {
   customFieldValues?: string;
 }
 
+interface Roles {
+  code: string;
+  roleId: string;
+}
+
+interface RoleList {
+  result: Roles[];
+}
 const Center: React.FC = () => {
   // use hooks
   const queryClient = useQueryClient();
@@ -135,6 +143,7 @@ const Center: React.FC = () => {
   const [updateBtnDisabled, setUpdateBtnDisabled] = React.useState(true);
   const [addFormData, setAddFormData] = useState({});
   const [addBtnDisabled, setAddBtnDisabled] = useState(true);
+  const [roleList, setRolelist] = useState<RoleList | undefined>(undefined);
   const [previousTenantId, setPreviousTenantId] = useState<string | null>(null);
   const [isCreateCohortAdminModalOpen, setIsCreateCohortAdminModalOpen] =
     useState(false);
@@ -1151,18 +1160,10 @@ const Center: React.FC = () => {
         }>;
       }
 
-      const roleObj = {
-        limit: "10",
-        page: 1,
-        filters: {
-          tenantId: selectedRowData?.tenantId,
-        },
-      };
-      const response = await rolesList(roleObj, selectedRowData?.tenantId);
-      const matchedRole = response?.result?.find(
+      const matchedRole = roleList?.result?.find(
         (role: any) => role.code === formData?.role
       );
-      const roleId = matchedRole ? matchedRole?.roleId : null;
+      const roleId = matchedRole ? matchedRole?.roleId : "";
 
       let obj: UserCreateData = {
         name: formData?.name,
@@ -1212,6 +1213,22 @@ const Center: React.FC = () => {
     setIsCreateCohortAdminModalOpen(true);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const roleObj = {
+        limit: "10",
+        page: 1,
+        filters: {
+          tenantId: selectedRowData?.tenantId,
+        },
+      };
+
+      const response = await rolesList(roleObj, selectedRowData?.tenantId);
+      setRolelist(response);
+    };
+    fetchData();
+  }, [isCreateCohortAdminModalOpen, Addmodalopen]);
+
   const handleAddCohortAdminAction = async (
     data: IChangeEvent<any, RJSFSchema, any>,
     event: React.FormEvent<any>
@@ -1223,16 +1240,7 @@ const Center: React.FC = () => {
       setLoading(true);
       setConfirmButtonDisable(true);
 
-      const roleObj = {
-        limit: "10",
-        page: 1,
-        filters: {
-          tenantId: selectedRowData?.tenantId,
-        },
-      };
-
-      const response = await rolesList(roleObj, selectedRowData?.tenantId);
-      const cohortAdminRole = response?.result.find(
+      const cohortAdminRole = roleList?.result.find(
         (item: any) => item.code === "cohort_admin"
       );
 
@@ -1245,7 +1253,7 @@ const Center: React.FC = () => {
 
         tenantCohortRoleMapping: [
           {
-            roleId: cohortAdminRole.roleId,
+            roleId: cohortAdminRole?.roleId,
             tenantId: selectedRowData?.tenantId,
             cohortId: [selectedRowData?.cohortId],
           },
