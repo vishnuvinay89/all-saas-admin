@@ -1,3 +1,4 @@
+import axios from "axios";
 import { post, get } from "./RestClient";
 import config from "@/utils/urlConstants.json";
 export interface userListParam {
@@ -16,18 +17,29 @@ export interface userListParam {
 }
 export interface learnerListParam {
   payload: any;
+  tenantId:string
 }
 
 export const userList = async ({
- payload
+  payload,
+  tenantId,
 }: learnerListParam): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.LIST}`;
-  try {
-    const response = await post(apiUrl,payload);
     
+  try {
+    const token=localStorage.getItem('token')
+
+    const response = await axios.post(apiUrl, payload, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Tenant-Id': tenantId, 
+      },
+    });
+
     return response?.data?.result;
   } catch (error) {
-    console.error("error in getting user list", error);
+    console.error('Error in getting user list', error);
     throw error;
   }
 };
