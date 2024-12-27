@@ -799,6 +799,9 @@ const UserTable: React.FC<UserTableProps> = ({
         if (filters.name) {
           offset = 0;
         }
+        const tenantId = filters?.tenantId
+          ? filters?.tenantId
+          : listOfTenants?.[0]?.tenantId;
 
         const payload = {
           limit,
@@ -807,14 +810,13 @@ const UserTable: React.FC<UserTableProps> = ({
             status: filters.status,
           },
           tenantCohortRoleMapping: {
-            tenantId: filters?.tenantId,
+            tenantId: tenantId,
             cohortId: filters?.cohortId ? [filters?.cohortId] : [],
           },
           sort: sortBy,
           offset,
         };
-
-        const resp = await userList({ payload });
+        const resp = await userList({ payload, tenantId });
 
         if (resp?.totalCount >= 15) {
           setPagination(true);
@@ -1332,13 +1334,11 @@ const UserTable: React.FC<UserTableProps> = ({
   const handleError = (error: any) => {};
 
   const handleTenantChange = (
-    selectedNames: string[], // An array of selected tenant names
-    selectedCodes: string[] // An array of selected tenant IDs
+    selectedNames: string[],
+    selectedCodes: string[]
   ) => {
     if (selectedNames && selectedCodes) {
-      // Join the tenant IDs into a comma-separated string
       const tenantId = selectedCodes.join(",");
-
       setSelectedTenant(selectedNames);
       setFilters((prevFilter) => ({
         ...prevFilter,
@@ -1353,8 +1353,6 @@ const UserTable: React.FC<UserTableProps> = ({
     selectedNames: string[],
     selectedCodes: string[]
   ) => {
-    console.log({ selectedCodes });
-
     if (selectedNames && selectedCodes) {
       const cohortId = selectedCodes.join(",");
       setSelectedCohort(selectedNames);
