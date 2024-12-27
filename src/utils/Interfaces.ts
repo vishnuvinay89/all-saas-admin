@@ -1,6 +1,16 @@
 export interface State {
+  tenantId: any;
+  label: any;
+}
+export interface Cohort {
   value: string;
-  label: string;
+  label: any;
+  // other properties for Cohort
+}
+export interface Tenant {
+  tenantId: any;
+  label: any;
+  name: string;
 }
 
 export interface FieldOption {

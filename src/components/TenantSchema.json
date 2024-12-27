@@ -2,7 +2,7 @@
   "title": "",
   "description": "",
   "type": "object",
-  "required": ["name", "status"],
+  "required": ["name"],
   "properties": {
     "name": {
       "title": "Tenant Name",
@@ -10,19 +10,6 @@
       "fieldId": null,
       "validation": [],
       "description": "Enter tenant name."
-    },
-    "status": {
-      "title": "Status",
-      "type": "string",
-      "oneOf": [
-        { "const": "active", "title": "Active" },
-        { "const": "inactive", "title": "Inactive" },
-        { "const": "archived", "title": "Archived" }
-      ],
-      "default": "active",
-      "readonly": true,
-      "validation": [],
-      "description": "The current status of the tenant, this field is read-only."
     }
   },
   "dependencies": {}

@@ -14,6 +14,8 @@
     "DUPLICATED_USER": "Duplicate User",
     "NO_USER_FOUND": "User not found",
     "NO_CENTER_FOUND": "Centers not found",
+    "NO_TENANT_FOUND": "Tenant Not Found",
+    "NO_COHORT_FOUND": "Cohort Not Found",
     "ALL": "All",
     "NO_GO_BACK": "No, go back",
     "YES": "Yes",
@@ -208,13 +210,16 @@
     "SEARCHBAR_PLACEHOLDER": "Search Center..",
     "COHORTS": "Cohorts",
     "CREATE_SUCCESSFULLY": "Cohort Created Successfully",
+    "COHORT_ADMIN_CREATE_SUCCESSFULLY": "Cohort Admin Created Successfully",
+    "COHORT_ADMIN_CREATE_FAILED": "Cohort Admin Created Failed",
     "CREATE_FAILED": "Cohort Creation Failed",
     "ADD_NEW_COHORT": "Add New Cohort",
     "UPDATE_COHORT": "Update Cohort",
     "SEARCH_COHORT": "Search Cohort",
     "DELETE_SUCCESSFULLY": "Cohort Deleted Successfully",
     "ALL_STATES": "All States",
-    "COHORT_MEMBER": "Cohort Member"
+    "COHORT_MEMBER": "Cohort Member",
+    "ADD_NEW_COHORT_ADMIN": "Add New Cohort Admin"
   },
   "COURSE_PLANNER": {
     "GRADE": "Grade",
@@ -425,7 +430,8 @@
     "EMAIL": "Email",
     "USERNAME": "Username",
     "DOMAIN": "Domain",
-    "CREATE_TENANT_ADMIN": "Create Tenant Admin"
+    "CREATE_TENANT_ADMIN": "Create Tenant Admin",
+    "CREATE_COHORT_ADMIN": "Create Cohort Admin"
   },
   "WORKSPACE": {
     "EDITOR_WORKSPACE": "Editor Workspace",
@@ -444,16 +450,20 @@
     "ROLE_ASSIGNED_fAILED": "Role Assigned Failed",
     "TENANT_MEMBER": "Tenant Member",
     "ALL_TENANTS": "All Tenants",
-    "ADD_NEW_TENANT_ADMIN": "Add New Tenant Admin"
+    "ADD_NEW_TENANT_ADMIN": "Add New Tenant Admin",
+    "TENANT_ADMIN_CREATE": "Tenant Admin Created Successfully",
+    "TENANT_ADMIN_FAILED_TO_CREATE": "Failed to Create Tenant Admin"
   },
   "USER": {
     "ADD_NEW_USER": "Add New User",
     "UPDATE_USER": "Update User",
     "CREATE_SUCCESSFULLY": "User Created Successfully",
+    "FAILED_TO_CREATE": "User Creation Failed ",
     "DELETE_SUCCESSFULLY": "User Deleted Successfully",
     "UPDATE_SUCCESSFULLY": "User Updated Successfully",
     "FAILED_TO_UPDATE": "Failed to Update User",
     "FAILED_TO_DELETE:": "Failed to Delete User",
+    "USER_ALREADY_EXIST": "User already exists",
     "SEARCH": "Search User",
     "NO_USER_FOUND": "Users not found",
     "USER_NOT_FOUND": "User not found",

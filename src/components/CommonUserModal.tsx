@@ -55,6 +55,10 @@ interface UserModalProps {
   userId?: string;
   onSubmit: (submitValue: boolean) => void;
   userType: string;
+  tenants: any[];
+  cohorts: any[];
+  handleTenantChange: (tenant: any) => void;
+  handleCohortChange: (cohort: any) => void;
 }
 
 const CommonUserModal: React.FC<UserModalProps> = ({
@@ -65,6 +69,10 @@ const CommonUserModal: React.FC<UserModalProps> = ({
   userId,
   onSubmit,
   userType,
+  tenants,
+  handleCohortChange,
+  handleTenantChange,
+  cohorts,
 }) => {
   const [schema, setSchema] = React.useState<any>();
   const [uiSchema, setUiSchema] = React.useState<any>();
@@ -157,9 +165,6 @@ const CommonUserModal: React.FC<UserModalProps> = ({
         : t("TEAM_LEADERS.EDIT_TEAM_LEADER");
   const theme = useTheme<any>();
   const {
-    states,
-    districts,
-    blocks,
     allCenters,
     isMobile,
     isMediumScreen,
@@ -613,21 +618,18 @@ const CommonUserModal: React.FC<UserModalProps> = ({
             }}
           >
             <AreaSelection
-              states={transformArray(states)}
-              districts={transformArray(districts)}
-              blocks={transformArray(blocks)}
-              selectedState={selectedState}
-              selectedDistrict={selectedDistrict}
-              selectedBlock={selectedBlock}
-              handleStateChangeWrapper={handleStateChangeWrapper}
-              handleDistrictChangeWrapper={handleDistrictChangeWrapper}
-              handleBlockChangeWrapper={handleBlockChangeWrapper}
+              tenants={transformArray(tenants)}
+              cohorts={transformArray(cohorts)}
+              selectedTenant={selectedState}
+              selectedCohort={selectedDistrict}
               isMobile={isMobile}
               isMediumScreen={isMediumScreen}
               isCenterSelection={userType !== "TEAM LEADER"}
-              allCenters={allCenters}
-              selectedCenter={selectedCenter}
-              handleCenterChangeWrapper={handleCenterChangeWrapper}
+              handleTenantChange={handleTenantChange}
+              handleCohortChange={handleCohortChange}
+              // allCenters={allCenters}
+              // selectedCenter={selectedCenter}
+              // handleCenterChangeWrapper={handleCenterChangeWrapper}
               inModal={true}
               stateDefaultValue={stateDefaultValue}
             />

@@ -38,7 +38,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import Loader from "@/components/Loader";
-import { getFormRead } from "@/services/CreateUserService";
+import { createUser, getFormRead } from "@/services/CreateUserService";
 import { customFields } from "@/components/GeneratedSchemas";
 import { CustomField } from "@/utils/Interfaces";
 import { showToastMessage } from "@/components/Toastify";
@@ -165,7 +165,7 @@ const Tenant: React.FC = () => {
   const [isCreateTenantAdminModalOpen, setIsCreateTenantAdminModalOpen] =
     useState(false);
   const [selectedRowData, setSelectedRowData] = useState<any>("");
-  const [adminRole, setAdminRole] = useState("");
+  const [adminRole, setAdminRole] = useState();
   const [updateBtnDisabled, setUpdateBtnDisabled] = React.useState(true);
   const [addBtnDisabled, setAddBtnDisabled] = React.useState(false);
   const [addFormData, setAddFormData] = useState({});
@@ -240,22 +240,28 @@ const Tenant: React.FC = () => {
       // },
       "ui:disabled": true,
     },
-    district: {
+    username: {
       "ui:widget": "text",
-      "ui:placeholder": "Enter district",
-      "ui:options": {},
+      "ui:placeholder": "Enter your username",
+      "ui:help": "Username must be at least 3 characters long.",
     },
+    password: {
+      "ui:widget": "password",
+      "ui:placeholder": "Enter a secure password",
+      "ui:help":
+        "Password must be at least 8 characters long, with at least one letter and one number.",
+    },
+    // role: {
+    //   "ui:widget": "select",
+    //   "ui:placeholder": "Select a role",
+    //   // "ui:help": "Select a role.",
+    // },
     status: {
       "ui:widget": "CustomRadioWidget",
       "ui:options": {
         defaultValue: "active",
       },
       "ui:disabled": true,
-    },
-    block: {
-      "ui:widget": "text",
-      "ui:placeholder": "Enter block",
-      "ui:options": {},
     },
   };
 
@@ -324,7 +330,7 @@ const Tenant: React.FC = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const getRole = JSON.parse(localStorage.getItem("adminInfo") || "{}");
-      setAdminRole(getRole?.role);
+      setAdminRole(getRole?.isSuperAdmin);
       setUserId(getRole?.userId);
     }
 
@@ -369,18 +375,21 @@ const Tenant: React.FC = () => {
 
         setCohortData(resultData);
         const totalCount = resp.length;
+
         // setTotalCount(totalCount);   // Set the total count
 
-        setPagination(totalCount > 10);
-        setPageSizeArray(
-          totalCount > 15
-            ? [5, 10, 15]
-            : totalCount > 10
-              ? [5, 10]
-              : totalCount > 5
-                ? [5]
-                : []
-        );
+        setPagination(totalCount >= 10);
+        let pageSizeArrayCount: any = [];
+
+        if (totalCount > 15) {
+          pageSizeArrayCount = [5, 10, 15];
+        } else if (totalCount >= 10) {
+          pageSizeArrayCount = [5, 10];
+        } else if (totalCount > 5) {
+          pageSizeArrayCount = [5];
+        }
+
+        setPageSizeArray(pageSizeArrayCount);
         const pageCount = Math.ceil(totalCount / pageLimit);
         setPageCount(pageCount);
       } else {
@@ -397,7 +406,7 @@ const Tenant: React.FC = () => {
 
   useEffect(() => {
     fetchTenantList();
-  }, [openAddNewCohort]);
+  }, [openAddNewCohort, filters]);
 
   // const getFormData = async () => {
   //   try {
@@ -755,7 +764,6 @@ const Tenant: React.FC = () => {
     newValue: any
   ) => {
     setStatusValue(newValue);
-
     setSelectedFilter(newValue);
     setPageSize(Numbers.TEN);
     setPageLimit(Numbers.TEN);
@@ -830,6 +838,7 @@ const Tenant: React.FC = () => {
     setLoading(false);
   };
   const handleAdd = (rowData: any) => {
+    // localStorage.setItem("tenantId", rowData?.tenantId);
     setSelectedRowData({ ...rowData });
     setLoading(true);
     setAddmodalopen(true);
@@ -918,13 +927,70 @@ const Tenant: React.FC = () => {
         status: formData?.status,
         type: formData?.type,
       };
-      const resp = await cohortCreate(obj);
+      const resp = await cohortCreate(obj, selectedRowData?.tenantId);
 
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
         showToastMessage(t("COHORTS.CREATE_SUCCESSFULLY"), "success");
         setLoading(false);
       } else {
         showToastMessage(t("COHORTS.CREATE_FAILED"), "error");
+      }
+    } catch (error) {
+      console.error("Error updating cohort:", error);
+      showToastMessage(t("COHORTS.CREATE_FAILED"), "error");
+    } finally {
+      // localStorage?.setItem("tenantId", "undefined");
+      setLoading(false);
+      setConfirmButtonDisable(false);
+      handleCloseAddModal();
+      onCloseEditMOdel();
+      fetchTenantList();
+      setIsEditForm(false);
+    }
+  };
+  const handleAddTenantAdminAction = async (
+    data: IChangeEvent<any, RJSFSchema, any>,
+    event: React.FormEvent<any>
+  ) => {
+    setLoading(true);
+    const formData = data?.formData;
+
+    try {
+      setLoading(true);
+      setConfirmButtonDisable(true);
+
+      const roleObj = {
+        limit: "10",
+        page: 1,
+        filters: {
+          tenantId: selectedRowData?.tenantId,
+        },
+      };
+      const response = await rolesList(roleObj, selectedRowData?.tenantId);
+      const tenantAdminRole = response?.result.find(
+        (item: any) => item.code === "tenant_admin"
+      );
+
+      let obj = {
+        name: formData?.name,
+        username: formData?.username,
+        password: formData?.password,
+        mobile: formData?.mobileNo,
+        email: formData?.email,
+        tenantCohortRoleMapping: [
+          {
+            roleId: tenantAdminRole.roleId,
+            tenantId: selectedRowData?.tenantId,
+          },
+        ],
+      };
+      const resp = await createUser(obj);
+
+      if (resp?.responseCode === 200 || resp?.responseCode === 201) {
+        showToastMessage(t("TENANT.TENANT_ADMIN_CREATE"), "success");
+        setLoading(false);
+      } else {
+        showToastMessage(t("TENANT.TENANT_ADMIN_FAILED_TO_CREATE"), "error");
       }
     } catch (error) {
       console.error("Error updating cohort:", error);
@@ -1195,13 +1261,14 @@ const Tenant: React.FC = () => {
     handleSortChange: handleSortChange,
     handleFilterChange: handleFilterChange,
     handleSearch: handleSearch,
-    // showAddNew: adminRole === "tenant_admin" ? true : false,
-    showAddNew: true,
+    showAddNew: adminRole == true ? true : false,
+    // showAddNew: true,
+    showSearch: false,
     statusArchived: false,
     handleAddUserClick: handleAddUserClick,
     statusValue: statusValue,
     setStatusValue: setStatusValue,
-    showSort: true,
+    showSort: false,
     selectedBlockCode: selectedBlockCode,
     setSelectedBlockCode: setSelectedBlockCode,
     selectedDistrictCode: selectedDistrictCode,
@@ -1316,13 +1383,14 @@ const Tenant: React.FC = () => {
             limit={pageLimit}
             roleButton
             offset={pageOffset}
-            paginationEnable={totalCount > Numbers.TEN}
+            paginationEnable={totalCount >= Numbers.TEN}
             PagesSelector={PagesSelector}
             pagination={pagination}
             PageSizeSelector={PageSizeSelectorFunction}
             pageSizes={pageSizeArray}
             extraActions={extraActions}
             showIcons={true}
+            allowEditIcon={adminRole == true ? false : true}
             onEdit={handleEdit}
             onAdd={handleAdd}
             onDelete={handleDelete}
@@ -1336,7 +1404,7 @@ const Tenant: React.FC = () => {
             height="20vh"
           >
             <Typography marginTop="10px" textAlign={"center"}>
-              {t("COMMON.NO_CENTER_FOUND")}
+              {t("COMMON.NO_TENANT_FOUND")}
             </Typography>
           </Box>
         )}
@@ -1477,7 +1545,7 @@ const Tenant: React.FC = () => {
             <DynamicForm
               schema={tenantAdminSchema}
               uiSchema={tenantAdminUiSchmea}
-              onSubmit={handleAddAction}
+              onSubmit={handleAddTenantAdminAction}
               onChange={handleChangeForm}
               onError={handleError}
               widgets={{}}

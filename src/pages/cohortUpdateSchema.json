@@ -27,7 +27,6 @@
         { "const": "archived", "title": "Archived" }
       ],
       "default": "active",
-      "readOnly": true,
       "validation": [],
       "description": "The current status of the cohort, this field is read-only."
     }

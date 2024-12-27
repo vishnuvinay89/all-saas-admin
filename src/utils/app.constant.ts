@@ -8,6 +8,8 @@ export enum Role {
   LEARNER = "Learner",
   TENANT_ADMIN="Tenant Admin",
   FACILITATORS = "Facilitators",
+  LOGIN_LEARNER="learner"
+
 }
 
 export enum Status {
@@ -52,6 +54,7 @@ export enum DataKey {
   ACTIONS = "actions",
   // ROLE="role",
   ASSIGNED_ROLES = "roleDefine",
+  CREATE_COHORT_ADMIN="cohortAdmin",
   CREATED_BY = "createdBy",
   UPDATED_BY = "updatedBy",
   STATUS = "status",

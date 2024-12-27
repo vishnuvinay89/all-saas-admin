@@ -70,8 +70,11 @@ export const getTLTableColumns = (t: any, isMobile: boolean) => {
   return generateColumns(t, configs, isMobile);
 };
 
-export const getTenantTableData = (t: any, isMobile: boolean,role:string) => {
+export const getTenantTableData = (t: any, isMobile: boolean,role:any) => {
   console.log({role});
+  const adminInfo = JSON.parse(localStorage.getItem("adminInfo") ?? '{}');
+  // const localRoleCheck = adminInfo?.tenantData?.[0]?.roleName === "cohort admin";
+  const isCohortAdmin = adminInfo?.tenantData?.[0]?.roleName === "cohort admin" ? true : false;
   
   const configs: ColumnConfig[] = [
     { key: "name", titleKey: "TABLE_TITLE.NAME", width: 130 },
@@ -92,15 +95,15 @@ export const getTenantTableData = (t: any, isMobile: boolean,role:string) => {
     // },
     { key: "status", titleKey: "TABLE_TITLE.STATUS", width: 90 },
     
-    ...(role === "super_admin" ? [{ key: "roleDefine", titleKey: "TABLE_TITLE.CREATE_TENANT_ADMIN", width: 130 }] : []),
-    
-    ...(role==="super_admin" ?[{ key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 }]:[]),
+    ...(role == true ? [{ key: "roleDefine", titleKey: "TABLE_TITLE.CREATE_TENANT_ADMIN", width: 130 }] : []),
+    ...(isCohortAdmin ==false?[{ key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 }]:[]),
+    // ...(role== true ?[{ key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 }]:[]),
   ];
   
 
   return generateColumns(t, configs, isMobile);
 };
-export const getCohortTableData = (t: any, isMobile: boolean) => {
+export const getCohortTableData = (t: any, isMobile: boolean,role:any) => {
   const configs: ColumnConfig[] = [
     { key: "name", titleKey: "TABLE_TITLE.NAME", width: 130 },
     { key: "type", titleKey: "TABLE_TITLE.TYPE", width: 90 },
@@ -120,6 +123,7 @@ export const getCohortTableData = (t: any, isMobile: boolean) => {
     //   width: 130,
     // },
     // { key: "roleDefine", titleKey: "TABLE_TITLE.ROLE", width: 130 },
+    ...(role == true ? [{ key: "cohortAdmin", titleKey: "TABLE_TITLE.CREATE_COHORT_ADMIN", width: 130 }] : []),
     { key: "actions", titleKey: "TABLE_TITLE.ACTIONS", width: 125 },
   ];
 

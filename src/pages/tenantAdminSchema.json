@@ -2,7 +2,7 @@
   "title": "",
   "description": "",
   "type": "object",
-  "required": ["name", "username", "password", "mobileNo", "email", "role"],
+  "required": ["name", "username", "password", "role"],
   "properties": {
     "name": {
       "title": "Full Name",
@@ -39,12 +39,14 @@
     "role": {
       "title": "Role",
       "type": "string",
+      "readOnly": true,
       "oneOf": [
         {
           "title": "Tenant Admin",
           "const": "tenant_admin"
         }
       ],
+      "default": "tenant_admin",
       "validation": []
     }
   },

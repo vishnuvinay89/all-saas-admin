@@ -37,6 +37,10 @@ interface ReassignCohortModalProps {
   districtCode?: any;
   cohortId?: any;
   centers: any;
+  tenants?: any;
+  cohorts?: any;
+  handleTenantChange: (tenant: any) => void;
+  handleCohortChange: (cohort: any) => void;
 }
 
 interface Cohort {
@@ -66,6 +70,10 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
   districtName,
   districtCode,
   centers,
+  tenants,
+  cohorts,
+  handleTenantChange,
+  handleCohortChange,
 }) => {
   const { t } = useTranslation();
   const theme = useTheme<any>();
@@ -103,7 +111,7 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
     setSelectedDistrictCode,
     setSelectedBlockCode,
   } = useLocationState(open, onClose, roleType, true);
-  let cohorts: Cohort[] = allCenters?.map(
+  let cohort: Cohort[] = allCenters?.map(
     (cohort: { cohortId: any; name: string }) => ({
       name: cohort.name,
       id: cohort.cohortId,
@@ -184,15 +192,17 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
       if (userType !== Role.TEAM_LEADERS) {
         selectedData = cohorts
           .filter(
-            (center) => center?.name && checkedCenters.includes(center.name)
+            (center: any) =>
+              center?.name && checkedCenters.includes(center.name)
           )
-          .map((center) => center!.id);
+          .map((center: any) => center!.id);
 
         unSelectedData = cohorts
           .filter(
-            (center) => center?.name && !checkedCenters.includes(center.name)
+            (center: any) =>
+              center?.name && !checkedCenters.includes(center.name)
           )
-          .map((center) => center!.id);
+          .map((center: any) => center!.id);
       } else {
         selectedData = blocks
           .filter(
@@ -405,17 +415,18 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
     }
   };
 
-  let filteredCohorts = cohorts?.filter((cohort) =>
+  let filteredCohorts = cohorts?.filter((cohort: any) =>
     cohort?.name?.toLowerCase().includes(searchInput)
   );
 
-  const formattedCohorts = filteredCohorts?.map((location) => ({
+  const formattedCohorts = filteredCohorts?.map((location: any) => ({
     ...location,
     name: location.name
       ? location.name
           .split(" ")
           .map(
-            (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+            (word: any) =>
+              word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
           )
           .join(" ")
       : "",
@@ -574,21 +585,18 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
         primaryBtnDisabled={checkedCenters.length === 0}
       >
         <AreaSelection
-          states={transformArray(states)}
-          districts={transformArray(districts)}
-          blocks={transformArray(blocks)}
-          selectedState={selectedState}
-          selectedDistrict={selectedDistrict}
-          selectedBlock={selectedBlock}
-          handleStateChangeWrapper={handleStateChangeWrapper}
-          handleDistrictChangeWrapper={handleDistrictChangeWrapper}
-          handleBlockChangeWrapper={handleBlockChangeWrapper}
+          tenants={transformArray(tenants)}
+          cohorts={transformArray(cohorts)}
+          selectedTenant={selectedState}
+          selectedCohort={selectedDistrict}
+          handleTenantChange={handleTenantChange}
+          handleCohortChange={handleCohortChange}
           isMobile={true}
           isMediumScreen={isMediumScreen}
-          isCenterSelection={false}
-          allCenters={allCenters}
-          selectedCenter={selectedCenter}
-          handleCenterChangeWrapper={handleCenterChangeWrapper}
+          // isCenterSelection={false}
+          // allCenters={allCenters}
+          // selectedCenter={selectedCenter}
+          // handleCenterChangeWrapper={handleCenterChangeWrapper}
           inModal={true}
           stateDefaultValue={stateDefaultValue}
           reAssignModal={true}
@@ -637,7 +645,7 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
             <Box sx={{ p: 3, maxHeight: "300px", overflowY: "auto" }}>
               {userType !== Role.TEAM_LEADERS ? (
                 formattedCohorts && formattedCohorts.length > 0 ? (
-                  formattedCohorts.map((center) => (
+                  formattedCohorts.map((center: any) => (
                     <Box key={center.id}>
                       <Box
                         sx={{

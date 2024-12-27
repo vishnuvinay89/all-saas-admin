@@ -31,6 +31,7 @@ import { userAgent } from "next/server";
 interface State {
   value: string;
   label: string;
+  tenantId?: string;
 }
 
 interface District {
@@ -97,6 +98,7 @@ const HeaderComponent = ({
   tenantDefaultValue,
   isTenantShow,
   isCohortShow,
+  showSearch = true,
 }: any) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -278,7 +280,7 @@ const HeaderComponent = ({
             const stateField = JSON.parse(admin).customFields.find(
               (field: any) => field.label === "STATES"
             );
-            if (stateField.value.includes(",")) {
+            if (stateField?.value?.includes(",")) {
               setStateDefaultValue(t("COMMON.ALL_STATES"));
             } else {
               setStateDefaultValue(stateField.value);
@@ -663,15 +665,18 @@ const HeaderComponent = ({
             display: "flex",
             flexDirection: isMobile || isMediumScreen ? "column" : "row",
             gap: isMobile || isMediumScreen ? "8px" : "5%",
-            marginTop: "20px",
+            marginTop: showSearch ? "20px" : "10px",
+            p: showSearch ? "1%" : "1%",
           }}
         >
-          <Box sx={{ flex: 1, paddingLeft: "16px", paddingRight: "16px" }}>
-            <SearchBar
-              onSearch={handleSearch}
-              placeholder={searchPlaceHolder}
-            />
-          </Box>
+          {showSearch && (
+            <Box sx={{ flex: 1, paddingLeft: "16px", paddingRight: "16px" }}>
+              <SearchBar
+                onSearch={handleSearch}
+                placeholder={searchPlaceHolder}
+              />
+            </Box>
+          )}
           {showAddNew && (
             <Box
               display={"flex"}
