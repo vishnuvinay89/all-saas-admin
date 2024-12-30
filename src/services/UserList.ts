@@ -33,7 +33,7 @@ export const userList = async ({
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'Tenant-Id': tenantId, 
+        'tenantid': tenantId, 
       },
     });
 
