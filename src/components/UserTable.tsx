@@ -299,15 +299,18 @@ const UserTable: React.FC<UserTableProps> = ({
       try {
         const result = await getTenantLists(filters);
         setListOfTenants(result);
+        const tenantId = filters?.tenantId
+          ? filters?.tenantId
+          : result?.[0]?.tenantId;
         let data = {
           limit: 0,
           offset: 0,
           filters: {
-            tenantId: result?.[0]?.tenantId,
+            tenantId: tenantId,
             // cohortId: cohortId,
           },
         };
-        if (filters?.tenantId) {
+        if (tenantId) {
           const cohortList = await getCohortList(data);
           setListOfCohorts(cohortList?.results);
         }
@@ -319,7 +322,7 @@ const UserTable: React.FC<UserTableProps> = ({
     if (filters) {
       fetchData();
     }
-  }, [filters]);
+  }, [filters, selectedCohort]);
 
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
     setPageSize(event.target.value);

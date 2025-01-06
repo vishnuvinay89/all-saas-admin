@@ -3,7 +3,7 @@
   "required": ["name", "username", "password"],
   "properties": {
     "name": {
-      "title": "Cohort Name",
+      "title": "Cohort Admin Name",
       "type": "string",
       "fieldId": null,
       "validation": [],

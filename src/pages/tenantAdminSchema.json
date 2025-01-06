@@ -5,7 +5,7 @@
   "required": ["name", "username", "password", "role"],
   "properties": {
     "name": {
-      "title": "Full Name",
+      "title": "Tenant Admin Name",
       "fieldId": null,
       "type": "string",
       "validation": []

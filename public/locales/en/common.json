@@ -218,7 +218,7 @@
     "SEARCH_COHORT": "Search Cohort",
     "DELETE_SUCCESSFULLY": "Cohort Deleted Successfully",
     "ALL_STATES": "All States",
-    "COHORT_MEMBER": "Cohort Member",
+    "COHORT_MEMBER": "Cohort",
     "ADD_NEW_COHORT_ADMIN": "Add New Cohort Admin"
   },
   "COURSE_PLANNER": {
@@ -448,7 +448,7 @@
     "SEARCH": "Search Tenant",
     "ROLE_ASSIGNED": "Role Created Successfully",
     "ROLE_ASSIGNED_fAILED": "Role Assigned Failed",
-    "TENANT_MEMBER": "Tenant Member",
+    "TENANT_MEMBER": "Tenant",
     "ALL_TENANTS": "All Tenants",
     "ADD_NEW_TENANT_ADMIN": "Add New Tenant Admin",
     "TENANT_ADMIN_CREATE": "Tenant Admin Created Successfully",
