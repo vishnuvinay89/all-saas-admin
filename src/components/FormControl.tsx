@@ -56,7 +56,7 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
     let selectedNames = typeof value === "string" ? value.split(",") : value;
 
     if (selectedNames.includes("all")) {
-      selectedNames = defaultValue ? [defaultValue] : [];
+      selectedNames = defaultValue ? [defaultValue] : ["All"];
     }
 
     const selectedCodes = selectedNames.map(
