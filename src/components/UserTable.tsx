@@ -1,7 +1,7 @@
 import DeleteUserModal from "@/components/DeleteUserModal";
 import HeaderComponent from "@/components/HeaderComponent";
 import PageSizeSelector from "@/components/PageSelector";
-import { FormContextType, SORT, Status } from "@/utils/app.constant";
+import { FormContextType, Numbers, SORT, Status } from "@/utils/app.constant";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import Box from "@mui/material/Box";
@@ -150,6 +150,7 @@ const UserTable: React.FC<UserTableProps> = ({
     (state: any) => state.setSubmittedButtonStatus
   );
 
+  const [totalCount, setTotalCount] = useState<number>(0);
   const [selectedStateCode, setSelectedStateCode] = useState("");
   const [selectedDistrict, setSelectedDistrict] = React.useState<string[]>([]);
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
@@ -162,7 +163,7 @@ const UserTable: React.FC<UserTableProps> = ({
   const [data, setData] = useState<UserDetails[]>([]);
   const [cohortsFetched, setCohortsFetched] = useState(false);
   const { t } = useTranslation();
-  const [pageSize, setPageSize] = React.useState<string | number>("10");
+  const [pageSize, setPageSize] = React.useState<number>(10);
   const [sortBy, setSortBy] = useState(["createdAt", "asc"]);
   const [sortByForCohortMemberList, setsortByForCohortMemberList] = useState([
     "name",
@@ -324,42 +325,6 @@ const UserTable: React.FC<UserTableProps> = ({
     }
   }, [filters, selectedCohort]);
 
-  const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
-    setPageSize(event.target.value);
-    setPageLimit(Number(event.target.value));
-  };
-
-  const handlePaginationChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    setPageOffset(value - 1);
-  };
-
-  const PagesSelector = () => (
-    <>
-      <Box sx={{ display: { xs: "block" } }}>
-        <Pagination
-          // size="small"
-          color="primary"
-          count={pageCount}
-          page={pageOffset + 1}
-          onChange={handlePaginationChange}
-          siblingCount={0}
-          boundaryCount={1}
-          sx={{ marginTop: "10px" }}
-        />
-      </Box>
-    </>
-  );
-
-  const PageSizeSelectorFunction = () => (
-    <PageSizeSelector
-      handleChange={handleChange}
-      pageSize={pageSize}
-      options={pageSizeArray}
-    />
-  );
   const handleStateChange = async (selected: string[], code: string[]) => {
     const newQuery = { ...router.query };
 
@@ -796,8 +761,8 @@ const UserTable: React.FC<UserTableProps> = ({
       setLoading(true);
       try {
         // const fields = ["age", "districts", "states", "blocks", "gender"];
-        let limit = pageLimit;
-        let offset = pageOffset * limit;
+        let limit = 0;
+        let offset = pageOffset * pageSize;
 
         if (filters.name) {
           offset = 0;
@@ -820,22 +785,26 @@ const UserTable: React.FC<UserTableProps> = ({
           offset,
         };
         const resp = await userList({ payload, tenantId });
-
-        if (resp?.totalCount >= 15) {
-          setPagination(true);
+        const totalCount = resp?.total_count || 0;
+        setTotalCount(totalCount);
+        setPagination(totalCount > 0);
+        if (totalCount >= 15) {
           setPageSizeArray([5, 10, 15]);
-        } else if (resp?.totalCount >= 10) {
-          setPagination(true);
+        } else if (totalCount >= 10) {
           setPageSizeArray([5, 10]);
-        } else if (resp?.totalCount > 5) {
-          setPagination(false);
+        } else if (totalCount > 5) {
           setPageSizeArray([5]);
-        } else if (resp?.totalCount <= 5) {
-          setPagination(false);
+        } else {
+          setPageSizeArray([totalCount]);
         }
 
-        setPageCount(Math.ceil(resp?.totalCount / pageLimit));
+        const pageCounts =
+          totalCount > 0 ? Math.ceil(totalCount / pageLimit) : 1;
+        setPageCount(pageCounts);
 
+        // if (pageOffset >= pageCounts - 1) {
+        //   setPageOffset(pageCounts - 1);
+        // }
         const finalResult = resp?.getUserDetails?.map((user: any) => {
           const ageField = user?.customFields?.find(
             (field: any) => field?.label === "AGE"
@@ -929,6 +898,45 @@ const UserTable: React.FC<UserTableProps> = ({
     editUserState,
   ]);
 
+  const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
+    const newPageSize = Number(event.target.value);
+    setPageSize(newPageSize);
+    setPageLimit(newPageSize);
+    // setPageOffset(0);
+  };
+
+  const handlePaginationChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    if (value >= 1 && value <= pageCount) {
+      setPageOffset(value - 1);
+    }
+  };
+  const PagesSelector = () => (
+    <>
+      <Box sx={{ display: { xs: "block" } }}>
+        <Pagination
+          // size="small"
+          color="primary"
+          count={pageCount}
+          page={pageOffset + 1}
+          onChange={handlePaginationChange}
+          siblingCount={0}
+          boundaryCount={1}
+          sx={{ marginTop: "10px" }}
+        />
+      </Box>
+    </>
+  );
+
+  const PageSizeSelectorFunction = () => (
+    <PageSizeSelector
+      handleChange={handleChange}
+      pageSize={pageSize}
+      options={pageSizeArray}
+    />
+  );
   const handleDelete = (rowData: any) => {
     setConfirmationModalOpen(true);
     setSelectedRowData(rowData);
@@ -1434,6 +1442,7 @@ const UserTable: React.FC<UserTableProps> = ({
           data={data}
           limit={pageLimit}
           offset={pageOffset}
+          paginationEnable={totalCount > Numbers.TEN}
           PagesSelector={PagesSelector}
           PageSizeSelector={PageSizeSelectorFunction}
           pageSizes={pageSizeArray}
