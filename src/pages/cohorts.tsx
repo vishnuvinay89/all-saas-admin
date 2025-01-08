@@ -109,7 +109,7 @@ const Center: React.FC = () => {
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [selectedFilter, setSelectedFilter] = useState("Active");
   const [cohortData, setCohortData] = useState<cohortFilterDetails[]>([]);
-  const [pageSize, setPageSize] = React.useState<string | number>(10);
+  const [pageSize, setPageSize] = React.useState<number>(10);
   const [confirmationModalOpen, setConfirmationModalOpen] =
     React.useState<boolean>(false);
   const [selectedCohortId, setSelectedCohortId] = React.useState<string>("");
@@ -388,9 +388,11 @@ const Center: React.FC = () => {
     try {
       setCohortData([]);
 
+      console.log({ pageSize, pageCount, pageOffset });
+
       const limit = 0;
       // const offset = pageOffset * limit;
-      const offset = pageOffset * 5;
+      const offset = pageOffset * pageSize;
       const sort = sortBy;
 
       const data = {
@@ -426,15 +428,19 @@ const Center: React.FC = () => {
         setPageSizeArray(
           totalCount >= 15
             ? [5, 10, 15]
-            : totalCount >= 10
+            : totalCount >= 10 && totalCount < 15
               ? [5, 10]
-              : totalCount >= 5
+              : totalCount >= 5 && totalCount < 10
                 ? [5]
-                : [5]
+                : []
         );
         const pageCount =
           totalCount > 0 ? Math.ceil(totalCount / pageLimit) : 1;
         setPageCount(pageCount);
+
+        // if (pageOffset >= pageCount) {
+        //   setPageOffset(pageCount - 1);
+        // }
       } else {
         setCohortData([]);
       }
@@ -529,8 +535,8 @@ const Center: React.FC = () => {
   ]);
 
   // handle functions
-  const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
-    setPageSize(event.target.value);
+  const handleChange = (event: SelectChangeEvent<number>) => {
+    setPageSize(Number(event.target.value));
     setPageLimit(Number(event.target.value));
     setPageOffset(0);
   };
@@ -543,6 +549,7 @@ const Center: React.FC = () => {
       setPageOffset(value - 1);
     }
   };
+
   const PagesSelector = () => (
     <Box sx={{ display: { xs: "block" } }}>
       <Pagination
@@ -553,6 +560,7 @@ const Center: React.FC = () => {
         onChange={handlePaginationChange}
         siblingCount={0}
         boundaryCount={1}
+        disabled={pageCount === 0}
         sx={{ marginTop: "10px" }}
       />
     </Box>

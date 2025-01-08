@@ -762,7 +762,7 @@ const UserTable: React.FC<UserTableProps> = ({
       try {
         // const fields = ["age", "districts", "states", "blocks", "gender"];
         let limit = 0;
-        let offset = pageOffset * 5;
+        let offset = pageOffset * pageSize;
 
         if (filters.name) {
           offset = 0;
