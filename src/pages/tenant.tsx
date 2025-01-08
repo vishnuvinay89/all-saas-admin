@@ -157,7 +157,7 @@ const Tenant: React.FC = () => {
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
   const [selectedBlockCode, setSelectedBlockCode] = useState("");
   const [formdata, setFormData] = useState<any>();
-  const [totalCount, setTotalCount] = useState<number>(0);
+  const [totalPageCount, setTotalPageCount] = useState<number>(0);
   const [editFormData, setEditFormData] = useState<any>([]);
   const [isEditForm, setIsEditForm] = useState(false);
   const [Addmodalopen, setAddmodalopen] = React.useState<any>(false);
@@ -375,7 +375,7 @@ const Tenant: React.FC = () => {
 
         setCohortData(resultData);
         const totalCount = resp?.length;
-        setTotalCount(totalCount);
+        setTotalPageCount(totalCount);
 
         setPagination(totalCount >= 10);
         let pageSizeArrayCount: any = [];
