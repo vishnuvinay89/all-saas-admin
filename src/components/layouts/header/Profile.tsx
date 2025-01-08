@@ -352,6 +352,9 @@ const Profile = () => {
                 fontSize: "16px",
                 backgroundColor: "white",
                 border: "0.6px solid #1E1B16",
+                "&:hover": {
+                  color: "white",
+                },
                 my: "20px",
               }}
               endIcon={<LogoutIcon />}

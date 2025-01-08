@@ -161,6 +161,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
                   fontSize: "14px",
                   fontWeight: "500",
                   height: "40px",
+                  color: "white",
                 }}
               >
                 {t("COMMON.CREATE")}

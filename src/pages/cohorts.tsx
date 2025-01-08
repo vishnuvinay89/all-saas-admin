@@ -388,8 +388,9 @@ const Center: React.FC = () => {
     try {
       setCohortData([]);
 
-      const limit = pageLimit;
-      const offset = pageOffset * limit;
+      const limit = 0;
+      // const offset = pageOffset * limit;
+      const offset = pageOffset * 5;
       const sort = sortBy;
 
       const data = {
@@ -419,21 +420,20 @@ const Center: React.FC = () => {
         }));
 
         setCohortData(resultData || []);
-
-        // Pagination and count handling
         const totalCount = resp?.count;
         setTotalCound(totalCount);
-        setPagination(totalCount > 10);
+        setPagination(totalCount >= 5);
         setPageSizeArray(
-          totalCount > 15
+          totalCount >= 15
             ? [5, 10, 15]
-            : totalCount > 10
+            : totalCount >= 10
               ? [5, 10]
-              : totalCount > 5
+              : totalCount >= 5
                 ? [5]
-                : []
+                : [5]
         );
-        const pageCount = Math.ceil(totalCount / pageLimit);
+        const pageCount =
+          totalCount > 0 ? Math.ceil(totalCount / pageLimit) : 1;
         setPageCount(pageCount);
       } else {
         setCohortData([]);
@@ -532,15 +532,17 @@ const Center: React.FC = () => {
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
     setPageSize(event.target.value);
     setPageLimit(Number(event.target.value));
+    setPageOffset(0);
   };
 
   const handlePaginationChange = (
     event: React.ChangeEvent<unknown>,
     value: number
   ) => {
-    setPageOffset(value - 1);
+    if (value >= 1 && value <= pageCount) {
+      setPageOffset(value - 1);
+    }
   };
-
   const PagesSelector = () => (
     <Box sx={{ display: { xs: "block" } }}>
       <Pagination
@@ -1453,6 +1455,7 @@ const Center: React.FC = () => {
                     width: "auto",
                     height: "40px",
                     marginLeft: "10px",
+                    color: "white",
                   }}
                   onClick={() => {
                     setSubmittedButtonStatus(true);
@@ -1516,6 +1519,7 @@ const Center: React.FC = () => {
                     width: "auto",
                     height: "40px",
                     marginLeft: "10px",
+                    color: "white",
                   }}
                   onClick={() => {
                     setSubmittedButtonStatus(true);
@@ -1579,6 +1583,7 @@ const Center: React.FC = () => {
                     width: "auto",
                     height: "40px",
                     marginLeft: "10px",
+                    color: "white",
                   }}
                   onClick={() => {
                     setSubmittedButtonStatus(true);

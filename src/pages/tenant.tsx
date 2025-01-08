@@ -157,7 +157,7 @@ const Tenant: React.FC = () => {
   const [selectedDistrictCode, setSelectedDistrictCode] = useState("");
   const [selectedBlockCode, setSelectedBlockCode] = useState("");
   const [formdata, setFormData] = useState<any>();
-  const [totalCount, setTotalCound] = useState<number>(0);
+  const [totalCount, setTotalCount] = useState<number>(0);
   const [editFormData, setEditFormData] = useState<any>([]);
   const [isEditForm, setIsEditForm] = useState(false);
   const [Addmodalopen, setAddmodalopen] = React.useState<any>(false);
@@ -374,9 +374,8 @@ const Tenant: React.FC = () => {
         });
 
         setCohortData(resultData);
-        const totalCount = resp.length;
-
-        // setTotalCount(totalCount);   // Set the total count
+        const totalCount = resp?.length;
+        setTotalCount(totalCount);
 
         setPagination(totalCount >= 10);
         let pageSizeArrayCount: any = [];
@@ -406,7 +405,7 @@ const Tenant: React.FC = () => {
 
   useEffect(() => {
     fetchTenantList();
-  }, [openAddNewCohort, filters]);
+  }, [openAddNewCohort, pageLimit, pageOffset, sortBy, filters]);
 
   // const getFormData = async () => {
   //   try {
@@ -1352,6 +1351,7 @@ const Tenant: React.FC = () => {
                   width: "auto",
                   height: "40px",
                   marginLeft: "10px",
+                  color: "white",
                 }}
                 onClick={() => {
                   setSubmittedButtonStatus(true);
@@ -1383,7 +1383,7 @@ const Tenant: React.FC = () => {
             limit={pageLimit}
             roleButton
             offset={pageOffset}
-            paginationEnable={totalCount >= Numbers.TEN}
+            paginationEnable={false}
             PagesSelector={PagesSelector}
             pagination={pagination}
             PageSizeSelector={PageSizeSelectorFunction}
@@ -1470,6 +1470,7 @@ const Tenant: React.FC = () => {
                     width: "auto",
                     height: "40px",
                     marginLeft: "10px",
+                    color: "white",
                   }}
                   onClick={() => {
                     setSubmittedButtonStatus(true);
@@ -1586,6 +1587,7 @@ const Tenant: React.FC = () => {
                     width: "auto",
                     height: "40px",
                     marginLeft: "10px",
+                    color: "white",
                   }}
                   onClick={() => {
                     setSubmittedButtonStatus(true);
