@@ -735,6 +735,9 @@ const UserTable: React.FC<UserTableProps> = ({
     const userId = rowData?.userId;
     setUserId(userId);
 
+    if (rowData) {
+      setSelectedRowData(rowData);
+    }
     const initialFormData = {
       userId: rowData.userId || "",
       name: rowData.name || "",
@@ -771,6 +774,7 @@ const UserTable: React.FC<UserTableProps> = ({
           ? filters?.tenantId
           : listOfTenants?.[0]?.tenantId;
 
+        const selectedTenantOrNot = selectedTenant?.[0] === "All";
         const payload = {
           limit,
           filters: {
@@ -778,7 +782,7 @@ const UserTable: React.FC<UserTableProps> = ({
             status: filters.status,
           },
           tenantCohortRoleMapping: {
-            tenantId: tenantId,
+            ...(selectedTenantOrNot ? {} : { tenantId: tenantId }),
             cohortId: filters?.cohortId ? [filters?.cohortId] : [],
           },
           sort: sortBy,
@@ -896,8 +900,41 @@ const UserTable: React.FC<UserTableProps> = ({
     reassignButtonStatus,
     userType,
     editUserState,
+    selectedTenant,
+    selectedCohort,
   ]);
 
+  const handleTenantChange = (
+    selectedNames: string[],
+    selectedCodes: string[]
+  ) => {
+    if (selectedNames && selectedCodes) {
+      const tenantId = selectedCodes.join(",");
+      setSelectedTenant(selectedNames);
+      if (selectedNames?.[0] == "All") {
+        setFilters(
+          (prevFilter) => (
+            console.log({ prevFilter }),
+            {
+              ...prevFilter,
+            }
+          )
+        );
+      } else {
+        setFilters(
+          (prevFilter) => (
+            console.log({ prevFilter }),
+            {
+              ...prevFilter,
+              tenantId: tenantId,
+            }
+          )
+        );
+      }
+    } else {
+      console.log("No valid tenants selected");
+    }
+  };
   const handleChange = (event: SelectChangeEvent<typeof pageSize>) => {
     const newPageSize = Number(event.target.value);
     setPageSize(newPageSize);
@@ -910,24 +947,34 @@ const UserTable: React.FC<UserTableProps> = ({
     value: number
   ) => {
     if (value >= 1 && value <= pageCount) {
-      setPageOffset(value - 1);
+      setPageOffset(value - 1); // Ensure pageOffset is updated correctly
     }
   };
+
+  useEffect(() => {
+    const calculatePageSizes = (total: number) => {
+      if (total >= 15) return [5, 10, 15];
+      if (total >= 10) return [5, 10];
+      if (total > 5) return [5];
+      return [total];
+    };
+
+    setPageSizeArray(calculatePageSizes(totalCount));
+    setPageCount(Math.ceil(totalCount / pageSize));
+  }, [totalCount, pageSize]);
+
   const PagesSelector = () => (
-    <>
-      <Box sx={{ display: { xs: "block" } }}>
-        <Pagination
-          // size="small"
-          color="primary"
-          count={pageCount}
-          page={pageOffset + 1}
-          onChange={handlePaginationChange}
-          siblingCount={0}
-          boundaryCount={1}
-          sx={{ marginTop: "10px" }}
-        />
-      </Box>
-    </>
+    <Box sx={{ display: { xs: "block" } }}>
+      <Pagination
+        color="primary"
+        count={pageCount}
+        page={pageOffset + 1}
+        onChange={handlePaginationChange}
+        siblingCount={0}
+        boundaryCount={1}
+        sx={{ marginTop: "10px" }}
+      />
+    </Box>
   );
 
   const PageSizeSelectorFunction = () => (
@@ -966,321 +1013,6 @@ const UserTable: React.FC<UserTableProps> = ({
     }
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       if (data.length === 0 || cohortsFetched) {
-  //         return;
-  //       }
-  //       const newData = await Promise.all(
-  //         data?.map(async (user) => {
-  //           const response = await getCohortList(user.userId);
-  //           // const cohortNames = response?.result?.cohortData?.map(
-  //           //   (cohort: Cohort) => cohort.name,
-  //           // );
-  //           const cohortNames = response?.result?.cohortData
-  //             ?.filter(
-  //               (cohort: Cohort) =>
-  //                 cohort.type !== "BLOCK" &&
-  //                 cohort?.cohortMemberStatus !== "archived"
-  //             )
-  //             .map((cohort: Cohort) => cohort.name);
-  //           const cohortIds = response?.result?.cohortData
-  //             ?.filter(
-  //               (cohort: Cohort) =>
-  //                 cohort.type !== "BLOCK" &&
-  //                 cohort?.cohortMemberStatus !== "archived"
-  //             )
-  //             .map((cohort: Cohort) => cohort.cohortId);
-
-  //           const centerMembershipIdList = response?.result?.cohortData
-  //             ?.filter(
-  //               (cohort: Cohort) =>
-  //                 cohort.type !== "BLOCK" &&
-  //                 cohort?.cohortMemberStatus !== "archived"
-  //             )
-  //             .map((cohort: Cohort) => cohort.cohortMembershipId);
-  //           const blockMembershipIdList = response?.result?.cohortData
-  //             ?.filter(
-  //               (cohort: Cohort) =>
-  //                 cohort.type === "BLOCK" &&
-  //                 cohort?.cohortMemberStatus !== "archived"
-  //             )
-  //             .map((cohort: Cohort) => cohort.cohortMembershipId);
-  //           //  const cohortMembershipId=response?.result?.cohortData?.cohortMembershipId;
-
-  //           let finalArray;
-  //           if (cohortNames?.length >= 1) {
-  //             finalArray = capitalizeFirstLetterOfEachWordInArray(cohortNames);
-  //           }
-  //           //   const finalArray=capitalizeFirstLetterOfEachWordInArray(cohortNames)
-  //           return {
-  //             ...user,
-  //             centerMembershipIdList: centerMembershipIdList,
-  //             blockMembershipIdList: blockMembershipIdList,
-  //             cohortIds: cohortIds,
-  //             centers: finalArray ? finalArray?.join(" , ") : "-",
-  //           };
-  //         })
-  //       );
-  //       setData(newData);
-  //       setCohortsFetched(true);
-  //     } catch (error: any) {
-  //
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [data, cohortsFetched]);
-
-  // useEffect(() => {
-  //   const fetchLocationData = () => {
-  //     try {
-  //       const object = {
-  //         // "limit": 20,
-  //         // "offset": 0,
-  //         fieldName: "states",
-  //       };
-  //       // const response = await getStateBlockDistrictList(object);
-  //       // const result = response?.result?.values;
-  //       if (typeof window !== "undefined" && window.localStorage) {
-  //         const admin = localStorage.getItem("adminInfo");
-  //         if (admin) {
-  //           const stateField = JSON.parse(admin).customFields.find(
-  //             (field: any) => field.label === "STATES"
-  //           );
-  //           if (!stateField.value.includes(",")) {
-  //             setSelectedState([stateField.value]);
-  //             setSelectedStateCode(stateField.code);
-
-  //             // setFilters({
-  //             //   states: stateField.code,
-  //             //   //districts:selectedDistrictCode,
-  //             //  // blocks:selectedBlockCode,
-  //             //   role: role,
-  //             //   status:[statusValue],
-  //             // }
-
-  //             // )
-  //             // if( selectedDistrict.length===0 ||selectedDistrict[0]==="All Districts")
-  //             // {
-  //             //   const newQuery = { ...router.query };
-
-  //             //   if (newQuery.district) {
-  //             //    delete newQuery.district;
-  //             //  }
-  //             //   if (newQuery.block) {
-  //             //     delete newQuery.block;
-  //             //   }
-  //             //   if(newQuery.center)
-  //             //   {
-  //             //     delete newQuery.center;
-  //             //   }
-  //             //   router.replace({
-  //             //     pathname: router.pathname,
-  //             //     query: {
-  //             //       ...newQuery,
-  //             //     }
-  //             //   });
-
-  //             // }
-  //             // if( selectedBlock.length===0 ||selectedBlock[0]==="All Blocks")
-  //             // {
-  //             //   const newQuery = { ...router.query };
-
-  //             //   // if (newQuery.district) {
-  //             //   //   delete newQuery.district;
-  //             //   // }
-
-  //             //   if (newQuery.block) {
-  //             //     delete newQuery.block;
-  //             //   }
-  //             //   if(newQuery.center)
-  //             //   {
-  //             //     delete newQuery.center;
-  //             //   }
-  //             //   router.replace({
-  //             //     pathname: router.pathname,
-  //             //     query: {
-  //             //       ...newQuery,
-  //             //     }
-  //             //   });
-
-  //             // }
-
-  //             if (
-  //               selectedDistrictCode &&
-  //               selectedDistrict.length !== 0 &&
-  //               selectedDistrict[0] !== t("COMMON.ALL_DISTRICTS")
-  //             ) {
-  //               setFilters({
-  //                 states: stateField.code,
-  //                 districts: selectedDistrictCode,
-  //                 //  blocks:selectedBlockCode,
-  //                 role: role,
-  //                 status: [statusValue],
-  //               });
-  //             }
-  //             if (
-  //               selectedBlockCode &&
-  //               selectedBlock.length !== 0 &&
-  //               selectedBlock[0] !== t("COMMON.ALL_BLOCKS")
-  //             ) {
-  //               setFilters({
-  //                 states: stateField.code,
-  //                 districts: selectedDistrictCode,
-  //                 blocks: selectedBlockCode,
-  //                 role: role,
-  //                 status: [statusValue],
-  //               });
-  //             }
-  //           }
-
-  //           // setStates(object);
-  //         }
-  //       }
-  //       //  setStates(result);
-  //     } catch (error) {
-  //
-  //     }
-  //   };
-
-  //   fetchLocationData();
-  // }, [selectedBlockCode, selectedDistrictCode]);
-  // useEffect(() => {
-  //   const fetchCenterData = () => {
-  //     if (userType === Role.TEAM_LEADERS) {
-  //       setEnableCenterFilter(false);
-  //     } else {
-  //       if (selectedCenter.length !== 0) {
-  //         if (
-  //           selectedCenter[0] === "" ||
-  //           selectedCenter[0] === t("COMMON.ALL_CENTERS")
-  //         ) {
-  //           setEnableCenterFilter(false);
-  //         } else {
-  //           setEnableCenterFilter(true);
-  //         }
-  //         //setEnableCenterFilter(true);
-  //         if (selectedCenterCode.length !== 0) {
-  //           setFilters({
-  //             // states: selectedStateCode,
-  //             // districts: selectedDistrictCode,
-  //             // blocks: blocks,
-  //             cohortId: selectedCenterCode[0],
-  //             role: role,
-  //             status: [statusValue],
-  //           });
-  //         }
-  //       } else {
-  //         setEnableCenterFilter(false);
-  //         if (selectedCenterCode.length !== 0) setSelectedCenterCode([]);
-  //       }
-  //     }
-  //   };
-
-  //   fetchCenterData();
-  // }, [selectedCenter, selectedCenterCode]);
-  // useEffect(() => {
-  //   const { state, district, block, center } = router.query;
-
-  // {
-  //   if (state) {
-  //     setSelectedStateCode(state.toString());
-  //   }
-  //   if (district) {
-  //     setSelectedDistrictCode(district.toString());
-  //   }
-  //   if (block) {
-  //     setSelectedBlockCode(block.toString());
-  //   }
-  //   if ( center) {
-  //     setSelectedCenter([center.toString()]);
-  //   }
-  //   setInitialized(true);
-  // }
-  // }, []);
-
-  // useEffect(() => {
-
-  //   // Handle replacement when only state and district codes are available
-  //   if (selectedStateCode!=="" && selectedDistrictCode==="" && selectedBlockCode==="") {
-  //     const newQuery = { ...router.query };
-
-  //      if (newQuery.center) {
-  //        delete newQuery.center;
-  //      }
-  //      if (newQuery.district) {
-  //       delete newQuery.district;
-  //     }
-  //      if (newQuery.block) {
-  //        delete newQuery.block;
-  //      }
-  //      router.replace({
-  //        pathname: router.pathname,
-  //        query: {
-  //          ...newQuery,
-  //          state: selectedStateCode,
-  //        }
-  //      });
-  //    }
-  //   if (selectedStateCode!=="" && selectedDistrictCode!=="" && selectedBlockCode==="") {
-  //    const newQuery = { ...router.query };
-
-  //     if (newQuery.center) {
-  //       delete newQuery.center;
-  //     }
-  //     if (newQuery.block) {
-  //       delete newQuery.block;
-  //     }
-  //     router.replace({
-  //       pathname: router.pathname,
-  //       query: {
-  //         ...newQuery,
-  //         state: selectedStateCode,
-  //         district: selectedDistrictCode
-  //       }
-  //     });
-  //   }
-
-  //   // Handle replacement when state, district, and block codes are available
-  //   if (selectedStateCode!=="" && selectedDistrictCode!=="" && selectedBlockCode!=="" && selectedCenter.length === 0) {
-  //     const newQuery = { ...router.query };
-
-  //     if (newQuery.center) {
-  //       delete newQuery.center;
-  //     }
-  //     if (newQuery.block) {
-  //       delete newQuery.block;
-  //     }
-  //     router.replace({
-  //       pathname: router.pathname,
-  //       query: {
-  //         ...newQuery,
-  //         state: selectedStateCode,
-  //         district: selectedDistrictCode,
-  //         block: selectedBlockCode
-  //       }
-  //     });
-  //   }
-
-  //   // Handle replacement when state, district, block, and center are all selected
-  //   if (selectedStateCode !==""&& selectedDistrictCode!=="" && selectedBlockCode!=="" && selectedCenter.length !== 0) {
-  //     if (userType !== Role.TEAM_LEADERS) {
-  //       router.replace({
-  //         pathname: router.pathname,
-  //         query: {
-  //           ...router.query,
-  //           state: selectedStateCode,
-  //           district: selectedDistrictCode,
-  //           block: selectedBlockCode,
-  //           center: selectedCenter
-  //         }
-  //       });
-  //     }
-  //   }
-  // }, [selectedStateCode]);
-
   const handleCloseReassignModal = () => {
     // setSelectedReason("");
     // setOtherReason("");
@@ -1310,27 +1042,28 @@ const UserTable: React.FC<UserTableProps> = ({
       //   return;
       // }
       let cohortDetails = {
-        name: formData?.name,
-        role: formData?.role,
-        userId: formData?.userId,
-        username: formData?.username,
-        mobile: formData?.mobileNo,
-        email: formData?.email,
-        // status: "archived",
-        // customFields: customFields,
+        userData: {
+          name: formData?.name,
+          role: formData?.role,
+          userId: formData?.userId,
+          username: formData?.username,
+          mobile: formData?.mobileNo,
+          email: formData?.email,
+          // status: "archived",
+          // customFields: customFields,
+        },
       };
-
-      const resp = await updateUser(formData?.userId, cohortDetails);
-
-      if (resp?.data?.responseCode === 200 || resp?.responseCode === 201) {
-        showToastMessage(t("CENTERS.CENTER_UPDATE_SUCCESSFULLY"), "success");
+      const tenantid = selectedRowData?.tenantId;
+      const resp = await updateUser(formData?.userId, cohortDetails, tenantid);
+      if (resp?.responseCode === 200 || resp?.responseCode === 201) {
+        showToastMessage(t("USER.UPDATE_SUCCESSFULLY"), "success");
         setEditUserState((state) => !state);
         setLoading(false);
       } else {
-        showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
+        showToastMessage(t("USER.FAILED_TO_UPDATE"), "error");
       }
     } catch (error) {
-      showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
+      showToastMessage(t("USER.FAILED_TO_UPDATE"), "error");
     } finally {
       setLoading(false);
       setConfirmButtonDisable(false);
@@ -1343,22 +1076,6 @@ const UserTable: React.FC<UserTableProps> = ({
     setUpdateBtnDisabled(false);
   };
   const handleError = (error: any) => {};
-
-  const handleTenantChange = (
-    selectedNames: string[],
-    selectedCodes: string[]
-  ) => {
-    if (selectedNames && selectedCodes) {
-      const tenantId = selectedCodes.join(",");
-      setSelectedTenant(selectedNames);
-      setFilters((prevFilter) => ({
-        ...prevFilter,
-        tenantId: tenantId,
-      }));
-    } else {
-      console.log("No valid tenants selected");
-    }
-  };
 
   const handleCohortChange = (
     selectedNames: string[],
@@ -1435,7 +1152,7 @@ const UserTable: React.FC<UserTableProps> = ({
         <KaTableComponent
           columns={
             // role === Role.TEAM_LEADER
-            getTLTableColumns(t, isMobile)
+            getTLTableColumns(t, isMobile, filters)
             // : getUserTableColumns(t, isMobile)
           }
           // reassignCohort={handleReassignCohort}
@@ -1465,44 +1182,9 @@ const UserTable: React.FC<UserTableProps> = ({
               {t("COMMON.NO_USER_FOUND")}
             </Typography>
           </Box>
-
-          // <KaTableComponent
-          //   columns={
-          //     role === Role.TEAM_LEADER
-          //       ? getTLTableColumns(t, isMobile)
-          //       : getUserTableColumns(t, isMobile)
-          //   }
-          //   data={data}
-          //   limit={pageLimit}
-          //   offset={pageOffset}
-          //   PagesSelector={PagesSelector}
-          //   PageSizeSelector={PageSizeSelectorFunction}
-          //   pageSizes={pageSizeArray}
-          //   extraActions={extraActions}
-          //   showIcons={true}
-          //   onEdit={handleEdit}
-          //   onDelete={handleDelete}
-          //   pagination={false}
-          //   noDataMessage={data.length === 0 ? noUserFoundJSX : ""}
-          // />
         )
       )}
 
-      {/* <DeleteUserModal
-        open={isDeleteModalOpen}
-        onClose={handleCloseDeleteModal}
-        selectedValue={selectedReason}
-        setSelectedValue={setSelectedReason}
-        handleDeleteAction={handleDeleteUser}
-        otherReason={otherReason}
-        setOtherReason={setOtherReason}
-        confirmButtonDisable={confirmButtonDisable}
-        setConfirmButtonDisable={setConfirmButtonDisable}
-        centers={userCohort}
-        userId={selectedUserId}
-        userName={userName}
-        userType={userType}
-      /> */}
       <SimpleModal
         open={isEditForm}
         onClose={onCloseEditForm}
@@ -1592,22 +1274,6 @@ const UserTable: React.FC<UserTableProps> = ({
         districtCode={districtCode}
         cohortId={cohortId}
         centers={assignedCenters}
-      /> */}
-
-      {/* <CommonUserModal
-        open={openAddLearnerModal}
-        onClose={handleCloseAddLearnerModal}
-        formData={formData}
-        isEditModal={true}
-        userId={userId}
-        onSubmit={handleModalSubmit}
-        userType={
-          userType === Role.LEARNERS
-            ? FormContextType.STUDENT
-            : userType === Role.FACILITATORS
-              ? FormContextType.TEACHER
-              : FormContextType.TEAM_LEADER
-        }
       /> */}
     </HeaderComponent>
   );

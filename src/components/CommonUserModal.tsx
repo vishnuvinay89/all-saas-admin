@@ -359,7 +359,7 @@ const CommonUserModal: React.FC<UserModalProps> = ({
             userData: userData,
             customFields: customFields,
           };
-          await updateUser(userId, object);
+          await updateUser(userId, object, "");
           const messageKey =
             userType === FormContextType.STUDENT
               ? "LEARNERS.LEARNER_UPDATED_SUCCESSFULLY"

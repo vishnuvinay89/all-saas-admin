@@ -68,13 +68,25 @@ export const createUser = async (userData: any): Promise<any> => {
 export const updateUser = async (
   userId: string,
   userData: any,
+  tenantId: string
 ): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.UPDATE}/${userId}`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.UPDATE}/${userId}`;
+
   try {
-    const response = await patch(apiUrl, { userData });
-    return response;
+    const token = localStorage.getItem('token');
+
+    const response = await axios.patch(apiUrl, userData, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'tenantId': tenantId,
+      },
+    });
+
+    return response?.data;
   } catch (error) {
-    console.error("error in fetching user details", error);
-    return error;
+    console.error("Error updating user details", error);
+    throw error;
   }
 };
+

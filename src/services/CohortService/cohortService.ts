@@ -33,16 +33,23 @@ export const getCohortList = async (data: cohortListData): Promise<any> => {
     return error;
   }
 };
-
 export const updateCohortUpdate = async (
   userId: string,
-  cohortDetails: any
+  cohortDetails: any,
+  tenantId: string
 ): Promise<any> => {
-  // const { name, status, type } = cohortDetails;
-  let apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.COHORT_UPDATE}/${userId}`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.COHORT_UPDATE}/${userId}`;
 
   try {
-    const response = await put(apiUrl, cohortDetails);
+    const token = localStorage.getItem('token');
+    const response = await axios.put(apiUrl, cohortDetails, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'tenantId': tenantId,
+      },
+    });
+
     return response?.data;
   } catch (error) {
     console.error("Error in updating cohort details", error);
@@ -77,9 +84,15 @@ export const createUser = async (userData: any): Promise<any> => {
   try {
     const response = await post(apiUrl, userData);
     return response?.data?.result;
-  } catch (error) {
-    console.error("error in getting cohort list", error);
-    // throw error;
+  } catch (error: unknown) {
+    let errorMessage = "An unexpected error occurred.";
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage = error.response.data?.params?.err || "Error from API.";
+    }
+
+    console.error("Error in creating user:", error);
+    throw new Error(errorMessage);
   }
 };
 
@@ -181,20 +194,26 @@ data:any
 
 
   export const deleteCohort = async (
-    // status:any,
-    option: string
+    option: string,
+    tenantId: string
   ): Promise<any> => {
+    const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.COHORT_DELETE}/${option}`;
     
-    const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.COHORT_DELETE}/${option}`;
-    const requestBody = {};
-    const requestHeaders = {};
-  
     try {
-      const response = await deleteApi(apiUrl, requestBody, requestHeaders);      
+      const token = localStorage.getItem('token');
+      const response = await axios.delete(apiUrl, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'tenantId': tenantId,
+        },
+        data: {}, 
+      });
+  
       return response?.data;
     } catch (error) {
-      console.error(`Error deleting`, error);
-      return error;
+      console.error("Error deleting cohort", error);
+      throw error;
     }
   };
   export const deleteTenant = async (
@@ -283,9 +302,15 @@ data:any
   
       const response = await axios.post(apiUrl, data, { headers });
       return response?.data;  
-    } catch (error) {
-      console.error('Error in Creating User:', error);
-      return error ; 
+    } catch (error: unknown) {
+      let errorMessage = "An unexpected error occurred.";
+  
+      if (axios.isAxiosError(error) && error.response) {
+        errorMessage = error.response.data?.params?.err || "Error from API.";
+      }
+  
+      console.error("Error in creating user:", error);
+      throw new Error(errorMessage);
     }
   };
   
