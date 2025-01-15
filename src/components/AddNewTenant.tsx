@@ -81,26 +81,31 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
     event: React.FormEvent<any>
   ) => {
     const formData = data?.formData;
-    if (!formData) {
-      showToastMessage("Form data is required", "error");
-      return;
-    }
-    console.log({ formData });
+    try {
+      if (!formData) {
+        showToastMessage("Form data is required", "error");
+        return;
+      }
+      const cohortDetails: CohortDetails = {
+        name: formData?.name,
+        domain: formData?.domain ? formData?.domain : " ",
+        // status: formData?.status,
+      };
 
-    const cohortDetails: CohortDetails = {
-      name: formData?.name,
-      domain: formData?.domain ? formData?.domain : " ",
-      // status: formData?.status,
-    };
-
-    const cohortData = await tenantCreate(cohortDetails);
-    console.log({ cohortData });
-
-    if (cohortData?.responseCode === 200 || cohortData?.responseCode === 201) {
-      showToastMessage(t("TENANT.CREATE_SUCCESSFULLY"), "success");
-      onClose();
-    } else {
-      showToastMessage("Please Input Data", "warning");
+      const cohortData = await tenantCreate(cohortDetails);
+      if (
+        cohortData?.responseCode === 200 ||
+        cohortData?.responseCode === 201
+      ) {
+        showToastMessage(t("TENANT.CREATE_SUCCESSFULLY"), "success");
+        onClose();
+      } else {
+        showToastMessage(t("TENANT.TENANT_ADMIN_FAILED_TO_CREATE"), "error");
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error.message || t("TENANT.TENANT_ADMIN_FAILED_TO_CREATE");
+      showToastMessage(errorMessage, "error");
     }
   };
 

@@ -239,9 +239,15 @@ data:any
     try {
       const response = await post(apiUrl, data);      
       return response?.data;
-    } catch (error) {
-      console.error("Error in Getting cohort List Details", error);
-      return error;
+    }catch (error: unknown) {
+      let errorMessage = "An unexpected error occurred.";
+  
+      if (axios.isAxiosError(error) && error.response) {
+        errorMessage = error.response.data?.params?.err || "Error from API.";
+      }
+  
+      console.error("Error in creating tenant:", error);
+      throw new Error(errorMessage);
     }
   };
   export const roleCreate = async (data: cohortListData): Promise<any> => {
