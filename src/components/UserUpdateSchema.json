@@ -2,7 +2,7 @@
   "title": "",
   "description": "",
   "type": "object",
-  "required": ["name", "username"],
+  "required": ["name"],
   "properties": {
     "name": {
       "title": "Full Name",
@@ -24,14 +24,6 @@
       "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$",
       "validation": ["required"],
       "shouldSkipDefaultValidation": true
-    },
-    "username": {
-      "title": "Username",
-      "fieldId": null,
-      "type": "string",
-      "minLength": 3,
-      "pattern": "^[a-zA-Z0-9!@#$%^&*()_+={}:;<>?,./~`|\\-]+$",
-      "validation": []
     }
   },
   "dependencies": {}
