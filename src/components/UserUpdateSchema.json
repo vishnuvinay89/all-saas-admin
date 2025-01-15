@@ -2,13 +2,12 @@
   "title": "",
   "description": "",
   "type": "object",
-  "required": ["name", "username"],
+  "required": ["name"],
   "properties": {
     "name": {
       "title": "Full Name",
       "fieldId": null,
       "type": "string",
-      "pattern": "^[a-zA-Z][a-zA-Z ]*[a-zA-Z]$",
       "validation": []
     },
     "mobileNo": {
@@ -25,12 +24,6 @@
       "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$",
       "validation": ["required"],
       "shouldSkipDefaultValidation": true
-    },
-    "username": {
-      "title": "Username",
-      "fieldId": null,
-      "type": "string",
-      "validation": []
     }
   },
   "dependencies": {}

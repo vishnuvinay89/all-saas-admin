@@ -219,7 +219,9 @@
     "DELETE_SUCCESSFULLY": "Cohort Deleted Successfully",
     "ALL_STATES": "All States",
     "COHORT_MEMBER": "Cohort",
-    "ADD_NEW_COHORT_ADMIN": "Add New Cohort Admin"
+    "ADD_NEW_COHORT_ADMIN": "Add New Cohort Admin",
+    "COHORT_UPDATED_SUCCESSFULLY": "Cohort Details Updated Successfully",
+    "COHORT_UPDATED_FAILED": "Cohort Details Updation Failed"
   },
   "COURSE_PLANNER": {
     "GRADE": "Grade",
@@ -431,7 +433,8 @@
     "USERNAME": "Username",
     "DOMAIN": "Domain",
     "CREATE_TENANT_ADMIN": "Create Tenant Admin",
-    "CREATE_COHORT_ADMIN": "Create Cohort Admin"
+    "CREATE_COHORT_ADMIN": "Create Cohort Admin",
+    "USERID": "UserId"
   },
   "WORKSPACE": {
     "EDITOR_WORKSPACE": "Editor Workspace",

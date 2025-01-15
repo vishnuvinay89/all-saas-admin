@@ -230,7 +230,7 @@ const Center: React.FC = () => {
       "ui:widget": "password",
       "ui:placeholder": "Enter a secure password",
       "ui:help":
-        "Password must be at least 8 characters long, with at least one letter and one number.",
+        "Password must be at least 8 characters long and contain one uppercase letter, one lowercase letter, one number, and one special character.",
     },
     role: {
       "ui:widget": "select",
@@ -269,7 +269,7 @@ const Center: React.FC = () => {
       "ui:widget": "password",
       "ui:placeholder": "Enter a secure password",
       "ui:help":
-        "Password must be at least 8 characters long, with at least one letter and one number.",
+        "Password must be at least 8 characters long and contain one uppercase letter, one lowercase letter, one number, and one special character.",
     },
     role: {
       "ui:widget": "select",
@@ -785,7 +785,8 @@ const Center: React.FC = () => {
       let cohortDetails = {
         status: Status.ARCHIVED,
       };
-      const resp = await deleteCohort(selectedCohortId);
+      const tenantid = selectedRowData?.tenantId;
+      const resp = await deleteCohort(selectedCohortId, tenantid);
       if (resp?.responseCode === 200) {
         showToastMessage(t("COHORTS.DELETE_SUCCESSFULLY"), "success");
         const cohort = cohortData?.find(
@@ -882,6 +883,7 @@ const Center: React.FC = () => {
     // Handle edit action here
     // setIsEditModalOpen(true);
     if (rowData) {
+      setSelectedRowData(rowData);
       const cohortId = rowData?.cohortId;
       setSelectedCohortId(cohortId);
       const cohortName = rowData?.name;
@@ -896,7 +898,11 @@ const Center: React.FC = () => {
         offset: 0,
       };
       const resp = await getCohortList(data);
-      setFormData(rowData);
+
+      setFormData({
+        ...rowData,
+        status: rowData?.status ? rowData?.status : "active",
+      });
       setEditFormData(mapFields(schema, rowData));
       setLoading(false);
       setIsEditForm(true);
@@ -989,18 +995,24 @@ const Center: React.FC = () => {
       const changedFields = getChangedFields(formData, editFormData);
 
       if (Object.keys(changedFields).length === 0) {
-        showToastMessage(t("CENTERS.NO_CHANGES_TO_UPDATE"), "info");
+        showToastMessage(t("USER.NO_CHANGES_TO_UPDATE"), "info");
         setLoading(false);
         return;
       }
-      const resp = await updateCohortUpdate(selectedCohortId, changedFields);
+
+      const tenantid = selectedRowData?.tenantId;
+      const resp = await updateCohortUpdate(
+        selectedCohortId,
+        changedFields,
+        tenantid
+      );
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
-        showToastMessage(t("CENTERS.CENTER_UPDATE_SUCCESSFULLY"), "success");
+        showToastMessage(t("COHORTS.COHORT_UPDATED_SUCCESSFULLY"), "success");
       } else {
-        showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
+        showToastMessage(t("COHORTS.COHORT_UPDATED_FAILED"), "error");
       }
     } catch (error) {
-      showToastMessage(t("CENTERS.CENTER_UPDATE_FAILED"), "error");
+      showToastMessage(t("COHORTS.COHORT_UPDATED_FAILED"), "error");
     } finally {
       setLoading(false);
       setConfirmButtonDisable(false);
@@ -1282,9 +1294,10 @@ const Center: React.FC = () => {
       } else {
         showToastMessage(t("COHORTS.COHORT_ADMIN_CREATE_FAILED"), "error");
       }
-    } catch (error) {
-      console.error("Error updating cohort:", error);
-      showToastMessage(t("COHORTS.CREATE_FAILED"), "error");
+    } catch (error: any) {
+      const errorMessage =
+        error.message || t("TENANT.TENANT_ADMIN_FAILED_TO_CREATE");
+      showToastMessage(errorMessage, "error");
     } finally {
       setLoading(false);
       setConfirmButtonDisable(false);
@@ -1370,8 +1383,8 @@ const Center: React.FC = () => {
           </Box>
         ) : cohortData?.length > 0 ? (
           <KaTableComponent
-            columns={getCohortTableData(t, isMobile, adminRole)}
-            addAction={true}
+            columns={getCohortTableData(t, isMobile, adminRole, filters)}
+            addAction={filters?.status?.[0] != "inactive" ? true : false}
             data={cohortData}
             limit={pageLimit}
             roleButton

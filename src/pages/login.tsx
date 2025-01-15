@@ -290,7 +290,7 @@ const LoginPage = () => {
             >
               {t("LOGIN_PAGE.LOGIN")}
             </Typography> */}
-            <FormControl fullWidth margin="normal">
+            {/* <FormControl fullWidth margin="normal">
               <Select
                 className="SelectLanguages"
                 value={language}
@@ -311,7 +311,7 @@ const LoginPage = () => {
                   </MenuItem>
                 ))}
               </Select>
-            </FormControl>
+            </FormControl> */}
             <TextField
               fullWidth
               id="username"
@@ -385,7 +385,7 @@ const LoginPage = () => {
               }}
             />
 
-            <Box
+            {/* <Box
               display="flex"
               alignItems="center"
               marginTop="1.2rem"
@@ -415,7 +415,7 @@ const LoginPage = () => {
               >
                 {t("LOGIN_PAGE.REMEMBER_ME")}
               </Typography>
-            </Box>
+            </Box> */}
             <Box marginTop="2rem" textAlign="center">
               <Button
                 variant="contained"
