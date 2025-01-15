@@ -433,7 +433,8 @@
     "USERNAME": "Username",
     "DOMAIN": "Domain",
     "CREATE_TENANT_ADMIN": "Create Tenant Admin",
-    "CREATE_COHORT_ADMIN": "Create Cohort Admin"
+    "CREATE_COHORT_ADMIN": "Create Cohort Admin",
+    "USERID": "UserId"
   },
   "WORKSPACE": {
     "EDITOR_WORKSPACE": "Editor Workspace",
