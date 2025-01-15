@@ -1130,7 +1130,7 @@ const UserTable: React.FC<UserTableProps> = ({
     selectedCenterCode: selectedCenterCode,
     setSelectedCenterCode: setSelectedCenterCode,
     setSelectedStateCode: setSelectedStateCode,
-    statusArchived: true,
+    statusArchived: false,
     isTenantShow: true,
     isCohortShow: true,
     //  statusArchived:true,
