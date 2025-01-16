@@ -8,6 +8,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import {
   cohortCreate,
+  createUser,
   deleteTenant,
   fetchCohortMemberList,
   getCohortList,
@@ -38,7 +39,6 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import Loader from "@/components/Loader";
-import { createUser, getFormRead } from "@/services/CreateUserService";
 import { customFields } from "@/components/GeneratedSchemas";
 import { CustomField } from "@/utils/Interfaces";
 import { showToastMessage } from "@/components/Toastify";
@@ -200,7 +200,7 @@ const Tenant: React.FC = () => {
       "ui:widget": "password",
       "ui:placeholder": "Enter a secure password",
       "ui:help":
-        "Password must be at least 8 characters long, with at least one letter and one number.",
+        "Password must be at least 8 characters long and contain one uppercase letter, one lowercase letter, one number, and one special character.",
     },
     role: {
       "ui:widget": "select",
@@ -989,9 +989,10 @@ const Tenant: React.FC = () => {
       } else {
         showToastMessage(t("TENANT.TENANT_ADMIN_FAILED_TO_CREATE"), "error");
       }
-    } catch (error) {
-      console.error("Error updating cohort:", error);
-      showToastMessage(t("COHORTS.CREATE_FAILED"), "error");
+    } catch (error: any) {
+      const errorMessage =
+        error.message || t("TENANT.TENANT_ADMIN_FAILED_TO_CREATE");
+      showToastMessage(errorMessage, "error");
     } finally {
       setLoading(false);
       setConfirmButtonDisable(false);

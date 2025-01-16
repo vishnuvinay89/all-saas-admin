@@ -264,7 +264,7 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
           customFields: customFields,
         };
         if (userId) {
-          await updateUser(userId, updateObject);
+          await updateUser(userId, updateObject, "");
         }
         handleClose();
 
@@ -394,7 +394,7 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
             customFields: customFields,
           };
           if (userId) {
-            await updateUser(userId, updateObject);
+            await updateUser(userId, updateObject, "");
           }
 
           showToastMessage(t("COMMON.BLOCKS_REASSIGN_SUCCESSFULLY"), "success");
@@ -537,7 +537,7 @@ const ReassignCenterModal: React.FC<ReassignCohortModalProps> = ({
         customFields: customFields,
       };
       if (selectedTLUserID) {
-        await updateUser(selectedTLUserID, updateObject);
+        await updateUser(selectedTLUserID, updateObject, "");
       }
 
       showToastMessage(t("COMMON.BLOCKS_REASSIGN_SUCCESSFULLY"), "success");

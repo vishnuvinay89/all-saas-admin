@@ -238,7 +238,6 @@ const LoginPage = () => {
     });
   };
   const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
-
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <Grid container sx={{}}>
@@ -297,28 +296,28 @@ const LoginPage = () => {
             >
               {t("LOGIN_PAGE.LOGIN")}
             </Typography> */}
-              <FormControl fullWidth margin="normal">
-                <Select
-                  className="SelectLanguages"
-                  value={language}
-                  onChange={handleChange}
-                  displayEmpty
-                  sx={{
-                    borderRadius: "0.5rem",
-                    color: theme.palette.warning.A200,
-                    width: "117px",
-                    height: "32px",
-                    marginBottom: "0rem",
-                    fontSize: "14px",
-                  }}
-                >
-                  {config.languages.map((lang) => (
-                    <MenuItem value={lang.code} key={lang.code}>
-                      {lang.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              {/* <FormControl fullWidth margin="normal">
+              <Select
+                className="SelectLanguages"
+                value={language}
+                onChange={handleChange}
+                displayEmpty
+                sx={{
+                  borderRadius: "0.5rem",
+                  color: theme.palette.warning.A200,
+                  width: "117px",
+                  height: "32px",
+                  marginBottom: "0rem",
+                  fontSize: "14px",
+                }}
+              >
+                {config.languages.map((lang) => (
+                  <MenuItem value={lang.code} key={lang.code}>
+                    {lang.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl> */}
               <TextField
                 fullWidth
                 id="username"
@@ -392,37 +391,37 @@ const LoginPage = () => {
                 }}
               />
 
-              <Box
-                display="flex"
-                alignItems="center"
-                marginTop="1.2rem"
-                className="remember-me-checkbox"
+              {/* <Box
+              display="flex"
+              alignItems="center"
+              marginTop="1.2rem"
+              className="remember-me-checkbox"
+            >
+              <Checkbox
+                onChange={(e) => setRememberMe(e.target.checked)}
+                checked={rememberMe}
+              />
+              <Typography
+                variant="body2"
+                onClick={() => {
+                  setRememberMe(!rememberMe);
+                  logEvent({
+                    action: "remember-me-button-clicked",
+                    category: "Login Page",
+                    label: `Remember Me ${
+                      rememberMe ? "Checked" : "Unchecked"
+                    }`,
+                  });
+                }}
+                sx={{
+                  cursor: "pointer",
+                  marginTop: "15px",
+                  color: theme.palette.warning[300],
+                }}
               >
-                <Checkbox
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  checked={rememberMe}
-                />
-                <Typography
-                  variant="body2"
-                  onClick={() => {
-                    setRememberMe(!rememberMe);
-                    logEvent({
-                      action: "remember-me-button-clicked",
-                      category: "Login Page",
-                      label: `Remember Me ${
-                        rememberMe ? "Checked" : "Unchecked"
-                      }`,
-                    });
-                  }}
-                  sx={{
-                    cursor: "pointer",
-                    marginTop: "15px",
-                    color: theme.palette.warning[300],
-                  }}
-                >
-                  {t("LOGIN_PAGE.REMEMBER_ME")}
-                </Typography>
-              </Box>
+                {t("LOGIN_PAGE.REMEMBER_ME")}
+              </Typography>
+            </Box> */}
               <Box marginTop="2rem" textAlign="center">
                 <Button
                   variant="contained"

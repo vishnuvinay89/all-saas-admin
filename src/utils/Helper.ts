@@ -185,7 +185,9 @@ export const mapFields = (schema: any, Details: any) => {
     } else {
       // Other fields are handled based on their schema properties and Details
       const fieldValue = getValue(Details[fieldName]);
-      if (fieldValue !== undefined) {
+      if (fieldName === "status" && Details.status) {
+        initialFormData[fieldName] = Details.status;
+      } else if (fieldValue !== undefined) {
         initialFormData[fieldName] = fieldValue;
       }
     }

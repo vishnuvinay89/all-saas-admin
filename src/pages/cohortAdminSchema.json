@@ -27,12 +27,15 @@
       "title": "Username",
       "fieldId": null,
       "type": "string",
+      "minLength": 3,
+      "pattern": "^[a-zA-Z0-9!@#$%^&*()_+={}:;<>?,./~`|\\-]+$",
       "validation": []
     },
     "password": {
       "title": "Password",
       "fieldId": null,
       "type": "string",
+      "pattern": "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
       "validation": []
     },
 
