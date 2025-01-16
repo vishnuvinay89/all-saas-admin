@@ -1,10 +1,7 @@
 import React from "react";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
-// import axios from "axios";
-import { useRouter } from "next/router";
 
 const GoogleSignInButton = () => {
-  // const router = useRouter();
   const handleSuccess = async (credentialResponse: CredentialResponse) => {
     const googleToken = credentialResponse?.credential;
     console.log("googleToken", googleToken);
