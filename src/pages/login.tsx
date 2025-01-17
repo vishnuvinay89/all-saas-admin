@@ -37,6 +37,8 @@ import useSubmittedButtonStore from "@/utils/useSharedState";
 import { Role } from "@/utils/app.constant";
 import PersonIcon from "@mui/icons-material/Person";
 import KeyIcon from "@mui/icons-material/VpnKey";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const LoginPage = () => {
   const { t } = useTranslation();
@@ -235,54 +237,58 @@ const LoginPage = () => {
       label: "Forgot Password Link Clicked",
     });
   };
-
+  const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
   return (
-    <Grid container sx={{}}>
-      {!(isMobile || isMedium) && ( // Render only on desktop view
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <Grid container sx={{}}>
+        {!(isMobile || isMedium) && ( // Render only on desktop view
+          <Grid
+            item
+            xs={12}
+            md={6}
+            sx={{
+              background: `url(${loginImage.src}) no-repeat center center`,
+              backgroundSize: "contain",
+              height: "100vh",
+            }}
+          />
+        )}
         <Grid
           item
           xs={12}
           md={6}
+          display="flex"
+          alignItems="center"
           sx={{
-            background: `url(${loginImage.src}) no-repeat center center`,
-            backgroundSize: "contain",
-            height: "100vh",
-          }}
-        />
-      )}
-      <Grid
-        item
-        xs={12}
-        md={6}
-        display="flex"
-        alignItems="center"
-        sx={{
-          backgroundColor: "white",
-        }}
-      >
-        <Box
-          sx={{
-            width: "100%",
-            maxWidth: 500,
-            margin: "auto",
-            padding: 4,
-            boxShadow: isMedium || isMobile ? null : 3,
+            backgroundColor: "white",
           }}
         >
-          <form onSubmit={handleFormSubmit}>
-            <Box
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              p={2}
-              borderRadius={2}
-            >
-              {loading && (
-                <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
-              )}
-              <Image src={appLogo} alt="App Logo" height={100} />
-            </Box>
-            {/* <Typography
+          <Box
+            sx={{
+              width: "100%",
+              maxWidth: 500,
+              margin: "auto",
+              padding: 4,
+              boxShadow: isMedium || isMobile ? null : 3,
+            }}
+          >
+            <form onSubmit={handleFormSubmit}>
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                p={2}
+                borderRadius={2}
+              >
+                {loading && (
+                  <Loader
+                    showBackdrop={true}
+                    loadingText={t("COMMON.LOADING")}
+                  />
+                )}
+                <Image src={appLogo} alt="App Logo" height={100} />
+              </Box>
+              {/* <Typography
               variant="h4"
               gutterBottom
               textAlign="center"
@@ -290,7 +296,7 @@ const LoginPage = () => {
             >
               {t("LOGIN_PAGE.LOGIN")}
             </Typography> */}
-            {/* <FormControl fullWidth margin="normal">
+              {/* <FormControl fullWidth margin="normal">
               <Select
                 className="SelectLanguages"
                 value={language}
@@ -312,30 +318,30 @@ const LoginPage = () => {
                 ))}
               </Select>
             </FormControl> */}
-            <TextField
-              fullWidth
-              id="username"
-              InputLabelProps={{ shrink: true }}
-              // label={t("LOGIN_PAGE.USERNAME")}
-              placeholder={t("LOGIN_PAGE.USERNAME_PLACEHOLDER")}
-              value={username}
-              onChange={handleUsernameChange}
-              error={usernameError}
-              margin="normal"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <PersonIcon />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "20px", // Adjust the value as needed for more or less rounding
-                },
-              }}
-            />
-            {/* <TextField
+              <TextField
+                fullWidth
+                id="username"
+                InputLabelProps={{ shrink: true }}
+                // label={t("LOGIN_PAGE.USERNAME")}
+                placeholder={t("LOGIN_PAGE.USERNAME_PLACEHOLDER")}
+                value={username}
+                onChange={handleUsernameChange}
+                error={usernameError}
+                margin="normal"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PersonIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "20px", // Adjust the value as needed for more or less rounding
+                  },
+                }}
+              />
+              {/* <TextField
               fullWidth
               id="username"
               InputLabelProps={{ shrink: true }}
@@ -347,45 +353,45 @@ const LoginPage = () => {
               margin="normal"
             /> */}
 
-            <TextField
-              fullWidth
-              type={showPassword ? "text" : "password"}
-              id="password"
-              InputLabelProps={{ shrink: true }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <KeyIcon />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              // label={t("LOGIN_PAGE.PASSWORD")}
-              placeholder={t("LOGIN_PAGE.PASSWORD_PLACEHOLDER")}
-              value={password}
-              onChange={handlePasswordChange}
-              error={passwordError}
-              margin="normal"
-              inputRef={passwordRef}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "20px", // Adjust the value as needed for more or less rounding
-                },
-              }}
-            />
+              <TextField
+                fullWidth
+                type={showPassword ? "text" : "password"}
+                id="password"
+                InputLabelProps={{ shrink: true }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <KeyIcon />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                // label={t("LOGIN_PAGE.PASSWORD")}
+                placeholder={t("LOGIN_PAGE.PASSWORD_PLACEHOLDER")}
+                value={password}
+                onChange={handlePasswordChange}
+                error={passwordError}
+                margin="normal"
+                inputRef={passwordRef}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "20px", // Adjust the value as needed for more or less rounding
+                  },
+                }}
+              />
 
-            {/* <Box
+              {/* <Box
               display="flex"
               alignItems="center"
               marginTop="1.2rem"
@@ -416,21 +422,25 @@ const LoginPage = () => {
                 {t("LOGIN_PAGE.REMEMBER_ME")}
               </Typography>
             </Box> */}
-            <Box marginTop="2rem" textAlign="center">
-              <Button
-                variant="contained"
-                type="submit"
-                fullWidth
-                disabled={isButtonDisabled}
-                ref={loginButtonRef}
-              >
-                {t("LOGIN_PAGE.LOGIN")}
-              </Button>
+              <Box marginTop="2rem" textAlign="center">
+                <Button
+                  variant="contained"
+                  type="submit"
+                  fullWidth
+                  disabled={isButtonDisabled}
+                  ref={loginButtonRef}
+                >
+                  {t("LOGIN_PAGE.LOGIN")}
+                </Button>
+              </Box>
+            </form>
+            <Box justifyContent={"center"} display={"flex"} marginTop={"20px"}>
+              <GoogleSignInButton />
             </Box>
-          </form>
-        </Box>
+          </Box>
+        </Grid>
       </Grid>
-    </Grid>
+    </GoogleOAuthProvider>
   );
 };
 
