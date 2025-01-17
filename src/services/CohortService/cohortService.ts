@@ -51,9 +51,15 @@ export const updateCohortUpdate = async (
     });
 
     return response?.data;
-  } catch (error) {
-    console.error("Error in updating cohort details", error);
-    throw error;
+  } catch (error: unknown) {
+    let errorMessage = "An unexpected error occurred.";
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage = error.response.data?.params?.errmsg || "Error from API.";
+    }
+
+    console.error("Error in updating cohort:", error);
+    throw new Error(errorMessage);
   }
 };
 
@@ -83,7 +89,7 @@ export const createUser = async (userData: any): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.CREATE}`;
   try {
     const response = await post(apiUrl, userData);
-    return response?.data?.result;
+    return response?.data;
   } catch (error: unknown) {
     let errorMessage = "An unexpected error occurred.";
 
@@ -172,9 +178,15 @@ export const cohortCreate = async (data: cohortListData, tenantId: string): Prom
       },
     });
     return response?.data;
-  } catch (error) {
-    console.error("Error in Creating Cohort", error);
-    return error;
+  } catch (error: unknown) {
+    let errorMessage = "An unexpected error occurred.";
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage = error.response.data?.params?.errmsg || "Error from API.";
+    }
+
+    console.error("Error in creating cohort:", error);
+    throw new Error(errorMessage);
   }
 };
 

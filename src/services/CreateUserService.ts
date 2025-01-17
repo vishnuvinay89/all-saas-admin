@@ -84,9 +84,15 @@ export const updateUser = async (
     });
 
     return response?.data;
-  } catch (error) {
-    console.error("Error updating user details", error);
-    throw error;
+  } catch (error: unknown) {
+    let errorMessage = "An unexpected error occurred.";
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage = error.response.data?.params?.err || "Error from API.";
+    }
+
+    console.error("Error in updating user:", error);
+    throw new Error(errorMessage);
   }
 };
 
