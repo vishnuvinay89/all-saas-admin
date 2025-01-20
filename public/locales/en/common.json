@@ -472,6 +472,7 @@
     "USER_NOT_FOUND": "User not found",
     "UPDATE_USER_DETAILS": "Update User Details",
     "DELETE_USER_DETAILS": "Delete User Details",
-    "DELETE_USER_CONFIRMATION_MESSAGE": "Are you sure you want to Archived this user?"
+    "DELETE_USER_CONFIRMATION_MESSAGE": "Are you sure you want to Archived this user?",
+    "NO_CHANGES_TO_UPDATE": "No Changes to Update"
   }
 }

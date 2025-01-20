@@ -1011,8 +1011,9 @@ const Center: React.FC = () => {
       } else {
         showToastMessage(t("COHORTS.COHORT_UPDATED_FAILED"), "error");
       }
-    } catch (error) {
-      showToastMessage(t("COHORTS.COHORT_UPDATED_FAILED"), "error");
+    } catch (error: any) {
+      const errorMessage = error.message || t("COHORTS.COHORT_UPDATED_FAILED");
+      showToastMessage(errorMessage, "error");
     } finally {
       setLoading(false);
       setConfirmButtonDisable(false);
@@ -1190,10 +1191,10 @@ const Center: React.FC = () => {
       const roleId = matchedRole ? matchedRole?.roleId : "";
 
       let obj: UserCreateData = {
-        name: formData?.name,
+        name: formData?.name.replace(/\s/g, ""),
         mobile: formData?.mobileNo,
         email: formData?.email,
-        username: formData?.username,
+        username: formData?.username.replace(/\s/g, ""),
         password: formData?.password,
         tenantCohortRoleMapping: [
           {
@@ -1212,9 +1213,9 @@ const Center: React.FC = () => {
       } else {
         showToastMessage(t("USER.FAILED_TO_CREATE"), "error");
       }
-    } catch (error) {
-      console.error("Error updating cohort:", error);
-      showToastMessage(t("USER.FAILED_TO_CREATE"), "error");
+    } catch (error: any) {
+      const errorMessage = error.message || t("USER.FAILED_TO_CREATE");
+      showToastMessage(errorMessage, "error");
     } finally {
       setLoading(false);
       setConfirmButtonDisable(false);
@@ -1269,8 +1270,8 @@ const Center: React.FC = () => {
       );
 
       let obj = {
-        name: formData?.name,
-        username: formData?.username,
+        name: formData?.name.replace(/\s/g, ""),
+        username: formData?.username.replace(/\s/g, ""),
         password: formData?.password,
         mobile: formData?.mobileNo,
         email: formData?.email,

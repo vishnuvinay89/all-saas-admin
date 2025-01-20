@@ -743,7 +743,7 @@ const UserTable: React.FC<UserTableProps> = ({
       name: rowData.name || "",
       mobileNo: rowData.mobile || "",
       email: rowData.email || "",
-      username: rowData.username || "",
+      username: rowData.username.replace(/\s/g, "") || "",
       role: rowData.role || "",
     };
 
@@ -1043,10 +1043,10 @@ const UserTable: React.FC<UserTableProps> = ({
       // }
       let cohortDetails = {
         userData: {
-          name: formData?.name,
+          name: formData?.name.replace(/\s/g, ""),
           role: formData?.role,
           userId: formData?.userId,
-          username: formData?.username,
+          username: formData?.username.replace(/\s/g, ""),
           mobile: formData?.mobileNo,
           email: formData?.email,
           // status: "archived",
@@ -1062,8 +1062,9 @@ const UserTable: React.FC<UserTableProps> = ({
       } else {
         showToastMessage(t("USER.FAILED_TO_UPDATE"), "error");
       }
-    } catch (error) {
-      showToastMessage(t("USER.FAILED_TO_UPDATE"), "error");
+    } catch (error: any) {
+      const errorMessage = error.message || t("USER.FAILED_TO_UPDATE");
+      showToastMessage(errorMessage, "error");
     } finally {
       setLoading(false);
       setConfirmButtonDisable(false);

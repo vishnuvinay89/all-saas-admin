@@ -87,7 +87,7 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
         return;
       }
       const cohortDetails: CohortDetails = {
-        name: formData?.name,
+        name: formData?.name.replace(/\s/g, ""),
         domain: formData?.domain ? formData?.domain : " ",
         // status: formData?.status,
       };

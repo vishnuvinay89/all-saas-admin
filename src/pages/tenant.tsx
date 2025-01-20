@@ -885,7 +885,7 @@ const Tenant: React.FC = () => {
         return;
       }
       let cohortDetails = {
-        name: formData?.name,
+        name: formData?.name.replace(/\s/g, ""),
         domain: formData?.domain,
         // customFields: customFields,
       };
@@ -918,7 +918,7 @@ const Tenant: React.FC = () => {
       setConfirmButtonDisable(true);
 
       let obj = {
-        name: formData?.name,
+        name: formData?.name.replace(/\s/g, ""),
         cohortId: selectedRowData?.cohortId,
         tenantId: selectedRowData?.tenantId,
         status: formData?.status,
@@ -932,9 +932,9 @@ const Tenant: React.FC = () => {
       } else {
         showToastMessage(t("COHORTS.CREATE_FAILED"), "error");
       }
-    } catch (error) {
-      console.error("Error updating cohort:", error);
-      showToastMessage(t("COHORTS.CREATE_FAILED"), "error");
+    } catch (error: any) {
+      const errorMessage = error.message || t("COHORTS.CREATE_FAILED");
+      showToastMessage(errorMessage, "error");
     } finally {
       // localStorage?.setItem("tenantId", "undefined");
       setLoading(false);
@@ -969,8 +969,8 @@ const Tenant: React.FC = () => {
       );
 
       let obj = {
-        name: formData?.name,
-        username: formData?.username,
+        name: formData?.name.replace(/\s/g, ""),
+        username: formData?.username.replace(/\s/g, ""),
         password: formData?.password,
         mobile: formData?.mobileNo,
         email: formData?.email,
