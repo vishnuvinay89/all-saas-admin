@@ -146,7 +146,7 @@ const Center: React.FC = () => {
   const [addFormData, setAddFormData] = useState({});
   const [addBtnDisabled, setAddBtnDisabled] = useState(true);
   const [roleList, setRolelist] = useState<RoleList | undefined>(undefined);
-  const [previousTenantId, setPreviousTenantId] = useState<string | null>(null);
+  const [error, setError] = useState<any>([]);
   const [isCreateCohortAdminModalOpen, setIsCreateCohortAdminModalOpen] =
     useState(false);
 
@@ -264,12 +264,27 @@ const Center: React.FC = () => {
       "ui:widget": "text",
       "ui:placeholder": "Enter your username",
       "ui:help": "Username must be at least 3 characters long.",
+      "ui:options": {
+        autocomplete: false,
+        value: "",
+      },
+      "ui:inputProps": {
+        autocomplete: false,
+        value: "",
+      },
     },
     password: {
       "ui:widget": "password",
       "ui:placeholder": "Enter a secure password",
       "ui:help":
         "Password must be at least 8 characters long and contain one uppercase letter, one lowercase letter, one number, and one special character.",
+      "ui:options": {
+        autocomplete: false,
+      },
+      "ui:inputProps": {
+        autocomplete: false,
+        name: "password",
+      },
     },
     role: {
       "ui:widget": "select",
@@ -387,9 +402,6 @@ const Center: React.FC = () => {
     setLoading(true);
     try {
       setCohortData([]);
-
-      console.log({ pageSize, pageCount, pageOffset });
-
       const limit = 0;
       // const offset = pageOffset * limit;
       const offset = pageOffset * pageSize;
@@ -507,7 +519,6 @@ const Center: React.FC = () => {
       }
     } catch (error) {
       showToastMessage(t("COMMON.ERROR_MESSAGE_SOMETHING_WRONG"), "error");
-      console.log("Error fetching form data:", error);
     }
   };
 
@@ -968,6 +979,7 @@ const Center: React.FC = () => {
   };
   const handleError = (error: any) => {
     console.log("error", error);
+    setError(error);
   };
   const handleUpdateAction = async (
     data: IChangeEvent<any, RJSFSchema, any>,
@@ -1221,6 +1233,7 @@ const Center: React.FC = () => {
       setConfirmButtonDisable(false);
       handleAddmodal();
       onCloseEditMOdel();
+      setError([]);
       setIsEditForm(false);
     }
   };
