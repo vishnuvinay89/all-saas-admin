@@ -1,15 +1,11 @@
 import Keycloak from "keycloak-js";
 
-
-export const logout = async (router) => {
-  
+export const logout = async (router: any) => {
   try {
     if (keycloakInstance) {
       console.log("calling logout");
-      
-      await keycloakInstance.logout({redirectUri: window.location.origin + '/login' });
 
-
+      await keycloakInstance.logout();
       // Clear local storage
       localStorage.removeItem("token");
       localStorage.removeItem("userProfile");
