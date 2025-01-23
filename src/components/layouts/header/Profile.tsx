@@ -15,6 +15,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import PhoneIcon from "@mui/icons-material/Phone";
 import { Box, Button, Divider, Menu, Typography } from "@mui/material";
 import { useRouter } from "next/router";
+import { logout } from "@/utils/keycloak";
 const Profile = () => {
   const [anchorEl4, setAnchorEl4] = React.useState<null | HTMLElement>(null);
   const [profileClick, setProfileClick] = React.useState<boolean>(false);
@@ -45,11 +46,11 @@ const Profile = () => {
     setAnchorEl4(null);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (typeof window !== "undefined" && window.localStorage) {
-      localStorage.removeItem("token");
+      // localStorage.removeItem("token");
+      await logout(router);
     }
-    router.push("/logout");
   };
 
   const mapFields = (formFields: any, response: any) => {

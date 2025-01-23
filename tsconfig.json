@@ -28,6 +28,6 @@
     "src/components/Link.tsx",
     "src/components/theme/theme.ts",
     "src/components/theme/theme.ts"
-, "src/pages/tenant.jsx"  ],
+, "src/pages/tenant.jsx", "src/utils/keycloak.ts", "src/context/AuthContextt.js"  ],
   "exclude": ["node_modules"]
 }

@@ -1,20 +1,17 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { logout } from "../services/LoginService";
+
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Loader from "@/components/Loader";
 import { useTranslation } from "react-i18next";
-
+import { logout } from "@/utils/keycloak";
 function Logout() {
   const router = useRouter();
   const { t } = useTranslation();
   useEffect(() => {
     const userLogout = async () => {
       try {
-        const refreshToken = localStorage.getItem("refreshToken");
-        if (refreshToken) {
-          await logout(refreshToken);
-        }
+        // await logout(router);
       } catch (error) {
         console.log(error);
       }
