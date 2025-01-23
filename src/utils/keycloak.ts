@@ -17,9 +17,9 @@ export const logout = async (router: any) => {
 };
 
 const keycloakConfig = {
-  url: "https://all-saas-keycloak.tekdinext.com/auth",
-  realm: "ALL-SaaS",
-  clientId: "ALL-SaaS",
+  url: process.env.NEXT_PUBLIC_KEYCLOAK_URL,
+  realm: process.env.NEXT_PUBLIC_KEYCLOAK_REALM,
+  clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID,
 };
 
 // Initialize Keycloak instance
