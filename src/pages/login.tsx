@@ -39,7 +39,6 @@ import PersonIcon from "@mui/icons-material/Person";
 import KeyIcon from "@mui/icons-material/VpnKey";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import KeyCloakLogin from "@/components/KeyCloakLogin";
 
 const LoginPage = () => {
   const { t } = useTranslation();
@@ -437,7 +436,6 @@ const LoginPage = () => {
             </form>
             <Box justifyContent={"center"} display={"flex"} marginTop={"20px"}>
               <GoogleSignInButton />
-              <KeyCloakLogin />
             </Box>
           </Box>
         </Grid>
