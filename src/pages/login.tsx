@@ -220,7 +220,7 @@ const LoginPage = () => {
 
   return (
     <Box sx={{ backgroundColor: "white", height: "100vh" }}>
-      {true && <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />}
+      <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />
     </Box>
   );
 };

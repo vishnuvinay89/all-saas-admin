@@ -15,7 +15,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import PhoneIcon from "@mui/icons-material/Phone";
 import { Box, Button, Divider, Menu, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-import { logout } from "@/utils/keycloak";
+
 const Profile = () => {
   const [anchorEl4, setAnchorEl4] = React.useState<null | HTMLElement>(null);
   const [profileClick, setProfileClick] = React.useState<boolean>(false);
