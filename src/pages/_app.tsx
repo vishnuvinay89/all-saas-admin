@@ -15,17 +15,9 @@ import "./../styles/style.css";
 import keycloak from "../utils/keycloak";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
 import "react-circular-progressbar/dist/styles.css";
-import { log } from "console";
-import { useRouter } from "next/router";
 
 function App({ Component, pageProps }: AppProps) {
-  const [isLogin, setLogin] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
-  const [accessToken, setAccessToken] = useState(null);
-  const router = useRouter();
-
   // Analytics initialization
   useEffect(() => {
     telemetryFactory.init();
@@ -42,24 +34,18 @@ function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     const initializeKeycloak = async () => {
       try {
-        if (!keycloak.authenticated) {
+        if (keycloak != null && !keycloak.authenticated) {
           const authenticated = await keycloak.init({
             onLoad: "login-required",
+            redirectUri: window.location.origin + "/tenant",
           });
 
-          setLogin(authenticated);
-
           if (authenticated) {
-            setAccessToken(keycloak.token);
-            localStorage.setItem("token", keycloak.token);
-            localStorage.setItem("refreshToken", keycloak.refreshToken);
-
-            try {
-              const profile = await keycloak.loadUserProfile();
-              setUserInfo(profile);
-              // router.push("/tenant");
-            } catch (err) {
-              console.error("Failed to load user profile:", err);
+            if (keycloak.token) {
+              localStorage.setItem("token", keycloak.token);
+            }
+            if (keycloak.refreshToken) {
+              localStorage.setItem("refreshToken", keycloak.refreshToken);
             }
           }
         }

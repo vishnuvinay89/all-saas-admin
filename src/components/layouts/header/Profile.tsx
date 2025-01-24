@@ -48,8 +48,7 @@ const Profile = () => {
 
   const handleLogout = async () => {
     if (typeof window !== "undefined" && window.localStorage) {
-      // localStorage.removeItem("token");
-      await logout(router);
+      router.replace("/logout");
     }
   };
 

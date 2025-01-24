@@ -11,7 +11,7 @@ function Logout() {
   useEffect(() => {
     const userLogout = async () => {
       try {
-        // await logout(router);
+        await logout();
       } catch (error) {
         console.log(error);
       }
@@ -43,7 +43,6 @@ function Logout() {
         }
       });
     }
-    router.replace("/login");
   }, []);
 
   return <Loader showBackdrop={true} loadingText={t("COMMON.LOADING")} />;
