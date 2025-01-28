@@ -76,11 +76,11 @@ const MultipleSelectCheckmarks: React.FC<MultipleSelectCheckmarksProps> = ({
           value={
             // If no categories are selected (empty or invalid selection), show default value or the first name from 'names'
             selectedCategories?.length <= 0 || selectedCategories[0] === ""
-              ? names?.length > 1
-                ? [names[0]] // If there are multiple tenants, default to the first one
+              ? names?.length >= 1
+                ? [names[0]]
                 : defaultValue
                   ? [defaultValue]
-                  : [] // Else, use defaultValue or empty array
+                  : []
               : selectedCategories // If categories are selected, use selectedCategories
           }
           onChange={handleChange} // Handle the change event for the selection
