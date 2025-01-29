@@ -36,7 +36,18 @@ const Profile = () => {
     (state: any) => state.setAdminInformation
   );
   const router = useRouter();
-
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const admin = localStorage.getItem("adminInfo");
+      if (admin) {
+        setAdminInfo(JSON.parse(admin));
+        clearInterval(intervalId);
+      }
+    }, 100);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
   const handleClick4 = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl4(event.currentTarget);
     setProfileClick(true);
@@ -169,13 +180,6 @@ const Profile = () => {
     getUserName();
   }, [formdata]);
 
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.localStorage) {
-      const admin = localStorage.getItem("adminInfo");
-      if (admin) setAdminInfo(JSON.parse(admin));
-    }
-  }, []);
-
   const handleModalSubmit = (value: boolean) => {
     submitValue ? setSubmitValue(false) : setSubmitValue(true);
   };
@@ -223,7 +227,9 @@ const Profile = () => {
                 whiteSpace: "nowrap",
               }}
             >
-              {t("COMMON.HI", { name: firstLetterInUpperCase(userName ?? "") })}
+              {t("COMMON.HI", {
+                name: firstLetterInUpperCase(adminInfo?.name ?? ""),
+              })}
             </Typography>
 
             <FeatherIcon icon="chevron-down" size="20" />

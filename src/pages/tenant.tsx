@@ -291,6 +291,7 @@ const Tenant: React.FC = () => {
     status: [statusValue],
     districts: "",
   });
+
   const handleCloseAddLearnerModal = () => {
     setUpdateBtnDisabled(true);
     setOpenAddNewCohort(false);
@@ -303,9 +304,9 @@ const Tenant: React.FC = () => {
     if (typeof window !== "undefined" && window?.localStorage) {
       const admin = localStorage.getItem("adminInfo");
       if (admin) {
-        const stateField: any = JSON.parse(admin).customFields.find(
-          (field: any) => field.label === "STATES"
-        );
+        // const stateField: any = JSON.parse(admin).customFields.find(
+        //   (field: any) => field.label === "STATES"
+        // );
         // const object = [
         //   {
         //     value: stateField.code,
@@ -1025,12 +1026,12 @@ const Tenant: React.FC = () => {
         if (typeof window !== "undefined" && window.localStorage) {
           const admin = localStorage.getItem("adminInfo");
           if (admin) {
-            const stateField = JSON.parse(admin).customFields.find(
-              (field: any) => field.label === "STATES"
+            const stateField = JSON.parse(admin).customFields?.find(
+              (field: any) => field?.label === "STATES"
             );
-            if (!stateField.value.includes(",")) {
+            if (!stateField?.value?.includes(",")) {
               // setSelectedState([stateField.value]);
-              setSelectedStateCode(stateField.code);
+              setSelectedStateCode(stateField?.code);
               if (
                 selectedDistrictCode &&
                 selectedDistrict.length !== 0 &&

@@ -327,9 +327,9 @@ const Center: React.FC = () => {
     if (typeof window !== "undefined" && window.localStorage) {
       const admin = localStorage.getItem("adminInfo");
       if (admin) {
-        const stateField: any = JSON.parse(admin).customFields.find(
-          (field: any) => field.label === "STATES"
-        );
+        // const stateField: any = JSON.parse(admin).customFields.find(
+        //   (field: any) => field.label === "STATES"
+        // );
         // const object = [
         //   {
         //     value: stateField.code,

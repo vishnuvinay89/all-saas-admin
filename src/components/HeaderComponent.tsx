@@ -283,23 +283,23 @@ const HeaderComponent = ({
             if (stateField?.value?.includes(",")) {
               setStateDefaultValue(t("COMMON.ALL_STATES"));
             } else {
-              setStateDefaultValue(stateField.value);
+              setStateDefaultValue(stateField?.value);
 
               const response = await queryClient.fetchQuery({
                 queryKey: [
                   QueryKeys.FIELD_OPTION_READ,
-                  stateField.code,
+                  stateField?.code,
                   "districts",
                 ],
                 queryFn: () =>
                   getStateBlockDistrictList({
-                    controllingfieldfk: stateField.code,
+                    controllingfieldfk: stateField?.code,
                     fieldName: "districts",
                   }),
               });
 
               // const object = {
-              //   controllingfieldfk: stateField.code,
+              //   controllingfieldfk: stateField?.code,
 
               //   fieldName: "districts",
               // };
@@ -334,7 +334,7 @@ const HeaderComponent = ({
                     pathname: router.pathname,
                     query: {
                       ...router.query,
-                      state: stateField.code,
+                      state: stateField?.code,
                       district: districtResult[0]?.value,
                     },
                   });
@@ -358,7 +358,7 @@ const HeaderComponent = ({
                     pathname: router.pathname,
                     // query: {
                     //   ...router.query,
-                    //   state: stateField.code,
+                    //   state: stateField?.code,
                     //   district: districtResult[0]?.value,
                     //   block: blockResult[0]?.value,
                     // },
@@ -372,7 +372,7 @@ const HeaderComponent = ({
                 filters: {
                   // "type":"COHORT",
                   status: ["active"],
-                  // states: stateField.code,
+                  // states: stateField?.code,
                   // districts: districtResult[0]?.value,
                   // blocks: blockResult[0]?.value,
                   // "name": selected[0]
@@ -416,7 +416,7 @@ const HeaderComponent = ({
                   pathname: router.pathname,
                   // query: {
                   //   ...router.query,
-                  //   state: stateField.code,
+                  //   state: stateField?.code,
                   //   district: districtResult[0]?.value,
                   //   block: blockResult[0]?.value,
                   //   // center: cohortInfo[0]?.cohortId
@@ -427,8 +427,8 @@ const HeaderComponent = ({
 
             const object = [
               {
-                value: stateField.code,
-                label: stateField.value,
+                value: stateField?.code,
+                label: stateField?.value,
               },
             ];
             setStates(object);

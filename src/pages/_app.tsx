@@ -3,7 +3,7 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { appWithTranslation } from "next-i18next";
 import { initGA } from "../utils/googleAnalytics";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AuthProvider } from "../context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -16,8 +16,13 @@ import keycloak from "../utils/keycloak";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "react-circular-progressbar/dist/styles.css";
+import { getUserId } from "@/services/LoginService";
+import { getUserDetailsInfo } from "@/services/UserList";
 
 function App({ Component, pageProps }: AppProps) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const hasFetchedUserDetails = useRef(false);
+
   // Analytics initialization
   useEffect(() => {
     telemetryFactory.init();
@@ -34,21 +39,18 @@ function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     const initializeKeycloak = async () => {
       try {
-        if (keycloak != null && !keycloak.authenticated) {
-          const authenticated = await keycloak.init({
-            onLoad: "login-required",
-            redirectUri: window.location.origin + "/tenant",
-          });
+        if (!keycloak || keycloak.authenticated) return;
 
-          if (authenticated) {
-            if (keycloak.token) {
-              localStorage.setItem("token", keycloak.token);
-            }
-            if (keycloak.refreshToken) {
-              localStorage.setItem("refreshToken", keycloak.refreshToken);
-            }
-          }
-        }
+        const authenticated = await keycloak.init({
+          onLoad: "login-required",
+          redirectUri: `${window.location.origin}/tenant`,
+        });
+
+        if (!authenticated) return;
+        setIsAuthenticated(true);
+        if (keycloak.token) localStorage.setItem("token", keycloak.token);
+        if (keycloak.refreshToken)
+          localStorage.setItem("refreshToken", keycloak.refreshToken);
       } catch (error) {
         console.error("Failed to initialize Keycloak:", error);
       }
@@ -56,6 +58,32 @@ function App({ Component, pageProps }: AppProps) {
 
     initializeKeycloak();
   }, []);
+  useEffect(() => {
+    if (!isAuthenticated || hasFetchedUserDetails.current) return;
+
+    const fetchUserDetails = async () => {
+      try {
+        const userResponse = await getUserId();
+        if (!userResponse) return;
+        localStorage.setItem("userId", userResponse.userId || "");
+        localStorage.setItem("name", userResponse.name || "");
+
+        const tenantId = userResponse.tenantData?.[0]?.tenantId || "";
+        localStorage.setItem("tenantId", tenantId);
+
+        if (userResponse?.userId) {
+          const response = await getUserDetailsInfo(userResponse.userId, true);
+          localStorage.setItem("adminInfo", JSON.stringify(response?.userData));
+        }
+
+        hasFetchedUserDetails.current = true;
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    fetchUserDetails();
+  }, [isAuthenticated]);
 
   const renderComponent = () => {
     if (pageProps.noLayout) {
