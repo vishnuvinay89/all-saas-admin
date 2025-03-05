@@ -465,6 +465,7 @@
     "STATUS": "Status",
     "CREATED_DATE": "Created Date",
     "UPDATED_DATE": "Updated Date",
+    "COHORT_EXPIRES_ON":"Expires On",
     "CREATED_BY": "Created By",
     "UPDATED_BY": "Updated By",
     "ACTIONS": "Actions",
