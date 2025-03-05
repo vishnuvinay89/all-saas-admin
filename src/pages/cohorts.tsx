@@ -345,7 +345,13 @@ const Center: React.FC = () => {
 
   //   fetchRoles();
   // }, [Addmodalopen]);
+  const calculateCohortExpiry = (dateString: string) => {
+    const originalDate = new Date(dateString);
+    const newDate = new Date(originalDate);
+    newDate.setDate(originalDate.getDate() + 30);
 
+    return newDate.toISOString().split("T")[0];
+  };
   const fetchUserList = async () => {
     setLoading(true);
     try {
@@ -371,6 +377,8 @@ const Center: React.FC = () => {
           const matchingTenant = listOfTenants.find(
             (tenant: any) => tenant?.tenantId === item?.tenantId
           );
+          const expiryDate = calculateCohortExpiry(item?.createdAt);
+
           return {
             name: item?.name,
             type: item?.type === "cohort" ? "Cohort" : item?.type,
@@ -383,6 +391,7 @@ const Center: React.FC = () => {
             updatedAt: item?.updatedAt,
             cohortId: item?.cohortId,
             userRoleTenantMapping: { code: item?.role },
+            cohortExpiresIn: expiryDate,
           };
         });
 
