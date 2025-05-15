@@ -762,7 +762,8 @@ const UserTable: React.FC<UserTableProps> = ({
       };
 
       try {
-        const resp = await deleteUser(userId);
+        const tenantId = selectedRowData.tenantId
+        const resp = await deleteUser(userId,tenantId);
         if (resp?.responseCode === 200) {
           showToastMessage(t("COMMON.USER_DELETE_SUCCSSFULLY"), "success");
           setDeleteUserState((prevState) => !prevState);

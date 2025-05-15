@@ -350,14 +350,25 @@ export const userCreate = async (
   }
 };
 
-export const deleteUser = async (userId: string): Promise<any> => {
+export const deleteUser = async (userId: string,tenantId: string): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.USER_DELETE}/${userId}`;
   const requestBody = {};
   const requestHeaders = {};
 
   try {
-    const response = await deleteApi(apiUrl, requestBody, requestHeaders);
+    const token = localStorage.getItem("token");
+    const response = await axios.delete(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        tenantId: tenantId,
+      },
+      data: {},
+    });
+
     return response?.data;
+    // const response = await deleteApi(apiUrl, requestBody, requestHeaders);
+    // return response?.data;
   } catch (error) {
     console.error(`Error deleting`, error);
     return error;
