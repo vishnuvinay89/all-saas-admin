@@ -9,6 +9,14 @@
       "fieldId": null,
       "type": "string",
       "validation": []
+    },
+    "grade": {
+      "title": "Grade",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10,
+      "ui:widget": "number",
+      "ui:placeholder": "Enter grade (1-10)"
     }
   },
   "dependencies": {}

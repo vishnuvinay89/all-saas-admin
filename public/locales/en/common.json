@@ -487,6 +487,7 @@
     "DISTRICT": "District",
     "EMAIL": "Email",
     "USERNAME": "Username",
+    "GRADE": "Grade",
     "DOMAIN": "Domain",
     "CREATE_TENANT_ADMIN": "Create Tenant Admin",
     "CREATE_COHORT_ADMIN": "Create Cohort Admin",

@@ -239,7 +239,6 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           } else {
             const { schema, uiSchema } = GenerateSchemaAndUiSchema(response, t);
             setSchema(schema);
-
             setUiSchema(uiSchema);
           }
         }
@@ -343,6 +342,13 @@ const CommonUserModal: React.FC<UserModalProps> = ({
           fieldId: districtFieldId,
           value: [selectedDistrictCode],
         });
+        // Add grade to customFields if it exists in formData
+        if (formData?.grade !== undefined) {
+          apiBody.customFields.push({
+            fieldId: "grade", // Assuming 'grade' is the fieldId for grade
+            value: [String(formData.grade)],
+          });
+        }
       }
 
       try {
