@@ -788,6 +788,7 @@ const Center: React.FC = () => {
         password: string;
         mobile: string;
         email: string;
+        grade: number;
         tenantCohortRoleMapping: Array<{
           roleId: string;
           tenantId: string;
@@ -806,6 +807,7 @@ const Center: React.FC = () => {
         email: formData?.email,
         username: formData?.username.replace(/\s/g, ""),
         password: formData?.password,
+        grade: formData?.grade,
         tenantCohortRoleMapping: [
           {
             roleId: roleId,

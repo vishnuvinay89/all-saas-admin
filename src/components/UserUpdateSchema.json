@@ -17,6 +17,14 @@
       "pattern": "^\\d{10}$",
       "validation": []
     },
+    "grade": {
+      "title": "Grade",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10,
+      "ui:widget": "number",
+      "ui:placeholder": "Enter grade (1-10)"
+    },
     "email": {
       "title": "Email Address",
       "type": "string",

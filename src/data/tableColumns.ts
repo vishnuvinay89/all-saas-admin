@@ -53,6 +53,7 @@ export const getTLTableColumns = (t: any, isMobile: boolean, filter: any) => {
     { key: "mobile", titleKey: "TABLE_TITLE.MOBILE", width: 130 },
     { key: "email", titleKey: "TABLE_TITLE.EMAIL", width: 130 },
     { key: "username", titleKey: "TABLE_TITLE.USERNAME", width: 130 },
+    { key: "grade", titleKey: "TABLE_TITLE.GRADE", width: 80 },
     // { key: "role", titleKey: "TABLE_TITLE.ROLE", width: 100 },
     // { key: "updatedBy", titleKey: "TABLE_TITLE.UPDATED_BY", width: 130 },
     // { key: "createdBy", titleKey: "TABLE_TITLE.CREATED_BY", width: 130 },

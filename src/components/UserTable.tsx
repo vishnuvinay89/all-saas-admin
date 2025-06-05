@@ -176,6 +176,15 @@ const UserTable: React.FC<UserTableProps> = ({
       "ui:placeholder": "Enter your email address",
       "ui:options": {},
     },
+    grade: {
+      "ui:widget": "text",
+      "ui:placeholder": "Enter grade (1-10)",
+      "ui:help": "Grade must be a number between 1 and 10",
+      "ui:options": {
+        "min": 1,
+        "max": 10
+      }
+    },
   };
 
   const handleOpenAddLearnerModal = () => {
@@ -519,6 +528,7 @@ const UserTable: React.FC<UserTableProps> = ({
       email: rowData.email || "",
       username: rowData.username.replace(/\s/g, "") || "",
       role: rowData.role || "",
+      grade: rowData.grade || "",
     };
 
     setFormData(initialFormData);
@@ -611,6 +621,7 @@ const UserTable: React.FC<UserTableProps> = ({
               user.name.slice(1).toLowerCase(),
             role: user.role ? user.role : "Public",
             mobile: user.mobile ? user.mobile : "-",
+            grade: user.grade ? user.grade : "-",
             age: ageField ? ageField?.value : " - ",
             district: districtField
               ? districtField?.value +
@@ -803,6 +814,7 @@ const UserTable: React.FC<UserTableProps> = ({
           username: formData?.username.replace(/\s/g, ""),
           mobile: formData?.mobileNo,
           email: formData?.email,
+          grade: formData?.grade,
           // status: "archived",
           // customFields: customFields,
         },
