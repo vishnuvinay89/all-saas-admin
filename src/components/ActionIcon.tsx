@@ -1,14 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "next-i18next";
-import { Box, Typography, Tooltip, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Tooltip,
+  Button,
+  ListItemText,
+  ListItemIcon,
+  MenuItem,
+  Menu,
+  IconButton,
+} from "@mui/material";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import AssessmentIcon from "@mui/icons-material/Assessment";
-import deleteIcon from "../../public/images/deleteIcon.svg";
 import editIcon from "../../public/images/editIcon.svg";
 import cohortIcon from "../../public/images/apartment.svg";
 import addIcon from "../../public/images/addIcon.svg";
-
+import MetabaseReportsMenu from "./MetabaseReportMenu";
+import { ResetPasswordModal } from "./ResetPassword";
+import AddIcon from "@mui/icons-material/Add";
+import PersonAddAltSharpIcon from "@mui/icons-material/PersonAddAltSharp";
+import GroupAddSharpIcon from "@mui/icons-material/GroupAddSharp";
 interface ActionCellProps {
   onEdit: (rowData: any) => void;
   onDelete: (rowData: any) => void;
@@ -22,6 +34,9 @@ interface ActionCellProps {
   allowEditIcon?: boolean;
   onAdd: (rowData: any) => void;
   showReports?: boolean;
+  showLearnerReports?: boolean;
+  showResetPassword?: boolean;
+  handleBulkUpload?: (rowData: any) => void;
 }
 
 const ActionIcon: React.FC<ActionCellProps> = ({
@@ -36,13 +51,19 @@ const ActionIcon: React.FC<ActionCellProps> = ({
   allowEditIcon = false,
   reassignType,
   showReports,
+  showLearnerReports = false,
+  showResetPassword = false,
+  handleBulkUpload = () => {},
 }) => {
   const { t } = useTranslation();
   const router = useRouter();
-
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
   const isCohortAdmin = rowData?.userRoleTenantMapping?.code === "cohort_admin";
   const currentPage = router.pathname;
-
+  // State to track whether menu is open
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
   const buttonStates = {
     add: {
       visible: roleButton || addAction,
@@ -60,6 +81,24 @@ const ActionIcon: React.FC<ActionCellProps> = ({
       visible: showReports,
       enabled: true,
     },
+    learnerReports: {
+      visible: showLearnerReports,
+      enabled: true,
+    },
+    resetPassword: {
+      visible: showResetPassword,
+      enabled: true,
+    },
+  };
+
+  const handleResetPassword = (userData: any) => {
+    setSelectedUser(userData);
+    setIsResetModalOpen(true);
+  };
+
+  const handleCloseResetModal = () => {
+    setIsResetModalOpen(false);
+    setSelectedUser(null);
   };
 
   const commonButtonStyles = (enabled: boolean) => ({
@@ -70,6 +109,37 @@ const ActionIcon: React.FC<ActionCellProps> = ({
     p: "10px",
     opacity: enabled ? 1 : 0.5,
   });
+
+  const addMenuItems = [
+    {
+      id: 1,
+      name: t("COMMON.ADD_SINGLE_USER"),
+      icon: <PersonAddAltSharpIcon fontSize="small" />,
+      action: () => onAdd(rowData),
+    },
+    {
+      id: 2,
+      name: t("COMMON.ADD_MULTIPLE_USERS"),
+      icon: <GroupAddSharpIcon fontSize="small" />,
+      action: () => handleBulkUpload(rowData),
+    },
+  ];
+
+  // Handler for opening menu
+  const handleClick = (event: any) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  // Handler for closing menu
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  // Handler for menu item click
+  const handleMenuItemClick = (action: () => void) => {
+    action();
+    handleClose();
+  };
 
   const renderAddButton = () => {
     if (!buttonStates.add.visible) return null;
@@ -92,6 +162,39 @@ const ActionIcon: React.FC<ActionCellProps> = ({
         </Tooltip>
       );
     }
+    if (currentPage === "/cohorts") {
+      return (
+        <div>
+          <IconButton
+            aria-controls={open ? "basic-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
+          >
+            <AddIcon />
+          </IconButton>
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+          >
+            {addMenuItems.map((item) => (
+              <MenuItem
+                key={item.id}
+                onClick={() => handleMenuItemClick(item.action)}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText>{item.name}</ListItemText>
+              </MenuItem>
+            ))}
+          </Menu>
+        </div>
+      );
+    }
 
     return (
       <Tooltip title={t("COMMON.ADD")}>
@@ -109,63 +212,20 @@ const ActionIcon: React.FC<ActionCellProps> = ({
   };
 
   const renderEditDeleteButtons = () => {
-    if (!buttonStates.editDelete.visible) return null;
+    if (!buttonStates.learnerReports.visible) return null;
 
     return (
-      <>
-        <Tooltip title={t("COMMON.EDIT")}>
-          <Box
-            onClick={() => buttonStates.editDelete.enabled && onEdit(rowData)}
-            sx={{
-              ...commonButtonStyles(buttonStates.editDelete.enabled),
-              backgroundColor: buttonStates.editDelete.enabled
-                ? "#E3EAF0"
-                : "#d3d3d3",
-            }}
-          >
-            <Image src={editIcon} alt="" />
-          </Box>
-        </Tooltip>
-
-        <Tooltip title={t("COMMON.DELETE")}>
-          <Box
-            onClick={() => buttonStates.editDelete.enabled && onDelete(rowData)}
-            sx={{
-              ...commonButtonStyles(buttonStates.editDelete.enabled),
-              backgroundColor: buttonStates.editDelete.enabled
-                ? "#EAF2FF"
-                : "#d3d3d3",
-            }}
-          >
-            <Image src={deleteIcon} alt="" />
-          </Box>
-        </Tooltip>
-      </>
-    );
-  };
-  const renderReportsButton = () => {
-    if (!buttonStates.reports.visible) return null;
-    const userRowData =
-      rowData?.tenantId && !rowData?.userId
-        ? { tenantId: rowData.tenantId }
-        : rowData?.userId
-          ? { userId: rowData.userId }
-          : {};
-    return (
-      <Tooltip title={t("COMMON.METABASE_REPORTS")}>
+      <Tooltip title={t("COMMON.EDIT")}>
         <Box
-          onClick={() =>
-            router.push({
-              pathname: "/dashboard",
-              query: { ...userRowData, from: router.pathname },
-            })
-          }
+          onClick={() => buttonStates.editDelete.enabled && onEdit(rowData)}
           sx={{
-            ...commonButtonStyles(true),
-            backgroundColor: "#EAF2FF",
+            ...commonButtonStyles(buttonStates.editDelete.enabled),
+            backgroundColor: buttonStates.editDelete.enabled
+              ? "#E3EAF0"
+              : "#d3d3d3",
           }}
         >
-          <AssessmentIcon />
+          <Image src={editIcon} alt="" />
         </Box>
       </Tooltip>
     );
@@ -204,8 +264,21 @@ const ActionIcon: React.FC<ActionCellProps> = ({
     >
       {renderAddButton()}
       {renderEditDeleteButtons()}
-      {renderReportsButton()}
       {renderReassignButton()}
+
+      <MetabaseReportsMenu
+        buttonStates={buttonStates}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        onResetPassword={handleResetPassword}
+        rowData={rowData}
+      />
+
+      <ResetPasswordModal
+        open={isResetModalOpen}
+        onClose={handleCloseResetModal}
+        userData={selectedUser}
+      />
     </Box>
   );
 };

@@ -553,9 +553,7 @@ const UserTable: React.FC<UserTableProps> = ({
         if (filters.name) {
           offset = 0;
         }
-        const tenantId = filters?.tenantId
-          ? filters?.tenantId
-          : listOfTenants?.[0]?.tenantId;
+        const tenantId = filters?.tenantId && filters?.tenantId;
 
         const selectedTenantOrNot = selectedTenant?.[0] === "All";
         const payload = {
@@ -675,11 +673,13 @@ const UserTable: React.FC<UserTableProps> = ({
 
     fetchUserList();
   }, [
-    // pageOffset,
+    pageOffset,
     // submitValue,
     pageLimit,
     sortBy,
     filters,
+    editUserState,
+    deleteUserState,
     // parentState,
     // userType,
     // editUserState,
@@ -694,16 +694,20 @@ const UserTable: React.FC<UserTableProps> = ({
     if (selectedNames && selectedCodes) {
       const tenantId = selectedCodes.join(",");
       setSelectedTenant(selectedNames);
-      if (selectedNames?.[0] == "All") {
-        setFilters((prevFilter) => ({
-          ...prevFilter,
-        }));
-      } else {
-        setFilters((prevFilter) => ({
-          ...prevFilter,
-          tenantId: tenantId,
-        }));
-      }
+
+      setSelectedCohort([]);
+      setFilters((prevFilter) => {
+        const newFilters = { ...prevFilter };
+
+        if (selectedNames?.[0] === "All") {
+          delete newFilters.tenantId;
+        } else {
+          newFilters.tenantId = tenantId;
+        }
+        delete newFilters.cohortId;
+
+        return newFilters;
+      });
     } else {
       console.log("No valid tenants selected");
     }
@@ -720,7 +724,7 @@ const UserTable: React.FC<UserTableProps> = ({
     value: number
   ) => {
     if (value >= 1 && value <= pageCount) {
-      setPageOffset(value - 1); // Ensure pageOffset is updated correctly
+      setPageOffset(value - 1);
     }
   };
 
@@ -769,7 +773,8 @@ const UserTable: React.FC<UserTableProps> = ({
       };
 
       try {
-        const resp = await deleteUser(userId);
+        const tenantId = selectedRowData.tenantId
+        const resp = await deleteUser(userId,tenantId);
         if (resp?.responseCode === 200) {
           showToastMessage(t("COMMON.USER_DELETE_SUCCSSFULLY"), "success");
           setDeleteUserState((prevState) => !prevState);
@@ -806,9 +811,12 @@ const UserTable: React.FC<UserTableProps> = ({
       //   showToastMessage(t("CENTERS.NO_COHORT_ID_SELECTED"), "error");
       //   return;
       // }
+      const formatName = (names: any) => {
+        return names?.trim().replace(/\s+/g, " ");
+      };
       let cohortDetails = {
         userData: {
-          name: formData?.name.replace(/\s/g, ""),
+          name: formatName(formData?.name),
           role: formData?.role,
           userId: formData?.userId,
           username: formData?.username.replace(/\s/g, ""),
@@ -853,10 +861,15 @@ const UserTable: React.FC<UserTableProps> = ({
       setSelectedCohort(selectedNames);
       setFilters((prevFilter) => ({
         ...prevFilter,
-        cohortId: cohortId,
+        cohortId: selectedNames?.[0] === "All" ? undefined : cohortId,
       }));
     } else {
       console.log("No valid cohort selected");
+      setFilters((prevFilter) => {
+        const newFilters = { ...prevFilter };
+        delete newFilters.cohortId;
+        return newFilters;
+      });
     }
   };
 
@@ -916,28 +929,38 @@ const UserTable: React.FC<UserTableProps> = ({
           <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
         </Box>
       ) : data?.length !== 0 && loading === false ? (
-        <KaTableComponent
-          columns={
-            // role === Role.TEAM_LEADER
-            getTLTableColumns(t, isMobile, filters)
-            // : getUserTableColumns(t, isMobile)
-          }
-          data={data}
-          limit={pageLimit}
-          offset={pageOffset}
-          paginationEnable={totalCount > Numbers.TEN}
-          PagesSelector={PagesSelector}
-          PageSizeSelector={PageSizeSelectorFunction}
-          pageSizes={pageSizeArray}
-          extraActions={extraActions}
-          showIcons={true}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          pagination={pagination}
-          allowEditIcon={true}
-          showReports={true}
-          noDataMessage={data?.length === 0 ? t("COMMON.NO_USER_FOUND") : ""}
-        />
+        <Box
+          sx={{
+            backgroundColor: "white",
+            padding: "10px",
+            borderRadius: "15px",
+          }}
+        >
+          <KaTableComponent
+            columns={
+              // role === Role.TEAM_LEADER
+              getTLTableColumns(t, isMobile, filters)
+              // : getUserTableColumns(t, isMobile)
+            }
+            data={data}
+            limit={pageLimit}
+            offset={pageOffset}
+            paginationEnable={totalCount > Numbers.TEN}
+            PagesSelector={PagesSelector}
+            PageSizeSelector={PageSizeSelectorFunction}
+            pageSizes={pageSizeArray}
+            extraActions={extraActions}
+            showIcons={true}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            pagination={pagination}
+            allowEditIcon={true}
+            showReports={true}
+            showLearnerReports={true}
+            showResetPassword={true}
+            noDataMessage={data?.length === 0 ? t("COMMON.NO_USER_FOUND") : ""}
+          />
+        </Box>
       ) : (
         loading === false &&
         data.length === 0 && (

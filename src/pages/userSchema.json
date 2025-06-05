@@ -8,21 +8,8 @@
       "title": "Full Name",
       "fieldId": null,
       "type": "string",
+      "description": "Full name, numbers, letters and spaces are allowed.",
       "validation": []
-    },
-    "mobileNo": {
-      "title": "Mobile Number",
-      "fieldId": null,
-      "type": "string",
-      "pattern": "^[6-9]\\d{9}$",
-      "validation": ["mobile"]
-    },
-    "email": {
-      "title": "Email Address",
-      "type": "string",
-      "format": "email",
-      "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$",
-      "validation": ["required"]
     },
     "username": {
       "title": "Username",
@@ -30,6 +17,7 @@
       "minLength": 3,
       "pattern": "^[a-zA-Z0-9!@#$%^&*()_+={}:;<>?,./~`|\\-]+$",
       "type": "string",
+      "description": "Username must be at least 3 characters long.",
       "validation": [],
       "ui:options": {
         "inputProps": {
@@ -39,15 +27,11 @@
     },
     "password": {
       "title": "Password",
-      "fieldId": null,
       "type": "string",
-      "pattern": "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
-      "validation": [],
-      "ui:options": {
-        "inputProps": {
-          "autoComplete": "new-password"
-        }
-      }
+      "description": "Your password needs to include both uppercase & lowercase letters, a number, and a special character. Must be at least 8 characters long.",
+      "ui:widget": "password",
+      "minLength": 8,
+      "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,}$"
     },
     "role": {
       "title": "Role",

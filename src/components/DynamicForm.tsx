@@ -10,38 +10,9 @@ import MultiSelectCheckboxes from "./form/MultiSelectCheckboxes";
 import MultiSelectDropdown from "./form/MultiSelectDropdown";
 const FormWithMaterialUI = withTheme(MaterialUITheme);
 import { getCurrentYearPattern } from "@/utils/Helper";
-
-interface UiSchema {
-  [key: string]: {
-    "ui:widget"?: string;
-    "ui:placeholder"?: string;
-    "ui:help"?: string;
-    "ui:options"?: object;
-    [key: string]: any;
-  };
-}
-
-interface DynamicFormProps {
-  schema: any;
-  uiSchema: object;
-  formData?: object;
-  onSubmit: (
-    data: IChangeEvent<any, RJSFSchema, any>,
-    event: React.FormEvent<any>
-  ) => void | Promise<void>;
-  onChange: (event: IChangeEvent<any>) => void;
-  onError: (errors: any) => void;
-  showErrorList: boolean;
-  id?: string;
-
-  widgets?: {
-    [key: string]: React.FC<WidgetProps<any, RJSFSchema, any>>;
-  };
-  customFields: {
-    [key: string]: React.FC<RegistryFieldsType<any, RJSFSchema, any>>;
-  };
-  children?: ReactNode;
-}
+import { DynamicFormProps } from "../utils/Interfaces";
+import { FormContextType } from "@/utils/app.constant";
+import { customValidation } from "./FormValidation";
 
 const DynamicForm: React.FC<DynamicFormProps> = ({
   id,
@@ -53,9 +24,17 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   onError,
   customFields,
   children,
+  isProgramFields = false,
+  role,
+  isEdit = false,
 }) => {
   const { t } = useTranslation();
   const [localFormData, setLocalFormData] = useState(formData ?? {});
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [changedFormData, setChangedFormData] = useState({});
+  const [isGetUserName, setIsGetUserName] = useState<boolean>(false);
+  const [storedSuggestions, setStoredSuggestions] = useState<string[]>([]);
+  const [liveValidate, setLiveValidate] = useState(false);
   const submittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.submittedButtonStatus
   );
@@ -77,7 +56,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     if (errors.length === 0) {
       // You can perform any additional action here when there are no errors
     }
-
     if (errors.length > 0) {
       const property = errors[0].property?.replace(/^root\./, "");
       const errorField = document.querySelector(
@@ -100,10 +78,37 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     event: IChangeEvent<any, RJSFSchema, any>,
     formEvent: React.FormEvent<any>
   ) => {
+    setLiveValidate(true);
+    if (isProgramFields) {
+      event.formData = changedFormData;
+    }
+
     onSubmit(event, formEvent);
   };
+  function getDifferences(obj1: any, obj2: any): any {
+    const differences: any = {};
 
-  const handleChange = (event: IChangeEvent<any>) => {
+    for (const key in obj1) {
+      if (obj1[key] !== obj2[key]) {
+        differences[key] = obj1[key];
+      }
+    }
+
+    for (const key in obj2) {
+      if (!(key in obj1)) {
+        differences[key] = obj2[key];
+      }
+    }
+
+    return differences;
+  }
+
+  const handleChange = async (event: IChangeEvent<any>) => {
+    console.log("event.formData", event.formData);
+    if (formData) {
+      const differences = getDifferences(event?.formData, formData);
+      setChangedFormData(differences);
+    }
     const cleanAndReplace = (data: any) => {
       for (const key in data) {
         if (Array.isArray(data[key])) {
@@ -122,27 +127,36 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
     setLocalFormData(cleanedFormData);
     setUserEnteredEmail(cleanedFormData?.email);
+    if (
+      event.formData?.username !== formData?.username &&
+      (formData?.username || formData?.username === "")
+    ) {
+      if (event.formData?.username !== "") {
+        setIsGetUserName(false);
+        setSuggestions([]);
+      } else setSuggestions(storedSuggestions);
+    }
     onChange({ ...event, formData: cleanedFormData });
+  };
+
+  const handleSuggestionSelect = (selectedUsername: string) => {
+    if (role === FormContextType.STUDENT)
+      setLocalFormData((prev: any) => ({
+        ...prev,
+        username: selectedUsername,
+      }));
+    setIsGetUserName(true);
+    setSuggestions([]);
   };
 
   const transformErrors = (errors: any) => {
     const currentYearPattern = new RegExp(getCurrentYearPattern());
 
+    console.log("errors", errors);
     errors.length === 0 ? setNoError(true) : setNoError(false);
 
-    let updatedUiSchema: UiSchema = { ...uiSchema };
-
     return errors?.map((error: any) => {
-      const property = error.property ? error.property.substring(1) : ""; // Check if error.property exists
-
-      if (!property) {
-        return error;
-      }
-
-      if (updatedUiSchema[property] && updatedUiSchema[property]["ui:help"]) {
-        delete updatedUiSchema[property]["ui:help"];
-      }
-
+      console.log("error.name", error.name);
       switch (error.name) {
         case "required": {
           error.message = submittedButtonStatus
@@ -151,6 +165,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           break;
         }
         case "maximum": {
+          const property = error.property.substring(1);
+
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
             if (property === "age") {
               error.message = t(
@@ -164,10 +180,12 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           break;
         }
         case "minimum": {
+          const property = error.property.substring(1);
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
             error.message = t("FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR", {
               minLength: schema.properties?.[property]?.minLength,
             });
+
             if (property === "age") {
               error.message = t(
                 "FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR_AGE",
@@ -175,37 +193,69 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                   minLength: schema.properties?.[property]?.minLength,
                 }
               );
+              //  error.message = `Age should be greater than or equal to ${error?.params?.limit}`
             }
           }
           break;
         }
+        // case "dob": {
+        //   const property = error.property.substring(1);
+        //   console.log("property",property)
+        //   const currentDate = new Date();
+        //   if(localFormData?.dob)
+        //   {
+        //     console.log("localFormData?.dob",localFormData?.dob)
+        //     const dobDate = new Date(localFormData?.dob);
+        //     currentDate.setHours(0, 0, 0, 0);
+        //     dobDate.setHours(0, 0, 0, 0);
+
+        //     if (dobDate >= currentDate) {
+        //       error.message = t("FORM_ERROR_MESSAGES.DATE_CANNOT_BE_TODAY")
+        //     }
+
+        //   }
+        //   // if (localFormData[property] === today) {
+        //   //   error.message = t("FORM_ERROR_MESSAGES.DATE_CANNOT_BE_TODAY");
+        //   // }
+        //   break;
+        // }
         case "pattern": {
           const pattern = error?.params?.pattern;
-
-          const shouldSkipDefaultValidation =
-            schema.properties?.[property]?.skipDefaultValidation;
-          if (shouldSkipDefaultValidation) {
-            error.message = "";
-            break;
-          }
-
+          const property = error.property.substring(1);
+          console.log({ pattern });
           switch (pattern) {
+            case "^(?=.*[a-zA-Z])[a-zA-Z ]+$": {
+              error.message = t(
+                "FORM_ERROR_MESSAGES.NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
+              );
+              break;
+            }
+            case '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$': {
+              error.message = t("COMMON.ENTER_VALID_PASSWORD");
+              break;
+            }
             case "^[a-zA-Z][a-zA-Z ]*[a-zA-Z]$": {
               error.message = t(
                 "FORM_ERROR_MESSAGES.NUMBER_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
               );
               break;
             }
-            case "^[6-9]\\d{9}$": {
-              const validations = schema.properties?.[property]?.validation;
+            case "^[a-zA-Z0-9.@]+$": {
+              error.message = t(
+                "FORM_ERROR_MESSAGES.SPACE_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
+              );
+              break;
+            }
+            case "^[0-9]{10}$": {
               if (
-                validations?.includes("mobile") ||
-                validations?.includes("mobileNo")
+                schema.properties?.[property]?.validation?.includes("mobile")
               ) {
                 error.message = t(
                   "FORM_ERROR_MESSAGES.ENTER_VALID_MOBILE_NUMBER"
                 );
-              } else if (validations?.includes(".age")) {
+              } else if (
+                schema.properties?.[property]?.validation?.includes(".age")
+              ) {
                 error.message = t("age must be valid");
               } else {
                 error.message = t(
@@ -214,17 +264,17 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               }
               break;
             }
-
             case "^d{10}$": {
               error.message = t(
                 "FORM_ERROR_MESSAGES.CHARACTERS_AND_SPECIAL_CHARACTERS_NOT_ALLOWED"
               );
               break;
             }
+
             default: {
               const validRange = currentYearPattern.test(pattern);
               if (!validRange) {
-                error.message = t("FORM_ERROR_MESSAGES.ENTER_VALID_DATA");
+                error.message = t("FORM_ERROR_MESSAGES.ENTER_VALID_YEAR");
               }
               break;
             }
@@ -232,6 +282,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           break;
         }
         case "minLength": {
+          const property = error.property.substring(1);
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
             error.message = t("FORM_ERROR_MESSAGES.MIN_LENGTH_DIGITS_ERROR", {
               minLength: schema.properties?.[property]?.minLength,
@@ -240,6 +291,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           break;
         }
         case "maxLength": {
+          const property = error.property.substring(1);
           if (schema.properties?.[property]?.validation?.includes("numeric")) {
             error.message = t("FORM_ERROR_MESSAGES.MAX_LENGTH_DIGITS_ERROR", {
               maxLength: schema.properties?.[property]?.maxLength,
@@ -251,15 +303,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           const format = error?.params?.format;
           switch (format) {
             case "email": {
-              error.message = t("");
-              break;
+              error.message = t("FORM_ERROR_MESSAGES.ENTER_VALID_EMAIL");
             }
           }
         }
-      }
-
-      if (!error.message && updatedUiSchema[property]) {
-        error.message = updatedUiSchema[property]["ui:help"];
       }
 
       return error;
@@ -267,10 +314,16 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   };
 
   useEffect(() => {
-    setSubmittedButtonStatus(false);
+    const updatedFormData = Object.fromEntries(
+      Object.entries(localFormData)?.map(([key, value]) => [
+        key,
+        value === "undefined" ? "" : value,
+      ])
+    );
+    setLocalFormData(updatedFormData);
   }, []);
   return (
-    <div className="shreyas shinde">
+    <div>
       <FormWithMaterialUI
         schema={schema}
         uiSchema={uiSchema}
@@ -278,7 +331,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         onChange={handleChange}
         onSubmit={handleSubmit}
         validator={validator}
-        liveValidate
+        liveValidate={liveValidate}
         showErrorList={false}
         widgets={widgets}
         noHtml5Validate
@@ -286,6 +339,11 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         transformErrors={transformErrors}
         fields={customFields}
         id={id}
+        customValidate={customValidation(schema, t)}
+        formContext={{
+          suggestions,
+          onSuggestionSelect: handleSuggestionSelect,
+        }}
       >
         <style>{`.rjsf-default-submit { display: none !important; }`}</style>
         {children}

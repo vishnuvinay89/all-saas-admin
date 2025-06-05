@@ -145,7 +145,31 @@
     "ENABLE_ROLE": "Enable Role",
     "SEND_INVITATION_TO_NEW_ADMIN": "Send Invitation to new cohort admin",
     "SEND_INVITATION": "Send Invitation",
-    "METABASE_REPORTS": "Metabase Report"
+    "METABASE_REPORTS": "Metabase Report",
+    "USER_JOURNEY_REPORT": "User Journey Report",
+    "USER_RESPONSE_EVENT": "User Response Event Report",
+    "RESET_PASSWORD": "Reset Password",
+    "NEW_PASSWORD": "New Password",
+    "CONFIRM_PASSWORD": "Confirm Password",
+    "ENTER_VALID_PASSWORD": "Enter Valid Password",
+    "ADD_SINGLE_USER": "Add Single user",
+    "ADD_MULTIPLE_USERS": "Add Multiple users",
+    "PASSWORD_RESET_SUCCESSFUL": "Password has been reset successfully.",
+    "PASSWORD_RESET_FAILED": "Failed to reset password. Please try again.",
+    "UNEXPECTED_ERROR": "An unexpected error occurred. Please try again later.",
+    "RESET_PASSWORD_FOR_USER": "Reset password for user:",
+    "PASSWORDS_DO_NOT_MATCH": "Passwords do not match.",
+    "PASSWORD_LENGTH_ERROR": "Password must be at least 8 characters long.",
+    "PASSWORD_UPPERCASE_ERROR": "Password must contain at least one uppercase letter.",
+    "PASSWORD_LOWERCASE_ERROR": "Password must contain at least one lowercase letter.",
+    "PASSWORD_NUMBER_ERROR": "Password must contain at least one number.",
+    "PASSWORD_SPECIAL_CHAR_ERROR": "Password must contain at least one special character.",
+    "PASSWORD_COMPLEXITY_REQUIREMENTS": "Password must: \n- Be at least 8 characters long\n- Contain uppercase and lowercase letters\n- Include a number\n- Include a special character"
+  },
+  "HINT": {
+    "PASSWORD_STRENGTH": {
+      "GENERAL": "Tip: Create a strong, unique password to protect your account."
+    }
   },
   "LOGIN_PAGE": {
     "USERNAME": "Username",
@@ -156,7 +180,35 @@
     "USERNAME_PASSWORD_NOT_CORRECT": "The username or password you entered is incorrect",
     "FORGOT_PASSWORD": "Forgot Password?",
     "REMEMBER_ME": "Remember Me",
-    "ACCESS_DENIED": "You do not have access to the portal. Please check your username or password."
+    "ACCESS_DENIED": "You do not have access to the portal. Please check your username or password.",
+    "CONFIRM_PASSWORD": "Confirm password",
+    "RESET_PASSWORD": "Reset Password",
+    "CREATE_NEW": "Create a new, strong password that you don't use for other websites",
+    "NOT_MATCH": "Passwords do not match",
+    "CHARACTERS_LONG": "Passwords must be at least 8 characters long",
+    "OLD_PASSWORD": "Old Password",
+    "NEW_PASSWORD": "New Password",
+    "CONFIRM_NEW_PASSWORD": "Confirm New Password",
+    "TROUBLE_LOGIN": "Trouble with logging in?",
+    "ENTER_USERNAME_TO_GET_LINK": "Enter your username, we’ll send you a link to get back into your account.",
+    "ENTER_USERNAME": "Enter Username",
+    "BACK_TO_LOGIN": "Back to Login",
+    "CREATE_STRONG_PASSWORD": "Create a strong password",
+    "YOUR_PASSWORD_NEED": "Your password needs to:",
+    "INCLUDE_BOTH": "Include both upper case and lower case",
+    "INCLUDE_NUMBER": "Include at least one number",
+    "INCLUDE_SPECIAL": "Include at least one special character",
+    "MUST_BE_AT": "Must be at least 8 characters long",
+    "OTHER_SETTING": "Other settings",
+    "WELCOME": "Welcome!",
+    "PLEASE_RESET_YOUR_PASSWORD": "Please reset your password to ensure your account is secure",
+    "DO_IT_LATER": "I’ll do it later",
+    "SUCCESSFULLY_RESET": "Your password has been successfully reset",
+    "LINK_EXPIRED": "Link has been expired",
+    "WE_SEND_AN_EMAIL": "We sent an email to {{maskEmail}} with a link to reset your password",
+    "CURRENT_PASSWORD_NOT": "Current Password Not Matched",
+    "NO_USERNAME": "Username not found",
+    "PASSWORD_SAME_AS_OLD": "Password same as old"
   },
   "SIDEBAR": {
     "HI": "hi",
@@ -413,6 +465,7 @@
     "STATUS": "Status",
     "CREATED_DATE": "Created Date",
     "UPDATED_DATE": "Updated Date",
+    "COHORT_EXPIRES_ON":"Expires On",
     "CREATED_BY": "Created By",
     "UPDATED_BY": "Updated By",
     "ACTIONS": "Actions",
@@ -438,7 +491,8 @@
     "DOMAIN": "Domain",
     "CREATE_TENANT_ADMIN": "Create Tenant Admin",
     "CREATE_COHORT_ADMIN": "Create Cohort Admin",
-    "USERID": "UserId"
+    "USERID": "UserId",
+    "TENANT_NAME": "Tenant Name"
   },
   "WORKSPACE": {
     "EDITOR_WORKSPACE": "Editor Workspace",
@@ -491,14 +545,20 @@
     "INVITED_TO_JOIN_COHORT": "Invited to join cohort",
     "INVITED_BY": "Invited by",
     "REVOKE_INVITATION": "Revoke Invitation",
+
     "DELETE_CONFIRMATION": "Revoke request of ",
     "CANCEL": "Cancel",
     "REVOKE": "Revoke",
+    "REVOKED_SUCCESS": "Invitation revoked successfully",
     "ACCEPTED_SUCCESS": "Accepted request successfully",
     "REJECTED_SUCCESS": "Rejected request",
     "ERROR_UPDATING_REQUEST": "Error in updating request",
     "INVITATION_DELETED_SUCCESS": "Invitation deleted successfully",
     "INVITATION_DELETED_ERROR": "Failed to delete invitation",
     "FETCH_INVITATIONS_ERROR": "Failed to fetch invitations"
+  },
+  "AUTH": {
+    "RESET_PASSWORD": "Reset Password",
+    "RESET_PASSWORD_INSTRUCTIONS": ""
   }
 }

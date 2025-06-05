@@ -15,11 +15,16 @@ import {
   userCreate,
 } from "@/services/CohortService/cohortService";
 import { CohortTypes, Numbers, SORT, Status } from "@/utils/app.constant";
-
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationModal from "@/components/ConfirmationModal";
-import { Box, Button, Typography, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  useMediaQuery,
+  CircularProgress,
+} from "@mui/material";
 import Loader from "@/components/Loader";
 import { customFields } from "@/components/GeneratedSchemas";
 import { showToastMessage } from "@/components/Toastify";
@@ -39,7 +44,22 @@ import userJsonSchema from "./userSchema.json";
 import cohortASchema from "./cohortAdminSchema.json";
 import updateCohortSchema from "./cohortUpdateSchema.json";
 import { sendRequest } from "@/services/InvitationService";
+import PasswordCreate from "../components/CreatePassword";
+import { bulkUpload } from "@/services/UploadService";
+import { tenantId } from "../../app.config";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ErrorIcon from "@mui/icons-material/Error";
 
+interface UploadResult {
+  registered: number;
+  failed: number;
+  alreadyRegistered: number;
+  failedRecords?: Array<{
+    record: string;
+    reason: string;
+  }>;
+}
 type cohortFilterDetails = {
   type?: string;
   status?: any;
@@ -98,6 +118,7 @@ const Center: React.FC = () => {
   const [isEditForm, setIsEditForm] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState<any>("");
   const [Addmodalopen, setAddmodalopen] = React.useState(false);
+  const [bulkUploadModalopen, setBulkUploadModalopen] = React.useState(false);
   const [updateBtnDisabled, setUpdateBtnDisabled] = React.useState(true);
   const [addFormData, setAddFormData] = useState({});
   const [addBtnDisabled, setAddBtnDisabled] = useState(true);
@@ -105,6 +126,13 @@ const Center: React.FC = () => {
   const [error, setError] = useState<any>([]);
   const [isCreateCohortAdminModalOpen, setIsCreateCohortAdminModalOpen] =
     useState(false);
+  const [fileName, setFileName] = useState<string>("");
+  const [fileSelected, setFileSelected] = useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [uploadComplete, setUploadComplete] = useState<boolean>(false);
+  const [uploadFailed, setUploadFailed] = useState<boolean>(false);
+  const [uploadResult, setUploadResult] = useState<UploadResult | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
@@ -151,18 +179,16 @@ const Center: React.FC = () => {
     name: {
       "ui:widget": "text",
       "ui:placeholder": "Enter your full name",
-      "ui:help": "Full name, numbers, letters and spaces are allowed.",
+      // "ui:help": "Full name, numbers, letters and spaces are allowed.",
     },
     username: {
       "ui:widget": "text",
       "ui:placeholder": "Enter your username",
-      "ui:help": "Username must be at least 3 characters long.",
+      // "ui:help": "Username must be at least 3 characters long.",
     },
     password: {
-      "ui:widget": "password",
+      "ui:widget": PasswordCreate,
       "ui:placeholder": "Enter a secure password",
-      "ui:help":
-        "Password must be at least 8 characters long and contain one uppercase letter, one lowercase letter, one number, and one special character.",
     },
     role: {
       "ui:widget": "select",
@@ -231,7 +257,13 @@ const Center: React.FC = () => {
     email: {
       // "ui:widget": "text",
       "ui:placeholder": "Enter your email address",
-      "ui:help": "Enter a valid email address.",
+      // "ui:help": "Enter a valid email address.",
+      // "ui:options": {
+      //   errorsSchema: {
+      //     required: "This field is required",
+      //     pattern: "Enter a valid email address",
+      //   },
+      // },
       // "ui:options": {},
     },
     // dob: {
@@ -242,7 +274,7 @@ const Center: React.FC = () => {
   };
 
   const [filters, setFilters] = useState<cohortFilterDetails>({
-    type: CohortTypes.COHORT,
+    type: "cohort",
     // states: "",
     status: [statusValue],
     // districts: "",
@@ -313,7 +345,13 @@ const Center: React.FC = () => {
 
   //   fetchRoles();
   // }, [Addmodalopen]);
+  const calculateCohortExpiry = (dateString: string) => {
+    const originalDate = new Date(dateString);
+    const newDate = new Date(originalDate);
+    newDate.setDate(originalDate.getDate() + 30);
 
+    return newDate.toISOString().split("T")[0];
+  };
   const fetchUserList = async () => {
     setLoading(true);
     try {
@@ -330,25 +368,32 @@ const Center: React.FC = () => {
         filters: filters,
       };
 
-      // Call getCohortList API
       const resp = await getCohortList(data);
 
       if (resp) {
         const result = resp?.results;
 
-        // Map response data to required format
-        const resultData = result?.map((item: any) => ({
-          name: item?.name,
-          type: item?.type === "cohort" ? "Cohort" : item?.type,
-          status: item?.status,
-          tenantId: item?.tenantId,
-          updatedBy: item?.updatedBy,
-          createdBy: item?.createdBy,
-          createdAt: item?.createdAt,
-          updatedAt: item?.updatedAt,
-          cohortId: item?.cohortId,
-          userRoleTenantMapping: { code: item?.role },
-        }));
+        const resultData = result?.map((item: any) => {
+          const matchingTenant = listOfTenants.find(
+            (tenant: any) => tenant?.tenantId === item?.tenantId
+          );
+          const expiryDate = calculateCohortExpiry(item?.createdAt);
+
+          return {
+            name: item?.name,
+            type: item?.type === "cohort" ? "Cohort" : item?.type,
+            status: item?.status,
+            tenantId: item?.tenantId,
+            tenantName: matchingTenant?.name || "Unknown Tenant",
+            updatedBy: item?.updatedBy,
+            createdBy: item?.createdBy,
+            createdAt: item?.createdAt,
+            updatedAt: item?.updatedAt,
+            cohortId: item?.cohortId,
+            userRoleTenantMapping: { code: item?.role },
+            cohortExpiresIn: expiryDate,
+          };
+        });
 
         setCohortData(resultData || []);
         const totalCount = resp?.count;
@@ -395,6 +440,7 @@ const Center: React.FC = () => {
     filters.states,
     filters.status,
     createCenterStatus,
+    listOfTenants,
   ]);
 
   // handle functions
@@ -453,7 +499,6 @@ const Center: React.FC = () => {
         tenantId: tenantId,
       }));
     } else {
-      console.log("No valid tenants selected");
     }
   };
 
@@ -622,7 +667,88 @@ const Center: React.FC = () => {
     setAddmodalopen(true);
     setLoading(false);
   };
+  const handleBulkAddModal = () => {
+    setBulkUploadModalopen(false);
+    setFileSelected(false);
+    setFileName("");
+    setIsUploading(false);
+    setUploadComplete(false);
+    setUploadFailed(false);
+    setUploadResult(null);
+    setErrorMessage("");
+  };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      setFileName(file.name);
+      setFileSelected(true);
+
+      // reset states when new file is upload
+      setUploadComplete(false);
+      setUploadFailed(false);
+      setUploadResult(null);
+      setErrorMessage("");
+    }
+  };
+  const handleUpload = async () => {
+    if (!fileSelected || !selectedRowData) return;
+
+    setIsUploading(true);
+    setUploadComplete(false);
+    setUploadFailed(false);
+
+    try {
+      const cohortAdminRole: any = roleList?.result.find(
+        (item: any) => item.code === "learner"
+      );
+      console.log({ cohortAdminRole });
+
+      const fileInput = document.getElementById(
+        "csv-file-upload"
+      ) as HTMLInputElement;
+      const uploadFile = fileInput?.files?.[0];
+      if (!uploadFile) throw new Error("No file selected");
+      const formData = new FormData();
+      formData.append("csvFile", uploadFile, uploadFile.name);
+      formData.append("tenantId", selectedRowData?.tenantId);
+      formData.append("cohortId", selectedRowData?.cohortId);
+      formData.append("roleId", cohortAdminRole.roleId);
+
+      const response = await bulkUpload(formData);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      if (response?.responseCode === 200) {
+        const formattedResponse = {
+          registered: response.result.success || 0,
+          failed: response.result.failed || 0,
+          alreadyRegistered: 0,
+          failedRecords:
+            response.result.failedDetails?.map((item: any) => ({
+              record: item?.record,
+              reason: item?.error,
+            })) || [],
+        };
+        setUploadResult(formattedResponse);
+        setUploadComplete(true);
+      } else {
+        setUploadComplete(false);
+      }
+      // Set the upload result
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      setUploadFailed(true);
+      setErrorMessage(
+        error instanceof Error ? error.message : "Unknown error occurred"
+      );
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleBulkUpload = async (rowData: any) => {
+    setSelectedRowData({ ...rowData });
+    setBulkUploadModalopen(true);
+  };
   // add  extra buttons
   const extraActions: any = [
     { name: t("COMMON.ADD"), onClick: handleAdd, icon: AddIcon },
@@ -645,6 +771,16 @@ const Center: React.FC = () => {
   };
   const handleError = (error: any) => {
     setError(error);
+  };
+  const handleCohortAdminError = (errors: any) => {
+    if (errors.length > 0) {
+      if (!errors[0].formData?.email) {
+        errors = [
+          errors.find((error: any) => error.name === "required"),
+        ].filter(Boolean);
+      }
+    }
+    return errors;
   };
   const handleUpdateAction = async (
     data: IChangeEvent<any, RJSFSchema, any>,
@@ -775,6 +911,9 @@ const Center: React.FC = () => {
     setAddBtnDisabled(true);
     setAddFormData({});
   };
+  // const handleBulkAddModal = () => {
+  //   setBulkUploadModalopen(false);
+  // };
 
   const handleAddAction = async (data: any) => {
     setLoading(true);
@@ -785,7 +924,7 @@ const Center: React.FC = () => {
       interface UserCreateData {
         name: string;
         username: string;
-        password: string;
+        password: any;
         mobile: string;
         email: string;
         grade: number;
@@ -800,9 +939,11 @@ const Center: React.FC = () => {
         (role: any) => role.code === formData?.role
       );
       const roleId = matchedRole ? matchedRole?.roleId : "";
-
+      const formatName = (names: any) => {
+        return names?.trim().replace(/\s+/g, " ");
+      };
       let obj: UserCreateData = {
-        name: formData?.name.replace(/\s/g, ""),
+        name: formatName(formData?.name),
         mobile: formData?.mobileNo,
         email: formData?.email,
         username: formData?.username.replace(/\s/g, ""),
@@ -864,7 +1005,7 @@ const Center: React.FC = () => {
       setRolelist(response);
     };
     fetchData();
-  }, [isCreateCohortAdminModalOpen, Addmodalopen]);
+  }, [isCreateCohortAdminModalOpen, bulkUploadModalopen, Addmodalopen]);
   const handleAddCohortAdminAction = async (
     data: IChangeEvent<any, RJSFSchema, any>,
     event: React.FormEvent<any>
@@ -916,7 +1057,7 @@ const Center: React.FC = () => {
     isTenantShow: true,
     selectedSort: selectedSort,
     selectedFilter: selectedFilter,
-    statusArchived: true,
+    statusArchived: false,
     statusInactive: true,
     selectedTenant: selectedTenant,
     handleTenantChange: handleTenantChange,
@@ -927,7 +1068,7 @@ const Center: React.FC = () => {
     handleAddUserClick: handleAddUserClick,
     statusValue: statusValue,
     setStatusValue: setStatusValue,
-    showSort: true,
+    showSort: false,
   };
 
   return (
@@ -966,28 +1107,37 @@ const Center: React.FC = () => {
             <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
           </Box>
         ) : cohortData?.length > 0 ? (
-          <KaTableComponent
-            columns={getCohortTableData(t, isMobile, adminRole, filters)}
-            addAction={filters?.status?.[0] != "inactive" ? true : false}
-            data={cohortData}
-            limit={pageLimit}
-            roleButton
-            offset={pageOffset}
-            addCohortBtnFunc={handleCreateCohortAdmin}
-            paginationEnable={totalCount > Numbers.TEN}
-            PagesSelector={PagesSelector}
-            pagination={pagination}
-            PageSizeSelector={PageSizeSelectorFunction}
-            pageSizes={pageSizeArray}
-            extraActions={extraActions}
-            showIcons={true}
-            allowEditIcon={true}
-            showReports={false}
-            onAdd={handleAdd}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            handleMemberClick={handleMemberClick}
-          />
+          <Box
+            sx={{
+              backgroundColor: "white",
+              padding: "10px",
+              borderRadius: "15px",
+            }}
+          >
+            <KaTableComponent
+              columns={getCohortTableData(t, isMobile, adminRole, filters)}
+              addAction={filters?.status?.[0] != "inactive" ? true : false}
+              data={cohortData}
+              limit={pageLimit}
+              roleButton
+              offset={pageOffset}
+              addCohortBtnFunc={handleCreateCohortAdmin}
+              paginationEnable={totalCount > Numbers.TEN}
+              PagesSelector={PagesSelector}
+              pagination={pagination}
+              PageSizeSelector={PageSizeSelectorFunction}
+              pageSizes={pageSizeArray}
+              extraActions={extraActions}
+              showIcons={true}
+              allowEditIcon={true}
+              showReports={false}
+              onAdd={handleAdd}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              handleMemberClick={handleMemberClick}
+              handleBulkUpload={handleBulkUpload}
+            />
+          </Box>
         ) : (
           <Box
             display="flex"
@@ -1138,6 +1288,145 @@ const Center: React.FC = () => {
             </DynamicForm>
           )}
         </SimpleModal>
+        <SimpleModal
+          open={bulkUploadModalopen}
+          onClose={handleBulkAddModal}
+          showFooter={false}
+          modalTitle={t("COMMON.ADD_MULTIPLE_USERS")}
+        >
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box>
+              <input
+                accept=".csv"
+                style={{ display: "none" }}
+                id="csv-file-upload"
+                type="file"
+                onChange={handleFileChange}
+                disabled={isUploading}
+              />
+              <label htmlFor="csv-file-upload">
+                <Button
+                  sx={{ color: "white", marginRight: 2 }}
+                  variant="contained"
+                  component="span"
+                  startIcon={<CloudUploadIcon />}
+                  color={fileSelected ? "success" : "primary"}
+                  disabled={isUploading}
+                >
+                  {fileSelected ? "CSV Selected" : "Select CSV"}
+                </Button>
+              </label>
+
+              {fileSelected &&
+                !isUploading &&
+                !uploadComplete &&
+                !uploadFailed && (
+                  <Button
+                    sx={{ color: "white" }}
+                    variant="contained"
+                    onClick={handleUpload}
+                    color="primary"
+                  >
+                    Upload
+                  </Button>
+                )}
+
+              {isUploading && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  disabled
+                  startIcon={<CircularProgress size={20} color="inherit" />}
+                >
+                  Uploading...
+                </Button>
+              )}
+
+              {uploadComplete && (
+                <Button
+                  variant="contained"
+                  color="success"
+                  startIcon={<CheckCircleIcon />}
+                  disabled
+                >
+                  Upload Complete
+                </Button>
+              )}
+
+              {uploadFailed && (
+                <Button
+                  variant="contained"
+                  color="error"
+                  startIcon={<ErrorIcon />}
+                  disabled
+                >
+                  Upload Failed
+                </Button>
+              )}
+            </Box>
+
+            {fileSelected && (
+              <Typography variant="body2">Selected file: {fileName}</Typography>
+            )}
+
+            {uploadComplete && uploadResult && (
+              <Box
+                sx={{
+                  mt: 2,
+                  p: 2,
+                  border: "1px solid #e0e0e0",
+                  borderRadius: 1,
+                }}
+              >
+                <Typography variant="h6" gutterBottom>
+                  Upload Summary
+                </Typography>
+                <Typography color="success.main">
+                  ✓ Successfully registered: {uploadResult.registered}
+                </Typography>
+                <Typography color="error.main">
+                  ✗ Failed to register: {uploadResult.failed}
+                </Typography>
+                {/* <Typography color="info.main">
+                  ℹ Already registered: {uploadResult.alreadyRegistered}
+                </Typography> */}
+
+                {uploadResult.failed > 0 && uploadResult.failedRecords && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant="subtitle2" gutterBottom>
+                      Failed Records Details:
+                    </Typography>
+                    {uploadResult.failedRecords.map((record, index) => (
+                      <Typography
+                        key={index}
+                        variant="body2"
+                        color="error.main"
+                      >
+                        Username : {record?.record}- {record.reason}
+                      </Typography>
+                    ))}
+                  </Box>
+                )}
+              </Box>
+            )}
+
+            {uploadFailed && (
+              <Box
+                sx={{
+                  mt: 2,
+                  p: 2,
+                  border: "1px solid #e0e0e0",
+                  borderRadius: 1,
+                  bgcolor: "#fff4f4",
+                }}
+              >
+                <Typography color="error" variant="body1">
+                  Upload failed: {errorMessage}
+                </Typography>
+              </Box>
+            )}
+          </Box>
+        </SimpleModal>
 
         <SimpleModal
           open={isCreateCohortAdminModalOpen}
@@ -1151,7 +1440,7 @@ const Center: React.FC = () => {
               uiSchema={cohortAdminUiSchema}
               onSubmit={handleAddCohortAdminAction}
               onChange={handleChangeForm}
-              onError={handleError}
+              onError={handleCohortAdminError}
               widgets={{}}
               showErrorList={false}
               customFields={customFields}

@@ -40,6 +40,7 @@ import { getTenantLists } from "@/services/CohortService/cohortService";
 import cohortSchemajson from "./cohortSchema.json";
 import userJsonSchema from "./tenantAdminSchema.json";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import PasswordCreate from "../components/CreatePassword";
 
 type cohortFilterDetails = {
   type?: string;
@@ -95,7 +96,8 @@ const Tenant: React.FC = () => {
   const [confirmButtonDisable, setConfirmButtonDisable] =
     React.useState<boolean>(false);
   const [inputName, setInputName] = React.useState<string>("");
-  const [loading, setLoading] = useState<boolean | undefined>(undefined);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [dataFetched, setDataFetched] = useState<boolean>(false);
   const [userId, setUserId] = useState("");
   const [schema] = React.useState(tenantSchema);
   const [cohortSchema] = React.useState(cohortSchemajson);
@@ -149,7 +151,7 @@ const Tenant: React.FC = () => {
       "ui:help": "Username must be at least 3 characters long.",
     },
     password: {
-      "ui:widget": "password",
+      "ui:widget": PasswordCreate,
       "ui:placeholder": "Enter a secure password",
       "ui:help":
         "Password must be at least 8 characters long and contain one uppercase letter, one lowercase letter, one number, and one special character.",
@@ -330,9 +332,11 @@ const Tenant: React.FC = () => {
         setCohortData([]);
       }
 
+      setDataFetched(true);
       setLoading(false);
     } catch (error) {
       setCohortData([]);
+      setDataFetched(true);
       setLoading(false);
       console.error("Error fetching tenant list:", error);
     }
@@ -340,13 +344,9 @@ const Tenant: React.FC = () => {
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      // Your function logic here
-
       fetchTenantList();
     }, 1000);
-    // get form data for center create
-    // getAddCenterFormData();
-    // getCohortMemberlistData();
+
     return () => {
       clearTimeout(timeoutId);
     };
@@ -651,8 +651,11 @@ const Tenant: React.FC = () => {
         showToastMessage(t(""), "error");
         return;
       }
+      const formatName = (names: any) => {
+        return names?.trim().replace(/\s+/g, " ");
+      };
       let cohortDetails = {
-        name: formData?.name.replace(/\s/g, ""),
+        name: formatName(formData?.name),
         domain: formData?.domain,
         // customFields: customFields,
       };
@@ -683,9 +686,11 @@ const Tenant: React.FC = () => {
     try {
       setLoading(true);
       setConfirmButtonDisable(true);
-
+      const formatName = (names: any) => {
+        return names?.trim().replace(/\s+/g, " ");
+      };
       let obj = {
-        name: formData?.name.replace(/\s/g, ""),
+        name: formatName(formData?.name),
         cohortId: selectedRowData?.cohortId,
         tenantId: selectedRowData?.tenantId,
         status: formData?.status,
@@ -734,9 +739,12 @@ const Tenant: React.FC = () => {
       const tenantAdminRole = response?.result.find(
         (item: any) => item.code === "tenant_admin"
       );
+      const formatName = (names: any) => {
+        return names?.trim().replace(/\s+/g, " ");
+      };
 
       let obj = {
-        name: formData?.name.replace(/\s/g, ""),
+        name: formatName(formData?.name),
         username: formData?.username.replace(/\s/g, ""),
         password: formData?.password,
         mobile: formData?.mobileNo,
@@ -1124,29 +1132,37 @@ const Tenant: React.FC = () => {
           >
             <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
           </Box>
-        ) : cohortData?.length > 0 ? (
-          <KaTableComponent
-            columns={getTenantTableData(t, isMobile, adminRole)}
-            addAction={true}
-            addBtnFunc={handleCreateTenantAdmin}
-            data={cohortData}
-            limit={pageLimit}
-            roleButton
-            offset={pageOffset}
-            paginationEnable={false}
-            PagesSelector={PagesSelector}
-            pagination={pagination}
-            PageSizeSelector={PageSizeSelectorFunction}
-            pageSizes={pageSizeArray}
-            extraActions={extraActions}
-            showIcons={true}
-            allowEditIcon={true}
-            showReports={true}
-            onEdit={handleEdit}
-            onAdd={handleAdd}
-            onDelete={handleDelete}
-            handleMemberClick={handleMemberClick}
-          />
+        ) : dataFetched && cohortData?.length > 0 ? (
+          <Box
+            sx={{
+              backgroundColor: "white",
+              padding: "15px",
+              borderRadius: "15px",
+            }}
+          >
+            <KaTableComponent
+              columns={getTenantTableData(t, isMobile, adminRole)}
+              addAction={true}
+              addBtnFunc={handleCreateTenantAdmin}
+              data={cohortData}
+              limit={pageLimit}
+              roleButton
+              offset={pageOffset}
+              paginationEnable={false}
+              PagesSelector={PagesSelector}
+              pagination={pagination}
+              PageSizeSelector={PageSizeSelectorFunction}
+              pageSizes={pageSizeArray}
+              extraActions={extraActions}
+              showIcons={true}
+              allowEditIcon={true}
+              showReports={true}
+              onEdit={handleEdit}
+              onAdd={handleAdd}
+              onDelete={handleDelete}
+              handleMemberClick={handleMemberClick}
+            />
+          </Box>
         ) : (
           <Box
             display="flex"
