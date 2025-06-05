@@ -10,13 +10,6 @@
       "type": "string",
       "validation": []
     },
-    "mobileNo": {
-      "title": "Mobile Number",
-      "fieldId": null,
-      "type": "string",
-      "pattern": "^\\d{10}$",
-      "validation": []
-    },
     "grade": {
       "title": "Grade",
       "type": "integer",
@@ -24,14 +17,6 @@
       "maximum": 10,
       "ui:widget": "number",
       "ui:placeholder": "Enter grade (1-10)"
-    },
-    "email": {
-      "title": "Email Address",
-      "type": "string",
-      "format": "email",
-      "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$",
-      "validation": ["required"],
-      "shouldSkipDefaultValidation": true
     }
   },
   "dependencies": {}
