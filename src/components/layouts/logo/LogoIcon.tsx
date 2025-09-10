@@ -12,7 +12,7 @@ const LogoIcon = () => {
         src={LogoDark}
         alt="LogoDark"
         style={{
-          maxWidth: "280px",
+          maxWidth: "200px",
           height: "auto",
           transition: "transform 0.2s ease",
           cursor: "pointer",
