@@ -345,13 +345,14 @@ const Center: React.FC = () => {
 
   //   fetchRoles();
   // }, [Addmodalopen]);
-  const calculateCohortExpiry = (dateString: string) => {
-    const originalDate = new Date(dateString);
-    const newDate = new Date(originalDate);
-    newDate.setDate(originalDate.getDate() + 30);
+  // Remove the calculateCohortExpiry function since we'll get expiryDate from API
+  // const calculateCohortExpiry = (dateString: string) => {
+  //   const originalDate = new Date(dateString);
+  //   const newDate = new Date(originalDate);
+  //   newDate.setDate(originalDate.getDate() + 30);
+  //   return newDate.toISOString().split("T")[0];
+  // };
 
-    return newDate.toISOString().split("T")[0];
-  };
   const fetchUserList = async () => {
     setLoading(true);
     try {
@@ -377,7 +378,17 @@ const Center: React.FC = () => {
           const matchingTenant = listOfTenants.find(
             (tenant: any) => tenant?.tenantId === item?.tenantId
           );
-          const expiryDate = calculateCohortExpiry(item?.createdAt);
+          
+          // Format expiryDate for user-readable display in table
+          const formatDateForDisplay = (isoDate: string) => {
+            if (!isoDate) return '';
+            const date = new Date(isoDate);
+            return date.toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
+          };
+
+          // Use expiryDate from API response and format it for display
+          const expiryDate = item?.expiryDate;
+          const formattedExpiryDate = formatDateForDisplay(expiryDate);
 
           return {
             name: item?.name,
@@ -391,7 +402,8 @@ const Center: React.FC = () => {
             updatedAt: item?.updatedAt,
             cohortId: item?.cohortId,
             userRoleTenantMapping: { code: item?.role },
-            cohortExpiresIn: expiryDate,
+            cohortExpiresIn: formattedExpiryDate, // Use formatted date for table display
+            expiryDate: expiryDate, // Keep original for edit form
           };
         });
 
@@ -609,7 +621,6 @@ const Center: React.FC = () => {
   const handleEdit = async (rowData: any) => {
     setLoading(true);
     // Handle edit action here
-    // setIsEditModalOpen(true);
     if (rowData) {
       setSelectedRowData(rowData);
       const cohortId = rowData?.cohortId;
@@ -627,11 +638,25 @@ const Center: React.FC = () => {
       };
       const resp = await getCohortList(data);
 
-      setFormData({
+      // Format the expiryDate from ISO format to YYYY-MM-DD format for the form
+      const formatExpiryDate = (isoDate: string) => {
+        if (!isoDate) return '';
+        const date = new Date(isoDate);
+        return date.toISOString().split('T')[0];
+      };
+
+      // Prepare the row data with properly formatted expiryDate
+      const formattedRowData = {
         ...rowData,
+        expiryDate: formatExpiryDate(rowData?.expiryDate || rowData?.cohortExpiresIn),
+      };
+
+      setFormData({
+        ...formattedRowData,
         status: rowData?.status ? rowData?.status : "active",
       });
-      setEditFormData(mapFields(schema, rowData));
+      // Use cohortUpdateSchema for edit form instead of schema
+      setEditFormData(mapFields(cohortUpdateSchema, formattedRowData));
       setLoading(false);
       setIsEditForm(true);
     }
@@ -915,65 +940,44 @@ const Center: React.FC = () => {
   //   setBulkUploadModalopen(false);
   // };
 
-  const handleAddAction = async (data: any) => {
+  const handleAddAction = async (
+    data: IChangeEvent<any, RJSFSchema, any>,
+    event: React.FormEvent<any>
+  ) => {
     setLoading(true);
     const formData = data?.formData;
+
     try {
       setLoading(true);
-
-      interface UserCreateData {
-        name: string;
-        username: string;
-        password: any;
-        mobile: string;
-        email: string;
-        grade: number;
-        tenantCohortRoleMapping: Array<{
-          roleId: string;
-          tenantId: string;
-          cohortId: string[];
-        }>;
-      }
-
-      const matchedRole = roleList?.result?.find(
-        (role: any) => role.code === formData?.role
-      );
-      const roleId = matchedRole ? matchedRole?.roleId : "";
+      setConfirmButtonDisable(true);
       const formatName = (names: any) => {
         return names?.trim().replace(/\s+/g, " ");
       };
-      let obj: UserCreateData = {
+      let obj = {
         name: formatName(formData?.name),
-        mobile: formData?.mobileNo,
-        email: formData?.email,
-        username: formData?.username.replace(/\s/g, ""),
-        password: formData?.password,
-        grade: formData?.grade,
-        tenantCohortRoleMapping: [
-          {
-            roleId: roleId,
-            tenantId: selectedRowData?.tenantId,
-            cohortId: [selectedRowData?.cohortId],
-          },
-        ],
+        cohortId: selectedRowData?.cohortId,
+        tenantId: selectedRowData?.tenantId,
+        status: formData?.status,
+        type: formData?.type,
+        expiryDate: formData?.expiryDate, // Include expiryDate in the request
       };
-      const resp = await userCreate(obj as any, selectedRowData?.tenantId);
+      const resp = await cohortCreate(obj, selectedRowData?.tenantId);
+
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
-        showToastMessage(t("USER.CREATE_SUCCESSFULLY"), "success");
+        showToastMessage(t("COHORTS.CREATE_SUCCESSFULLY"), "success");
         setLoading(false);
-      } else if (resp?.responseCode === 403) {
-        showToastMessage(t("USER.USER_ALREADY_EXIST"), "error");
       } else {
-        showToastMessage(t("USER.FAILED_TO_CREATE"), "error");
+        showToastMessage(t("COHORTS.CREATE_FAILED"), "error");
       }
     } catch (error: any) {
-      const errorMessage = error.message || t("USER.FAILED_TO_CREATE");
+      const errorMessage = error.message || t("COHORTS.CREATE_FAILED");
       showToastMessage(errorMessage, "error");
     } finally {
       setLoading(false);
-      handleAddmodal();
+      setConfirmButtonDisable(false);
+      handleCloseAddModal();
       onCloseEditMOdel();
-      setError([]);
+      fetchUserList();
       setIsEditForm(false);
     }
   };

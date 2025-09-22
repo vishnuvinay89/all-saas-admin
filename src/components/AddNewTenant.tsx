@@ -4,6 +4,7 @@ import {
   customFields,
 } from "@/components/GeneratedSchemas";
 import SimpleModal from "@/components/SimpleModal";
+import ApprovalRequestModal from "@/components/ApprovalRequestModal";
 import {
   createCohort,
   tenantCreate,
@@ -62,6 +63,8 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
   const [schema] = useState(Tenatschema);
   const { t } = useTranslation();
   const [updateBtnDisabled, setUpdateBtnDisabled] = React.useState(true);
+  const [approvalModalOpen, setApprovalModalOpen] = useState(false);
+  const [approvalErrorMessage, setApprovalErrorMessage] = useState("");
 
   const roleType = FormContextType.ADMIN_CENTER;
   const {
@@ -96,6 +99,16 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
       };
 
       const cohortData = await tenantCreate(cohortDetails);
+      
+      // Check if response indicates a 403 error requiring approval
+      if (cohortData?.responseCode === 403) {
+        const errorMsg = cohortData?.params?.errmsg || 
+          "You need approval from super admin to perform this action. Please submit an approval request first.";
+        setApprovalErrorMessage(errorMsg);
+        setApprovalModalOpen(true);
+        return;
+      }
+      
       if (
         cohortData?.responseCode === 200 ||
         cohortData?.responseCode === 201
@@ -120,7 +133,13 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
     console.log("Form errors:", errors);
   };
 
+  const handleApprovalModalClose = () => {
+    setApprovalModalOpen(false);
+    setApprovalErrorMessage("");
+  };
+
   return (
+    <>
     <SimpleModal
       open={open}
       onClose={onClose}
@@ -178,6 +197,13 @@ const AddNewCenters: React.FC<AddLearnerModalProps> = ({
         )}
       </>
     </SimpleModal>
+
+    <ApprovalRequestModal
+      open={approvalModalOpen}
+      onClose={handleApprovalModalClose}
+      errorMessage={approvalErrorMessage}
+        />
+    </>
   );
 };
 

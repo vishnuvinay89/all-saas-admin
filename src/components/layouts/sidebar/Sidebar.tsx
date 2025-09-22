@@ -15,12 +15,13 @@ import FeatherIcon from "feather-icons-react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LogoIcon from "../logo/LogoIcon";
 import Buynow from "./Buynow";
 import Menuitems from "./MenuItems";
 import Image from "next/image";
 import MasterIcon from "../../../../public/images/database.svg";
+import { hasPermission } from "../../../utils/roleUtils";
 
 const Sidebar = ({
   isMobileSidebarOpen,
@@ -28,6 +29,18 @@ const Sidebar = ({
   isSidebarOpen,
 }: any) => {
   const [open, setOpen] = useState<number | null>(null);
+  const [filteredMenuItems, setFilteredMenuItems] = useState(Menuitems);
+
+  useEffect(() => {
+    // Filter menu items based on user role
+    const filtered = Menuitems.filter(item => {
+      if (!item.roles) {
+        return true; // Show items without role restrictions
+      }
+      return item.roles.some(role => hasPermission(role));
+    });
+    setFilteredMenuItems(filtered);
+  }, []);
 
   const { t } = useTranslation();
   const lgUp = useMediaQuery((theme: any) => theme.breakpoints.up("lg"));
@@ -52,7 +65,7 @@ const Sidebar = ({
 
       <Box mt={2}>
         <List>
-          {Menuitems?.map((item, index) => (
+          {filteredMenuItems?.map((item, index) => (
             <List component="li" disablePadding key={item.title}>
               <Tooltip placement="right-start" title={t(item.title)}>
                 <ListItem

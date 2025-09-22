@@ -40,6 +40,9 @@
     "SEND_INVITATION_REQUEST": "invitation/sendinvite",
     "DELETE_INVITATION_REQUEST": "",
     "LEARNER_FORGOT_PASSWORD": "learner-forgot-password",
-    "BULK_CREATE": "bulk-create"
+    "BULK_CREATE": "bulk-create",
+    "APPROVAL_CREATE": "user-approval/create",
+    "APPROVAL_READ": "user-approval/read",
+    "APPROVAL_UPDATE": "user-approval/update"
   }
 }
