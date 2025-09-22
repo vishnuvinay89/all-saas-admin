@@ -17,6 +17,7 @@ export interface cohortListData {
   filter?: any;
   status?: any;
   type?: "cohort";
+  expiryDate?: string; // Add expiryDate to the interface
 }
 export interface UpdateCohortMemberStatusParams {
   memberStatus: string;
@@ -256,14 +257,21 @@ export const tenantCreate = async (data: cohortListData): Promise<any> => {
     const response = await post(apiUrl, data);
     return response?.data;
   } catch (error: unknown) {
-    let errorMessage = "An unexpected error occurred.";
-
     if (axios.isAxiosError(error) && error.response) {
-      errorMessage = error.response.data?.params?.err || "Error from API.";
+      // Return the full error response for proper handling in the UI
+      const errorData = error.response.data;
+      
+      // For 403 errors, we want to pass the full response to handle approval flow
+      if (error.response.status === 403) {
+        return errorData;
+      }
+      
+      const errorMessage = errorData?.params?.err || errorData?.params?.errmsg || "Error from API.";
+      throw new Error(errorMessage);
     }
 
     console.error("Error in creating tenant:", error);
-    throw new Error(errorMessage);
+    throw new Error("An unexpected error occurred.");
   }
 };
 export const roleCreate = async (data: cohortListData): Promise<any> => {
@@ -372,5 +380,112 @@ export const deleteUser = async (userId: string,tenantId: string): Promise<any> 
   } catch (error) {
     console.error(`Error deleting`, error);
     return error;
+  }
+};
+
+// New approval request service
+export const createApprovalRequest = async (): Promise<any> => {
+  const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.APPROVAL_CREATE}`;
+
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.post(apiUrl, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response?.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error) && error.response) {
+      // For 400 errors (like existing request), return the response data instead of throwing
+      if (error.response.status === 400) {
+        return error.response.data;
+      }
+      
+      const errorMessage = error.response.data?.params?.errmsg || "Error from API.";
+      throw new Error(errorMessage);
+    }
+
+    console.error("Error in creating approval request:", error);
+    throw new Error("An unexpected error occurred while creating approval request.");
+  }
+};
+
+// Get user approval requests
+export const getUserApprovalRequests = async (): Promise<any> => {
+  const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.APPROVAL_READ}`;
+
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response?.data;
+  } catch (error: unknown) {
+    let errorMessage = "An unexpected error occurred while fetching approval requests.";
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage = error.response.data?.params?.errmsg || "Error from API.";
+    }
+
+    console.error("Error in fetching approval requests:", error);
+    throw new Error(errorMessage);
+  }
+};
+
+// Super admin functions for managing approval requests
+export const getAllApprovalRequests = async (page: number = 1, limit: number = 10): Promise<any> => {
+  const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.APPROVAL_READ}?page=${page}&limit=${limit}`;
+
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response?.data;
+  } catch (error: unknown) {
+    let errorMessage = "An unexpected error occurred while fetching approval requests.";
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage = error.response.data?.params?.errmsg || "Error from API.";
+    }
+
+    console.error("Error in fetching approval requests:", error);
+    throw new Error(errorMessage);
+  }
+};
+
+export const updateApprovalRequest = async (approvalId: string, status: 'approved' | 'rejected'): Promise<any> => {
+  const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/${config.URLS.APPROVAL_UPDATE}/${approvalId}`;
+
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.put(apiUrl, { status }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response?.data;
+  } catch (error: unknown) {
+    let errorMessage = "An unexpected error occurred while updating approval request.";
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage = error.response.data?.params?.errmsg || "Error from API.";
+    }
+
+    console.error("Error in updating approval request:", error);
+    throw new Error(errorMessage);
   }
 };

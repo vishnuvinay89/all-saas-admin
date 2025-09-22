@@ -224,7 +224,9 @@
     "FOUNDATION_COURSE": "Foundation Course",
     "MAIN_COURSE": "Main Course",
     "WORKSPACE": "Workspace",
-    "TENANT": "Tenant"
+    "TENANT": "Tenant",
+    "APPROVAL_STATUS": "Approval Status",
+    "ADMIN_APPROVALS": "Admin Approvals"
   },
   "FACILITATORS": {
     "STATE": "State",
@@ -500,6 +502,9 @@
   },
   "TENANT": {
     "TENANT": "Tenant",
+    "APPROVAL_STATUS": "Approval Status",
+    "ADMIN_APPROVALS": "Admin Approvals",
+    "ADMIN_APPROVALS": "Admin Approvals",
     "UPDATE_TENANT": "Update Tenant",
     "CREATE_SUCCESSFULLY": "Tenant Created Successfully",
     "DELETE_SUCCESSFULLY": "Tenant Deleted Successfully",
@@ -560,5 +565,56 @@
   "AUTH": {
     "RESET_PASSWORD": "Reset Password",
     "RESET_PASSWORD_INSTRUCTIONS": ""
+  },
+  "APPROVAL": {
+    "APPROVAL_REQUIRED": "Approval Required",
+    "APPROVAL_REQUIRED_MESSAGE": "You need approval from super admin to perform this action. Please submit an approval request first.",
+    "WHAT_HAPPENS_NEXT": "What happens next?",
+    "ADMIN_WILL_REVIEW": "Super admin will review your request",
+    "YOU_WILL_BE_NOTIFIED": "You'll be notified of the decision",
+    "APPROVAL_STATUS_TRACKING": "You can track the status of your request",
+    "SEND_REQUEST": "Send Request",
+    "REQUEST_SENT_SUCCESSFULLY": "Request Sent Successfully!",
+    "REQUEST_SUBMITTED_MESSAGE": "Your approval request has been submitted to the super admin.",
+    "REQUEST_ID": "Request ID",
+    "SAVE_REQUEST_ID": "Please save this ID for future reference.",
+    "APPROVAL_STATUS_TITLE": "Approval Status",
+    "NO_REQUESTS_FOUND": "No Approval Requests Found",
+    "NO_REQUESTS_DESCRIPTION": "You have not submitted any approval requests yet.",
+    "STATUS": "Status",
+    "REQUEST_TYPE": "Request Type",
+    "CREATED_DATE": "Created Date",
+    "UPDATED_DATE": "Updated Date",
+    "DESCRIPTION": "Description",
+    "TENANT_CREATION": "Tenant Creation",
+    "TENANT_CREATION_REQUEST": "Request to create a new tenant",
+    "EXISTING_REQUEST_FOUND": "Existing Request Found",
+    "EXISTING_REQUEST_MESSAGE": "You already have a pending approval request. Please wait for it to be reviewed.",
+    "CHECK_STATUS_MESSAGE": "You can check the status of your existing request in the Approval Status page.",
+    "NAVIGATE_TO_STATUS": "Go to the sidebar menu and click 'Approval Status' to view your request."
+  },
+  "ADMIN_APPROVALS": {
+      "TITLE": "Admin Approval Management",
+      "NO_REQUESTS_FOUND": "No Approval Requests Found",
+      "NO_REQUESTS_DESCRIPTION": "There are no pending approval requests at the moment.",
+      "REQUEST_ID": "Request ID",
+      "USER_NAME": "User Name",
+      "USER_EMAIL": "User Email",
+      "STATUS": "Status",
+      "CREATED_DATE": "Created Date",
+      "UPDATED_DATE": "Updated Date",
+      "ACTIONS": "Actions",
+      "APPROVE_REQUEST": "Approve Request",
+      "REJECT_REQUEST": "Reject Request",
+      "APPROVE_CONFIRMATION": "Are you sure you want to approve this request?",
+      "REJECT_CONFIRMATION": "Are you sure you want to reject this request?",
+      "REQUEST_DETAILS": "Request Details",
+      "APPROVE": "Approve",
+      "REJECT": "Reject"
+  },
+  "ROLE_PROTECTION": {
+    "ACCESS_DENIED": "Access Denied",
+    "INSUFFICIENT_PERMISSIONS": "You don't have sufficient permissions to access this page.",
+    "GO_BACK": "Go Back"
   }
 }

@@ -3,6 +3,7 @@ import centerIcon from "../../../../public/images/centers.svg";
 import dashboardIcon from "../../../../public/images/dashboard.svg";
 import userIcon from "../../../../public/images/group.svg";
 import coursePannerIcon from "../../../../public/images/event_available.svg";
+import approvalIcon from "../../../../public/images/approval.svg";
 const ENV = process.env.NEXT_PUBLIC_SHOW_WORKSPACE;
 
 //
@@ -36,6 +37,18 @@ const Menuitems = [
         href: "/learners",
       },
     ],
+  },
+  {
+    title: "SIDEBAR.APPROVAL_STATUS",
+    icon: approvalIcon,
+    href: "/approval-status",
+    roles: ["tenant_admin", "cohort_admin", "super_admin"], // Visible to tenant admins and super admins
+  },
+  {
+    title: "SIDEBAR.ADMIN_APPROVALS",
+    icon: approvalIcon,
+    href: "/admin-approvals",
+    roles: ["super_admin"], // Only visible to super admins
   },
 
   // {

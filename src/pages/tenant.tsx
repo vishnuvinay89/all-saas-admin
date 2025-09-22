@@ -292,8 +292,7 @@ const Tenant: React.FC = () => {
       };
 
       const resp = await getTenantLists(data);
-
-      if (resp) {
+      if (resp && Array.isArray(resp)) {
         const resultData: TenantData[] = [];
 
         resp?.forEach((item: any) => {
@@ -330,6 +329,7 @@ const Tenant: React.FC = () => {
         setPageCount(pageCount);
       } else {
         setCohortData([]);
+        console.warn("API response is not an array:", resp);
       }
 
       setDataFetched(true);

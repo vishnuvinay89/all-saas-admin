@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "required": ["name", "status", "type"],
+  "required": ["name", "status", "type", "expiryDate"],
   "properties": {
     "name": {
       "title": "Cohort Name",
@@ -17,7 +17,14 @@
       "validation": [],
       "description": "Indicates the type of user or entity."
     },
-
+    "expiryDate": {
+      "title": "Expiry Date",
+      "type": "string",
+      "format": "date",
+      "fieldId": null,
+      "validation": [],
+      "description": "Select the expiry date for this cohort."
+    },
     "status": {
       "title": "Status",
       "type": "string",
