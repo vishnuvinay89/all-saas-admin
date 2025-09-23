@@ -42,7 +42,8 @@ const Menuitems = [
     title: "SIDEBAR.APPROVAL_STATUS",
     icon: approvalIcon,
     href: "/approval-status",
-    roles: ["tenant_admin", "cohort_admin", "super_admin"], // Visible to tenant admins and super admins
+    roles: ["tenant_admin", "cohort_admin"], // Visible to tenant admins and super admins
+    //roles: ["tenant_admin", "cohort_admin", "super_admin"], // Visible to tenant admins and super admins
   },
   {
     title: "SIDEBAR.ADMIN_APPROVALS",
