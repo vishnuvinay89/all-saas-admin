@@ -7,6 +7,7 @@ import Pagination from "@mui/material/Pagination";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PageSizeSelector from "@/components/PageSelector";
 import {
+  cohortCreate,
   deleteCohort,
   getCohortList,
   getTenantLists,
@@ -975,7 +976,7 @@ const Center: React.FC = () => {
     } finally {
       setLoading(false);
       setConfirmButtonDisable(false);
-      handleCloseAddModal();
+      handleCloseModal();
       onCloseEditMOdel();
       fetchUserList();
       setIsEditForm(false);
@@ -1509,3 +1510,7 @@ export async function getStaticProps({ locale }: any) {
 }
 
 export default Center;
+function setConfirmButtonDisable(arg0: boolean) {
+  throw new Error("Function not implemented.");
+}
+
