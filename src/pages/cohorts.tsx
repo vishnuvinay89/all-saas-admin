@@ -32,6 +32,10 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Card,
+  CardContent,
+  Grid,
+  Chip,
 } from "@mui/material";
 import Loader from "@/components/Loader";
 import { customFields } from "@/components/GeneratedSchemas";
@@ -99,6 +103,8 @@ const Center: React.FC = () => {
   const [selectedSort, setSelectedSort] = useState("Sort");
   const [selectedFilter, setSelectedFilter] = useState("Active");
   const [cohortData, setCohortData] = useState<cohortFilterDetails[]>([]);
+  const [cohertDashboardData, setCohertDashboardData] = useState<cohortFilterDetails[]>([]);
+
   const [pageSize, setPageSize] = React.useState<number>(10);
   const [confirmationModalOpen, setConfirmationModalOpen] =
     React.useState<boolean>(false);
@@ -379,6 +385,20 @@ const Center: React.FC = () => {
       };
 
       const resp = await getCohortList(data);
+      const getChortData = await getCohortList({
+        "limit": 0,
+        "offset": 0,
+        "sort": [
+            "createdAt",
+            "asc"
+        ],
+        "filters": {
+            "type": "cohort",
+            "status": ""
+        }
+    });
+
+      setCohertDashboardData(getChortData?.results || []);
 
       if (resp) {
         const result = resp?.results;
@@ -1108,7 +1128,17 @@ const Center: React.FC = () => {
         modalOpen={confirmationModalOpen}
       />
 
-      <HeaderComponent {...userProps}>
+      <HeaderComponent 
+        {...userProps}
+        showDashboard={true}
+        dashboardData={{
+          total: totalCount || 0,
+          active: cohertDashboardData?.filter((item: any) => item.status === "active").length || 0,
+          inactive: cohertDashboardData?.filter((item: any) => item.status === "inactive").length || 0,
+          type: "Cohorts",
+          totalIcon: "👩‍🏫"
+        }}
+      >
         {loading ? (
           <Box
             width={"100%"}
@@ -1153,13 +1183,19 @@ const Center: React.FC = () => {
           </Box>
         ) : (
           <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            height="20vh"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              minHeight: "300px",
+              backgroundColor: "white",
+              borderRadius: "15px",
+              padding: "40px",
+            }}
           >
-            <Typography marginTop="10px" textAlign={"center"}>
-              {t("COMMON.NO_COHORT_FOUND")}
+            <Typography variant="h6" color="text.secondary">
+              No cohorts found
             </Typography>
           </Box>
         )}
@@ -1309,25 +1345,25 @@ const Center: React.FC = () => {
         >
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             {/* Main Upload Section */}
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <Typography variant="h6" sx={{ color: "#333", fontWeight: "bold" }}>
                 Upload CSV File
               </Typography>
               
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <input
-                  accept=".csv"
-                  style={{ display: "none" }}
-                  id="csv-file-upload"
-                  type="file"
-                  onChange={handleFileChange}
-                  disabled={isUploading}
-                />
+              <input
+                accept=".csv"
+                style={{ display: "none" }}
+                id="csv-file-upload"
+                type="file"
+                onChange={handleFileChange}
+                disabled={isUploading}
+              />
                 
                 {/* Enhanced Select CSV Button */}
                 <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-                  <label htmlFor="csv-file-upload">
-                    <Button
+              <label htmlFor="csv-file-upload">
+                <Button
                       sx={{ 
                         color: "white",
                         minWidth: 200,
@@ -1353,14 +1389,14 @@ const Center: React.FC = () => {
                         transition: "all 0.3s ease",
                         border: fileSelected ? "2px solid #4caf50" : "2px solid #2196f3",
                       }}
-                      variant="contained"
-                      component="span"
+                  variant="contained"
+                  component="span"
                       startIcon={<CloudUploadIcon sx={{ fontSize: "20px" }} />}
-                      disabled={isUploading}
-                    >
+                  disabled={isUploading}
+                >
                       {fileSelected ? "✓ CSV Selected" : "📁 Select CSV File"}
-                    </Button>
-                  </label>
+                </Button>
+              </label>
 
                   {/* File info display */}
                   {fileSelected && (
@@ -1383,11 +1419,11 @@ const Center: React.FC = () => {
 
                 {/* Action buttons */}
                 <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
-                  {fileSelected &&
-                    !isUploading &&
-                    !uploadComplete &&
-                    !uploadFailed && (
-                      <Button
+              {fileSelected &&
+                !isUploading &&
+                !uploadComplete &&
+                !uploadFailed && (
+                  <Button
                         sx={{ 
                           color: "white",
                           minWidth: 120,
@@ -1404,20 +1440,20 @@ const Center: React.FC = () => {
                           },
                           transition: "all 0.2s ease",
                         }}
-                        variant="contained"
-                        onClick={handleUpload}
-                        color="primary"
-                      >
+                    variant="contained"
+                    onClick={handleUpload}
+                    color="primary"
+                  >
                         🚀 Upload Now
-                      </Button>
-                    )}
+                  </Button>
+                )}
 
-                  {isUploading && (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      disabled
-                      startIcon={<CircularProgress size={20} color="inherit" />}
+              {isUploading && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  disabled
+                  startIcon={<CircularProgress size={20} color="inherit" />}
                       sx={{ 
                         minWidth: 140, 
                         height: 45,
@@ -1428,15 +1464,15 @@ const Center: React.FC = () => {
                       }}
                     >
                       ⏳ Uploading...
-                    </Button>
-                  )}
+                </Button>
+              )}
 
-                  {uploadComplete && (
-                    <Button
-                      variant="contained"
-                      color="success"
-                      startIcon={<CheckCircleIcon />}
-                      disabled
+              {uploadComplete && (
+                <Button
+                  variant="contained"
+                  color="success"
+                  startIcon={<CheckCircleIcon />}
+                  disabled
                       sx={{ 
                         minWidth: 160, 
                         height: 45,
@@ -1447,15 +1483,15 @@ const Center: React.FC = () => {
                       }}
                     >
                       ✅ Upload Complete
-                    </Button>
-                  )}
+                </Button>
+              )}
 
-                  {uploadFailed && (
-                    <Button
-                      variant="contained"
-                      color="error"
-                      startIcon={<ErrorIcon />}
-                      disabled
+              {uploadFailed && (
+                <Button
+                  variant="contained"
+                  color="error"
+                  startIcon={<ErrorIcon />}
+                  disabled
                       sx={{ 
                         minWidth: 140, 
                         height: 45,
@@ -1466,8 +1502,8 @@ const Center: React.FC = () => {
                       }}
                     >
                       ❌ Upload Failed
-                    </Button>
-                  )}
+                </Button>
+              )}
                 </Box>
               </Box>
             </Box>

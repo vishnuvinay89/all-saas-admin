@@ -7,6 +7,9 @@ import {
   MenuItem,
   Typography,
   useMediaQuery,
+  Card,
+  CardContent,
+  Grid,
 } from "@mui/material";
 import Select from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
@@ -86,6 +89,9 @@ const HeaderComponent = ({
   isTenantShow,
   isCohortShow,
   showSearch = true,
+  // Dashboard props
+  showDashboard = false,
+  dashboardData = null,
 }: any) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -414,6 +420,133 @@ const HeaderComponent = ({
           </Box>
         )}
       </Box>
+
+      {/* Dashboard Section */}
+      {showDashboard && dashboardData && (
+        <Box sx={{ mb: 3, mt: 2 }}>
+          {/* <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", color: "#333" }}>
+            📊 Dashboard Overview
+          </Typography> */}
+          <Grid container spacing={3}>
+            {/* Total Card */}
+            <Grid item xs={12} sm={6} md={4}>
+              <Card sx={{ 
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                color: "white",
+                borderRadius: "12px",
+                boxShadow: "0 4px 20px rgba(102, 126, 234, 0.3)",
+                transition: "transform 0.3s ease",
+                "&:hover": {
+                  transform: "translateY(-4px)",
+                  boxShadow: "0 8px 25px rgba(102, 126, 234, 0.4)"
+                }
+              }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <Box>
+                      <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
+                        {dashboardData.total || 0}
+                      </Typography>
+                      <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                        Total {dashboardData.type || 'Items'}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ 
+                      width: 60, 
+                      height: 60, 
+                      borderRadius: "50%", 
+                      backgroundColor: "rgba(255,255,255,0.2)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center"
+                    }}>
+                      <Typography sx={{ fontSize: "24px" }}>{dashboardData.totalIcon || '📊'}</Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Active Card */}
+            <Grid item xs={12} sm={6} md={4}>
+              <Card sx={{ 
+                background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+                color: "white",
+                borderRadius: "12px",
+                boxShadow: "0 4px 20px rgba(79, 172, 254, 0.3)",
+                transition: "transform 0.3s ease",
+                "&:hover": {
+                  transform: "translateY(-4px)",
+                  boxShadow: "0 8px 25px rgba(79, 172, 254, 0.4)"
+                }
+              }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <Box>
+                      <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
+                        {dashboardData.active || 0}
+                      </Typography>
+                      <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                        Active {dashboardData.type || 'Items'}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ 
+                      width: 60, 
+                      height: 60, 
+                      borderRadius: "50%", 
+                      backgroundColor: "rgba(255,255,255,0.2)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center"
+                    }}>
+                      <Typography sx={{ fontSize: "24px" }}>✅</Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Inactive Card */}
+            <Grid item xs={12} sm={6} md={4}>
+              <Card sx={{ 
+                background: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+                color: "white",
+                borderRadius: "12px",
+                boxShadow: "0 4px 20px rgba(250, 112, 154, 0.3)",
+                transition: "transform 0.3s ease",
+                "&:hover": {
+                  transform: "translateY(-4px)",
+                  boxShadow: "0 8px 25px rgba(250, 112, 154, 0.4)"
+                }
+              }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <Box>
+                      <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
+                        {dashboardData.inactive || 0}
+                      </Typography>
+                      <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                        Inactive {dashboardData.type || 'Items'}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ 
+                      width: 60, 
+                      height: 60, 
+                      borderRadius: "50%", 
+                      backgroundColor: "rgba(255,255,255,0.2)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center"
+                    }}>
+                      <Typography sx={{ fontSize: "24px" }}>⏸️</Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Box>
+      )}
 
       <Box
         sx={{
