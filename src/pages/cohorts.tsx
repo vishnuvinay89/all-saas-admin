@@ -91,6 +91,7 @@ interface Roles {
 interface RoleList {
   result: Roles[];
 }
+
 const Center: React.FC = () => {
   // use hooks
   const router = useRouter();
@@ -384,19 +385,18 @@ const Center: React.FC = () => {
         filters: filters,
       };
 
+      const cohortData = {
+        limit: limit,
+        offset: offset,
+        sort: sort,
+        filters: {
+          "type": "cohort",
+          "status": ""
+      },
+      };
+
       const resp = await getCohortList(data);
-      const getChortData = await getCohortList({
-        "limit": 0,
-        "offset": 0,
-        "sort": [
-            "createdAt",
-            "asc"
-        ],
-        "filters": {
-            "type": "cohort",
-            "status": ""
-        }
-    });
+      const getChortData = await getCohortList(cohortData);
 
       setCohertDashboardData(getChortData?.results || []);
 
