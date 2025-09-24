@@ -25,6 +25,13 @@ import {
   Typography,
   useMediaQuery,
   CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
 } from "@mui/material";
 import Loader from "@/components/Loader";
 import { customFields } from "@/components/GeneratedSchemas";
@@ -134,6 +141,7 @@ const Center: React.FC = () => {
   const [uploadFailed, setUploadFailed] = useState<boolean>(false);
   const [uploadResult, setUploadResult] = useState<UploadResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [showSampleData, setShowSampleData] = useState(false);
 
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
@@ -1299,81 +1307,436 @@ const Center: React.FC = () => {
           showFooter={false}
           modalTitle={t("COMMON.ADD_MULTIPLE_USERS")}
         >
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Box>
-              <input
-                accept=".csv"
-                style={{ display: "none" }}
-                id="csv-file-upload"
-                type="file"
-                onChange={handleFileChange}
-                disabled={isUploading}
-              />
-              <label htmlFor="csv-file-upload">
-                <Button
-                  sx={{ color: "white", marginRight: 2 }}
-                  variant="contained"
-                  component="span"
-                  startIcon={<CloudUploadIcon />}
-                  color={fileSelected ? "success" : "primary"}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            {/* Main Upload Section */}
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <Typography variant="h6" sx={{ color: "#333", fontWeight: "bold" }}>
+                Upload CSV File
+              </Typography>
+              
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <input
+                  accept=".csv"
+                  style={{ display: "none" }}
+                  id="csv-file-upload"
+                  type="file"
+                  onChange={handleFileChange}
                   disabled={isUploading}
-                >
-                  {fileSelected ? "CSV Selected" : "Select CSV"}
-                </Button>
-              </label>
+                />
+                
+                {/* Enhanced Select CSV Button */}
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+                  <label htmlFor="csv-file-upload">
+                    <Button
+                      sx={{ 
+                        color: "white",
+                        minWidth: 200,
+                        height: 50,
+                        fontSize: "16px",
+                        fontWeight: "bold",
+                        borderRadius: "8px",
+                        textTransform: "none",
+                        boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                        background: fileSelected 
+                          ? "linear-gradient(45deg, #4caf50 30%, #66bb6a 90%)" 
+                          : "linear-gradient(45deg, #2196f3 30%, #42a5f5 90%)",
+                        "&:hover": {
+                          background: fileSelected 
+                            ? "linear-gradient(45deg, #388e3c 30%, #4caf50 90%)" 
+                            : "linear-gradient(45deg, #1976d2 30%, #2196f3 90%)",
+                          boxShadow: "0 6px 12px rgba(0,0,0,0.15)",
+                          transform: "translateY(-2px)",
+                        },
+                        "&:active": {
+                          transform: "translateY(0px)",
+                        },
+                        transition: "all 0.3s ease",
+                        border: fileSelected ? "2px solid #4caf50" : "2px solid #2196f3",
+                      }}
+                      variant="contained"
+                      component="span"
+                      startIcon={<CloudUploadIcon sx={{ fontSize: "20px" }} />}
+                      disabled={isUploading}
+                    >
+                      {fileSelected ? "✓ CSV Selected" : "📁 Select CSV File"}
+                    </Button>
+                  </label>
 
-              {fileSelected &&
-                !isUploading &&
-                !uploadComplete &&
-                !uploadFailed && (
-                  <Button
-                    sx={{ color: "white" }}
-                    variant="contained"
-                    onClick={handleUpload}
-                    color="primary"
+                  {/* File info display */}
+                  {fileSelected && (
+                    <Box sx={{ 
+                      display: "flex", 
+                      alignItems: "center", 
+                      gap: 1,
+                      padding: "8px 16px",
+                      backgroundColor: "#e8f5e8",
+                      borderRadius: "20px",
+                      border: "1px solid #4caf50"
+                    }}>
+                      <CloudUploadIcon sx={{ color: "#4caf50", fontSize: "16px" }} />
+                      <Typography variant="body2" sx={{ color: "#2e7d32", fontWeight: "500" }}>
+                        {fileName}
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+
+                {/* Action buttons */}
+                <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
+                  {fileSelected &&
+                    !isUploading &&
+                    !uploadComplete &&
+                    !uploadFailed && (
+                      <Button
+                        sx={{ 
+                          color: "white",
+                          minWidth: 120,
+                          height: 45,
+                          fontSize: "14px",
+                          fontWeight: "bold",
+                          borderRadius: "6px",
+                          textTransform: "none",
+                          background: "linear-gradient(45deg, #ff9800 30%, #ffb74d 90%)",
+                          "&:hover": {
+                            background: "linear-gradient(45deg, #f57c00 30%, #ff9800 90%)",
+                            boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+                            transform: "translateY(-1px)",
+                          },
+                          transition: "all 0.2s ease",
+                        }}
+                        variant="contained"
+                        onClick={handleUpload}
+                        color="primary"
+                      >
+                        🚀 Upload Now
+                      </Button>
+                    )}
+
+                  {isUploading && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      disabled
+                      startIcon={<CircularProgress size={20} color="inherit" />}
+                      sx={{ 
+                        minWidth: 140, 
+                        height: 45,
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                        textTransform: "none",
+                        borderRadius: "6px"
+                      }}
+                    >
+                      ⏳ Uploading...
+                    </Button>
+                  )}
+
+                  {uploadComplete && (
+                    <Button
+                      variant="contained"
+                      color="success"
+                      startIcon={<CheckCircleIcon />}
+                      disabled
+                      sx={{ 
+                        minWidth: 160, 
+                        height: 45,
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                        textTransform: "none",
+                        borderRadius: "6px"
+                      }}
+                    >
+                      ✅ Upload Complete
+                    </Button>
+                  )}
+
+                  {uploadFailed && (
+                    <Button
+                      variant="contained"
+                      color="error"
+                      startIcon={<ErrorIcon />}
+                      disabled
+                      sx={{ 
+                        minWidth: 140, 
+                        height: 45,
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                        textTransform: "none",
+                        borderRadius: "6px"
+                      }}
+                    >
+                      ❌ Upload Failed
+                    </Button>
+                  )}
+                </Box>
+              </Box>
+            </Box>
+
+            {/* Enhanced Sample CSV Reference - Collapsible */}
+            <Box sx={{ 
+              border: "1px solid #e3f2fd", 
+              borderRadius: "12px",
+              overflow: "hidden",
+              backgroundColor: "#fafafa",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                borderColor: "#2196f3"
+              }
+            }}>
+              <Box 
+                sx={{ 
+                  background: showSampleData 
+                    ? "linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)" 
+                    : "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
+                  padding: "16px 20px",
+                  cursor: "pointer",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    background: showSampleData 
+                      ? "linear-gradient(135deg, #bbdefb 0%, #e1bee7 100%)" 
+                      : "linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)",
+                    transform: "translateY(-1px)"
+                  }
+                }}
+                onClick={() => setShowSampleData(!showSampleData)}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Box sx={{ 
+                    width: 32, 
+                    height: 32, 
+                    borderRadius: "50%", 
+                    backgroundColor: showSampleData ? "#2196f3" : "#9e9e9e",
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "center",
+                    transition: "all 0.3s ease"
+                  }}>
+                    <Typography sx={{ color: "white", fontSize: "16px", fontWeight: "bold" }}>
+                      📋
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="subtitle1" sx={{ 
+                      fontWeight: "bold", 
+                      color: showSampleData ? "#1976d2" : "#424242",
+                      fontSize: "16px",
+                      transition: "color 0.3s ease"
+                    }}>
+                      Sample CSV Format
+                    </Typography>
+                    <Typography variant="body2" sx={{ 
+                      color: showSampleData ? "#1976d2" : "#757575",
+                      fontSize: "12px",
+                      marginTop: "2px"
+                    }}>
+                      {showSampleData ? "Click to hide reference" : "Click to show format example"}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box sx={{ 
+                  display: "flex", 
+                  alignItems: "center", 
+                  gap: 1,
+                  transition: "all 0.3s ease"
+                }}>
+                  <Typography variant="body2" sx={{ 
+                    color: showSampleData ? "#1976d2" : "#757575",
+                    fontSize: "12px",
+                    fontWeight: "500"
+                  }}>
+                    {showSampleData ? "Hide" : "Show"}
+                  </Typography>
+                  <Box sx={{
+                    width: 24,
+                    height: 24,
+                    borderRadius: "50%",
+                    backgroundColor: showSampleData ? "#2196f3" : "#9e9e9e",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    transition: "all 0.3s ease",
+                    transform: showSampleData ? "rotate(180deg)" : "rotate(0deg)"
+                  }}>
+                    <Typography sx={{ color: "white", fontSize: "12px" }}>
+                      ▼
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+              
+              {showSampleData && (
+                <Box sx={{ 
+                  padding: "20px",
+                  backgroundColor: "#ffffff",
+                  borderTop: "1px solid #e3f2fd"
+                }}>
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="h6" sx={{ 
+                      color: "#1976d2", 
+                      fontWeight: "bold", 
+                      mb: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1
+                    }}>
+                      📊 Required CSV Structure
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: "#666", fontSize: "14px" }}>
+                      Your CSV file must contain these exact column headers in the first row:
+                    </Typography>
+                  </Box>
+
+                  <TableContainer 
+                    component={Paper} 
+                    sx={{ 
+                      maxHeight: 250, 
+                      mb: 3,
+                      borderRadius: "8px",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                      border: "1px solid #e0e0e0"
+                    }}
                   >
-                    Upload
-                  </Button>
-                )}
+                    <Table size="small" stickyHeader>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell sx={{ 
+                            fontWeight: "bold", 
+                            backgroundColor: "#e3f2fd",
+                            color: "#1976d2",
+                            fontSize: "14px",
+                            textAlign: "center",
+                            border: "1px solid #bbdefb"
+                          }}>
+                            name
+                          </TableCell>
+                          <TableCell sx={{ 
+                            fontWeight: "bold", 
+                            backgroundColor: "#e3f2fd",
+                            color: "#1976d2",
+                            fontSize: "14px",
+                            textAlign: "center",
+                            border: "1px solid #bbdefb"
+                          }}>
+                            username
+                          </TableCell>
+                          <TableCell sx={{ 
+                            fontWeight: "bold", 
+                            backgroundColor: "#e3f2fd",
+                            color: "#1976d2",
+                            fontSize: "14px",
+                            textAlign: "center",
+                            border: "1px solid #bbdefb"
+                          }}>
+                            password
+                          </TableCell>
+                          <TableCell sx={{ 
+                            fontWeight: "bold", 
+                            backgroundColor: "#e3f2fd",
+                            color: "#1976d2",
+                            fontSize: "14px",
+                            textAlign: "center",
+                            border: "1px solid #bbdefb"
+                          }}>
+                            grade
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        <TableRow sx={{ "&:hover": { backgroundColor: "#f5f5f5" } }}>
+                          <TableCell sx={{ 
+                            textAlign: "center", 
+                            fontSize: "13px",
+                            border: "1px solid #e0e0e0",
+                            backgroundColor: "#fafafa"
+                          }}>
+                            User_1
+                          </TableCell>
+                          <TableCell sx={{ 
+                            textAlign: "center", 
+                            fontSize: "13px",
+                            border: "1px solid #e0e0e0",
+                            backgroundColor: "#fafafa"
+                          }}>
+                            gourav_m1
+                          </TableCell>
+                          <TableCell sx={{ 
+                            textAlign: "center", 
+                            fontSize: "13px",
+                            border: "1px solid #e0e0e0",
+                            backgroundColor: "#fafafa"
+                          }}>
+                            Test@123
+                          </TableCell>
+                          <TableCell sx={{ 
+                            textAlign: "center", 
+                            fontSize: "13px",
+                            border: "1px solid #e0e0e0",
+                            backgroundColor: "#fafafa"
+                          }}>
+                            3
+                          </TableCell>
+                        </TableRow>
+                        <TableRow sx={{ "&:hover": { backgroundColor: "#f5f5f5" } }}>
+                          <TableCell sx={{ 
+                            textAlign: "center", 
+                            fontSize: "13px",
+                            border: "1px solid #e0e0e0"
+                          }}>
+                            User_2
+                          </TableCell>
+                          <TableCell sx={{ 
+                            textAlign: "center", 
+                            fontSize: "13px",
+                            border: "1px solid #e0e0e0"
+                          }}>
+                            gourav_m2
+                          </TableCell>
+                          <TableCell sx={{ 
+                            textAlign: "center", 
+                            fontSize: "13px",
+                            border: "1px solid #e0e0e0"
+                          }}>
+                            Test@123
+                          </TableCell>
+                          <TableCell sx={{ 
+                            textAlign: "center", 
+                            fontSize: "13px",
+                            border: "1px solid #e0e0e0"
+                          }}>
+                            2
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
 
-              {isUploading && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  disabled
-                  startIcon={<CircularProgress size={20} color="inherit" />}
-                >
-                  Uploading...
-                </Button>
-              )}
-
-              {uploadComplete && (
-                <Button
-                  variant="contained"
-                  color="success"
-                  startIcon={<CheckCircleIcon />}
-                  disabled
-                >
-                  Upload Complete
-                </Button>
-              )}
-
-              {uploadFailed && (
-                <Button
-                  variant="contained"
-                  color="error"
-                  startIcon={<ErrorIcon />}
-                  disabled
-                >
-                  Upload Failed
-                </Button>
+                  <Box sx={{ 
+                    backgroundColor: "#e8f5e8", 
+                    padding: "12px 16px", 
+                    borderRadius: "8px",
+                    border: "1px solid #c8e6c9"
+                  }}>
+                    <Typography variant="body2" sx={{ 
+                      color: "#2e7d32", 
+                      fontWeight: "500",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      fontSize: "14px"
+                    }}>
+                      💡 <strong>Important:</strong> Please ensure your CSV file follows the above format with the required columns: name, username, password, and grade.
+                    </Typography>
+                  </Box>
+                </Box>
               )}
             </Box>
 
-            {fileSelected && (
-              <Typography variant="body2">Selected file: {fileName}</Typography>
-            )}
-
+            {/* Upload Results */}
             {uploadComplete && uploadResult && (
               <Box
                 sx={{
@@ -1381,6 +1744,7 @@ const Center: React.FC = () => {
                   p: 2,
                   border: "1px solid #e0e0e0",
                   borderRadius: 1,
+                  backgroundColor: "#f8f9fa"
                 }}
               >
                 <Typography variant="h6" gutterBottom>
@@ -1392,9 +1756,6 @@ const Center: React.FC = () => {
                 <Typography color="error.main">
                   ✗ Failed to register: {uploadResult.failed}
                 </Typography>
-                {/* <Typography color="info.main">
-                  ℹ Already registered: {uploadResult.alreadyRegistered}
-                </Typography> */}
 
                 {uploadResult.failed > 0 && uploadResult.failedRecords && (
                   <Box sx={{ mt: 2 }}>
