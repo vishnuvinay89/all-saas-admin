@@ -20,7 +20,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationModal from "@/components/ConfirmationModal";
-import { Box, Button, Typography, useMediaQuery } from "@mui/material";
+import { Box, Button, Typography, useMediaQuery, Card, CardContent, Grid } from "@mui/material";
 import Loader from "@/components/Loader";
 import { customFields } from "@/components/GeneratedSchemas";
 import { showToastMessage } from "@/components/Toastify";
@@ -1121,7 +1121,17 @@ const Tenant: React.FC = () => {
           </DynamicForm>
         )}
       </SimpleModal>
-      <HeaderComponent {...userProps}>
+      <HeaderComponent 
+        {...userProps}
+        showDashboard={true}
+        dashboardData={{
+          total: cohortData?.length || 0,
+          active: cohortData?.filter((item: any) => item.status === "active").length || 0,
+          inactive: cohortData?.filter((item: any) => item.status !== "active").length || 0,
+          type: "Tenants",
+          totalIcon: "🏫"
+        }}
+      >
         {loading ? (
           <Box
             width={"100%"}
@@ -1132,47 +1142,58 @@ const Tenant: React.FC = () => {
           >
             <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
           </Box>
-        ) : dataFetched && cohortData?.length > 0 ? (
-          <Box
-            sx={{
-              backgroundColor: "white",
-              padding: "15px",
-              borderRadius: "15px",
-            }}
-          >
-            <KaTableComponent
-              columns={getTenantTableData(t, isMobile, adminRole)}
-              addAction={true}
-              addBtnFunc={handleCreateTenantAdmin}
-              data={cohortData}
-              limit={pageLimit}
-              roleButton
-              offset={pageOffset}
-              paginationEnable={false}
-              PagesSelector={PagesSelector}
-              pagination={pagination}
-              PageSizeSelector={PageSizeSelectorFunction}
-              pageSizes={pageSizeArray}
-              extraActions={extraActions}
-              showIcons={true}
-              allowEditIcon={true}
-              showReports={true}
-              onEdit={handleEdit}
-              onAdd={handleAdd}
-              onDelete={handleDelete}
-              handleMemberClick={handleMemberClick}
-            />
-          </Box>
         ) : (
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            height="20vh"
-          >
-            <Typography marginTop="10px" textAlign={"center"}>
-              {t("COMMON.NO_TENANT_FOUND")}
-            </Typography>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            {/* Table Section */}
+            {dataFetched && cohortData?.length > 0 ? (
+              <Box
+                sx={{
+                  backgroundColor: "white",
+                  padding: "15px",
+                  borderRadius: "15px",
+                }}
+              >
+                <KaTableComponent
+                  columns={getTenantTableData(t, isMobile, adminRole)}
+                  addAction={true}
+                  addBtnFunc={handleCreateTenantAdmin}
+                  data={cohortData}
+                  limit={pageLimit}
+                  roleButton
+                  offset={pageOffset}
+                  paginationEnable={false}
+                  PagesSelector={PagesSelector}
+                  pagination={pagination}
+                  PageSizeSelector={PageSizeSelectorFunction}
+                  pageSizes={pageSizeArray}
+                  extraActions={extraActions}
+                  showIcons={true}
+                  allowEditIcon={true}
+                  showReports={true}
+                  onEdit={handleEdit}
+                  onAdd={handleAdd}
+                  onDelete={handleDelete}
+                  handleMemberClick={handleMemberClick}
+                />
+              </Box>
+            ) : (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minHeight: "300px",
+                  backgroundColor: "white",
+                  borderRadius: "15px",
+                  padding: "40px",
+                }}
+              >
+                <Typography variant="h6" color="text.secondary">
+                  No tenants found
+                </Typography>
+              </Box>
+            )}
           </Box>
         )}
 

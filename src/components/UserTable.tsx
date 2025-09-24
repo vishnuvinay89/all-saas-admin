@@ -18,7 +18,7 @@ import { updateUser } from "@/services/CreateUserService";
 import { showToastMessage } from "./Toastify";
 import { firstLetterInUpperCase } from "../utils/Helper";
 import { getTLTableColumns } from "@/data/tableColumns";
-import { Button, useMediaQuery } from "@mui/material";
+import { Button, useMediaQuery, Card, CardContent, Grid } from "@mui/material";
 import { Theme } from "@mui/system";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -917,7 +917,17 @@ const UserTable: React.FC<UserTableProps> = ({
   };
 
   return (
-    <HeaderComponent {...userProps}>
+    <HeaderComponent 
+      {...userProps}
+      showDashboard={true}
+        dashboardData={{
+          total: totalCount || 0,
+          active: data?.filter((item: any) => item.status === "active").length || 0,
+          inactive: data?.filter((item: any) => item.status === "inactive").length || 0,
+          type: "Learners",
+          totalIcon: "🧑‍🎓"
+        }}
+    >
       {loading ? (
         <Box
           width={"100%"}
@@ -928,50 +938,63 @@ const UserTable: React.FC<UserTableProps> = ({
         >
           <Loader showBackdrop={false} loadingText={t("COMMON.LOADING")} />
         </Box>
-      ) : data?.length !== 0 && loading === false ? (
-        <Box
-          sx={{
-            backgroundColor: "white",
-            padding: "10px",
-            borderRadius: "15px",
-          }}
-        >
-          <KaTableComponent
-            columns={
-              // role === Role.TEAM_LEADER
-              getTLTableColumns(t, isMobile, filters)
-              // : getUserTableColumns(t, isMobile)
-            }
-            data={data}
-            limit={pageLimit}
-            offset={pageOffset}
-            paginationEnable={totalCount > Numbers.TEN}
-            PagesSelector={PagesSelector}
-            PageSizeSelector={PageSizeSelectorFunction}
-            pageSizes={pageSizeArray}
-            extraActions={extraActions}
-            showIcons={true}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            pagination={pagination}
-            allowEditIcon={true}
-            showReports={true}
-            showLearnerReports={true}
-            showResetPassword={true}
-            noDataMessage={data?.length === 0 ? t("COMMON.NO_USER_FOUND") : ""}
-          />
-        </Box>
       ) : (
-        loading === false &&
-        data.length === 0 && (
-          <Box display="flex" marginLeft="40%" gap="20px">
-            {/* <Image src={glass} alt="" /> */}
-            <PersonSearchIcon fontSize="large" />
-            <Typography marginTop="10px" variant="h2">
-              {t("COMMON.NO_USER_FOUND")}
-            </Typography>
-          </Box>
-        )
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          {/* Table Section */}
+          {data?.length !== 0 && loading === false ? (
+            <Box
+              sx={{
+                backgroundColor: "white",
+                padding: "10px",
+                borderRadius: "15px",
+              }}
+            >
+              <KaTableComponent
+                columns={
+                  getTLTableColumns(t, isMobile, filters)
+                }
+                data={data}
+                limit={pageLimit}
+                offset={pageOffset}
+                paginationEnable={totalCount > Numbers.TEN}
+                PagesSelector={PagesSelector}
+                PageSizeSelector={PageSizeSelectorFunction}
+                pageSizes={pageSizeArray}
+                extraActions={extraActions}
+                showIcons={true}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                pagination={pagination}
+                allowEditIcon={true}
+                showReports={true}
+                showLearnerReports={true}
+                showResetPassword={true}
+                noDataMessage={data?.length === 0 ? t("COMMON.NO_USER_FOUND") : ""}
+              />
+            </Box>
+          ) : (
+            loading === false &&
+            data.length === 0 && (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minHeight: "300px",
+                  backgroundColor: "white",
+                  borderRadius: "15px",
+                  padding: "40px",
+                }}
+              >
+                <PersonSearchIcon fontSize="large" sx={{ color: "#ccc", mb: 2 }} />
+                <Typography variant="h6" color="text.secondary">
+                  {t("COMMON.NO_USER_FOUND")}
+                </Typography>
+              </Box>
+            )
+          )}
+        </Box>
       )}
 
       <SimpleModal
