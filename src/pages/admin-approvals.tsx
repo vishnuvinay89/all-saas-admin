@@ -187,9 +187,7 @@ const AdminApprovalsContent: React.FC = () => {
   return (
     <Box sx={{ p: 3 }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4" component="h1" sx={{ fontWeight: 600 }}>
-          {t("ADMIN_APPROVALS.TITLE")}
-        </Typography>
+        <Typography variant="h1">{t("ADMIN_APPROVALS.TITLE")}</Typography>
         <Tooltip title="Refresh">
           <IconButton onClick={handleRefresh} disabled={refreshing}>
             <RefreshIcon />
