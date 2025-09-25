@@ -269,7 +269,7 @@ const components: Components<Omit<Theme, "components">> = {
         padding: "12px 16px !important",
         fontSize: "14px !important",
         lineHeight: "24px !important",
-        textAlign: "center !important",
+        textAlign: "center",
         borderBottom: "1px solid #e0e0e0 !important",
       },
     },
@@ -323,7 +323,6 @@ const components: Components<Omit<Theme, "components">> = {
       root: {
         fontSize: "1.5rem",
         fontWeight: "700",
-        color: "#1f2937",
         padding: "24px 24px 16px 24px",
         margin: "0",
         background: "linear-gradient(135deg, #2581C4 0%, #1976d2 100%)",
@@ -370,40 +369,6 @@ const components: Components<Omit<Theme, "components">> = {
     },
   },
 
-  MuiTextField: {
-    styleOverrides: {
-      root: {
-        marginBottom: "20px",
-        "& .MuiOutlinedInput-root": {
-          borderRadius: "12px",
-          backgroundColor: "#ffffff",
-          transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-          "&:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#2581C4",
-            borderWidth: "2px",
-          },
-          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#2581C4",
-            borderWidth: "2px",
-            boxShadow: "0 0 0 3px rgba(37, 129, 196, 0.1)",
-          },
-        },
-        "& .MuiInputLabel-root": {
-          color: "#6b7280",
-          fontWeight: "500",
-          "&.Mui-focused": {
-            color: "#2581C4",
-          },
-        },
-        "& .MuiFormHelperText-root": {
-          color: "#6b7280",
-          fontSize: "0.875rem",
-          marginTop: "4px",
-        },
-      },
-    },
-  },
-
   MuiFormControlLabel: {
     styleOverrides: {
       root: {
@@ -417,40 +382,6 @@ const components: Components<Omit<Theme, "components">> = {
         "& .MuiFormControlLabel-label": {
           color: "#374151",
           fontWeight: "500",
-        },
-      },
-    },
-  },
-
-  MuiButton: {
-    styleOverrides: {
-      root: {
-        borderRadius: "12px",
-        fontWeight: "600",
-        fontSize: "0.875rem",
-        padding: "12px 24px",
-        textTransform: "none",
-        transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-        "&:hover": {
-          transform: "translateY(-1px)",
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-        },
-      },
-      containedPrimary: {
-        background: "linear-gradient(135deg, #2581C4 0%, #1976d2 100%)",
-        color: "#ffffff",
-        boxShadow: "0 4px 12px rgba(37, 129, 196, 0.3)",
-        "&:hover": {
-          background: "linear-gradient(135deg, #1976d2 0%, #1565c0 100%)",
-          boxShadow: "0 6px 16px rgba(37, 129, 196, 0.4)",
-        },
-      },
-      outlined: {
-        borderColor: "#d1d5db",
-        color: "#374151",
-        "&:hover": {
-          borderColor: "#2581C4",
-          backgroundColor: "rgba(37, 129, 196, 0.04)",
         },
       },
     },
