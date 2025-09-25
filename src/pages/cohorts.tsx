@@ -551,21 +551,23 @@ const Center: React.FC = () => {
 
   const handleActionForDelete = async () => {
     if (selectedCohortId) {
-      let cohortDetails = {
-        status: Status.ARCHIVED,
-      };
-      const tenantid = selectedRowData?.tenantId;
-      const resp = await deleteCohort(selectedCohortId, tenantid);
-      if (resp?.responseCode === 200) {
-        showToastMessage(t("COHORTS.DELETE_SUCCESSFULLY"), "success");
-        const cohort = cohortData?.find(
-          (item: any) => item.cohortId == selectedCohortId
-        );
-        if (cohort) {
-          cohort.status = Status.ARCHIVED;
+      try {
+        const tenantid = selectedRowData?.tenantId;
+        const resp = await deleteCohort(selectedCohortId, tenantid);
+        if (resp?.responseCode === 200) {
+          showToastMessage(t("COHORTS.DELETE_SUCCESSFULLY"), "success");
+          const cohort = cohortData?.find(
+            (item: any) => item.cohortId == selectedCohortId
+          );
+          if (cohort) {
+            cohort.status = Status.ARCHIVED;
+          }
+        } else {
+          showToastMessage("Cohort Not Archived", "error");
         }
-      } else {
-        showToastMessage("Cohort Not Archived", "error");
+      } catch (error: any) {
+        // Show the API error message from the service
+        showToastMessage(error.message || "Failed to delete cohort", "error");
       }
       setSelectedCohortId("");
     } else {

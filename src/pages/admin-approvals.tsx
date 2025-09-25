@@ -242,9 +242,9 @@ const AdminApprovalsContent: React.FC = () => {
                       <Typography variant="body2" sx={{ fontWeight: 500 }}>
                         {request.user.name}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      {/* <Typography variant="caption" color="text.secondary">
                         @{request.user.username}
-                      </Typography>
+                      </Typography> */}
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2">
