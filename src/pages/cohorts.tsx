@@ -1130,9 +1130,9 @@ const Center: React.FC = () => {
 
       <HeaderComponent 
         {...userProps}
-        showDashboard={true}
+        showDashboard={true}  
         dashboardData={{
-          total: totalCount || 0,
+          total: cohertDashboardData?.length || 0,
           active: cohertDashboardData?.filter((item: any) => item.status === "active").length || 0,
           inactive: cohertDashboardData?.filter((item: any) => item.status === "inactive").length || 0,
           type: "Cohorts",

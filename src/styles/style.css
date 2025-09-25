@@ -1,37 +1,232 @@
-.ka-thead-background {
-  z-index: 1;
-  color: white;
-background: #a8a6a6;
+/* UNIVERSAL TABLE STYLING - HIGHEST PRIORITY */
+/* Force consistent colors across all table types */
+
+/* Ka-Table Styling */
+.ka-thead-background,
+.ka-thead-cell,
+.ka-thead-cell-content,
+div[data-key] .ka-thead-cell,
+div[data-key] .ka-thead-cell-content {
   background-color: #2581C4 !important;
+  color: white !important;
+  font-weight: 600 !important;
+  z-index: 1;
 }
 
-.ka-tbody .ka-tr {
-  border-bottom: 2px solid #ececec;
+.ka-tbody .ka-tr:nth-child(odd),
+.ka-tbody .ka-tr:nth-child(odd) .ka-cell {
+  background-color: #EAF2FF !important;
 }
 
-.ka-tbody .ka-tr:nth-child(odd) {
-  background-color: #EAF2FF; /* Light blue shade for odd rows */
+.ka-tbody .ka-tr:nth-child(even),
+.ka-tbody .ka-tr:nth-child(even) .ka-cell {
+  background-color: #FFFFFF !important;
 }
 
-.ka-tbody .ka-tr:nth-child(even) {
-  background-color: #FFFFFF; /* White for even rows */
+.ka-tbody .ka-tr:hover,
+.ka-tbody .ka-tr:hover .ka-cell {
+  background-color: rgba(37, 129, 196, 0.08) !important;
 }
 
-.table-cell {
-  font-size: 14px;
+/* Material-UI Table Styling - Force Override */
+.MuiTableHead-root .MuiTableCell-head,
+.MuiTableHead-root .MuiTableCell-root,
+table thead th,
+table thead td {
+  background-color: #2581C4 !important;
+  color: white !important;
+  font-weight: 600 !important;
 }
 
-.ka-table {
-  font-size: 14px;
+.MuiTableBody-root .MuiTableRow-root:nth-of-type(odd),
+.MuiTableBody-root .MuiTableRow-root:nth-of-type(odd) .MuiTableCell-root,
+table tbody tr:nth-child(odd),
+table tbody tr:nth-child(odd) td {
+  background-color: #EAF2FF !important;
 }
 
-.ka-cell {
+.MuiTableBody-root .MuiTableRow-root:nth-of-type(even),
+.MuiTableBody-root .MuiTableRow-root:nth-of-type(even) .MuiTableCell-root,
+table tbody tr:nth-child(even),
+table tbody tr:nth-child(even) td {
+  background-color: #FFFFFF !important;
+}
+
+.MuiTableBody-root .MuiTableRow-root:hover,
+.MuiTableBody-root .MuiTableRow-root:hover .MuiTableCell-root,
+table tbody tr:hover,
+table tbody tr:hover td {
+  background-color: rgba(37, 129, 196, 0.08) !important;
+}
+
+/* General table styling */
+.ka-cell, .MuiTableCell-root, table td, table th {
+  padding: 12px 16px !important;
+  font-size: 14px !important;
   line-height: 24px !important;
-  word-wrap: break-word;
+  text-align: center !important;
+  border-bottom: 1px solid #e0e0e0 !important;
 }
 
+/* Table container */
+.ka-table-wrapper, .MuiTableContainer-root {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Status chips */
+.status-active, .MuiChip-colorSuccess {
+  background-color: #e8f5e8 !important;
+  color: #2e7d32 !important;
+}
+
+.status-pending, .MuiChip-colorWarning {
+  background-color: #fff3e0 !important;
+  color: #f57c00 !important;
+}
+
+.status-approved {
+  background-color: #e8f5e8 !important;
+  color: #2e7d32 !important;
+}
+
+/* Mobile responsive */
 @media (max-width: 768px) {
-  .ka-cell {
-    word-wrap: break-word;
+  .ka-cell, .MuiTableCell-root, table td, table th {
+    font-size: 12px !important;
+    padding: 8px 12px !important;
+  }
+}
+
+/* Enhanced Modal/Popup Styling */
+
+/* Modal backdrop enhancement */
+.MuiBackdrop-root {
+  backdrop-filter: blur(4px) !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Modal paper enhancements */
+.MuiDialog-paper {
+  border: 1px solid rgba(37, 129, 196, 0.1) !important;
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Form field enhancements */
+.MuiTextField-root .MuiOutlinedInput-root {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.MuiTextField-root .MuiOutlinedInput-root:hover {
+  transform: translateY(-1px) !important;
+}
+
+/* Radio button enhancements */
+.MuiFormControlLabel-root .MuiRadio-root {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.MuiFormControlLabel-root .MuiRadio-root:hover {
+  transform: scale(1.1) !important;
+}
+
+/* Button hover effects */
+.MuiDialogActions .MuiButton-root {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.MuiDialogActions .MuiButton-root:hover {
+  transform: translateY(-2px) !important;
+}
+
+/* Modal title gradient effect */
+.MuiDialogTitle-root {
+  background: linear-gradient(135deg, #2581C4 0%, #1976d2 100%) !important;
+  color: white !important;
+  text-align: center !important;
+  position: relative !important;
+}
+
+.MuiDialogTitle-root::after {
+  content: "" !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 60px !important;
+  height: 4px !important;
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-radius: 2px !important;
+}
+
+/* Enhanced input focus states */
+.MuiTextField-root .MuiOutlinedInput-root.Mui-focused {
+  box-shadow: 0 0 0 3px rgba(37, 129, 196, 0.1) !important;
+}
+
+/* Status indicators in modals */
+.modal-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.modal-status-active {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+}
+
+.modal-status-pending {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+/* Modal animation enhancements */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.MuiDialog-paper {
+  animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Mobile responsive modal */
+@media (max-width: 768px) {
+  .MuiDialog-paper {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    margin: 16px !important;
+  }
+  
+  .MuiDialogTitle-root {
+    font-size: 1.25rem !important;
+    padding: 20px 16px 12px 16px !important;
+  }
+  
+  .MuiDialogContent-root {
+    padding: 16px !important;
+  }
+  
+  .MuiDialogActions-root {
+    padding: 12px 16px 16px 16px !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  
+  .MuiDialogActions-root .MuiButton-root {
+    width: 100% !important;
   }
 }
