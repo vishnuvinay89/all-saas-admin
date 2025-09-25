@@ -220,8 +220,14 @@ export const deleteCohort = async (
     });
 
     return response?.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error deleting cohort", error);
+    
+    if (error.response?.status === 409) {
+      const errorMessage = error.response?.data?.params?.err || "Cannot delete cohort due to conflicts";
+      throw new Error(errorMessage);
+    }
+    
     throw error;
   }
 };
