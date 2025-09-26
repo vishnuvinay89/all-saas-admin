@@ -16,6 +16,7 @@ import { createTheme } from "@mui/material/styles";
 import Profile from "./Profile";
 import { Mail } from "@mui/icons-material";
 import InvitationMenu from "./Invitation";
+import HelpButton from './HelpButton';
 
 const Header = ({ sx, customClass, toggleMobileSidebar, position }: any) => {
   const { t } = useTranslation();
@@ -153,7 +154,10 @@ const Header = ({ sx, customClass, toggleMobileSidebar, position }: any) => {
             </MenuItem>
           ))}
         </Menu>
-        <Profile />
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <HelpButton />
+          <Profile />
+        </Box>
         {/* ------------------------------------------- */}
         {/* Profile Dropdown */}
         {/* ------------------------------------------- */}

@@ -226,7 +226,8 @@
     "WORKSPACE": "Workspace",
     "TENANT": "Tenant",
     "APPROVAL_STATUS": "Approval Status",
-    "ADMIN_APPROVALS": "Admin Approvals"
+    "ADMIN_APPROVALS": "Admin Approvals",
+    "HELP": "Help & Support"
   },
   "FACILITATORS": {
     "STATE": "State",
@@ -616,5 +617,21 @@
     "ACCESS_DENIED": "Access Denied",
     "INSUFFICIENT_PERMISSIONS": "You don't have sufficient permissions to access this page.",
     "GO_BACK": "Go Back"
+  },
+  "HELP": {
+    "TITLE": "Help & Documentation",
+    "SUBTITLE": "Comprehensive guide to using the Admin Portal",
+    "QUICK_START": "Quick Start Guide",
+    "WELCOME": "Welcome to the Admin Portal! This comprehensive help section will guide you through all the features and functionalities.",
+    "TENANT_MANAGEMENT": "Tenant Management",
+    "COHORT_MANAGEMENT": "Cohort Management",
+    "USER_MANAGEMENT": "User Management",
+    "APPROVAL_SYSTEM": "Approval System",
+    "SYSTEM_SETTINGS": "System Settings",
+    "ADDITIONAL_RESOURCES": "Additional Resources",
+    "FAQ": "Frequently Asked Questions",
+    "VIDEO_TUTORIALS": "Video Tutorials",
+    "DOCUMENTATION": "Documentation",
+    "CONTACT_SUPPORT": "Contact Support"
   }
 }
