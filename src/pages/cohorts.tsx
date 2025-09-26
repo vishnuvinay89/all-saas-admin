@@ -149,6 +149,7 @@ const Center: React.FC = () => {
   const [uploadResult, setUploadResult] = useState<UploadResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [showSampleData, setShowSampleData] = useState(false);
+  const [confirmButtonDisable, setConfirmButtonDisable] = useState<boolean>(true);
 
   const setSubmittedButtonStatus = useSubmittedButtonStore(
     (state: any) => state.setSubmittedButtonStatus
@@ -980,34 +981,63 @@ const Center: React.FC = () => {
 
     try {
       setLoading(true);
+      interface UserCreateData {
+        name: string;
+        username: string;
+        password: any;
+        mobile: string;
+        email: string;
+        grade: number;
+        tenantCohortRoleMapping: Array<{
+          roleId: string;
+          tenantId: string;
+          cohortId: string[];
+        }>;
+      }
+
+      const matchedRole = roleList?.result?.find(
+        (role: any) => role.code === formData?.role
+      );
+      const roleId = matchedRole ? matchedRole?.roleId : "";
+
       setConfirmButtonDisable(true);
       const formatName = (names: any) => {
         return names?.trim().replace(/\s+/g, " ");
       };
-      let obj = {
+
+      let obj: UserCreateData = {
         name: formatName(formData?.name),
-        cohortId: selectedRowData?.cohortId,
-        tenantId: selectedRowData?.tenantId,
-        status: formData?.status,
-        type: formData?.type,
-        expiryDate: formData?.expiryDate, // Include expiryDate in the request
+        mobile: formData?.mobileNo,
+        email: formData?.email,
+        username: formData?.username.replace(/\s/g, ""),
+        password: formData?.password,
+        grade: formData?.grade,
+        tenantCohortRoleMapping: [
+          {
+            roleId: roleId,
+            tenantId: selectedRowData?.tenantId,
+            cohortId: [selectedRowData?.cohortId],
+          },
+        ]
       };
-      const resp = await cohortCreate(obj, selectedRowData?.tenantId);
+
+      const resp = await userCreate(obj as any, selectedRowData?.tenantId);
 
       if (resp?.responseCode === 200 || resp?.responseCode === 201) {
-        showToastMessage(t("COHORTS.CREATE_SUCCESSFULLY"), "success");
+        showToastMessage(t("USER.CREATE_SUCCESSFULLY"), "success");
         setLoading(false);
       } else {
-        showToastMessage(t("COHORTS.CREATE_FAILED"), "error");
+        showToastMessage(t("USER.CREATE_FAILED"), "error");
       }
     } catch (error: any) {
-      const errorMessage = error.message || t("COHORTS.CREATE_FAILED");
+      const errorMessage = error.message || t("USER.CREATE_FAILED");
       showToastMessage(errorMessage, "error");
     } finally {
       setLoading(false);
       setConfirmButtonDisable(false);
       handleCloseModal();
       onCloseEditMOdel();
+      setAddmodalopen(false);
       fetchUserList();
       setIsEditForm(false);
     }
@@ -1909,7 +1939,4 @@ export async function getStaticProps({ locale }: any) {
 }
 
 export default Center;
-function setConfirmButtonDisable(arg0: boolean) {
-  throw new Error("Function not implemented.");
-}
 
